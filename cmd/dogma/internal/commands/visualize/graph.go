@@ -2,6 +2,7 @@ package visualize
 
 import (
 	"context"
+	"errors"
 	"io"
 	"os"
 
@@ -13,13 +14,29 @@ import (
 
 func init() {
 	cmd := &cobra.Command{
-		Use:   "graph <plugin> [...]",
+		Use:   "graph",
 		Short: "generate a visualization of one or more Dogma applications in Graphviz DOT format",
-		Args:  cobra.MinimumNArgs(1),
+		Args:  cobra.NoArgs,
 		RunE:  graph,
 	}
 
-	cmd.Flags().StringP("output", "o", "-", "write output to the specified file")
+	cmd.Flags().StringSlice(
+		"plugin",
+		nil,
+		"load applications from the specified plugin",
+	)
+
+	cmd.Flags().StringSlice(
+		"package",
+		nil,
+		"load applications from packages that match the specified package pattern",
+	)
+
+	cmd.Flags().StringP(
+		"output", "o",
+		"-",
+		"write output to the specified file",
+	)
 
 	Root.AddCommand(cmd)
 }
@@ -28,9 +45,38 @@ func init() {
 func graph(cmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 
-	applications, err := loadConfigsFromPlugins(ctx, args)
+	patterns, err := cmd.Flags().GetStringSlice("package")
 	if err != nil {
 		return err
+	}
+
+	plugins, err := cmd.Flags().GetStringSlice("plugin")
+	if err != nil {
+		return err
+	}
+
+	if len(patterns) == 0 && len(plugins) == 0 {
+		patterns = []string{"./..."}
+	}
+
+	var applications []configkit.Application
+
+	if len(patterns) != 0 {
+		apps, err := loadConfigsFromPackages(ctx, patterns)
+		if err != nil {
+			return err
+		}
+
+		applications = append(applications, apps...)
+	}
+
+	if len(plugins) != 0 {
+		apps, err := loadConfigsFromPlugins(ctx, plugins)
+		if err != nil {
+			return err
+		}
+
+		applications = append(applications, apps...)
 	}
 
 	g, err := dot.Generate(applications...)
@@ -97,4 +143,13 @@ func loadConfigsFromPlugins(
 	}
 
 	return applications, nil
+}
+
+// loadConfigsFromPackages returns the configuration for all applications
+// defined within the packages that match the given patterns.
+func loadConfigsFromPackages(
+	ctx context.Context,
+	patterns []string,
+) ([]configkit.Application, error) {
+	return nil, errors.New("not implemented")
 }
