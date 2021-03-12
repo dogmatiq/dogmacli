@@ -2,21 +2,21 @@ package visualize
 
 import (
 	"context"
-	"errors"
 	"io"
 	"os"
 
 	"github.com/dogmatiq/configkit"
+	"github.com/dogmatiq/configkit/static"
 	"github.com/dogmatiq/configkit/visualization/dot"
 	"github.com/dogmatiq/pluginkit"
 	"github.com/spf13/cobra"
+	"golang.org/x/tools/go/packages"
 )
 
 func init() {
 	cmd := &cobra.Command{
-		Use:   "graph",
+		Use:   "graph [<package> ...]",
 		Short: "generate a visualization of one or more Dogma applications in Graphviz DOT format",
-		Args:  cobra.NoArgs,
 		RunE:  graph,
 	}
 
@@ -24,12 +24,6 @@ func init() {
 		"plugin",
 		nil,
 		"load applications from the specified plugin",
-	)
-
-	cmd.Flags().StringSlice(
-		"package",
-		nil,
-		"load applications from packages that match the specified package pattern",
 	)
 
 	cmd.Flags().StringP(
@@ -45,24 +39,19 @@ func init() {
 func graph(cmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 
-	patterns, err := cmd.Flags().GetStringSlice("package")
-	if err != nil {
-		return err
-	}
-
 	plugins, err := cmd.Flags().GetStringSlice("plugin")
 	if err != nil {
 		return err
 	}
 
-	if len(patterns) == 0 && len(plugins) == 0 {
-		patterns = []string{"./..."}
+	if len(args) == 0 && len(plugins) == 0 {
+		args = []string{"."}
 	}
 
 	var applications []configkit.Application
 
-	if len(patterns) != 0 {
-		apps, err := loadConfigsFromPackages(ctx, patterns)
+	if len(args) != 0 {
+		apps, err := loadConfigsFromPackages(ctx, args)
 		if err != nil {
 			return err
 		}
@@ -151,5 +140,31 @@ func loadConfigsFromPackages(
 	ctx context.Context,
 	patterns []string,
 ) ([]configkit.Application, error) {
-	return nil, errors.New("not implemented")
+	cfg := packages.Config{
+		Context: ctx,
+		Mode:    packages.LoadAllSyntax,
+		// Dir:  cwd,
+	}
+
+	var applications []configkit.Application
+
+	for _, pattern := range patterns {
+		pkgs, err := packages.Load(&cfg, pattern)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, pkg := range pkgs {
+			for _, err := range pkg.Errors {
+				return nil, err
+			}
+		}
+
+		applications = append(
+			applications,
+			static.FromPackages(pkgs)...,
+		)
+	}
+
+	return applications, nil
 }
