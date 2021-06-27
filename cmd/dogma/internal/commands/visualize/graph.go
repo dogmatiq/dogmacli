@@ -5,32 +5,21 @@ import (
 	"errors"
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/dogmatiq/configkit"
+	"github.com/dogmatiq/configkit/static"
 	"github.com/dogmatiq/configkit/visualization/dot"
-	"github.com/dogmatiq/pluginkit"
 	"github.com/spf13/cobra"
+	"golang.org/x/tools/go/packages"
 )
 
 func init() {
 	cmd := &cobra.Command{
-		Use:   "graph",
+		Use:   "graph [<package> ...]",
 		Short: "generate a visualization of one or more Dogma applications in Graphviz DOT format",
-		Args:  cobra.NoArgs,
 		RunE:  graph,
 	}
-
-	cmd.Flags().StringSlice(
-		"plugin",
-		nil,
-		"load applications from the specified plugin",
-	)
-
-	cmd.Flags().StringSlice(
-		"package",
-		nil,
-		"load applications from packages that match the specified package pattern",
-	)
 
 	cmd.Flags().StringP(
 		"output", "o",
@@ -45,41 +34,20 @@ func init() {
 func graph(cmd *cobra.Command, args []string) error {
 	ctx := context.Background()
 
-	patterns, err := cmd.Flags().GetStringSlice("package")
+	if len(args) == 0 {
+		args = []string{"./..."}
+	}
+
+	apps, err := loadConfigsFromPackages(ctx, args)
 	if err != nil {
 		return err
 	}
 
-	plugins, err := cmd.Flags().GetStringSlice("plugin")
-	if err != nil {
-		return err
+	if len(apps) == 0 {
+		return errors.New("no applications found")
 	}
 
-	if len(patterns) == 0 && len(plugins) == 0 {
-		patterns = []string{"./..."}
-	}
-
-	var applications []configkit.Application
-
-	if len(patterns) != 0 {
-		apps, err := loadConfigsFromPackages(ctx, patterns)
-		if err != nil {
-			return err
-		}
-
-		applications = append(applications, apps...)
-	}
-
-	if len(plugins) != 0 {
-		apps, err := loadConfigsFromPlugins(ctx, plugins)
-		if err != nil {
-			return err
-		}
-
-		applications = append(applications, apps...)
-	}
-
-	g, err := dot.Generate(applications...)
+	g, err := dot.Generate(apps...)
 	if err != nil {
 		return err
 	}
@@ -108,48 +76,45 @@ func graph(cmd *cobra.Command, args []string) error {
 	return err
 }
 
-// loadConfigsFromPlugins returns the configuration for all applications
-// provided by the given plugin files.
-func loadConfigsFromPlugins(
-	ctx context.Context,
-	files []string,
-) ([]configkit.Application, error) {
-	var applications []configkit.Application
-
-	for _, f := range files {
-		p, err := pluginkit.Load(ctx, f)
-		if err != nil {
-			return nil, err
-		}
-		defer p.Close()
-
-		s, ok := p.ApplicationService()
-		if !ok {
-			continue
-		}
-
-		for _, k := range s.ApplicationKeys() {
-			app, closer, err := s.NewApplication(ctx, k)
-			if err != nil {
-				return nil, err
-			}
-			defer closer.Close()
-
-			applications = append(
-				applications,
-				configkit.FromApplication(app),
-			)
-		}
-	}
-
-	return applications, nil
-}
-
 // loadConfigsFromPackages returns the configuration for all applications
 // defined within the packages that match the given patterns.
 func loadConfigsFromPackages(
 	ctx context.Context,
 	patterns []string,
 ) ([]configkit.Application, error) {
-	return nil, errors.New("not implemented")
+	var applications []configkit.Application
+
+	for _, pattern := range patterns {
+		cfg := packages.Config{
+			Context: ctx,
+			Mode:    packages.LoadAllSyntax,
+			Dir:     pattern,
+		}
+
+		if filepath.Base(pattern) == "..." {
+			cfg.Dir = filepath.Dir(pattern)
+			pattern = "./..."
+		} else {
+			pattern = "."
+		}
+
+		pkgs, err := packages.Load(&cfg, pattern)
+		if err != nil {
+			return nil, err
+		}
+
+		for _, pkg := range pkgs {
+			for _, err := range pkg.Errors {
+				return nil, err
+			}
+		}
+
+		applications = append(
+			applications,
+			static.FromPackages(pkgs)...,
+		)
+
+	}
+
+	return applications, nil
 }
