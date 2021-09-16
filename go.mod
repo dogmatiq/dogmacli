@@ -1,9 +1,19 @@
 module github.com/dogmatiq/dogmacli
 
-go 1.15
+go 1.17
 
 require (
-	github.com/dogmatiq/configkit v0.11.0
-	github.com/dogmatiq/pluginkit v0.0.0-20201223104101-47527b896768
-	github.com/spf13/cobra v1.2.1
+	github.com/dogmatiq/configkit v0.11.1-0.20210627063455-14abe13af60d
+	github.com/spf13/cobra v1.1.3
+	golang.org/x/tools v0.0.0-20201224043029-2b0845dc783e
+)
+
+require (
+	github.com/dogmatiq/dogma v0.11.1 // indirect
+	github.com/dogmatiq/iago v0.4.0 // indirect
+	github.com/emicklei/dot v0.16.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
+	github.com/spf13/pflag v1.0.5 // indirect
+	golang.org/x/mod v0.3.0 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 )
