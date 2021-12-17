@@ -87,8 +87,19 @@ func loadConfigsFromPackages(
 	for _, pattern := range patterns {
 		cfg := packages.Config{
 			Context: ctx,
-			Mode:    packages.LoadAllSyntax,
 			Dir:     pattern,
+
+			// TODO: Some of these modes can probably be omitted but without
+			// tests we're not sure which ones.
+			Mode: packages.NeedName |
+				packages.NeedFiles |
+				packages.NeedCompiledGoFiles |
+				packages.NeedImports |
+				packages.NeedTypes |
+				packages.NeedTypesSizes |
+				packages.NeedSyntax |
+				packages.NeedTypesInfo |
+				packages.NeedDeps,
 		}
 
 		if filepath.Base(pattern) == "..." {
