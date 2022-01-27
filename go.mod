@@ -5,7 +5,7 @@ go 1.17
 require (
 	github.com/dogmatiq/configkit v0.11.1-0.20210627063455-14abe13af60d
 	github.com/spf13/cobra v1.3.0
-	golang.org/x/tools v0.1.8
+	golang.org/x/tools v0.1.9
 )
 
 require (
