@@ -3,7 +3,7 @@ module github.com/dogmatiq/dogmacli
 go 1.17
 
 require (
-	github.com/dogmatiq/configkit v0.11.1-0.20210627063455-14abe13af60d
+	github.com/dogmatiq/configkit v0.11.1
 	github.com/spf13/cobra v1.6.1
 	golang.org/x/tools v0.6.0
 )
