@@ -10,3 +10,9 @@ The `dogma` command line interface contains various tools for working with
 [![Code Coverage](https://img.shields.io/codecov/c/github/dogmatiq/dogmacli/main.svg?style=for-the-badge)](https://codecov.io/github/dogmatiq/dogmacli)
 
 </div>
+
+## Installation
+
+```
+go install github.com/dogmatiq/dogmacli/cmd/dogma@latest
+```
