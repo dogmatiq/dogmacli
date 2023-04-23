@@ -1,4 +1,4 @@
-package visualize
+package graph
 
 import (
 	"context"
@@ -10,15 +10,60 @@ import (
 	"github.com/dogmatiq/configkit"
 	"github.com/dogmatiq/configkit/static"
 	"github.com/dogmatiq/configkit/visualization/dot"
+	"github.com/dogmatiq/imbue"
 	"github.com/spf13/cobra"
 	"golang.org/x/tools/go/packages"
 )
 
-func init() {
+// Command returns the "visualize graph" command.
+func Command(con *imbue.Container) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "graph [<package> ...]",
-		Short: "generate a visualization of one or more Dogma applications in Graphviz DOT format",
-		RunE:  graph,
+		Short: "Generate a visualization of one or more Dogma applications in Graphviz DOT format",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx := cmd.Context()
+
+			if len(args) == 0 {
+				args = []string{"./..."}
+			}
+
+			apps, err := loadConfigsFromPackages(ctx, args)
+			if err != nil {
+				return err
+			}
+
+			if len(apps) == 0 {
+				return errors.New("no applications found")
+			}
+
+			g, err := dot.Generate(apps...)
+			if err != nil {
+				return err
+			}
+
+			out, err := cmd.Flags().GetString("output")
+			if err != nil {
+				return err
+			}
+
+			w := cmd.OutOrStdout()
+			if out != "-" {
+				f, err := os.Create(out)
+				if err != nil {
+					return err
+				}
+				defer f.Close()
+
+				w = f
+			}
+
+			_, err = io.WriteString(
+				w,
+				g.String(),
+			)
+
+			return err
+		},
 	}
 
 	cmd.Flags().StringP(
@@ -27,53 +72,7 @@ func init() {
 		"write output to the specified file",
 	)
 
-	Root.AddCommand(cmd)
-}
-
-// graph is the entry point for the "graph" command.
-func graph(cmd *cobra.Command, args []string) error {
-	ctx := context.Background()
-
-	if len(args) == 0 {
-		args = []string{"./..."}
-	}
-
-	apps, err := loadConfigsFromPackages(ctx, args)
-	if err != nil {
-		return err
-	}
-
-	if len(apps) == 0 {
-		return errors.New("no applications found")
-	}
-
-	g, err := dot.Generate(apps...)
-	if err != nil {
-		return err
-	}
-
-	out, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
-
-	w := cmd.OutOrStdout()
-	if out != "-" {
-		f, err := os.Create(out)
-		if err != nil {
-			return err
-		}
-		defer f.Close()
-
-		w = f
-	}
-
-	_, err = io.WriteString(
-		w,
-		g.String(),
-	)
-
-	return err
+	return cmd
 }
 
 // loadConfigsFromPackages returns the configuration for all applications
