@@ -1,6 +1,8 @@
 github.com/cpuguy83/go-md2man/v2 v2.0.2/go.mod h1:tgQtvFlXSQOSOSIRvRPT7W67SCa46tRHOmNcaadrF8o=
 github.com/dogmatiq/configkit v0.12.0 h1:fB28zVlt+B0KXWPKBtOznxodfhpY+7kHK3hNz4aULK4=
 github.com/dogmatiq/configkit v0.12.0/go.mod h1:Y1P2CUURkcey3Sl0o6xEOS3X+Tm9SywUHjKIwI96Dc8=
+github.com/dogmatiq/configkit v0.12.1-0.20230421074222-ed737547c58c h1:FDLZaJxAgU/wBH2b2xrd3Z+dslLTiM+LlIXwW1sbnb4=
+github.com/dogmatiq/configkit v0.12.1-0.20230421074222-ed737547c58c/go.mod h1:Y1P2CUURkcey3Sl0o6xEOS3X+Tm9SywUHjKIwI96Dc8=
 github.com/dogmatiq/dogma v0.12.0 h1:hUvAbdrcLGAP2IrpBKvdbUSGubgNKzqa5QfFarIQPfU=
 github.com/dogmatiq/dogma v0.12.0/go.mod h1:op4IjAGC593ONvvUPhh2xNyk/3Ezv9HkCPRlzdbkX9Y=
 github.com/dogmatiq/iago v0.4.0 h1:57nZqVT34IZxtCZEW/RFif7DNUEjMXgevfr/Mmd0N8I=
