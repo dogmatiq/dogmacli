@@ -5,8 +5,6 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 )
 
 func (g *generator) literalName(t *metamodel.Type) jen.Code {
@@ -30,10 +28,7 @@ func (g *generator) literals(code *jen.File) {
 		literals := g.pendingLiterals
 		g.pendingLiterals = nil
 
-		names := maps.Keys(literals)
-		slices.Sort(names)
-
-		for _, n := range names {
+		for _, n := range sortedKeys(literals) {
 			t := literals[n]
 
 			code.

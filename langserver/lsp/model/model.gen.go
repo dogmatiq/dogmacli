@@ -5036,68 +5036,6 @@ type Pattern string
 // UNIONS & TUPLES
 // ------------------------------------------------------------------------
 
-// OneOf4 is a union of 4 values.
-type OneOf4[T0, T1, T2, T3 any] struct {
-	First  *T0
-	Second *T1
-	Third  *T2
-	Fourth *T3
-}
-
-func (v OneOf4[T0, T1, T2, T3]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
-	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
-	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
-	}
-	if v.Fourth != nil {
-		return json.Marshal(v.Fourth)
-	}
-	return []byte("null"), nil
-}
-
-func (v *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
-	var (
-		err  error
-		errs []error
-	)
-
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-	v.Fourth = nil
-
-	err = json.Unmarshal(data, &v.First)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Second)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Third)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fourth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	return errors.Join(errs...)
-}
-
 // OneOf2 is a union of 2 values.
 type OneOf2[T0, T1 any] struct {
 	First  *T0
@@ -5181,6 +5119,68 @@ func (v *OneOf3[T0, T1, T2]) UnmarshalJSON(data []byte) error {
 	errs = append(errs, err)
 
 	err = json.Unmarshal(data, &v.Third)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	return errors.Join(errs...)
+}
+
+// OneOf4 is a union of 4 values.
+type OneOf4[T0, T1, T2, T3 any] struct {
+	First  *T0
+	Second *T1
+	Third  *T2
+	Fourth *T3
+}
+
+func (v OneOf4[T0, T1, T2, T3]) MarshalJSON() ([]byte, error) {
+	if v.First != nil {
+		return json.Marshal(v.First)
+	}
+	if v.Second != nil {
+		return json.Marshal(v.Second)
+	}
+	if v.Third != nil {
+		return json.Marshal(v.Third)
+	}
+	if v.Fourth != nil {
+		return json.Marshal(v.Fourth)
+	}
+	return []byte("null"), nil
+}
+
+func (v *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
+	var (
+		err  error
+		errs []error
+	)
+
+	v.First = nil
+	v.Second = nil
+	v.Third = nil
+	v.Fourth = nil
+
+	err = json.Unmarshal(data, &v.First)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	err = json.Unmarshal(data, &v.Second)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	err = json.Unmarshal(data, &v.Third)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	err = json.Unmarshal(data, &v.Fourth)
 	if err == nil {
 		return nil
 	}

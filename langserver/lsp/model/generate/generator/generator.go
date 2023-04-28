@@ -5,6 +5,9 @@ import (
 
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
+	"golang.org/x/exp/constraints"
+	"golang.org/x/exp/maps"
+	"golang.org/x/exp/slices"
 )
 
 type generator struct {
@@ -100,4 +103,10 @@ func (g *generator) pushName(n string) {
 
 func (g *generator) popName() {
 	g.namingContext = g.namingContext[:len(g.namingContext)-1]
+}
+
+func sortedKeys[M map[K]V, K constraints.Ordered, V any](m M) []K {
+	keys := maps.Keys(m)
+	slices.Sort(keys)
+	return keys
 }

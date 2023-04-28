@@ -17,7 +17,7 @@ func tupleName(arity int) string {
 }
 
 func (g *generator) tuples(code *jen.File) {
-	for arity := range g.tupleArities {
+	for _, arity := range sortedKeys(g.tupleArities) {
 		name, ok := tupleNames[arity]
 		if !ok {
 			panic(fmt.Sprintf("no name for tuple with arity %d", arity))
