@@ -7,7 +7,7 @@ import (
 	"path"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/generator"
+	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/generator"
 	"golang.org/x/exp/slices"
 )
 

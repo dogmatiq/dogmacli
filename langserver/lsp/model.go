@@ -1,4 +1,4 @@
-package model
+package lsp
 
 // URI is a string that represents a URI.
 type URI = string

@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
+	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/metamodel"
 )
 
 func unionName(arity int) string {

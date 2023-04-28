@@ -2,7 +2,7 @@ package generator
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
+	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/metamodel"
 )
 
 func (g *generator) typeRef(t *metamodel.Type) jen.Code {
