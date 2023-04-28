@@ -16,6 +16,14 @@ func Root(con *imbue.Container, ver string) *cobra.Command {
 		DisableFlagsInUseLine: true,
 		Version:               ver,
 		Short:                 "Dogma command-line",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			imbue.With0(
+				con,
+				func(imbue.Context) (*cobra.Command, error) {
+					return cmd, nil
+				},
+			)
+		},
 	}
 
 	cmd.SetIn(os.Stdin)

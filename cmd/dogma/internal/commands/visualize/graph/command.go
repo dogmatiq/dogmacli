@@ -27,6 +27,8 @@ func Command(con *imbue.Container) *cobra.Command {
 				args = []string{"./..."}
 			}
 
+			cmd.SilenceUsage = true
+
 			apps, err := loadConfigsFromPackages(ctx, args)
 			if err != nil {
 				return err
