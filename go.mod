@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/dave/jennifer v1.6.0
 	github.com/dogmatiq/configkit v0.12.1-0.20230421074222-ed737547c58c
+	github.com/dogmatiq/dapper v0.4.6
 	github.com/dogmatiq/harpy v0.8.2
 	github.com/dogmatiq/imbue v0.7.0
 	github.com/spf13/cobra v1.6.1
@@ -28,4 +29,5 @@ require (
 	golang.org/x/mod v0.10.0 // indirect
 	golang.org/x/sync v0.1.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
+	google.golang.org/protobuf v1.28.1 // indirect
 )

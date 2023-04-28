@@ -14,6 +14,7 @@ func (g *generator) literalStructRef(t *metamodel.Type) jen.Code {
 
 	name, suffix := g.uniqueName(
 		strings.Join(g.namingContext, ""),
+		typeInfo{omittable: false},
 	)
 
 	g.pushName(suffix)

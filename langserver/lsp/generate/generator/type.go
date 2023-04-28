@@ -5,6 +5,29 @@ import (
 	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/metamodel"
 )
 
+func (g *generator) isOmittable(t *metamodel.Type) bool {
+	switch t.Kind {
+	case "base":
+		return true
+	case "reference":
+		return g.names[normalizeName(t.Name)].omittable
+	case "tuple":
+		return false
+	case "or":
+		return false
+	case "literal":
+		return false
+	case "stringLiteral":
+		return false
+	case "map":
+		return true
+	case "array":
+		return true
+	default:
+		panic("unsupported kind: " + t.Kind)
+	}
+}
+
 func (g *generator) typeRef(t *metamodel.Type) jen.Code {
 	switch t.Kind {
 	case "base":

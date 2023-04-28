@@ -146,7 +146,7 @@ type FoldingRange struct {
 	// Describes the kind of the folding range such as `comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
 	// See {@link FoldingRangeKind} for an enumeration of standardized kinds.
-	Kind *FoldingRangeKind `json:"kind,omitempty"`
+	Kind FoldingRangeKind `json:"kind,omitempty"`
 	// The text that the client should show when the specified range is
 	// collapsed. If not defined or not supported by the client, a default
 	// will be chosen by the client.
@@ -238,7 +238,7 @@ type CallHierarchyItem struct {
 	SelectionRange Range `json:"selectionRange"`
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 
 // Call hierarchy options used during static or dynamic registration.
@@ -498,7 +498,7 @@ type Moniker struct {
 	// The scope in which the moniker is unique
 	Unique UniquenessLevel `json:"unique"`
 	// The moniker kind if known.
-	Kind *MonikerKind `json:"kind,omitempty"`
+	Kind MonikerKind `json:"kind,omitempty"`
 }
 
 type MonikerRegistrationOptions struct {
@@ -537,7 +537,7 @@ type TypeHierarchyItem struct {
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
 	// resolving supertypes and subtypes.
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 
 // Type hierarchy options used during static or dynamic registration.
@@ -614,7 +614,7 @@ type InlayHint struct {
 	Label OneOf2[string, []InlayHintLabelPart] `json:"label"`
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
-	Kind *InlayHintKind `json:"kind,omitempty"`
+	Kind InlayHintKind `json:"kind,omitempty"`
 	// Optional text edits that are performed when accepting this inlay hint.
 	//
 	// *Note* that edits are expected to change the document so that the inlay
@@ -637,7 +637,7 @@ type InlayHint struct {
 	PaddingRight bool `json:"paddingRight,omitempty"`
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 
 // Inlay hint options used during static or dynamic registration.
@@ -972,7 +972,7 @@ type CompletionItem struct {
 	LabelDetails *CompletionItemLabelDetails `json:"labelDetails,omitempty"`
 	// The kind of this completion item. Based of the kind
 	// an icon is chosen by the editor.
-	Kind *CompletionItemKind `json:"kind,omitempty"`
+	Kind CompletionItemKind `json:"kind,omitempty"`
 	// Tags for this completion item.
 	//
 	// @since 3.15.0
@@ -1017,13 +1017,13 @@ type CompletionItem struct {
 	//
 	// Please note that the insertTextFormat doesn't apply to
 	// `additionalTextEdits`.
-	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
+	InsertTextFormat InsertTextFormat `json:"insertTextFormat,omitempty"`
 	// How whitespace and indentation is handled during completion
 	// item insertion. If not provided the clients default value depends on
 	// the `textDocument.completion.insertTextMode` client capability.
 	//
 	// @since 3.16.0
-	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
+	InsertTextMode InsertTextMode `json:"insertTextMode,omitempty"`
 	// An {@link TextEdit edit} which is applied to a document when selecting
 	// this completion. When an edit is provided the value of
 	// {@link CompletionItem.insertText insertText} is ignored.
@@ -1074,7 +1074,7 @@ type CompletionItem struct {
 	Command *Command `json:"command,omitempty"`
 	// A data entry field that is preserved on a completion item between a
 	// {@link CompletionRequest} and a {@link CompletionResolveRequest}.
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 
 // Represents a collection of {@link CompletionItem completion items} to be presented
@@ -1114,15 +1114,15 @@ type CompletionListItemDefaults struct {
 	// A default insert text format.
 	//
 	// @since 3.17.0
-	InsertTextFormat *InsertTextFormat `json:"insertTextFormat,omitempty"`
+	InsertTextFormat InsertTextFormat `json:"insertTextFormat,omitempty"`
 	// A default insert text mode.
 	//
 	// @since 3.17.0
-	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
+	InsertTextMode InsertTextMode `json:"insertTextMode,omitempty"`
 	// A default data value.
 	//
 	// @since 3.17.0
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 type CompletionListItemDefaultsEditRange struct {
 	Insert  Range `json:"insert"`
@@ -1240,7 +1240,7 @@ type DocumentHighlight struct {
 	// The range this highlight applies to.
 	Range Range `json:"range"`
 	// The highlight kind, default is {@link DocumentHighlightKind.Text text}.
-	Kind *DocumentHighlightKind `json:"kind,omitempty"`
+	Kind DocumentHighlightKind `json:"kind,omitempty"`
 }
 
 // Registration options for a {@link DocumentHighlightRequest}.
@@ -1350,7 +1350,7 @@ type CodeAction struct {
 	// The kind of the code action.
 	//
 	// Used to filter code actions.
-	Kind *CodeActionKind `json:"kind,omitempty"`
+	Kind CodeActionKind `json:"kind,omitempty"`
 	// The diagnostics that this code action resolves.
 	Diagnostics []Diagnostic `json:"diagnostics,omitempty"`
 	// Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
@@ -1387,7 +1387,7 @@ type CodeAction struct {
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
@@ -1426,7 +1426,7 @@ type WorkspaceSymbol struct {
 	Location OneOf2[Location, WorkspaceSymbolLocation] `json:"location"`
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 type WorkspaceSymbolLocation struct {
 	URI DocumentURI `json:"uri"`
@@ -1458,7 +1458,7 @@ type CodeLens struct {
 	// A data entry field that is preserved on a code lens item between
 	// a {@link CodeLensRequest} and a [CodeLensResolveRequest]
 	// (#CodeLensResolveRequest)
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 
 // Registration options for a {@link CodeLensRequest}.
@@ -1492,7 +1492,7 @@ type DocumentLink struct {
 	Tooltip string `json:"tooltip,omitempty"`
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 
 // Registration options for a {@link DocumentLinkRequest}.
@@ -2439,7 +2439,7 @@ type Registration struct {
 	// The method / capability to register for.
 	Method string `json:"method"`
 	// Options necessary for the registration.
-	RegisterOptions any `json:"registerOptions,omitempty"`
+	RegisterOptions *any `json:"registerOptions,omitempty"`
 }
 
 // General parameters to unregister a request or notification.
@@ -2487,9 +2487,9 @@ type _InitializeParams struct {
 	// The capabilities provided by the client (editor or tool)
 	Capabilities ClientCapabilities `json:"capabilities"`
 	// User provided initialization options.
-	InitializationOptions any `json:"initializationOptions,omitempty"`
+	InitializationOptions *any `json:"initializationOptions,omitempty"`
 	// The initial trace setting. If omitted trace is disabled ('off').
-	Trace *TraceValues `json:"trace,omitempty"`
+	Trace TraceValues `json:"trace,omitempty"`
 }
 type _InitializeParamsClientInfo struct {
 	// The name of the client as defined by the client.
@@ -2521,7 +2521,7 @@ type ServerCapabilities struct {
 	// If omitted it defaults to 'utf-16'.
 	//
 	// @since 3.17.0
-	PositionEncoding *PositionEncodingKind `json:"positionEncoding,omitempty"`
+	PositionEncoding PositionEncodingKind `json:"positionEncoding,omitempty"`
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
@@ -2613,7 +2613,7 @@ type ServerCapabilities struct {
 	// Workspace specific server capabilities.
 	Workspace *ServerCapabilitiesWorkspace `json:"workspace,omitempty"`
 	// Experimental server capabilities.
-	Experimental any `json:"experimental,omitempty"`
+	Experimental *any `json:"experimental,omitempty"`
 }
 type ServerCapabilitiesWorkspace struct {
 	// The server supports workspace folder.
@@ -2655,7 +2655,7 @@ type FileSystemWatcher struct {
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
-	Kind *WatchKind `json:"kind,omitempty"`
+	Kind WatchKind `json:"kind,omitempty"`
 }
 
 // Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
@@ -2665,7 +2665,7 @@ type Diagnostic struct {
 	Range Range `json:"range"`
 	// The diagnostic's severity. Can be omitted. If omitted it is up to the
 	// client to interpret diagnostics as error, warning, info or hint.
-	Severity *DiagnosticSeverity `json:"severity,omitempty"`
+	Severity DiagnosticSeverity `json:"severity,omitempty"`
 	// The diagnostic's code, which usually appear in the user interface.
 	Code *OneOf2[int32, string] `json:"code,omitempty"`
 	// An optional property to describe the error code.
@@ -2690,7 +2690,7 @@ type Diagnostic struct {
 	// notification and `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
-	Data any `json:"data,omitempty"`
+	Data *any `json:"data,omitempty"`
 }
 
 // Contains additional information about the context in which a completion request is triggered.
@@ -2892,7 +2892,7 @@ type CodeActionContext struct {
 	// The reason why code actions were requested.
 	//
 	// @since 3.17.0
-	TriggerKind *CodeActionTriggerKind `json:"triggerKind,omitempty"`
+	TriggerKind CodeActionTriggerKind `json:"triggerKind,omitempty"`
 }
 
 // Provider options for a {@link CodeActionRequest}.
@@ -3023,7 +3023,7 @@ type ResourceOperation struct {
 	// An optional annotation identifier describing the operation.
 	//
 	// @since 3.16.0
-	AnnotationId *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	AnnotationId ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
 }
 
 // Options to create a file.
@@ -3066,7 +3066,7 @@ type FileOperationPattern struct {
 	// Whether to match files or folders with this pattern.
 	//
 	// Matches both if undefined.
-	Matches *FileOperationPatternKind `json:"matches,omitempty"`
+	Matches FileOperationPatternKind `json:"matches,omitempty"`
 	// Additional options used during matching.
 	Options *FileOperationPatternOptions `json:"options,omitempty"`
 }
@@ -3147,7 +3147,7 @@ type ClientCapabilities struct {
 	// @since 3.16.0
 	General *GeneralClientCapabilities `json:"general,omitempty"`
 	// Experimental client capabilities.
-	Experimental any `json:"experimental,omitempty"`
+	Experimental *any `json:"experimental,omitempty"`
 }
 
 type TextDocumentSyncOptions struct {
@@ -3156,7 +3156,7 @@ type TextDocumentSyncOptions struct {
 	OpenClose bool `json:"openClose,omitempty"`
 	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
 	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
-	Change *TextDocumentSyncKind `json:"change,omitempty"`
+	Change TextDocumentSyncKind `json:"change,omitempty"`
 	// If present will save notifications are sent to the server. If omitted the notification should not be
 	// sent.
 	WillSave bool `json:"willSave,omitempty"`
@@ -3572,7 +3572,7 @@ type WorkspaceEditClientCapabilities struct {
 	// fails.
 	//
 	// @since 3.13.0
-	FailureHandling *FailureHandlingKind `json:"failureHandling,omitempty"`
+	FailureHandling FailureHandlingKind `json:"failureHandling,omitempty"`
 	// Whether the client normalizes line endings to the client specific
 	// setting.
 	// If set to `true` the client will normalize line ending characters
@@ -3771,7 +3771,7 @@ type CompletionClientCapabilities struct {
 	// text in either `insertText` or `textEdit`.
 	//
 	// @since 3.17.0
-	InsertTextMode *InsertTextMode `json:"insertTextMode,omitempty"`
+	InsertTextMode InsertTextMode `json:"insertTextMode,omitempty"`
 	// The client supports to send additional context information for a
 	// `textDocument/completion` request.
 	ContextSupport bool `json:"contextSupport,omitempty"`
@@ -4108,7 +4108,7 @@ type RenameClientCapabilities struct {
 	// client.
 	//
 	// @since 3.16.0
-	PrepareSupportDefaultBehavior *PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitempty"`
+	PrepareSupportDefaultBehavior PrepareSupportDefaultBehavior `json:"prepareSupportDefaultBehavior,omitempty"`
 	// Whether the client honors the change annotations in
 	// text edits and resource operations returned via the
 	// rename request's workspace edit by for example presenting

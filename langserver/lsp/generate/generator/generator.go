@@ -13,28 +13,32 @@ import (
 
 type generator struct {
 	root          metamodel.Root
-	names         map[string]struct{}
+	names         map[string]typeInfo
 	unionArities  map[int]struct{}
 	tupleArities  map[int]struct{}
 	namingContext []string
 	pending       []jen.Code
 }
 
+type typeInfo struct {
+	omittable bool
+}
+
 // Generate generates the Go representation of the LSP model.
 func Generate(gen *jen.File) {
 	g := &generator{
 		root:  metamodel.Get(),
-		names: map[string]struct{}{},
+		names: map[string]typeInfo{},
 	}
 
 	for _, m := range g.root.Structures {
-		g.names[normalizeName(m.Name)] = struct{}{}
+		g.names[normalizeName(m.Name)] = typeInfo{omittable: false}
 	}
 	for _, m := range g.root.Enumerations {
-		g.names[normalizeName(m.Name)] = struct{}{}
+		g.names[normalizeName(m.Name)] = typeInfo{omittable: true}
 	}
 	for _, m := range g.root.TypeAliases {
-		g.names[normalizeName(m.Name)] = struct{}{}
+		g.names[normalizeName(m.Name)] = typeInfo{omittable: g.isOmittable(m.Type)}
 	}
 
 	banner := func(text string) {
@@ -81,9 +85,9 @@ func (g *generator) popName() {
 	g.namingContext = g.namingContext[:len(g.namingContext)-1]
 }
 
-func (g *generator) uniqueName(desired string) (actual, suffix string) {
+func (g *generator) uniqueName(desired string, info typeInfo) (actual, suffix string) {
 	defer func() {
-		g.names[actual] = struct{}{}
+		g.names[actual] = info
 	}()
 
 	if _, ok := g.names[desired]; !ok {

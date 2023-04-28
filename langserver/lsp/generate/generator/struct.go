@@ -1,8 +1,6 @@
 package generator
 
 import (
-	"strings"
-
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/metamodel"
 )
@@ -50,16 +48,10 @@ func (g *generator) generateStructProperty(
 	if m.Optional {
 		tag += ",omitempty"
 
-		switch m.Type.Kind {
-		case "base":
-		case "map":
-		case "array":
-		default:
-			if !strings.HasPrefix(m.Type.Name, "LSP") {
-				ref = jen.
-					Op("*").
-					Add(ref)
-			}
+		if !g.isOmittable(m.Type) {
+			ref = jen.
+				Op("*").
+				Add(ref)
 		}
 	}
 
