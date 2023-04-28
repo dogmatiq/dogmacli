@@ -7,43 +7,42 @@ import (
 	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
 )
 
-func (g *generator) structure(
-	code *jen.File,
+func (g *generator) generateStruct(
+	gen *jen.File,
 	m metamodel.Structure,
 ) {
 	g.pushName(m.Name)
 	defer g.popName()
 
 	if m.Documentation == "" {
-		code.Line()
+		gen.Line()
 	} else {
-		documentation(code, m.Documentation)
+		generateDocs(gen, m.Documentation)
 	}
 
-	code.
-		Type().
+	gen.Type().
 		Id(normalizeName(m.Name)).
-		StructFunc(func(code *jen.Group) {
+		StructFunc(func(gen *jen.Group) {
 			for _, p := range m.Extends {
-				code.Id(normalizeName(p.Name))
+				gen.Id(normalizeName(p.Name))
 			}
 			for _, p := range m.Mixins {
-				code.Id(normalizeName(p.Name))
+				gen.Id(normalizeName(p.Name))
 			}
 			for _, p := range m.Properties {
-				g.property(code, p)
+				g.generateStructProperty(gen, p)
 			}
 		})
 }
 
-func (g *generator) property(
-	code *jen.Group,
+func (g *generator) generateStructProperty(
+	gen *jen.Group,
 	m metamodel.Property,
 ) {
 	g.pushName(m.Name)
 	defer g.popName()
 
-	documentation(code, m.Documentation)
+	generateDocs(gen, m.Documentation)
 
 	ref := g.typeRef(m.Type)
 	tag := m.Name
@@ -64,23 +63,9 @@ func (g *generator) property(
 		}
 	}
 
-	code.
-		Id(normalizeName(m.Name)).
+	gen.Id(normalizeName(m.Name)).
 		Add(ref).
 		Tag(map[string]string{
 			"json": tag,
 		})
-}
-
-var ordinalFieldNames = []string{
-	"First",
-	"Second",
-	"Third",
-	"Fourth",
-	"Fifth",
-	"Sixth",
-	"Seventh",
-	"Eighth",
-	"Ninth",
-	"Tenth",
 }

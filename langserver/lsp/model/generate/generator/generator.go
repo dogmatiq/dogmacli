@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -11,90 +12,65 @@ import (
 )
 
 type generator struct {
-	root            metamodel.Root
-	unionArities    map[int]struct{}
-	tupleArities    map[int]struct{}
-	pendingLiterals map[string][]*metamodel.Type
-	namingContext   []string
+	root          metamodel.Root
+	names         map[string]struct{}
+	unionArities  map[int]struct{}
+	tupleArities  map[int]struct{}
+	namingContext []string
+	pending       []jen.Code
 }
 
 // Generate generates the Go representation of the LSP model.
-func Generate(code *jen.File) {
+func Generate(gen *jen.File) {
 	g := &generator{
-		root: metamodel.Get(),
+		root:  metamodel.Get(),
+		names: map[string]struct{}{},
+	}
+
+	for _, m := range g.root.Structures {
+		g.names[normalizeName(m.Name)] = struct{}{}
+	}
+	for _, m := range g.root.Enumerations {
+		g.names[normalizeName(m.Name)] = struct{}{}
+	}
+	for _, m := range g.root.TypeAliases {
+		g.names[normalizeName(m.Name)] = struct{}{}
 	}
 
 	banner := func(text string) {
-		code.Comment(strings.Repeat("-", 72))
-		code.Comment(text)
-		code.Comment(strings.Repeat("-", 72))
-		code.Line()
+		gen.Comment(strings.Repeat("-", 72))
+		gen.Comment(text)
+		gen.Comment(strings.Repeat("-", 72))
+		gen.Line()
 	}
 
 	banner("STRUCTURES")
 	for _, m := range g.root.Structures {
-		g.structure(code, m)
-		g.literals(code)
+		g.generateStruct(gen, m)
+		g.flushPending(gen)
 	}
 
 	banner("ENUMERATIONS")
 	for _, m := range g.root.Enumerations {
-		g.enum(code, m)
-		g.literals(code)
+		g.generateEnum(gen, m)
+		g.flushPending(gen)
 	}
 
 	banner("TYPE ALIASES")
 	for _, m := range g.root.TypeAliases {
-		g.alias(code, m)
-		g.literals(code)
+		g.generateAlias(gen, m)
+		g.flushPending(gen)
 	}
 
-	banner("UNIONS & TUPLES")
-	g.unions(code)
-	g.tuples(code)
-}
-
-func documentation(
-	code interface {
-		Comment(string) *jen.Statement
-	},
-	docs string,
-) {
-	if docs != "" {
-		for _, line := range strings.Split(docs, "\n") {
-			code.Comment(line)
-		}
-	}
-}
-
-func (g *generator) hasSymbol(n string) bool {
-	for _, def := range g.root.Structures {
-		if def.Name == n {
-			return true
-		}
+	if len(g.unionArities) != 0 {
+		banner("UNIONS")
+		g.generateUnions(gen)
 	}
 
-	for _, def := range g.root.Enumerations {
-		if def.Name == n {
-			return true
-		}
+	if len(g.tupleArities) != 0 {
+		banner("TUPLES")
+		g.generateTuples(gen)
 	}
-
-	for _, def := range g.root.TypeAliases {
-		if def.Name == n {
-			return true
-		}
-	}
-
-	_, ok := g.pendingLiterals[n]
-
-	return ok
-}
-
-func normalizeName(n string) string {
-	n = strings.Title(n)
-	n = strings.ReplaceAll(n, "Uri", "URI")
-	return n
 }
 
 func (g *generator) pushName(n string) {
@@ -105,8 +81,67 @@ func (g *generator) popName() {
 	g.namingContext = g.namingContext[:len(g.namingContext)-1]
 }
 
+func (g *generator) uniqueName(desired string) (actual, suffix string) {
+	defer func() {
+		g.names[actual] = struct{}{}
+	}()
+
+	if _, ok := g.names[desired]; !ok {
+		return desired, ""
+	}
+
+	i := 0
+	for {
+		i++
+
+		suffix := strconv.Itoa(i)
+		candidate := desired + suffix
+
+		if _, ok := g.names[candidate]; !ok {
+			return candidate, suffix
+		}
+	}
+}
+
+func (g *generator) flushPending(gen *jen.File) {
+	for _, c := range g.pending {
+		gen.Add(c)
+	}
+	g.pending = nil
+}
+
+func generateDocs(
+	gen interface{ Comment(string) *jen.Statement },
+	docs string,
+) {
+	if docs != "" {
+		for _, line := range strings.Split(docs, "\n") {
+			gen.Comment(line)
+		}
+	}
+}
+
+func normalizeName(n string) string {
+	n = strings.Title(n)
+	n = strings.ReplaceAll(n, "Uri", "URI")
+	return n
+}
+
 func sortedKeys[M map[K]V, K constraints.Ordered, V any](m M) []K {
 	keys := maps.Keys(m)
 	slices.Sort(keys)
 	return keys
+}
+
+var ordinalFieldNames = []string{
+	"First",
+	"Second",
+	"Third",
+	"Fourth",
+	"Fifth",
+	"Sixth",
+	"Seventh",
+	"Eighth",
+	"Ninth",
+	"Tenth",
 }

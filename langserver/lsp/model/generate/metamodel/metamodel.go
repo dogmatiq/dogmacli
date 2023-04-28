@@ -49,9 +49,24 @@ func (t *Type) MapValue() *Type {
 	return &value
 }
 
-// LiteralProperties unserializes RawValue for use as a literal type's
+// LiteralString unserializes RawValue for use as a literal string type.
+func (t *Type) LiteralString() string {
+	if t.Kind != "stringLiteral" {
+		panic("not a literal string type")
+	}
+
+	var value string
+
+	if err := json.Unmarshal(t.RawValue, &value); err != nil {
+		panic(err)
+	}
+
+	return value
+}
+
+// LiteralStructProperties unserializes RawValue for use as a literal type's
 // properties.
-func (t *Type) LiteralProperties() []Property {
+func (t *Type) LiteralStructProperties() []Property {
 	if t.Kind != "literal" {
 		panic("not a literal type")
 	}

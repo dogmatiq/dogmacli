@@ -2,10 +2,19 @@ package generator
 
 import (
 	"fmt"
+	"reflect"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
 )
+
+var tupleNames = map[int]string{
+	2: "Pair",
+	3: "Triad",
+	4: "Tetrad",
+	5: "Pentad",
+}
 
 func tupleName(arity int) string {
 	name, ok := tupleNames[arity]
@@ -16,7 +25,42 @@ func tupleName(arity int) string {
 	return fmt.Sprintf("%sOf", name)
 }
 
-func (g *generator) tuples(gen *jen.File) {
+func (g *generator) tupleRef(t *metamodel.Type) jen.Code {
+	n := len(t.Items)
+
+	first := t.Items[0]
+	array := true
+	for _, item := range t.Items[1:] {
+		if !reflect.DeepEqual(item, first) {
+			array = false
+			break
+		}
+	}
+
+	if array {
+		return jen.Index(
+			jen.Lit(n),
+		).Add(
+			g.typeRef(first),
+		)
+	}
+
+	var types []jen.Code
+	for _, item := range t.Items {
+		types = append(types, g.typeRef(item))
+	}
+
+	if g.tupleArities == nil {
+		g.tupleArities = map[int]struct{}{}
+	}
+	g.tupleArities[n] = struct{}{}
+
+	return jen.
+		Id(tupleName(n)).
+		Types(types...)
+}
+
+func (g *generator) generateTuples(gen *jen.File) {
 	for _, arity := range sortedKeys(g.tupleArities) {
 		name, ok := tupleNames[arity]
 		if !ok {
@@ -180,11 +224,4 @@ func (g *generator) tuples(gen *jen.File) {
 				)
 			})
 	}
-}
-
-var tupleNames = map[int]string{
-	2: "Pair",
-	3: "Triad",
-	4: "Tetrad",
-	5: "Pentad",
 }

@@ -7,8 +7,8 @@ import (
 	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
 )
 
-func (g *generator) alias(
-	code *jen.File,
+func (g *generator) generateAlias(
+	gen *jen.File,
 	m metamodel.TypeAlias,
 ) {
 	if strings.HasPrefix(m.Name, "LSP") {
@@ -19,13 +19,12 @@ func (g *generator) alias(
 	defer g.popName()
 
 	if m.Documentation == "" {
-		code.Line()
+		gen.Line()
 	} else {
-		documentation(code, m.Documentation)
+		generateDocs(gen, m.Documentation)
 	}
 
-	code.
-		Type().
+	gen.Type().
 		Id(normalizeName(m.Name)).
 		Add(g.typeRef(m.Type))
 }

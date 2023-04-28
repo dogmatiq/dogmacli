@@ -3,8 +3,10 @@
 package model
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 )
 
 // ------------------------------------------------------------------------
@@ -787,9 +789,9 @@ type InitializeResult struct {
 	// Information about the server.
 	//
 	// @since 3.15.0
-	ServerInfo *InitializeResultServerInfo0 `json:"serverInfo,omitempty"`
+	ServerInfo *InitializeResultServerInfo `json:"serverInfo,omitempty"`
 }
-type InitializeResultServerInfo0 struct {
+type InitializeResultServerInfo struct {
 	// The name of the server as defined by the server.
 	Name string `json:"name"`
 	// The server's version as defined by the server.
@@ -1097,11 +1099,11 @@ type CompletionList struct {
 	// capability.
 	//
 	// @since 3.17.0
-	ItemDefaults *CompletionListItemDefaults0 `json:"itemDefaults,omitempty"`
+	ItemDefaults *CompletionListItemDefaults `json:"itemDefaults,omitempty"`
 	// The completion items.
 	Items []CompletionItem `json:"items"`
 }
-type CompletionListItemDefaults0 struct {
+type CompletionListItemDefaults struct {
 	// A default commit character set.
 	//
 	// @since 3.17.0
@@ -1109,7 +1111,7 @@ type CompletionListItemDefaults0 struct {
 	// A default edit range.
 	//
 	// @since 3.17.0
-	EditRange *OneOf2[Range, CompletionListItemDefaults0EditRange0] `json:"editRange,omitempty"`
+	EditRange *OneOf2[Range, CompletionListItemDefaultsEditRange] `json:"editRange,omitempty"`
 	// A default insert text format.
 	//
 	// @since 3.17.0
@@ -1123,7 +1125,7 @@ type CompletionListItemDefaults0 struct {
 	// @since 3.17.0
 	Data any `json:"data,omitempty"`
 }
-type CompletionListItemDefaults0EditRange0 struct {
+type CompletionListItemDefaultsEditRange struct {
 	Insert  Range `json:"insert"`
 	Replace Range `json:"replace"`
 }
@@ -1375,7 +1377,7 @@ type CodeAction struct {
 	//     error message with `reason` in the editor.
 	//
 	// @since 3.16.0
-	Disabled *CodeActionDisabled0 `json:"disabled,omitempty"`
+	Disabled *CodeActionDisabled `json:"disabled,omitempty"`
 	// The workspace edit this code action performs.
 	Edit *WorkspaceEdit `json:"edit,omitempty"`
 	// A command this code action executes. If a code action
@@ -1388,7 +1390,7 @@ type CodeAction struct {
 	// @since 3.16.0
 	Data any `json:"data,omitempty"`
 }
-type CodeActionDisabled0 struct {
+type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
 	//
 	// This is displayed in the code actions UI.
@@ -1422,12 +1424,12 @@ type WorkspaceSymbol struct {
 	// capability `workspace.symbol.resolveSupport`.
 	//
 	// See SymbolInformation#location for more details.
-	Location OneOf2[Location, WorkspaceSymbolLocation0] `json:"location"`
+	Location OneOf2[Location, WorkspaceSymbolLocation] `json:"location"`
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
 	Data any `json:"data,omitempty"`
 }
-type WorkspaceSymbolLocation0 struct {
+type WorkspaceSymbolLocation struct {
 	URI DocumentURI `json:"uri"`
 }
 
@@ -1620,7 +1622,7 @@ type ApplyWorkspaceEditResult struct {
 }
 
 type WorkDoneProgressBegin struct {
-	Kind string `json:"kind"`
+	Kind beginLiteral `json:"kind"`
 	// Mandatory title of the progress operation. Used to briefly inform about
 	// the kind of operation being performed.
 	//
@@ -1645,8 +1647,23 @@ type WorkDoneProgressBegin struct {
 	Percentage uint32 `json:"percentage,omitempty"`
 }
 
+// beginLiteral is a type that must be represented as the JSON-string "begin".
+type beginLiteral struct{}
+
+var beginJSON = []byte("\"begin\"")
+
+func (beginLiteral) MarshalJSON() ([]byte, error) {
+	return beginJSON, nil
+}
+func (*beginLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, beginJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, beginJSON)
+}
+
 type WorkDoneProgressReport struct {
-	Kind string `json:"kind"`
+	Kind reportLiteral `json:"kind"`
 	// Controls enablement state of a cancel button.
 	//
 	// Clients that don't support cancellation or don't support controlling the button's
@@ -1667,11 +1684,41 @@ type WorkDoneProgressReport struct {
 	Percentage uint32 `json:"percentage,omitempty"`
 }
 
+// reportLiteral is a type that must be represented as the JSON-string "report".
+type reportLiteral struct{}
+
+var reportJSON = []byte("\"report\"")
+
+func (reportLiteral) MarshalJSON() ([]byte, error) {
+	return reportJSON, nil
+}
+func (*reportLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, reportJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, reportJSON)
+}
+
 type WorkDoneProgressEnd struct {
-	Kind string `json:"kind"`
+	Kind endLiteral `json:"kind"`
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
 	Message string `json:"message,omitempty"`
+}
+
+// endLiteral is a type that must be represented as the JSON-string "end".
+type endLiteral struct{}
+
+var endJSON = []byte("\"end\"")
+
+func (endLiteral) MarshalJSON() ([]byte, error) {
+	return endJSON, nil
+}
+func (*endLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, endJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, endJSON)
 }
 
 type SetTraceParams struct {
@@ -1876,15 +1923,15 @@ type SemanticTokensOptions struct {
 	Legend SemanticTokensLegend `json:"legend"`
 	// Server supports providing semantic tokens for a specific range
 	// of a document.
-	Range *OneOf2[bool, SemanticTokensOptionsRange0] `json:"range,omitempty"`
+	Range *OneOf2[bool, SemanticTokensOptionsRange] `json:"range,omitempty"`
 	// Server supports providing semantic tokens for a full document.
-	Full *OneOf2[bool, SemanticTokensOptionsFull0] `json:"full,omitempty"`
+	Full *OneOf2[bool, SemanticTokensOptionsFull] `json:"full,omitempty"`
 }
-type SemanticTokensOptionsFull0 struct {
+type SemanticTokensOptionsRange struct{}
+type SemanticTokensOptionsFull struct {
 	// The server supports deltas for full documents.
 	Delta bool `json:"delta,omitempty"`
 }
-type SemanticTokensOptionsRange0 struct{}
 
 // @since 3.16.0
 type SemanticTokensEdit struct {
@@ -1926,18 +1973,33 @@ type TextDocumentEdit struct {
 type CreateFile struct {
 	ResourceOperation
 	// A create
-	Kind string `json:"kind"`
+	Kind createLiteral `json:"kind"`
 	// The resource to create.
 	URI DocumentURI `json:"uri"`
 	// Additional options
 	Options *CreateFileOptions `json:"options,omitempty"`
 }
 
+// createLiteral is a type that must be represented as the JSON-string "create".
+type createLiteral struct{}
+
+var createJSON = []byte("\"create\"")
+
+func (createLiteral) MarshalJSON() ([]byte, error) {
+	return createJSON, nil
+}
+func (*createLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, createJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, createJSON)
+}
+
 // Rename file operation
 type RenameFile struct {
 	ResourceOperation
 	// A rename
-	Kind string `json:"kind"`
+	Kind renameLiteral `json:"kind"`
 	// The old (existing) location.
 	OldURI DocumentURI `json:"oldUri"`
 	// The new location.
@@ -1946,15 +2008,45 @@ type RenameFile struct {
 	Options *RenameFileOptions `json:"options,omitempty"`
 }
 
+// renameLiteral is a type that must be represented as the JSON-string "rename".
+type renameLiteral struct{}
+
+var renameJSON = []byte("\"rename\"")
+
+func (renameLiteral) MarshalJSON() ([]byte, error) {
+	return renameJSON, nil
+}
+func (*renameLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, renameJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, renameJSON)
+}
+
 // Delete file operation
 type DeleteFile struct {
 	ResourceOperation
 	// A delete
-	Kind string `json:"kind"`
+	Kind deleteLiteral `json:"kind"`
 	// The file to delete.
 	URI DocumentURI `json:"uri"`
 	// Delete options.
 	Options *DeleteFileOptions `json:"options,omitempty"`
+}
+
+// deleteLiteral is a type that must be represented as the JSON-string "delete".
+type deleteLiteral struct{}
+
+var deleteJSON = []byte("\"delete\"")
+
+func (deleteLiteral) MarshalJSON() ([]byte, error) {
+	return deleteJSON, nil
+}
+func (*deleteLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, deleteJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, deleteJSON)
 }
 
 // Additional information that describes document changes.
@@ -2172,13 +2264,28 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 // @since 3.17.0
 type FullDocumentDiagnosticReport struct {
 	// A full document diagnostic report.
-	Kind string `json:"kind"`
+	Kind fullLiteral `json:"kind"`
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
 	// same document.
 	ResultId string `json:"resultId,omitempty"`
 	// The actual items.
 	Items []Diagnostic `json:"items"`
+}
+
+// fullLiteral is a type that must be represented as the JSON-string "full".
+type fullLiteral struct{}
+
+var fullJSON = []byte("\"full\"")
+
+func (fullLiteral) MarshalJSON() ([]byte, error) {
+	return fullJSON, nil
+}
+func (*fullLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, fullJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, fullJSON)
 }
 
 // A diagnostic report indicating that the last returned
@@ -2190,10 +2297,25 @@ type UnchangedDocumentDiagnosticReport struct {
 	// no changes to the last result. A server can
 	// only return `unchanged` if result ids are
 	// provided.
-	Kind string `json:"kind"`
+	Kind unchangedLiteral `json:"kind"`
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
 	ResultId string `json:"resultId"`
+}
+
+// unchangedLiteral is a type that must be represented as the JSON-string "unchanged".
+type unchangedLiteral struct{}
+
+var unchangedJSON = []byte("\"unchanged\"")
+
+func (unchangedLiteral) MarshalJSON() ([]byte, error) {
+	return unchangedJSON, nil
+}
+func (*unchangedLiteral) UnmarshalJSON(data []byte) error {
+	if bytes.Equal(data, unchangedJSON) {
+		return nil
+	}
+	return fmt.Errorf("unexpected JSON (%s), expected %s", data, unchangedJSON)
 }
 
 // Diagnostic options.
@@ -2277,19 +2399,19 @@ type NotebookDocumentChangeEvent struct {
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata map[string]any `json:"metadata,omitempty"`
 	// Changes to cells
-	Cells *NotebookDocumentChangeEventCells0 `json:"cells,omitempty"`
+	Cells *NotebookDocumentChangeEventCells `json:"cells,omitempty"`
 }
-type NotebookDocumentChangeEventCells0 struct {
+type NotebookDocumentChangeEventCells struct {
 	// Changes to the cell structure to add or
 	// remove cells.
-	Structure *NotebookDocumentChangeEventCells0Structure0 `json:"structure,omitempty"`
+	Structure *NotebookDocumentChangeEventCellsStructure `json:"structure,omitempty"`
 	// Changes to notebook cells properties like its
 	// kind, execution summary or metadata.
 	Data []NotebookCell `json:"data,omitempty"`
 	// Changes to the text content of notebook cells.
-	TextContent []NotebookDocumentChangeEventCells0TextContent0 `json:"textContent,omitempty"`
+	TextContent []NotebookDocumentChangeEventCellsTextContent `json:"textContent,omitempty"`
 }
-type NotebookDocumentChangeEventCells0Structure0 struct {
+type NotebookDocumentChangeEventCellsStructure struct {
 	// The change to the cell array.
 	Array NotebookCellArrayChange `json:"array"`
 	// Additional opened cell text documents.
@@ -2297,7 +2419,7 @@ type NotebookDocumentChangeEventCells0Structure0 struct {
 	// Additional closed cell text documents.
 	DidClose []TextDocumentIdentifier `json:"didClose,omitempty"`
 }
-type NotebookDocumentChangeEventCells0TextContent0 struct {
+type NotebookDocumentChangeEventCellsTextContent struct {
 	Document VersionedTextDocumentIdentifier  `json:"document"`
 	Changes  []TextDocumentContentChangeEvent `json:"changes"`
 }
@@ -2342,7 +2464,7 @@ type _InitializeParams struct {
 	// Information about the client
 	//
 	// @since 3.15.0
-	ClientInfo *_InitializeParamsClientInfo0 `json:"clientInfo,omitempty"`
+	ClientInfo *_InitializeParamsClientInfo `json:"clientInfo,omitempty"`
 	// The locale the client is currently showing the user interface
 	// in. This must not necessarily be the locale of the operating
 	// system.
@@ -2370,7 +2492,7 @@ type _InitializeParams struct {
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace *TraceValues `json:"trace,omitempty"`
 }
-type _InitializeParamsClientInfo0 struct {
+type _InitializeParamsClientInfo struct {
 	// The name of the client as defined by the client.
 	Name string `json:"name"`
 	// The client's version as defined by the client.
@@ -2490,11 +2612,11 @@ type ServerCapabilities struct {
 	// @since 3.17.0
 	DiagnosticProvider *OneOf2[DiagnosticOptions, DiagnosticRegistrationOptions] `json:"diagnosticProvider,omitempty"`
 	// Workspace specific server capabilities.
-	Workspace *ServerCapabilitiesWorkspace0 `json:"workspace,omitempty"`
+	Workspace *ServerCapabilitiesWorkspace `json:"workspace,omitempty"`
 	// Experimental server capabilities.
 	Experimental any `json:"experimental,omitempty"`
 }
-type ServerCapabilitiesWorkspace0 struct {
+type ServerCapabilitiesWorkspace struct {
 	// The server supports workspace folder.
 	//
 	// @since 3.6.0
@@ -2633,9 +2755,9 @@ type CompletionOptions struct {
 	// capabilities.
 	//
 	// @since 3.17.0
-	CompletionItem *CompletionOptionsCompletionItem0 `json:"completionItem,omitempty"`
+	CompletionItem *CompletionOptionsCompletionItem `json:"completionItem,omitempty"`
 }
-type CompletionOptionsCompletionItem0 struct {
+type CompletionOptionsCompletionItem struct {
 	// The server has support for completion item label
 	// details (see also `CompletionItemLabelDetails`) when
 	// receiving a completion item in a resolve call.
@@ -3062,18 +3184,21 @@ type TextDocumentSyncOptions struct {
 // @since 3.17.0
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
-	NotebookSelector []OneOf2[NotebookDocumentSyncOptionsNotebookSelector0, NotebookDocumentSyncOptionsNotebookSelector1] `json:"notebookSelector"`
+	NotebookSelector []OneOf2[NotebookDocumentSyncOptionsNotebookSelector, NotebookDocumentSyncOptionsNotebookSelector1] `json:"notebookSelector"`
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
 	Save bool `json:"save,omitempty"`
 }
-type NotebookDocumentSyncOptionsNotebookSelector0 struct {
+type NotebookDocumentSyncOptionsNotebookSelector struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
 	Notebook OneOf2[string, NotebookDocumentFilter] `json:"notebook"`
 	// The cells of the matching notebook to be synced.
-	Cells []NotebookDocumentSyncOptionsNotebookSelector0Cells0 `json:"cells,omitempty"`
+	Cells []NotebookDocumentSyncOptionsNotebookSelectorCells `json:"cells,omitempty"`
+}
+type NotebookDocumentSyncOptionsNotebookSelectorCells struct {
+	Language string `json:"language"`
 }
 type NotebookDocumentSyncOptionsNotebookSelector1 struct {
 	// The notebook to be synced If a string
@@ -3081,12 +3206,9 @@ type NotebookDocumentSyncOptionsNotebookSelector1 struct {
 	// notebook type. '*' matches every notebook.
 	Notebook *OneOf2[string, NotebookDocumentFilter] `json:"notebook,omitempty"`
 	// The cells of the matching notebook to be synced.
-	Cells []NotebookDocumentSyncOptionsNotebookSelector1Cells0 `json:"cells"`
+	Cells []NotebookDocumentSyncOptionsNotebookSelector1Cells `json:"cells"`
 }
-type NotebookDocumentSyncOptionsNotebookSelector0Cells0 struct {
-	Language string `json:"language"`
-}
-type NotebookDocumentSyncOptionsNotebookSelector1Cells0 struct {
+type NotebookDocumentSyncOptionsNotebookSelector1Cells struct {
 	Language string `json:"language"`
 }
 
@@ -3388,7 +3510,7 @@ type GeneralClientCapabilities struct {
 	// anymore since the information is outdated).
 	//
 	// @since 3.17.0
-	StaleRequestSupport *GeneralClientCapabilitiesStaleRequestSupport0 `json:"staleRequestSupport,omitempty"`
+	StaleRequestSupport *GeneralClientCapabilitiesStaleRequestSupport `json:"staleRequestSupport,omitempty"`
 	// Client capabilities specific to regular expressions.
 	//
 	// @since 3.16.0
@@ -3417,7 +3539,7 @@ type GeneralClientCapabilities struct {
 	// @since 3.17.0
 	PositionEncodings []PositionEncodingKind `json:"positionEncodings,omitempty"`
 }
-type GeneralClientCapabilitiesStaleRequestSupport0 struct {
+type GeneralClientCapabilitiesStaleRequestSupport struct {
 	// The client will actively cancel the request.
 	Cancel bool `json:"cancel"`
 	// The list of requests for which the client
@@ -3464,9 +3586,9 @@ type WorkspaceEditClientCapabilities struct {
 	// create file, rename file and delete file changes.
 	//
 	// @since 3.16.0
-	ChangeAnnotationSupport *WorkspaceEditClientCapabilitiesChangeAnnotationSupport0 `json:"changeAnnotationSupport,omitempty"`
+	ChangeAnnotationSupport *WorkspaceEditClientCapabilitiesChangeAnnotationSupport `json:"changeAnnotationSupport,omitempty"`
 }
-type WorkspaceEditClientCapabilitiesChangeAnnotationSupport0 struct {
+type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
 	// Whether the client groups edits with equal labels into tree nodes,
 	// for instance all edits labelled with "Changes in Strings" would
 	// be a tree node.
@@ -3495,25 +3617,20 @@ type WorkspaceSymbolClientCapabilities struct {
 	// Symbol request supports dynamic registration.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
-	SymbolKind *WorkspaceSymbolClientCapabilitiesSymbolKind0 `json:"symbolKind,omitempty"`
+	SymbolKind *WorkspaceSymbolClientCapabilitiesSymbolKind `json:"symbolKind,omitempty"`
 	// The client supports tags on `SymbolInformation`.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// @since 3.16.0
-	TagSupport *WorkspaceSymbolClientCapabilitiesTagSupport0 `json:"tagSupport,omitempty"`
+	TagSupport *WorkspaceSymbolClientCapabilitiesTagSupport `json:"tagSupport,omitempty"`
 	// The client support partial workspace symbols. The client will send the
 	// request `workspaceSymbol/resolve` to the server to resolve additional
 	// properties.
 	//
 	// @since 3.17.0
-	ResolveSupport *WorkspaceSymbolClientCapabilitiesResolveSupport0 `json:"resolveSupport,omitempty"`
+	ResolveSupport *WorkspaceSymbolClientCapabilitiesResolveSupport `json:"resolveSupport,omitempty"`
 }
-type WorkspaceSymbolClientCapabilitiesResolveSupport0 struct {
-	// The properties that a client can resolve lazily. Usually
-	// `location.range`
-	Properties []string `json:"properties"`
-}
-type WorkspaceSymbolClientCapabilitiesSymbolKind0 struct {
+type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 	// The symbol kind values the client supports. When this
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
@@ -3524,9 +3641,14 @@ type WorkspaceSymbolClientCapabilitiesSymbolKind0 struct {
 	// the initial version of the protocol.
 	ValueSet []SymbolKind `json:"valueSet,omitempty"`
 }
-type WorkspaceSymbolClientCapabilitiesTagSupport0 struct {
+type WorkspaceSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag `json:"valueSet"`
+}
+type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
+	// The properties that a client can resolve lazily. Usually
+	// `location.range`
+	Properties []string `json:"properties"`
 }
 
 // The client capabilities of a {@link ExecuteCommandRequest}.
@@ -3643,8 +3765,8 @@ type CompletionClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
-	CompletionItem     *CompletionClientCapabilitiesCompletionItem0     `json:"completionItem,omitempty"`
-	CompletionItemKind *CompletionClientCapabilitiesCompletionItemKind0 `json:"completionItemKind,omitempty"`
+	CompletionItem     *CompletionClientCapabilitiesCompletionItem     `json:"completionItem,omitempty"`
+	CompletionItemKind *CompletionClientCapabilitiesCompletionItemKind `json:"completionItemKind,omitempty"`
 	// Defines how the client handles whitespace and indentation
 	// when accepting a completion item that uses multi line
 	// text in either `insertText` or `textEdit`.
@@ -3658,9 +3780,9 @@ type CompletionClientCapabilities struct {
 	// capabilities.
 	//
 	// @since 3.17.0
-	CompletionList *CompletionClientCapabilitiesCompletionList0 `json:"completionList,omitempty"`
+	CompletionList *CompletionClientCapabilitiesCompletionList `json:"completionList,omitempty"`
 }
-type CompletionClientCapabilitiesCompletionItem0 struct {
+type CompletionClientCapabilitiesCompletionItem struct {
 	// Client supports snippets as insert text.
 	//
 	// A snippet can define tab stops and placeholders with `$1`, `$2`
@@ -3683,7 +3805,7 @@ type CompletionClientCapabilitiesCompletionItem0 struct {
 	// a resolve call.
 	//
 	// @since 3.15.0
-	TagSupport *CompletionClientCapabilitiesCompletionItem0TagSupport0 `json:"tagSupport,omitempty"`
+	TagSupport *CompletionClientCapabilitiesCompletionItemTagSupport `json:"tagSupport,omitempty"`
 	// Client support insert replace edit to control different behavior if a
 	// completion item is inserted in the text or should replace text.
 	//
@@ -3694,20 +3816,31 @@ type CompletionClientCapabilitiesCompletionItem0 struct {
 	// and `details` could be resolved lazily.
 	//
 	// @since 3.16.0
-	ResolveSupport *CompletionClientCapabilitiesCompletionItem0ResolveSupport0 `json:"resolveSupport,omitempty"`
+	ResolveSupport *CompletionClientCapabilitiesCompletionItemResolveSupport `json:"resolveSupport,omitempty"`
 	// The client supports the `insertTextMode` property on
 	// a completion item to override the whitespace handling mode
 	// as defined by the client (see `insertTextMode`).
 	//
 	// @since 3.16.0
-	InsertTextModeSupport *CompletionClientCapabilitiesCompletionItem0InsertTextModeSupport0 `json:"insertTextModeSupport,omitempty"`
+	InsertTextModeSupport *CompletionClientCapabilitiesCompletionItemInsertTextModeSupport `json:"insertTextModeSupport,omitempty"`
 	// The client has support for completion item label
 	// details (see also `CompletionItemLabelDetails`).
 	//
 	// @since 3.17.0
 	LabelDetailsSupport bool `json:"labelDetailsSupport,omitempty"`
 }
-type CompletionClientCapabilitiesCompletionItemKind0 struct {
+type CompletionClientCapabilitiesCompletionItemTagSupport struct {
+	// The tags supported by the client.
+	ValueSet []CompletionItemTag `json:"valueSet"`
+}
+type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
+	// The properties that a client can resolve lazily.
+	Properties []string `json:"properties"`
+}
+type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
+	ValueSet []InsertTextMode `json:"valueSet"`
+}
+type CompletionClientCapabilitiesCompletionItemKind struct {
 	// The completion item kind values the client supports. When this
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
@@ -3718,7 +3851,7 @@ type CompletionClientCapabilitiesCompletionItemKind0 struct {
 	// the initial version of the protocol.
 	ValueSet []CompletionItemKind `json:"valueSet,omitempty"`
 }
-type CompletionClientCapabilitiesCompletionList0 struct {
+type CompletionClientCapabilitiesCompletionList struct {
 	// The client supports the following itemDefaults on
 	// a completion list.
 	//
@@ -3728,17 +3861,6 @@ type CompletionClientCapabilitiesCompletionList0 struct {
 	//
 	// @since 3.17.0
 	ItemDefaults []string `json:"itemDefaults,omitempty"`
-}
-type CompletionClientCapabilitiesCompletionItem0InsertTextModeSupport0 struct {
-	ValueSet []InsertTextMode `json:"valueSet"`
-}
-type CompletionClientCapabilitiesCompletionItem0ResolveSupport0 struct {
-	// The properties that a client can resolve lazily.
-	Properties []string `json:"properties"`
-}
-type CompletionClientCapabilitiesCompletionItem0TagSupport0 struct {
-	// The tags supported by the client.
-	ValueSet []CompletionItemTag `json:"valueSet"`
 }
 
 type HoverClientCapabilities struct {
@@ -3755,7 +3877,7 @@ type SignatureHelpClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 	// The client supports the following `SignatureInformation`
 	// specific properties.
-	SignatureInformation *SignatureHelpClientCapabilitiesSignatureInformation0 `json:"signatureInformation,omitempty"`
+	SignatureInformation *SignatureHelpClientCapabilitiesSignatureInformation `json:"signatureInformation,omitempty"`
 	// The client supports to send additional context information for a
 	// `textDocument/signatureHelp` request. A client that opts into
 	// contextSupport will also support the `retriggerCharacters` on
@@ -3764,19 +3886,19 @@ type SignatureHelpClientCapabilities struct {
 	// @since 3.15.0
 	ContextSupport bool `json:"contextSupport,omitempty"`
 }
-type SignatureHelpClientCapabilitiesSignatureInformation0 struct {
+type SignatureHelpClientCapabilitiesSignatureInformation struct {
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
 	DocumentationFormat []MarkupKind `json:"documentationFormat,omitempty"`
 	// Client capabilities specific to parameter information.
-	ParameterInformation *SignatureHelpClientCapabilitiesSignatureInformation0ParameterInformation0 `json:"parameterInformation,omitempty"`
+	ParameterInformation *SignatureHelpClientCapabilitiesSignatureInformationParameterInformation `json:"parameterInformation,omitempty"`
 	// The client supports the `activeParameter` property on `SignatureInformation`
 	// literal.
 	//
 	// @since 3.16.0
 	ActiveParameterSupport bool `json:"activeParameterSupport,omitempty"`
 }
-type SignatureHelpClientCapabilitiesSignatureInformation0ParameterInformation0 struct {
+type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct {
 	// The client supports processing label offsets instead of a
 	// simple label string.
 	//
@@ -3846,7 +3968,7 @@ type DocumentSymbolClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 	// Specific capabilities for the `SymbolKind` in the
 	// `textDocument/documentSymbol` request.
-	SymbolKind *DocumentSymbolClientCapabilitiesSymbolKind0 `json:"symbolKind,omitempty"`
+	SymbolKind *DocumentSymbolClientCapabilitiesSymbolKind `json:"symbolKind,omitempty"`
 	// The client supports hierarchical document symbols.
 	HierarchicalDocumentSymbolSupport bool `json:"hierarchicalDocumentSymbolSupport,omitempty"`
 	// The client supports tags on `SymbolInformation`. Tags are supported on
@@ -3854,14 +3976,14 @@ type DocumentSymbolClientCapabilities struct {
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// @since 3.16.0
-	TagSupport *DocumentSymbolClientCapabilitiesTagSupport0 `json:"tagSupport,omitempty"`
+	TagSupport *DocumentSymbolClientCapabilitiesTagSupport `json:"tagSupport,omitempty"`
 	// The client supports an additional label presented in the UI when
 	// registering a document symbol provider.
 	//
 	// @since 3.16.0
 	LabelSupport bool `json:"labelSupport,omitempty"`
 }
-type DocumentSymbolClientCapabilitiesSymbolKind0 struct {
+type DocumentSymbolClientCapabilitiesSymbolKind struct {
 	// The symbol kind values the client supports. When this
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
@@ -3872,7 +3994,7 @@ type DocumentSymbolClientCapabilitiesSymbolKind0 struct {
 	// the initial version of the protocol.
 	ValueSet []SymbolKind `json:"valueSet,omitempty"`
 }
-type DocumentSymbolClientCapabilitiesTagSupport0 struct {
+type DocumentSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag `json:"valueSet"`
 }
@@ -3886,7 +4008,7 @@ type CodeActionClientCapabilities struct {
 	// set the request can only return `Command` literals.
 	//
 	// @since 3.8.0
-	CodeActionLiteralSupport *CodeActionClientCapabilitiesCodeActionLiteralSupport0 `json:"codeActionLiteralSupport,omitempty"`
+	CodeActionLiteralSupport *CodeActionClientCapabilitiesCodeActionLiteralSupport `json:"codeActionLiteralSupport,omitempty"`
 	// Whether code action supports the `isPreferred` property.
 	//
 	// @since 3.15.0
@@ -3905,7 +4027,7 @@ type CodeActionClientCapabilities struct {
 	// properties via a separate `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	ResolveSupport *CodeActionClientCapabilitiesResolveSupport0 `json:"resolveSupport,omitempty"`
+	ResolveSupport *CodeActionClientCapabilitiesResolveSupport `json:"resolveSupport,omitempty"`
 	// Whether the client honors the change annotations in
 	// text edits and resource operations returned via the
 	// `CodeAction#edit` property by for example presenting
@@ -3915,21 +4037,21 @@ type CodeActionClientCapabilities struct {
 	// @since 3.16.0
 	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitempty"`
 }
-type CodeActionClientCapabilitiesCodeActionLiteralSupport0 struct {
+type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
 	// The code action kind is support with the following value
 	// set.
-	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupport0CodeActionKind0 `json:"codeActionKind"`
+	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind `json:"codeActionKind"`
 }
-type CodeActionClientCapabilitiesResolveSupport0 struct {
-	// The properties that a client can resolve lazily.
-	Properties []string `json:"properties"`
-}
-type CodeActionClientCapabilitiesCodeActionLiteralSupport0CodeActionKind0 struct {
+type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 	// The code action kind values the client supports. When this
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
 	ValueSet []CodeActionKind `json:"valueSet"`
+}
+type CodeActionClientCapabilitiesResolveSupport struct {
+	// The properties that a client can resolve lazily.
+	Properties []string `json:"properties"`
 }
 
 // The client capabilities  of a {@link CodeLensRequest}.
@@ -4015,25 +4137,25 @@ type FoldingRangeClientCapabilities struct {
 	// Specific options for the folding range kind.
 	//
 	// @since 3.17.0
-	FoldingRangeKind *FoldingRangeClientCapabilitiesFoldingRangeKind0 `json:"foldingRangeKind,omitempty"`
+	FoldingRangeKind *FoldingRangeClientCapabilitiesFoldingRangeKind `json:"foldingRangeKind,omitempty"`
 	// Specific options for the folding range.
 	//
 	// @since 3.17.0
-	FoldingRange *FoldingRangeClientCapabilitiesFoldingRange0 `json:"foldingRange,omitempty"`
+	FoldingRange *FoldingRangeClientCapabilitiesFoldingRange `json:"foldingRange,omitempty"`
 }
-type FoldingRangeClientCapabilitiesFoldingRange0 struct {
-	// If set, the client signals that it supports setting collapsedText on
-	// folding ranges to display custom labels instead of the default text.
-	//
-	// @since 3.17.0
-	CollapsedText bool `json:"collapsedText,omitempty"`
-}
-type FoldingRangeClientCapabilitiesFoldingRangeKind0 struct {
+type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
 	// The folding range kind values the client supports. When this
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
 	ValueSet []FoldingRangeKind `json:"valueSet,omitempty"`
+}
+type FoldingRangeClientCapabilitiesFoldingRange struct {
+	// If set, the client signals that it supports setting collapsedText on
+	// folding ranges to display custom labels instead of the default text.
+	//
+	// @since 3.17.0
+	CollapsedText bool `json:"collapsedText,omitempty"`
 }
 
 type SelectionRangeClientCapabilities struct {
@@ -4051,7 +4173,7 @@ type PublishDiagnosticsClientCapabilities struct {
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// @since 3.15.0
-	TagSupport *PublishDiagnosticsClientCapabilitiesTagSupport0 `json:"tagSupport,omitempty"`
+	TagSupport *PublishDiagnosticsClientCapabilitiesTagSupport `json:"tagSupport,omitempty"`
 	// Whether the client interprets the version property of the
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
@@ -4068,7 +4190,7 @@ type PublishDiagnosticsClientCapabilities struct {
 	// @since 3.16.0
 	DataSupport bool `json:"dataSupport,omitempty"`
 }
-type PublishDiagnosticsClientCapabilitiesTagSupport0 struct {
+type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []DiagnosticTag `json:"valueSet"`
 }
@@ -4095,7 +4217,7 @@ type SemanticTokensClientCapabilities struct {
 	// `request.range` are both set to true but the server only provides a
 	// range provider the client might not render a minimap correctly or might
 	// even decide to not show any semantic tokens at all.
-	Requests SemanticTokensClientCapabilitiesRequests0 `json:"requests"`
+	Requests SemanticTokensClientCapabilitiesRequests `json:"requests"`
 	// The token types that the client supports.
 	TokenTypes []string `json:"tokenTypes"`
 	// The token modifiers that the client supports.
@@ -4125,20 +4247,20 @@ type SemanticTokensClientCapabilities struct {
 	// @since 3.17.0
 	AugmentsSyntaxTokens bool `json:"augmentsSyntaxTokens,omitempty"`
 }
-type SemanticTokensClientCapabilitiesRequests0 struct {
+type SemanticTokensClientCapabilitiesRequests struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
-	Range *OneOf2[bool, SemanticTokensClientCapabilitiesRequests0Range0] `json:"range,omitempty"`
+	Range *OneOf2[bool, SemanticTokensClientCapabilitiesRequestsRange] `json:"range,omitempty"`
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
-	Full *OneOf2[bool, SemanticTokensClientCapabilitiesRequests0Full0] `json:"full,omitempty"`
+	Full *OneOf2[bool, SemanticTokensClientCapabilitiesRequestsFull] `json:"full,omitempty"`
 }
-type SemanticTokensClientCapabilitiesRequests0Full0 struct {
+type SemanticTokensClientCapabilitiesRequestsRange struct{}
+type SemanticTokensClientCapabilitiesRequestsFull struct {
 	// The client will send the `textDocument/semanticTokens/full/delta` request if
 	// the server provides a corresponding handler.
 	Delta bool `json:"delta,omitempty"`
 }
-type SemanticTokensClientCapabilitiesRequests0Range0 struct{}
 
 // Client capabilities for the linked editing range request.
 //
@@ -4184,9 +4306,9 @@ type InlayHintClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 	// Indicates which properties a client can resolve lazily on an inlay
 	// hint.
-	ResolveSupport *InlayHintClientCapabilitiesResolveSupport0 `json:"resolveSupport,omitempty"`
+	ResolveSupport *InlayHintClientCapabilitiesResolveSupport `json:"resolveSupport,omitempty"`
 }
-type InlayHintClientCapabilitiesResolveSupport0 struct {
+type InlayHintClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily.
 	Properties []string `json:"properties"`
 }
@@ -4219,9 +4341,9 @@ type NotebookDocumentSyncClientCapabilities struct {
 // Show message request client capabilities
 type ShowMessageRequestClientCapabilities struct {
 	// Capabilities specific to the `MessageActionItem` type.
-	MessageActionItem *ShowMessageRequestClientCapabilitiesMessageActionItem0 `json:"messageActionItem,omitempty"`
+	MessageActionItem *ShowMessageRequestClientCapabilitiesMessageActionItem `json:"messageActionItem,omitempty"`
 }
-type ShowMessageRequestClientCapabilitiesMessageActionItem0 struct {
+type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
 	// Whether the client supports additional attributes which
 	// are preserved and send back to the server in the
 	// request's response.
@@ -4932,12 +5054,12 @@ type InlineValue OneOf3[InlineValueText, InlineValueVariableLookup, InlineValueE
 // @since 3.17.0
 type DocumentDiagnosticReport OneOf2[RelatedFullDocumentDiagnosticReport, RelatedUnchangedDocumentDiagnosticReport]
 
-type PrepareRenameResult OneOf3[Range, PrepareRenameResult0, PrepareRenameResult1]
-type PrepareRenameResult0 struct {
+type PrepareRenameResult OneOf3[Range, PrepareRenameResult1, PrepareRenameResult2]
+type PrepareRenameResult1 struct {
 	Range       Range  `json:"range"`
 	Placeholder string `json:"placeholder"`
 }
-type PrepareRenameResult1 struct {
+type PrepareRenameResult2 struct {
 	DefaultBehavior bool `json:"defaultBehavior"`
 }
 
@@ -4960,8 +5082,8 @@ type WorkspaceDocumentDiagnosticReport OneOf2[WorkspaceFullDocumentDiagnosticRep
 
 // An event describing a change to a text document. If only a text is provided
 // it is considered to be the full content of the document.
-type TextDocumentContentChangeEvent OneOf2[TextDocumentContentChangeEvent0, TextDocumentContentChangeEvent1]
-type TextDocumentContentChangeEvent0 struct {
+type TextDocumentContentChangeEvent OneOf2[TextDocumentContentChangeEvent1, TextDocumentContentChangeEvent2]
+type TextDocumentContentChangeEvent1 struct {
 	// The range of the document that changed.
 	Range Range `json:"range"`
 	// The optional length of the range that got replaced.
@@ -4971,7 +5093,7 @@ type TextDocumentContentChangeEvent0 struct {
 	// The new text for the provided range.
 	Text string `json:"text"`
 }
-type TextDocumentContentChangeEvent1 struct {
+type TextDocumentContentChangeEvent2 struct {
 	// The new text of the whole document.
 	Text string `json:"text"`
 }
@@ -4988,8 +5110,8 @@ type TextDocumentContentChangeEvent1 struct {
 //
 // Note that markdown strings will be sanitized - that means html will be escaped.
 // @deprecated use MarkupContent instead.
-type MarkedString OneOf2[string, MarkedString0]
-type MarkedString0 struct {
+type MarkedString OneOf2[string, MarkedString1]
+type MarkedString1 struct {
 	Language string `json:"language"`
 	Value    string `json:"value"`
 }
@@ -5021,8 +5143,8 @@ type GlobPattern OneOf2[Pattern, RelativePattern]
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // @since 3.17.0
-type TextDocumentFilter OneOf3[TextDocumentFilter0, TextDocumentFilter1, TextDocumentFilter2]
-type TextDocumentFilter0 struct {
+type TextDocumentFilter OneOf3[TextDocumentFilter1, TextDocumentFilter2, TextDocumentFilter3]
+type TextDocumentFilter1 struct {
 	// A language id, like `typescript`.
 	Language string `json:"language"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
@@ -5030,7 +5152,7 @@ type TextDocumentFilter0 struct {
 	// A glob pattern, like `*.{ts,js}`.
 	Pattern string `json:"pattern,omitempty"`
 }
-type TextDocumentFilter1 struct {
+type TextDocumentFilter2 struct {
 	// A language id, like `typescript`.
 	Language string `json:"language,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
@@ -5038,7 +5160,7 @@ type TextDocumentFilter1 struct {
 	// A glob pattern, like `*.{ts,js}`.
 	Pattern string `json:"pattern,omitempty"`
 }
-type TextDocumentFilter2 struct {
+type TextDocumentFilter3 struct {
 	// A language id, like `typescript`.
 	Language string `json:"language,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
@@ -5052,8 +5174,8 @@ type TextDocumentFilter2 struct {
 // against the notebook's URI (same as with documents)
 //
 // @since 3.17.0
-type NotebookDocumentFilter OneOf3[NotebookDocumentFilter0, NotebookDocumentFilter1, NotebookDocumentFilter2]
-type NotebookDocumentFilter0 struct {
+type NotebookDocumentFilter OneOf3[NotebookDocumentFilter1, NotebookDocumentFilter2, NotebookDocumentFilter3]
+type NotebookDocumentFilter1 struct {
 	// The type of the enclosing notebook.
 	NotebookType string `json:"notebookType"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
@@ -5061,7 +5183,7 @@ type NotebookDocumentFilter0 struct {
 	// A glob pattern.
 	Pattern string `json:"pattern,omitempty"`
 }
-type NotebookDocumentFilter1 struct {
+type NotebookDocumentFilter2 struct {
 	// The type of the enclosing notebook.
 	NotebookType string `json:"notebookType,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
@@ -5069,7 +5191,7 @@ type NotebookDocumentFilter1 struct {
 	// A glob pattern.
 	Pattern string `json:"pattern,omitempty"`
 }
-type NotebookDocumentFilter2 struct {
+type NotebookDocumentFilter3 struct {
 	// The type of the enclosing notebook.
 	NotebookType string `json:"notebookType,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
@@ -5090,7 +5212,7 @@ type NotebookDocumentFilter2 struct {
 type Pattern string
 
 // ------------------------------------------------------------------------
-// UNIONS & TUPLES
+// UNIONS
 // ------------------------------------------------------------------------
 
 // OneOf2 is a union of 2 values.
@@ -5099,32 +5221,31 @@ type OneOf2[T0, T1 any] struct {
 	Second *T1
 }
 
-func (v OneOf2[T0, T1]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
+func (x OneOf2[T0, T1]) MarshalJSON() ([]byte, error) {
+	if x.First != nil {
+		return json.Marshal(x.First)
 	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
+	if x.Second != nil {
+		return json.Marshal(x.Second)
 	}
 	return []byte("null"), nil
 }
 
-func (v *OneOf2[T0, T1]) UnmarshalJSON(data []byte) error {
+func (x *OneOf2[T0, T1]) UnmarshalJSON(data []byte) error {
+	*x = OneOf2[T0, T1]{}
+
 	var (
 		err  error
 		errs []error
 	)
 
-	v.First = nil
-	v.Second = nil
-
-	err = json.Unmarshal(data, &v.First)
+	err = json.Unmarshal(data, &x.First)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &v.Second)
+	err = json.Unmarshal(data, &x.Second)
 	if err == nil {
 		return nil
 	}
@@ -5140,42 +5261,40 @@ type OneOf3[T0, T1, T2 any] struct {
 	Third  *T2
 }
 
-func (v OneOf3[T0, T1, T2]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
+func (x OneOf3[T0, T1, T2]) MarshalJSON() ([]byte, error) {
+	if x.First != nil {
+		return json.Marshal(x.First)
 	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
+	if x.Second != nil {
+		return json.Marshal(x.Second)
 	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
+	if x.Third != nil {
+		return json.Marshal(x.Third)
 	}
 	return []byte("null"), nil
 }
 
-func (v *OneOf3[T0, T1, T2]) UnmarshalJSON(data []byte) error {
+func (x *OneOf3[T0, T1, T2]) UnmarshalJSON(data []byte) error {
+	*x = OneOf3[T0, T1, T2]{}
+
 	var (
 		err  error
 		errs []error
 	)
 
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-
-	err = json.Unmarshal(data, &v.First)
+	err = json.Unmarshal(data, &x.First)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &v.Second)
+	err = json.Unmarshal(data, &x.Second)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &v.Third)
+	err = json.Unmarshal(data, &x.Third)
 	if err == nil {
 		return nil
 	}
@@ -5192,52 +5311,49 @@ type OneOf4[T0, T1, T2, T3 any] struct {
 	Fourth *T3
 }
 
-func (v OneOf4[T0, T1, T2, T3]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
+func (x OneOf4[T0, T1, T2, T3]) MarshalJSON() ([]byte, error) {
+	if x.First != nil {
+		return json.Marshal(x.First)
 	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
+	if x.Second != nil {
+		return json.Marshal(x.Second)
 	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
+	if x.Third != nil {
+		return json.Marshal(x.Third)
 	}
-	if v.Fourth != nil {
-		return json.Marshal(v.Fourth)
+	if x.Fourth != nil {
+		return json.Marshal(x.Fourth)
 	}
 	return []byte("null"), nil
 }
 
-func (v *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
+func (x *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
+	*x = OneOf4[T0, T1, T2, T3]{}
+
 	var (
 		err  error
 		errs []error
 	)
 
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-	v.Fourth = nil
-
-	err = json.Unmarshal(data, &v.First)
+	err = json.Unmarshal(data, &x.First)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &v.Second)
+	err = json.Unmarshal(data, &x.Second)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &v.Third)
+	err = json.Unmarshal(data, &x.Third)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &v.Fourth)
+	err = json.Unmarshal(data, &x.Fourth)
 	if err == nil {
 		return nil
 	}
