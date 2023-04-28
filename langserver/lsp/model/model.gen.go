@@ -4,7 +4,6 @@ package model
 
 import (
 	"bytes"
-	"encoding/json"
 	"errors"
 	"fmt"
 )
@@ -5222,30 +5221,29 @@ type OneOf2[T0, T1 any] struct {
 }
 
 func (x OneOf2[T0, T1]) MarshalJSON() ([]byte, error) {
-	if x.First != nil {
-		return json.Marshal(x.First)
+	switch {
+	default:
+		return marshal(x.First)
+	case x.Second != nil:
+		return marshal(x.Second)
 	}
-	if x.Second != nil {
-		return json.Marshal(x.Second)
-	}
-	return []byte("null"), nil
 }
 
 func (x *OneOf2[T0, T1]) UnmarshalJSON(data []byte) error {
 	*x = OneOf2[T0, T1]{}
 
 	var (
-		err  error
 		errs []error
+		err  error
 	)
 
-	err = json.Unmarshal(data, &x.First)
+	err = unmarshal(data, &x.First)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &x.Second)
+	err = unmarshal(data, &x.Second)
 	if err == nil {
 		return nil
 	}
@@ -5262,39 +5260,37 @@ type OneOf3[T0, T1, T2 any] struct {
 }
 
 func (x OneOf3[T0, T1, T2]) MarshalJSON() ([]byte, error) {
-	if x.First != nil {
-		return json.Marshal(x.First)
+	switch {
+	default:
+		return marshal(x.First)
+	case x.Second != nil:
+		return marshal(x.Second)
+	case x.Third != nil:
+		return marshal(x.Third)
 	}
-	if x.Second != nil {
-		return json.Marshal(x.Second)
-	}
-	if x.Third != nil {
-		return json.Marshal(x.Third)
-	}
-	return []byte("null"), nil
 }
 
 func (x *OneOf3[T0, T1, T2]) UnmarshalJSON(data []byte) error {
 	*x = OneOf3[T0, T1, T2]{}
 
 	var (
-		err  error
 		errs []error
+		err  error
 	)
 
-	err = json.Unmarshal(data, &x.First)
+	err = unmarshal(data, &x.First)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &x.Second)
+	err = unmarshal(data, &x.Second)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &x.Third)
+	err = unmarshal(data, &x.Third)
 	if err == nil {
 		return nil
 	}
@@ -5312,48 +5308,45 @@ type OneOf4[T0, T1, T2, T3 any] struct {
 }
 
 func (x OneOf4[T0, T1, T2, T3]) MarshalJSON() ([]byte, error) {
-	if x.First != nil {
-		return json.Marshal(x.First)
+	switch {
+	default:
+		return marshal(x.First)
+	case x.Second != nil:
+		return marshal(x.Second)
+	case x.Third != nil:
+		return marshal(x.Third)
+	case x.Fourth != nil:
+		return marshal(x.Fourth)
 	}
-	if x.Second != nil {
-		return json.Marshal(x.Second)
-	}
-	if x.Third != nil {
-		return json.Marshal(x.Third)
-	}
-	if x.Fourth != nil {
-		return json.Marshal(x.Fourth)
-	}
-	return []byte("null"), nil
 }
 
 func (x *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
 	*x = OneOf4[T0, T1, T2, T3]{}
 
 	var (
-		err  error
 		errs []error
+		err  error
 	)
 
-	err = json.Unmarshal(data, &x.First)
+	err = unmarshal(data, &x.First)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &x.Second)
+	err = unmarshal(data, &x.Second)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &x.Third)
+	err = unmarshal(data, &x.Third)
 	if err == nil {
 		return nil
 	}
 	errs = append(errs, err)
 
-	err = json.Unmarshal(data, &x.Fourth)
+	err = unmarshal(data, &x.Fourth)
 	if err == nil {
 		return nil
 	}

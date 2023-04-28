@@ -137,11 +137,7 @@ func (g *generator) generateTuples(gen *jen.File) {
 			).
 			Block(
 				jen.Return(
-					jen.
-						Qual(
-							"encoding/json",
-							"Marshal",
-						).
+					jen.Id("marshal").
 						Call(
 							jen.
 								Index(jen.Lit(arity)).
@@ -166,19 +162,13 @@ func (g *generator) generateTuples(gen *jen.File) {
 				gen.Var().
 					Id("elements").
 					Index(jen.Lit(arity)).
-					Qual(
-						"encoding/json",
-						"RawMessage",
-					)
+					Qual("encoding/json", "RawMessage")
 
 				gen.Line()
 				gen.If(
 					jen.Err().
 						Op(":=").
-						Qual(
-							"encoding/json",
-							"Unmarshal",
-						).
+						Id("unmarshal").
 						Call(
 							jen.Id("data"),
 							jen.Op("&").
@@ -198,10 +188,7 @@ func (g *generator) generateTuples(gen *jen.File) {
 					gen.If(
 						jen.Err().
 							Op(":=").
-							Qual(
-								"encoding/json",
-								"Unmarshal",
-							).
+							Id("unmarshal").
 							Call(
 								jen.Id("elements").
 									Index(jen.Lit(i)),

@@ -74,24 +74,22 @@ func (g *generator) generateUnions(gen *jen.File) {
 				jen.Error(),
 			).
 			BlockFunc(func(gen *jen.Group) {
-				for _, f := range fieldExpressions {
-					gen.If(jen.Add(f).Op("!=").Nil()).
-						Block(
-							jen.Return(
-								jen.Qual("encoding/json", "Marshal").
-									Call(f),
-							),
-						)
-				}
+				gen.Switch().
+					BlockFunc(func(gen *jen.Group) {
+						gen.Default().
+							Return(
+								jen.Id("marshal").
+									Call(fieldExpressions[0]),
+							)
 
-				gen.Return(
-					jen.Index().
-						Byte().
-						Call(
-							jen.Lit("null"),
-						),
-					jen.Nil(),
-				)
+						for _, f := range fieldExpressions[1:] {
+							gen.Case(jen.Add(f).Op("!=").Nil()).
+								Return(
+									jen.Id("marshal").
+										Call(f),
+								)
+						}
+					})
 			})
 
 		gen.Line()
@@ -114,21 +112,20 @@ func (g *generator) generateUnions(gen *jen.File) {
 				gen.Line()
 				gen.Var().
 					Defs(
-						jen.Err().Error(),
 						jen.Id("errs").Index().Error(),
+						jen.Id("err").Error(),
 					)
 
 				for _, f := range fieldExpressions {
 					gen.Line()
 					gen.Err().
 						Op("=").
-						Qual("encoding/json", "Unmarshal").
+						Id("unmarshal").
 						Call(
 							jen.Id("data"),
 							jen.Op("&").
 								Add(f),
 						)
-
 					gen.If(
 						jen.Err().
 							Op("==").
@@ -145,16 +142,12 @@ func (g *generator) generateUnions(gen *jen.File) {
 							jen.Id("errs"),
 							jen.Err(),
 						)
-
 				}
 
 				gen.Line()
 				gen.Return(
 					jen.Qual("errors", "Join").
-						Call(
-							jen.Id("errs").
-								Op("..."),
-						),
+						Call(jen.Id("errs").Op("...")),
 				)
 			})
 	}
