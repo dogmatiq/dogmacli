@@ -1,6 +1,8 @@
 package generator
 
 import (
+	"strings"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/metamodel"
 )
@@ -10,6 +12,9 @@ func (g *generator) isOmittable(t *metamodel.Type) bool {
 	case "base":
 		return true
 	case "reference":
+		if strings.HasPrefix(t.Name, "LSP") {
+			return true
+		}
 		return g.names[normalizeName(t.Name)].omittable
 	case "tuple":
 		return false

@@ -238,7 +238,7 @@ type CallHierarchyItem struct {
 	SelectionRange Range `json:"selectionRange"`
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Call hierarchy options used during static or dynamic registration.
@@ -537,7 +537,7 @@ type TypeHierarchyItem struct {
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
 	// resolving supertypes and subtypes.
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Type hierarchy options used during static or dynamic registration.
@@ -637,7 +637,7 @@ type InlayHint struct {
 	PaddingRight bool `json:"paddingRight,omitempty"`
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Inlay hint options used during static or dynamic registration.
@@ -1074,7 +1074,7 @@ type CompletionItem struct {
 	Command *Command `json:"command,omitempty"`
 	// A data entry field that is preserved on a completion item between a
 	// {@link CompletionRequest} and a {@link CompletionResolveRequest}.
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Represents a collection of {@link CompletionItem completion items} to be presented
@@ -1122,7 +1122,7 @@ type CompletionListItemDefaults struct {
 	// A default data value.
 	//
 	// @since 3.17.0
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 type CompletionListItemDefaultsEditRange struct {
 	Insert  Range `json:"insert"`
@@ -1387,7 +1387,7 @@ type CodeAction struct {
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
@@ -1426,7 +1426,7 @@ type WorkspaceSymbol struct {
 	Location OneOf2[Location, WorkspaceSymbolLocation] `json:"location"`
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 type WorkspaceSymbolLocation struct {
 	URI DocumentURI `json:"uri"`
@@ -1458,7 +1458,7 @@ type CodeLens struct {
 	// A data entry field that is preserved on a code lens item between
 	// a {@link CodeLensRequest} and a [CodeLensResolveRequest]
 	// (#CodeLensResolveRequest)
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Registration options for a {@link CodeLensRequest}.
@@ -1492,7 +1492,7 @@ type DocumentLink struct {
 	Tooltip string `json:"tooltip,omitempty"`
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Registration options for a {@link DocumentLinkRequest}.
@@ -2439,7 +2439,7 @@ type Registration struct {
 	// The method / capability to register for.
 	Method string `json:"method"`
 	// Options necessary for the registration.
-	RegisterOptions *any `json:"registerOptions,omitempty"`
+	RegisterOptions any `json:"registerOptions,omitempty"`
 }
 
 // General parameters to unregister a request or notification.
@@ -2487,7 +2487,7 @@ type _InitializeParams struct {
 	// The capabilities provided by the client (editor or tool)
 	Capabilities ClientCapabilities `json:"capabilities"`
 	// User provided initialization options.
-	InitializationOptions *any `json:"initializationOptions,omitempty"`
+	InitializationOptions any `json:"initializationOptions,omitempty"`
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace TraceValues `json:"trace,omitempty"`
 }
@@ -2613,7 +2613,7 @@ type ServerCapabilities struct {
 	// Workspace specific server capabilities.
 	Workspace *ServerCapabilitiesWorkspace `json:"workspace,omitempty"`
 	// Experimental server capabilities.
-	Experimental *any `json:"experimental,omitempty"`
+	Experimental any `json:"experimental,omitempty"`
 }
 type ServerCapabilitiesWorkspace struct {
 	// The server supports workspace folder.
@@ -2690,7 +2690,7 @@ type Diagnostic struct {
 	// notification and `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
-	Data *any `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Contains additional information about the context in which a completion request is triggered.
@@ -3147,7 +3147,7 @@ type ClientCapabilities struct {
 	// @since 3.16.0
 	General *GeneralClientCapabilities `json:"general,omitempty"`
 	// Experimental client capabilities.
-	Experimental *any `json:"experimental,omitempty"`
+	Experimental any `json:"experimental,omitempty"`
 }
 
 type TextDocumentSyncOptions struct {
