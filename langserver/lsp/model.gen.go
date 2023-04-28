@@ -5015,16 +5015,16 @@ const (
 //
 // Servers should prefer returning `DefinitionLink` over `Definition` if supported
 // by the client.
-type Definition OneOf2[Location, []Location]
+type Definition = OneOf2[Location, []Location]
 
 // Information about where a symbol is defined.
 //
 // Provides additional metadata over normal {@link Location location} definitions, including the range of
 // the defining symbol
-type DefinitionLink LocationLink
+type DefinitionLink = LocationLink
 
 // The declaration of a symbol representation as one or many {@link Location locations}.
-type Declaration OneOf2[Location, []Location]
+type Declaration = OneOf2[Location, []Location]
 
 // Information about where a symbol is declared.
 //
@@ -5033,7 +5033,7 @@ type Declaration OneOf2[Location, []Location]
 //
 // Servers should prefer returning `DeclarationLink` over `Declaration` if supported
 // by the client.
-type DeclarationLink LocationLink
+type DeclarationLink = LocationLink
 
 // Inline value information can be provided by different means:
 // - directly as a text value (class InlineValueText).
@@ -5042,7 +5042,7 @@ type DeclarationLink LocationLink
 // The InlineValue types combines all inline value types into one type.
 //
 // @since 3.17.0
-type InlineValue OneOf3[InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression]
+type InlineValue = OneOf3[InlineValueText, InlineValueVariableLookup, InlineValueEvaluatableExpression]
 
 // The result of a document diagnostic pull request. A report can
 // either be a full report containing all diagnostics for the
@@ -5051,9 +5051,9 @@ type InlineValue OneOf3[InlineValueText, InlineValueVariableLookup, InlineValueE
 // pull request.
 //
 // @since 3.17.0
-type DocumentDiagnosticReport OneOf2[RelatedFullDocumentDiagnosticReport, RelatedUnchangedDocumentDiagnosticReport]
+type DocumentDiagnosticReport = OneOf2[RelatedFullDocumentDiagnosticReport, RelatedUnchangedDocumentDiagnosticReport]
 
-type PrepareRenameResult OneOf3[Range, PrepareRenameResult1, PrepareRenameResult2]
+type PrepareRenameResult = OneOf3[Range, PrepareRenameResult1, PrepareRenameResult2]
 type PrepareRenameResult1 struct {
 	Range       Range  `json:"range"`
 	Placeholder string `json:"placeholder"`
@@ -5067,21 +5067,21 @@ type PrepareRenameResult2 struct {
 // @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 //
 // The use of a string as a document filter is deprecated @since 3.16.0.
-type DocumentSelector []DocumentFilter
+type DocumentSelector = []DocumentFilter
 
-type ProgressToken OneOf2[int32, string]
+type ProgressToken = OneOf2[int32, string]
 
 // An identifier to refer to a change annotation stored with a workspace edit.
-type ChangeAnnotationIdentifier string
+type ChangeAnnotationIdentifier = string
 
 // A workspace diagnostic document report.
 //
 // @since 3.17.0
-type WorkspaceDocumentDiagnosticReport OneOf2[WorkspaceFullDocumentDiagnosticReport, WorkspaceUnchangedDocumentDiagnosticReport]
+type WorkspaceDocumentDiagnosticReport = OneOf2[WorkspaceFullDocumentDiagnosticReport, WorkspaceUnchangedDocumentDiagnosticReport]
 
 // An event describing a change to a text document. If only a text is provided
 // it is considered to be the full content of the document.
-type TextDocumentContentChangeEvent OneOf2[TextDocumentContentChangeEvent1, TextDocumentContentChangeEvent2]
+type TextDocumentContentChangeEvent = OneOf2[TextDocumentContentChangeEvent1, TextDocumentContentChangeEvent2]
 type TextDocumentContentChangeEvent1 struct {
 	// The range of the document that changed.
 	Range Range `json:"range"`
@@ -5109,7 +5109,7 @@ type TextDocumentContentChangeEvent2 struct {
 //
 // Note that markdown strings will be sanitized - that means html will be escaped.
 // @deprecated use MarkupContent instead.
-type MarkedString OneOf2[string, MarkedString1]
+type MarkedString = OneOf2[string, MarkedString1]
 type MarkedString1 struct {
 	Language string `json:"language"`
 	Value    string `json:"value"`
@@ -5119,12 +5119,12 @@ type MarkedString1 struct {
 // a notebook cell document.
 //
 // @since 3.17.0 - proposed support for NotebookCellTextDocumentFilter.
-type DocumentFilter OneOf2[TextDocumentFilter, NotebookCellTextDocumentFilter]
+type DocumentFilter = OneOf2[TextDocumentFilter, NotebookCellTextDocumentFilter]
 
 // The glob pattern. Either a string pattern or a relative pattern.
 //
 // @since 3.17.0
-type GlobPattern OneOf2[Pattern, RelativePattern]
+type GlobPattern = OneOf2[Pattern, RelativePattern]
 
 // A document filter denotes a document by different properties like
 // the {@link TextDocument.languageId language}, the {@link Uri.scheme scheme} of
@@ -5142,7 +5142,7 @@ type GlobPattern OneOf2[Pattern, RelativePattern]
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // @since 3.17.0
-type TextDocumentFilter OneOf3[TextDocumentFilter1, TextDocumentFilter2, TextDocumentFilter3]
+type TextDocumentFilter = OneOf3[TextDocumentFilter1, TextDocumentFilter2, TextDocumentFilter3]
 type TextDocumentFilter1 struct {
 	// A language id, like `typescript`.
 	Language string `json:"language"`
@@ -5173,7 +5173,7 @@ type TextDocumentFilter3 struct {
 // against the notebook's URI (same as with documents)
 //
 // @since 3.17.0
-type NotebookDocumentFilter OneOf3[NotebookDocumentFilter1, NotebookDocumentFilter2, NotebookDocumentFilter3]
+type NotebookDocumentFilter = OneOf3[NotebookDocumentFilter1, NotebookDocumentFilter2, NotebookDocumentFilter3]
 type NotebookDocumentFilter1 struct {
 	// The type of the enclosing notebook.
 	NotebookType string `json:"notebookType"`
@@ -5208,7 +5208,7 @@ type NotebookDocumentFilter3 struct {
 // - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
 //
 // @since 3.17.0
-type Pattern string
+type Pattern = string
 
 // ------------------------------------------------------------------------
 // UNIONS

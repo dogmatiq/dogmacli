@@ -3,9 +3,7 @@ package langserver
 import (
 	"context"
 	"io"
-	"os"
 
-	"github.com/dogmatiq/dapper"
 	"github.com/dogmatiq/dogmacli/langserver/iotransport"
 	"github.com/dogmatiq/dogmacli/langserver/lsp"
 	"github.com/dogmatiq/harpy"
@@ -25,13 +23,11 @@ func (s *Server) Run(ctx context.Context) error {
 			harpy.WithRoute(
 				"initialize",
 				s.initialize,
-				harpy.AllowUnknownFields(true),
 			),
-			// harpy.WithRoute(
-			// 	"textDocument/diagnostic",
-			// 	s.textDocumentDiagnostic,
-			// 	harpy.AllowUnknownFields(true),
-			// ),
+			harpy.WithRoute(
+				"textDocument/diagnostic",
+				s.textDocumentDiagnostic,
+			),
 		),
 		s.In,
 		s.Out,
@@ -43,7 +39,6 @@ func (s *Server) initialize(
 	ctx context.Context,
 	params lsp.InitializeParams,
 ) (lsp.InitializeResult, error) {
-	dapper.Write(os.Stderr, params)
 	return lsp.InitializeResult{
 		ServerInfo: &lsp.InitializeResultServerInfo{
 			Name:    "Dogma",
@@ -56,19 +51,13 @@ func (s *Server) initialize(
 					Change:    lsp.TextDocumentSyncKindFull,
 				},
 			},
-			// 		DiagnosticProvider: lsp.DiagnosticRegistrationOptions{
-			// 			TextDocumentRegistrationOptions: lsp.TextDocumentRegistrationOptions{
-			// 				DocumentSelector: []lsp.DocumentFilter{},
-			// 			},
-			// 			DiagnosticOptions: lsp.DiagnosticOptions{
-			// 				Identifier:            "dogma",
-			// 				InterFileDependencies: true,
-			// 				WorkspaceDiagnostics:  false,
-			// 			},
-			// 			StaticRegistrationOptions: lsp.StaticRegistrationOptions{
-			// 				ID: "",
-			// 			},
-			// 		},
+			DiagnosticProvider: &lsp.OneOf2[lsp.DiagnosticOptions, lsp.DiagnosticRegistrationOptions]{
+				First: &lsp.DiagnosticOptions{
+					Identifier:            "dogma",
+					InterFileDependencies: true,
+					WorkspaceDiagnostics:  false,
+				},
+			},
 		},
 	}, nil
 }

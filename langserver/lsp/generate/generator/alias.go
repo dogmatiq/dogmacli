@@ -26,5 +26,6 @@ func (g *generator) generateAlias(
 
 	gen.Type().
 		Id(normalizeName(m.Name)).
+		Op("=").
 		Add(g.typeRef(m.Type))
 }
