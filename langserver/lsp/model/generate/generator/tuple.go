@@ -16,7 +16,7 @@ func tupleName(arity int) string {
 	return fmt.Sprintf("%sOf", name)
 }
 
-func (g *generator) tuples(code *jen.File) {
+func (g *generator) tuples(gen *jen.File) {
 	for _, arity := range sortedKeys(g.tupleArities) {
 		name, ok := tupleNames[arity]
 		if !ok {
@@ -47,32 +47,28 @@ func (g *generator) tuples(code *jen.File) {
 
 		fullType := jen.Id(tupleName(arity)).Types(types...)
 
-		code.Commentf("%s is a tuple of %d values.", tupleName(arity), arity)
-		code.
-			Type().
+		gen.Commentf("%s is a tuple of %d values.", tupleName(arity), arity)
+		gen.Type().
 			Id(tupleName(arity)).
 			Types(jen.List(types...).Any()).
 			Struct(fields...)
 
-		code.Commentf("%s returns a tuple of %d values.", name, arity)
-		code.
-			Func().
+		gen.Commentf("%s returns a tuple of %d values.", name, arity)
+		gen.Func().
 			Id(name).
 			Types(jen.List(types...).Any()).
 			Params(parameters...).
 			Add(fullType).
 			Block(
 				jen.Return(
-					jen.
-						Add(fullType).
+					jen.Add(fullType).
 						Values(variables...),
 				),
 			)
 
 		name += "P"
-		code.Commentf("%s returns a pointer to a tuple of %d values.", name, arity)
-		code.
-			Func().
+		gen.Commentf("%s returns a pointer to a tuple of %d values.", name, arity)
+		gen.Func().
 			Id(name).
 			Types(jen.List(types...).Any()).
 			Params(parameters...).
@@ -86,9 +82,8 @@ func (g *generator) tuples(code *jen.File) {
 				),
 			)
 
-		code.Line()
-		code.
-			Func().
+		gen.Line()
+		gen.Func().
 			Params(jen.Id("x").Add(fullType)).
 			Id("MarshalJSON").
 			Params().
@@ -105,12 +100,85 @@ func (g *generator) tuples(code *jen.File) {
 						).
 						Call(
 							jen.
-								Index().
+								Index(jen.Lit(arity)).
 								Any().
 								Values(fieldExpressions...),
 						),
 				),
 			)
+
+		gen.Line()
+		gen.
+			Func().
+			Params(jen.Id("x").Add(fullType)).
+			Id("UnmarshalJSON").
+			Params(
+				jen.Id("data").Index().Byte(),
+			).
+			Params(
+				jen.Error(),
+			).
+			BlockFunc(func(gen *jen.Group) {
+				gen.Var().
+					Id("elements").
+					Index(jen.Lit(arity)).
+					Qual(
+						"encoding/json",
+						"RawMessage",
+					)
+
+				gen.Line()
+				gen.If(
+					jen.Err().
+						Op(":=").
+						Qual(
+							"encoding/json",
+							"Unmarshal",
+						).
+						Call(
+							jen.Id("data"),
+							jen.Op("&").
+								Id("elements"),
+						),
+					jen.Err().
+						Op("!=").
+						Nil(),
+				).Block(
+					jen.Return(
+						jen.Err(),
+					),
+				)
+
+				for i := 0; i < arity; i++ {
+					gen.Line()
+					gen.If(
+						jen.Err().
+							Op(":=").
+							Qual(
+								"encoding/json",
+								"Unmarshal",
+							).
+							Call(
+								jen.Id("elements").
+									Index(jen.Lit(i)),
+								jen.Op("&").
+									Add(fieldExpressions[i]),
+							),
+						jen.Err().
+							Op("!=").
+							Nil(),
+					).Block(
+						jen.Return(
+							jen.Err(),
+						),
+					)
+				}
+
+				gen.Line()
+				gen.Return(
+					jen.Nil(),
+				)
+			})
 	}
 }
 
