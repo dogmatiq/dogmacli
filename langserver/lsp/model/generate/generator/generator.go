@@ -14,7 +14,7 @@ type generator struct {
 	root            metamodel.Root
 	unionArities    map[int]struct{}
 	tupleArities    map[int]struct{}
-	pendingLiterals map[string]*metamodel.Type
+	pendingLiterals map[string][]*metamodel.Type
 	namingContext   []string
 }
 

@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -12,33 +13,41 @@ func (g *generator) literalName(t *metamodel.Type) jen.Code {
 		panic("no context for naming literal")
 	}
 
-	name := "Lit" + strings.Join(g.namingContext, "")
+	key := strings.Join(g.namingContext, "")
 
 	if g.pendingLiterals == nil {
-		g.pendingLiterals = map[string]*metamodel.Type{}
+		g.pendingLiterals = map[string][]*metamodel.Type{}
 	}
 
-	g.pendingLiterals[name] = t
+	types := g.pendingLiterals[key]
+	g.pendingLiterals[key] = append(types, t)
 
-	return jen.Id(name)
+	return jen.Id(
+		fmt.Sprintf("%s%d", key, len(types)),
+	)
 }
 
-func (g *generator) literals(code *jen.File) {
+func (g *generator) literals(gen *jen.File) {
 	for g.pendingLiterals != nil {
 		literals := g.pendingLiterals
 		g.pendingLiterals = nil
 
-		for _, n := range sortedKeys(literals) {
-			t := literals[n]
+		for _, key := range sortedKeys(literals) {
+			for i, t := range literals[key] {
+				n := fmt.Sprintf("%s%d", key, i)
 
-			code.
-				Type().
-				Id(n).
-				StructFunc(func(code *jen.Group) {
-					for _, p := range t.LiteralProperties() {
-						g.property(code, p)
-					}
-				})
+				g.pushName(n)
+
+				gen.Type().
+					Id(n).
+					StructFunc(func(code *jen.Group) {
+						for _, p := range t.LiteralProperties() {
+							g.property(code, p)
+						}
+					})
+
+				g.popName()
+			}
 		}
 	}
 }
