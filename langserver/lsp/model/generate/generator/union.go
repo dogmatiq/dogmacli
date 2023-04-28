@@ -44,8 +44,157 @@ func (g *generator) unions(code *jen.File) {
 				for i, f := range fields {
 					code.
 						Add(f).
+						Op("*").
 						Add(types[i])
 				}
+			})
+
+		code.
+			Func().
+			Params(
+				jen.
+					Id("v").
+					Id(unionName(arity)).
+					Types(types...),
+			).
+			Id("MarshalJSON").
+			Params().
+			Params(
+				jen.Index().Byte(),
+				jen.Error(),
+			).
+			BlockFunc(func(code *jen.Group) {
+				for _, f := range fields {
+					code.
+						If(
+							jen.
+								Id("v").
+								Op(".").
+								Add(f).
+								Op("!=").
+								Nil(),
+						).
+						BlockFunc(func(code *jen.Group) {
+							code.
+								Return(
+									jen.
+										Qual(
+											"encoding/json",
+											"Marshal",
+										).
+										Call(
+											jen.
+												Id("v").
+												Op(".").
+												Add(f),
+										),
+								)
+						})
+				}
+
+				code.
+					Return(
+						jen.Index().Byte().Call(
+							jen.Lit("null"),
+						),
+						jen.Nil(),
+					)
+			})
+
+		code.Line()
+
+		code.
+			Func().
+			Params(
+				jen.
+					Id("v").
+					Op("*").
+					Id(unionName(arity)).
+					Types(types...),
+			).
+			Id("UnmarshalJSON").
+			Params(
+				jen.Id("data").Index().Byte(),
+			).
+			Params(
+				jen.Error(),
+			).
+			BlockFunc(func(code *jen.Group) {
+				code.
+					Var().
+					Defs(
+						jen.Err().Error(),
+						jen.Id("errs").Index().Error(),
+					)
+
+				code.Line()
+
+				for _, f := range fields {
+					code.
+						Id("v").
+						Op(".").
+						Add(f).
+						Op("=").
+						Nil()
+				}
+
+				code.Line()
+
+				for _, f := range fields {
+					code.
+						Err().
+						Op("=").
+						Qual(
+							"encoding/json",
+							"Unmarshal",
+						).
+						Call(
+							jen.Id("data"),
+							jen.
+								Op("&").
+								Id("v").
+								Op(".").
+								Add(f),
+						)
+
+					code.
+						If(
+							jen.
+								Err().
+								Op("==").
+								Nil(),
+						).
+						Block(
+							jen.
+								Return(
+									jen.Nil(),
+								),
+						)
+
+					code.
+						Id("errs").
+						Op("=").
+						Append(
+							jen.Id("errs"),
+							jen.Err(),
+						)
+
+					code.Line()
+				}
+
+				code.
+					Return(
+						jen.
+							Qual(
+								"errors",
+								"Join",
+							).
+							Call(
+								jen.
+									Id("errs").
+									Op("..."),
+							),
+					)
 			})
 	}
 }
