@@ -118,7 +118,7 @@ type WorkDoneProgressOptions struct {
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
-	DocumentSelector OneOf2[DocumentSelector, Null] `json:"documentSelector"`
+	DocumentSelector *DocumentSelector `json:"documentSelector"`
 }
 
 // Parameters for a {@link FoldingRangeRequest}.
@@ -237,7 +237,7 @@ type CallHierarchyItem struct {
 	SelectionRange Range `json:"selectionRange"`
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Call hierarchy options used during static or dynamic registration.
@@ -536,7 +536,7 @@ type TypeHierarchyItem struct {
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
 	// resolving supertypes and subtypes.
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Type hierarchy options used during static or dynamic registration.
@@ -636,7 +636,7 @@ type InlayHint struct {
 	PaddingRight bool `json:"paddingRight,omitempty"`
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Inlay hint options used during static or dynamic registration.
@@ -811,7 +811,7 @@ type InitializedParams struct{}
 // The parameters of a change configuration notification.
 type DidChangeConfigurationParams struct {
 	// The actual changed settings
-	Settings LSPAny `json:"settings"`
+	Settings any `json:"settings"`
 }
 
 type DidChangeConfigurationRegistrationOptions struct {
@@ -1073,7 +1073,7 @@ type CompletionItem struct {
 	Command *Command `json:"command,omitempty"`
 	// A data entry field that is preserved on a completion item between a
 	// {@link CompletionRequest} and a {@link CompletionResolveRequest}.
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Represents a collection of {@link CompletionItem completion items} to be presented
@@ -1121,7 +1121,7 @@ type LitCompletionListItemDefaults struct {
 	// A default data value.
 	//
 	// @since 3.17.0
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 type LitEditRange struct {
 	Insert  Range `json:"insert"`
@@ -1336,7 +1336,7 @@ type Command struct {
 	Command string `json:"command"`
 	// Arguments that the command handler should be
 	// invoked with.
-	Arguments []LSPAny `json:"arguments,omitempty"`
+	Arguments []any `json:"arguments,omitempty"`
 }
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
@@ -1386,7 +1386,7 @@ type CodeAction struct {
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 type LitCodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
@@ -1425,7 +1425,7 @@ type WorkspaceSymbol struct {
 	Location OneOf2[Location, LitWorkspaceSymbolLocation] `json:"location"`
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 type LitWorkspaceSymbolLocation struct {
 	URI DocumentURI `json:"uri"`
@@ -1457,7 +1457,7 @@ type CodeLens struct {
 	// A data entry field that is preserved on a code lens item between
 	// a {@link CodeLensRequest} and a [CodeLensResolveRequest]
 	// (#CodeLensResolveRequest)
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Registration options for a {@link CodeLensRequest}.
@@ -1491,7 +1491,7 @@ type DocumentLink struct {
 	Tooltip string `json:"tooltip,omitempty"`
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Registration options for a {@link DocumentLinkRequest}.
@@ -1585,7 +1585,7 @@ type ExecuteCommandParams struct {
 	// The identifier of the actual command handler.
 	Command string `json:"command"`
 	// Arguments that the command should be invoked with.
-	Arguments []LSPAny `json:"arguments,omitempty"`
+	Arguments []any `json:"arguments,omitempty"`
 }
 
 // Registration options for a {@link ExecuteCommandRequest}.
@@ -1692,7 +1692,7 @@ type ProgressParams struct {
 	// The progress token provided by the client or server.
 	Token ProgressToken `json:"token"`
 	// The progress data.
-	Value LSPAny `json:"value"`
+	Value any `json:"value"`
 }
 
 // A parameter literal used in requests to pass a text document and a position inside that
@@ -2239,7 +2239,7 @@ type NotebookDocument struct {
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *LSPObject `json:"metadata,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 	// The cells of a notebook.
 	Cells []NotebookCell `json:"cells"`
 }
@@ -2275,7 +2275,7 @@ type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *LSPObject `json:"metadata,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 	// Changes to cells
 	Cells *LitNotebookDocumentChangeEventCells `json:"cells,omitempty"`
 }
@@ -2318,7 +2318,7 @@ type Registration struct {
 	// The method / capability to register for.
 	Method string `json:"method"`
 	// Options necessary for the registration.
-	RegisterOptions *LSPAny `json:"registerOptions,omitempty"`
+	RegisterOptions any `json:"registerOptions,omitempty"`
 }
 
 // General parameters to unregister a request or notification.
@@ -2338,7 +2338,7 @@ type _InitializeParams struct {
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
-	ProcessId OneOf2[int32, Null] `json:"processId"`
+	ProcessId *int32 `json:"processId"`
 	// Information about the client
 	//
 	// @since 3.15.0
@@ -2356,17 +2356,17 @@ type _InitializeParams struct {
 	// if no folder is open.
 	//
 	// @deprecated in favour of rootUri.
-	RootPath *OneOf2[string, Null] `json:"rootPath,omitempty"`
+	RootPath **string `json:"rootPath,omitempty"`
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
 	//
 	// @deprecated in favour of workspaceFolders.
-	RootURI OneOf2[DocumentURI, Null] `json:"rootUri"`
+	RootURI *DocumentURI `json:"rootUri"`
 	// The capabilities provided by the client (editor or tool)
 	Capabilities ClientCapabilities `json:"capabilities"`
 	// User provided initialization options.
-	InitializationOptions *LSPAny `json:"initializationOptions,omitempty"`
+	InitializationOptions any `json:"initializationOptions,omitempty"`
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace *TraceValues `json:"trace,omitempty"`
 }
@@ -2385,7 +2385,7 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// @since 3.6.0
-	WorkspaceFolders *OneOf2[[]WorkspaceFolder, Null] `json:"workspaceFolders,omitempty"`
+	WorkspaceFolders **[]WorkspaceFolder `json:"workspaceFolders,omitempty"`
 }
 
 // Defines the capabilities provided by a language
@@ -2492,7 +2492,7 @@ type ServerCapabilities struct {
 	// Workspace specific server capabilities.
 	Workspace *LitServerCapabilitiesWorkspace `json:"workspace,omitempty"`
 	// Experimental server capabilities.
-	Experimental *LSPAny `json:"experimental,omitempty"`
+	Experimental any `json:"experimental,omitempty"`
 }
 type LitServerCapabilitiesWorkspace struct {
 	// The server supports workspace folder.
@@ -2569,7 +2569,7 @@ type Diagnostic struct {
 	// notification and `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
-	Data *LSPAny `json:"data,omitempty"`
+	Data any `json:"data,omitempty"`
 }
 
 // Contains additional information about the context in which a completion request is triggered.
@@ -2883,7 +2883,7 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
-	Version OneOf2[int32, Null] `json:"version"`
+	Version *int32 `json:"version"`
 }
 
 // A special text edit with an additional change annotation.
@@ -2959,7 +2959,7 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 	URI DocumentURI `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version OneOf2[int32, Null] `json:"version"`
+	Version *int32 `json:"version"`
 }
 
 // An unchanged document diagnostic report for a workspace diagnostic result.
@@ -2971,7 +2971,7 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	URI DocumentURI `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version OneOf2[int32, Null] `json:"version"`
+	Version *int32 `json:"version"`
 }
 
 // A notebook cell.
@@ -2990,7 +2990,7 @@ type NotebookCell struct {
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata *LSPObject `json:"metadata,omitempty"`
+	Metadata map[string]any `json:"metadata,omitempty"`
 	// Additional execution summary information
 	// if supported by the client.
 	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitempty"`
@@ -3026,7 +3026,7 @@ type ClientCapabilities struct {
 	// @since 3.16.0
 	General *GeneralClientCapabilities `json:"general,omitempty"`
 	// Experimental client capabilities.
-	Experimental *LSPAny `json:"experimental,omitempty"`
+	Experimental any `json:"experimental,omitempty"`
 }
 
 type TextDocumentSyncOptions struct {
@@ -3147,7 +3147,7 @@ type ParameterInformation struct {
 	//
 	// *Note*: a label of type string should be a substring of its containing signature label.
 	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
-	Label OneOf2[string, PairOf[uint32, uint32]] `json:"label"`
+	Label OneOf2[string, [2]uint32] `json:"label"`
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
 	Documentation *OneOf2[string, MarkupContent] `json:"documentation,omitempty"`
@@ -4891,18 +4891,6 @@ type Definition OneOf2[Location, []Location]
 // the defining symbol
 type DefinitionLink LocationLink
 
-// LSP arrays.
-// @since 3.17.0
-type LSPArray []LSPAny
-
-// The LSP any type.
-// Please note that strictly speaking a property with the value `undefined`
-// can't be converted into JSON preserving the property name. However for
-// convenience it is allowed and assumed that all these properties are
-// optional as well.
-// @since 3.17.0
-type LSPAny OneOf8[LSPObject, LSPArray, string, int32, uint32, float64, bool, Null]
-
 // The declaration of a symbol representation as one or many {@link Location locations}.
 type Declaration OneOf2[Location, []Location]
 
@@ -4987,10 +4975,6 @@ type LitMarkedString struct {
 // @since 3.17.0 - proposed support for NotebookCellTextDocumentFilter.
 type DocumentFilter OneOf2[TextDocumentFilter, NotebookCellTextDocumentFilter]
 
-// LSP object definition.
-// @since 3.17.0
-type LSPObject map[string]LSPAny
-
 // The glob pattern. Either a string pattern or a relative pattern.
 //
 // @since 3.17.0
@@ -5051,6 +5035,68 @@ type Pattern string
 // ------------------------------------------------------------------------
 // UNIONS & TUPLES
 // ------------------------------------------------------------------------
+
+// OneOf4 is a union of 4 values.
+type OneOf4[T0, T1, T2, T3 any] struct {
+	First  *T0
+	Second *T1
+	Third  *T2
+	Fourth *T3
+}
+
+func (v OneOf4[T0, T1, T2, T3]) MarshalJSON() ([]byte, error) {
+	if v.First != nil {
+		return json.Marshal(v.First)
+	}
+	if v.Second != nil {
+		return json.Marshal(v.Second)
+	}
+	if v.Third != nil {
+		return json.Marshal(v.Third)
+	}
+	if v.Fourth != nil {
+		return json.Marshal(v.Fourth)
+	}
+	return []byte("null"), nil
+}
+
+func (v *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
+	var (
+		err  error
+		errs []error
+	)
+
+	v.First = nil
+	v.Second = nil
+	v.Third = nil
+	v.Fourth = nil
+
+	err = json.Unmarshal(data, &v.First)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	err = json.Unmarshal(data, &v.Second)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	err = json.Unmarshal(data, &v.Third)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	err = json.Unmarshal(data, &v.Fourth)
+	if err == nil {
+		return nil
+	}
+	errs = append(errs, err)
+
+	return errors.Join(errs...)
+}
 
 // OneOf2 is a union of 2 values.
 type OneOf2[T0, T1 any] struct {
@@ -5141,440 +5187,4 @@ func (v *OneOf3[T0, T1, T2]) UnmarshalJSON(data []byte) error {
 	errs = append(errs, err)
 
 	return errors.Join(errs...)
-}
-
-// OneOf4 is a union of 4 values.
-type OneOf4[T0, T1, T2, T3 any] struct {
-	First  *T0
-	Second *T1
-	Third  *T2
-	Fourth *T3
-}
-
-func (v OneOf4[T0, T1, T2, T3]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
-	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
-	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
-	}
-	if v.Fourth != nil {
-		return json.Marshal(v.Fourth)
-	}
-	return []byte("null"), nil
-}
-
-func (v *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
-	var (
-		err  error
-		errs []error
-	)
-
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-	v.Fourth = nil
-
-	err = json.Unmarshal(data, &v.First)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Second)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Third)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fourth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	return errors.Join(errs...)
-}
-
-// OneOf5 is a union of 5 values.
-type OneOf5[T0, T1, T2, T3, T4 any] struct {
-	First  *T0
-	Second *T1
-	Third  *T2
-	Fourth *T3
-	Fifth  *T4
-}
-
-func (v OneOf5[T0, T1, T2, T3, T4]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
-	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
-	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
-	}
-	if v.Fourth != nil {
-		return json.Marshal(v.Fourth)
-	}
-	if v.Fifth != nil {
-		return json.Marshal(v.Fifth)
-	}
-	return []byte("null"), nil
-}
-
-func (v *OneOf5[T0, T1, T2, T3, T4]) UnmarshalJSON(data []byte) error {
-	var (
-		err  error
-		errs []error
-	)
-
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-	v.Fourth = nil
-	v.Fifth = nil
-
-	err = json.Unmarshal(data, &v.First)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Second)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Third)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fourth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fifth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	return errors.Join(errs...)
-}
-
-// OneOf6 is a union of 6 values.
-type OneOf6[T0, T1, T2, T3, T4, T5 any] struct {
-	First  *T0
-	Second *T1
-	Third  *T2
-	Fourth *T3
-	Fifth  *T4
-	Sixth  *T5
-}
-
-func (v OneOf6[T0, T1, T2, T3, T4, T5]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
-	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
-	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
-	}
-	if v.Fourth != nil {
-		return json.Marshal(v.Fourth)
-	}
-	if v.Fifth != nil {
-		return json.Marshal(v.Fifth)
-	}
-	if v.Sixth != nil {
-		return json.Marshal(v.Sixth)
-	}
-	return []byte("null"), nil
-}
-
-func (v *OneOf6[T0, T1, T2, T3, T4, T5]) UnmarshalJSON(data []byte) error {
-	var (
-		err  error
-		errs []error
-	)
-
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-	v.Fourth = nil
-	v.Fifth = nil
-	v.Sixth = nil
-
-	err = json.Unmarshal(data, &v.First)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Second)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Third)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fourth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fifth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Sixth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	return errors.Join(errs...)
-}
-
-// OneOf7 is a union of 7 values.
-type OneOf7[T0, T1, T2, T3, T4, T5, T6 any] struct {
-	First   *T0
-	Second  *T1
-	Third   *T2
-	Fourth  *T3
-	Fifth   *T4
-	Sixth   *T5
-	Seventh *T6
-}
-
-func (v OneOf7[T0, T1, T2, T3, T4, T5, T6]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
-	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
-	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
-	}
-	if v.Fourth != nil {
-		return json.Marshal(v.Fourth)
-	}
-	if v.Fifth != nil {
-		return json.Marshal(v.Fifth)
-	}
-	if v.Sixth != nil {
-		return json.Marshal(v.Sixth)
-	}
-	if v.Seventh != nil {
-		return json.Marshal(v.Seventh)
-	}
-	return []byte("null"), nil
-}
-
-func (v *OneOf7[T0, T1, T2, T3, T4, T5, T6]) UnmarshalJSON(data []byte) error {
-	var (
-		err  error
-		errs []error
-	)
-
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-	v.Fourth = nil
-	v.Fifth = nil
-	v.Sixth = nil
-	v.Seventh = nil
-
-	err = json.Unmarshal(data, &v.First)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Second)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Third)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fourth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fifth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Sixth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Seventh)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	return errors.Join(errs...)
-}
-
-// OneOf8 is a union of 8 values.
-type OneOf8[T0, T1, T2, T3, T4, T5, T6, T7 any] struct {
-	First   *T0
-	Second  *T1
-	Third   *T2
-	Fourth  *T3
-	Fifth   *T4
-	Sixth   *T5
-	Seventh *T6
-	Eighth  *T7
-}
-
-func (v OneOf8[T0, T1, T2, T3, T4, T5, T6, T7]) MarshalJSON() ([]byte, error) {
-	if v.First != nil {
-		return json.Marshal(v.First)
-	}
-	if v.Second != nil {
-		return json.Marshal(v.Second)
-	}
-	if v.Third != nil {
-		return json.Marshal(v.Third)
-	}
-	if v.Fourth != nil {
-		return json.Marshal(v.Fourth)
-	}
-	if v.Fifth != nil {
-		return json.Marshal(v.Fifth)
-	}
-	if v.Sixth != nil {
-		return json.Marshal(v.Sixth)
-	}
-	if v.Seventh != nil {
-		return json.Marshal(v.Seventh)
-	}
-	if v.Eighth != nil {
-		return json.Marshal(v.Eighth)
-	}
-	return []byte("null"), nil
-}
-
-func (v *OneOf8[T0, T1, T2, T3, T4, T5, T6, T7]) UnmarshalJSON(data []byte) error {
-	var (
-		err  error
-		errs []error
-	)
-
-	v.First = nil
-	v.Second = nil
-	v.Third = nil
-	v.Fourth = nil
-	v.Fifth = nil
-	v.Sixth = nil
-	v.Seventh = nil
-	v.Eighth = nil
-
-	err = json.Unmarshal(data, &v.First)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Second)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Third)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fourth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Fifth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Sixth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Seventh)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	err = json.Unmarshal(data, &v.Eighth)
-	if err == nil {
-		return nil
-	}
-	errs = append(errs, err)
-
-	return errors.Join(errs...)
-}
-
-// PairOf is a tuple of 2 values.
-type PairOf[T0, T1 any] struct {
-	First  T0
-	Second T1
-}
-
-// Pair returns a tuple of 2 values.
-func Pair[T0, T1 any](first T0, second T1) PairOf[T0, T1] {
-	return PairOf[T0, T1]{first, second}
-}
-
-// PairP returns a pointer to a tuple of 2 values.
-func PairP[T0, T1 any](first T0, second T1) *PairOf[T0, T1] {
-	return &PairOf[T0, T1]{first, second}
 }

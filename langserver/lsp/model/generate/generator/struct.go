@@ -1,6 +1,8 @@
 package generator
 
 import (
+	"strings"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/langserver/lsp/model/generate/metamodel"
 )
@@ -54,9 +56,11 @@ func (g *generator) property(
 		case "map":
 		case "array":
 		default:
-			ref = jen.
-				Op("*").
-				Add(ref)
+			if !strings.HasPrefix(m.Type.Name, "LSP") {
+				ref = jen.
+					Op("*").
+					Add(ref)
+			}
 		}
 	}
 

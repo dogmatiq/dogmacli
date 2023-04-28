@@ -9,8 +9,8 @@ import (
 
 type generator struct {
 	root            metamodel.Root
-	unionArity      int
-	tupleArity      int
+	unionArities    map[int]struct{}
+	tupleArities    map[int]struct{}
 	pendingLiterals map[string]*metamodel.Type
 	namingContext   []string
 }

@@ -11,7 +11,7 @@ func unionName(arity int) string {
 }
 
 func (g *generator) unions(code *jen.File) {
-	for arity := 2; arity <= g.unionArity; arity++ {
+	for arity := range g.unionArities {
 		var types []jen.Code
 		var fields []jen.Code
 
