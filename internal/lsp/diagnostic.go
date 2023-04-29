@@ -2,19 +2,14 @@ package lsp
 
 import (
 	"context"
-	"encoding/json"
-	"os"
 
-	"github.com/dogmatiq/dapper"
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto"
 )
 
-func (s *Server) textDocumentDiagnostic(
+func (h *handler) HandleTextDocumentDiagnostic(
 	ctx context.Context,
-	params proto.DocumentDiagnosticParams,
+	p proto.DocumentDiagnosticParams,
 ) (proto.DocumentDiagnosticReport, error) {
-	dapper.Write(os.Stderr, params)
-
 	rep := proto.DocumentDiagnosticReport{
 		// First: &lsp.RelatedFullDocumentDiagnosticReport{
 		// 	FullDocumentDiagnosticReport: lsp.FullDocumentDiagnosticReport{
@@ -37,10 +32,6 @@ func (s *Server) textDocumentDiagnostic(
 		// 	},
 		// },
 	}
-
-	enc := json.NewEncoder(os.Stderr)
-	enc.SetIndent("", "  ")
-	enc.Encode(rep)
 
 	return rep, nil
 }

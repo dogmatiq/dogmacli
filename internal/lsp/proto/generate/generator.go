@@ -48,6 +48,16 @@ func generate(gen *jen.File) {
 		gen.Line()
 	}
 
+	banner("REQUESTS")
+	for _, m := range g.root.Requests {
+		g.generateRequest(gen, m)
+	}
+
+	banner("NOTIFICATIONS")
+	for _, m := range g.root.Notifications {
+		g.generateNotification(gen, m)
+	}
+
 	banner("STRUCTURES")
 	for _, m := range g.root.Structures {
 		g.generateStruct(gen, m)
@@ -126,7 +136,10 @@ func generateDocs(
 }
 
 func normalizeName(n string) string {
+	n = strings.ReplaceAll(n, "/", " ")
+	n = strings.ReplaceAll(n, "$", " ")
 	n = strings.Title(n)
+	n = strings.ReplaceAll(n, " ", "")
 	n = strings.ReplaceAll(n, "Uri", "URI")
 	return n
 }

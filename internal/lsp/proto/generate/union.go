@@ -12,30 +12,42 @@ func unionName(arity int) string {
 }
 
 func (g *generator) unionRef(t *metamodel.Type) jen.Code {
-	if len(t.Items) == 2 {
-		first, second := t.Items[0], t.Items[1]
-		if first.Kind == "base" && first.Name == "null" {
-			return jen.Op("*").Add(g.typeRef(second))
-		}
-		if second.Kind == "base" && second.Name == "null" {
-			return jen.Op("*").Add(g.typeRef(first))
+	var (
+		items    []*metamodel.Type
+		types    []jen.Code
+		optional bool
+	)
+
+	for _, item := range t.Items {
+		if item.IsNull() {
+			optional = true
+		} else {
+			items = append(items, item)
+			types = append(types, g.typeRef(item))
 		}
 	}
 
-	var types []jen.Code
-	for _, item := range t.Items {
-		types = append(types, g.typeRef(item))
-	}
+	union := types[0]
 
 	n := len(types)
-	if g.unionArities == nil {
-		g.unionArities = map[int]struct{}{}
-	}
-	g.unionArities[n] = struct{}{}
+	if n > 1 {
+		if g.unionArities == nil {
+			g.unionArities = map[int]struct{}{}
+		}
+		g.unionArities[n] = struct{}{}
 
-	return jen.
-		Id(unionName(n)).
-		Types(types...)
+		union = jen.
+			Id(unionName(n)).
+			Types(types...)
+	} else if g.isOmittable(items[0]) {
+		optional = false
+	}
+
+	if optional {
+		return jen.Op("*").Add(union)
+	}
+	return union
+
 }
 
 func (g *generator) generateUnions(gen *jen.File) {

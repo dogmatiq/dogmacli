@@ -3,17 +3,20 @@ package metamodel
 import (
 	_ "embed"
 	"encoding/json"
+
+	"golang.org/x/exp/slices"
 )
 
 // Root is the root of the model.
 type Root struct {
-	Requests     []Request     `json:"requests"`
-	Structures   []Structure   `json:"structures"`
-	Enumerations []Enumeration `json:"enumerations"`
-	TypeAliases  []TypeAlias   `json:"typeAliases"`
+	Requests      []Request      `json:"requests"`
+	Notifications []Notification `json:"notifications"`
+	Structures    []Structure    `json:"structures"`
+	Enumerations  []Enumeration  `json:"enumerations"`
+	TypeAliases   []TypeAlias    `json:"typeAliases"`
 }
 
-// Request defines a JSON-RPC call (request/response) model.
+// Request defines a JSON-RPC call (request/response).
 type Request struct {
 	Documentation       string `json:"documentation"`
 	Method              string `json:"method"`
@@ -21,6 +24,17 @@ type Request struct {
 	Params              *Type  `json:"params"`
 	Result              *Type  `json:"result"`
 	PartialResult       *Type  `json:"partialResult"`
+	RegistrationMethod  string `json:"registrationMethod"`
+	RegistrationOptions *Type  `json:"registrationOptions"`
+}
+
+// Notification defines a JSON-RPC notification.
+type Notification struct {
+	Documentation       string `json:"documentation"`
+	Method              string `json:"method"`
+	Direction           string `json:"messageDirection"`
+	Params              *Type  `json:"params"`
+	RegistrationMethod  string `json:"registrationMethod"`
 	RegistrationOptions *Type  `json:"registrationOptions"`
 }
 
@@ -32,6 +46,11 @@ type Type struct {
 	ArrayElement *Type           `json:"element"`
 	MapKey       *Type           `json:"key"`
 	RawValue     json.RawMessage `json:"value"`
+}
+
+// IsNull returns true if the type is the null type.
+func (t *Type) IsNull() bool {
+	return t.Kind == "base" && t.Name == "null"
 }
 
 // MapValue unserializes RawValue for use as a map value.
@@ -127,8 +146,38 @@ var data []byte
 // Get returns the root node of the model.
 func Get() Root {
 	var root Root
+
 	if err := json.Unmarshal(data, &root); err != nil {
 		panic(err)
 	}
+
+	slices.SortFunc(
+		root.Requests,
+		func(a, b Request) bool {
+			return a.Method < b.Method
+		},
+	)
+
+	slices.SortFunc(
+		root.Structures,
+		func(a, b Structure) bool {
+			return a.Name < b.Name
+		},
+	)
+
+	slices.SortFunc(
+		root.Enumerations,
+		func(a, b Enumeration) bool {
+			return a.Name < b.Name
+		},
+	)
+
+	slices.SortFunc(
+		root.TypeAliases,
+		func(a, b TypeAlias) bool {
+			return a.Name < b.Name
+		},
+	)
+
 	return root
 }
