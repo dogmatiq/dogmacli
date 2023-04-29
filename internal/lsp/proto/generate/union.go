@@ -46,8 +46,8 @@ func (g *generator) unionRef(t *metamodel.Type) jen.Code {
 	if optional {
 		return jen.Op("*").Add(union)
 	}
-	return union
 
+	return union
 }
 
 func (g *generator) generateUnions(gen *jen.File) {

@@ -42,9 +42,10 @@ func generate(gen *jen.File) {
 	}
 
 	banner := func(text string) {
-		gen.Comment(strings.Repeat("-", 72))
+		sep := strings.Repeat("-", 120-3)
+		gen.Comment(sep)
 		gen.Comment(text)
-		gen.Comment(strings.Repeat("-", 72))
+		gen.Comment(sep)
 		gen.Line()
 	}
 

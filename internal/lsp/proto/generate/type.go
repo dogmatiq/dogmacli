@@ -19,6 +19,11 @@ func (g *generator) isOmittable(t *metamodel.Type) bool {
 	case "tuple":
 		return false
 	case "or":
+		for _, item := range t.Items {
+			if item.IsNull() {
+				return true
+			}
+		}
 		return false
 	case "literal":
 		return false

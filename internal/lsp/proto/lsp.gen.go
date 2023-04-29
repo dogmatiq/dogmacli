@@ -10,9 +10,9 @@ import (
 	harpy "github.com/dogmatiq/harpy"
 )
 
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 // REQUESTS
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 // CallHierarchyIncomingCallsHandler handles "callHierarchy/incomingCalls" requests.
 type CallHierarchyIncomingCallsHandler interface {
@@ -1005,9 +1005,9 @@ func WorkspaceSymbolResolveRoute(h WorkspaceSymbolResolveHandler) harpy.RouterOp
 	)
 }
 
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 // NOTIFICATIONS
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 // WorkspaceDidChangeWorkspaceFoldersHandler handles "workspace/didChangeWorkspaceFolders" notifications.
 type WorkspaceDidChangeWorkspaceFoldersHandler interface {
@@ -1406,9 +1406,9 @@ func SetTraceRoute(h SetTraceHandler) harpy.RouterOption {
 	)
 }
 
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 // STRUCTURES
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 // A special text edit with an additional change annotation.
 //
@@ -5610,7 +5610,7 @@ type WorkspaceFoldersInitializeParams struct {
 	// configured.
 	//
 	// @since 3.6.0
-	WorkspaceFolders *[]WorkspaceFolder `json:"workspaceFolders,omitempty"`
+	WorkspaceFolders []WorkspaceFolder `json:"workspaceFolders,omitempty"`
 }
 
 type WorkspaceFoldersServerCapabilities struct {
@@ -5760,7 +5760,7 @@ type _InitializeParams struct {
 	// if no folder is open.
 	//
 	// @deprecated in favour of rootUri.
-	RootPath *string `json:"rootPath,omitempty"`
+	RootPath string `json:"rootPath,omitempty"`
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
@@ -5781,9 +5781,9 @@ type _InitializeParamsClientInfo struct {
 	Version string `json:"version,omitempty"`
 }
 
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 // ENUMERATIONS
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 // A set of predefined code action kinds
 type CodeActionKind string
@@ -6403,9 +6403,9 @@ const (
 	WatchKindDelete WatchKind = 4
 )
 
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 // TYPE ALIASES
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 // An identifier to refer to a change annotation stored with a workspace edit.
 type ChangeAnnotationIdentifier = string
@@ -6608,9 +6608,9 @@ type TextDocumentFilter3 struct {
 // @since 3.17.0
 type WorkspaceDocumentDiagnosticReport = OneOf2[WorkspaceFullDocumentDiagnosticReport, WorkspaceUnchangedDocumentDiagnosticReport]
 
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 // UNIONS
-// ------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 // OneOf2 is a union of 2 values.
 type OneOf2[T0, T1 any] struct {
