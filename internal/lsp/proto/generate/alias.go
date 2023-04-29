@@ -1,10 +1,10 @@
-package generator
+package main
 
 import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/metamodel"
+	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
 
 func (g *generator) generateAlias(

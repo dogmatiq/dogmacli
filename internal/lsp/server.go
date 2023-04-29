@@ -1,11 +1,11 @@
-package langserver
+package lsp
 
 import (
 	"context"
 	"io"
 
-	"github.com/dogmatiq/dogmacli/langserver/iotransport"
-	"github.com/dogmatiq/dogmacli/langserver/lsp"
+	lsp "github.com/dogmatiq/dogmacli/internal/lsp/proto"
+	"github.com/dogmatiq/dogmacli/internal/lsp/transport"
 	"github.com/dogmatiq/harpy"
 )
 
@@ -17,7 +17,7 @@ type Server struct {
 }
 
 func (s *Server) Run(ctx context.Context) error {
-	return iotransport.Run(
+	return transport.Run(
 		ctx,
 		harpy.NewRouter(
 			harpy.WithRoute(

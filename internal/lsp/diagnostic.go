@@ -1,4 +1,4 @@
-package langserver
+package lsp
 
 import (
 	"context"
@@ -6,16 +6,16 @@ import (
 	"os"
 
 	"github.com/dogmatiq/dapper"
-	"github.com/dogmatiq/dogmacli/langserver/lsp"
+	"github.com/dogmatiq/dogmacli/internal/lsp/proto"
 )
 
 func (s *Server) textDocumentDiagnostic(
 	ctx context.Context,
-	params lsp.DocumentDiagnosticParams,
-) (lsp.DocumentDiagnosticReport, error) {
+	params proto.DocumentDiagnosticParams,
+) (proto.DocumentDiagnosticReport, error) {
 	dapper.Write(os.Stderr, params)
 
-	rep := lsp.DocumentDiagnosticReport{
+	rep := proto.DocumentDiagnosticReport{
 		// First: &lsp.RelatedFullDocumentDiagnosticReport{
 		// 	FullDocumentDiagnosticReport: lsp.FullDocumentDiagnosticReport{
 		// 		Items: []lsp.Diagnostic{

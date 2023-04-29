@@ -1,5 +1,5 @@
-GO_EMBEDDED_FILES += langserver/lsp/generate/metamodel/metamodel-3.17.0.json
-DOGMACLI_GENERATED_FILES += langserver/lsp/model.gen.go
+GO_EMBEDDED_FILES += internal/lsp/proto/internal/metamodel/metamodel-3.17.0.json
+DOGMACLI_GENERATED_FILES += internal/lsp/proto/lsp.gen.go
 
 GENERATED_FILES += $(DOGMACLI_GENERATED_FILES)
 
@@ -12,5 +12,5 @@ GENERATED_FILES += $(DOGMACLI_GENERATED_FILES)
 run: artifacts/build/debug/$(GOHOSTOS)/$(GOHOSTARCH)/dogma
 	$< $(args)
 
-$(DOGMACLI_GENERATED_FILES): $(shell find langserver/lsp/generate -type f)
-	go run langserver/lsp/generate/main.go -- $@
+$(DOGMACLI_GENERATED_FILES): $(shell find internal/lsp/proto/generate -type f)
+	go run ./internal/lsp/proto/generate -- $@

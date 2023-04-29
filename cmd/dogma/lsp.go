@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/dogmatiq/dogmacli/langserver"
+	"github.com/dogmatiq/dogmacli/internal/lsp"
 	"github.com/dogmatiq/harpy"
 	"github.com/dogmatiq/imbue"
 	"go.uber.org/zap"
@@ -14,7 +14,7 @@ func init() {
 		catalog,
 		func(
 			ctx imbue.Context,
-		) (*langserver.Server, error) {
+		) (*lsp.Server, error) {
 			logger, err := zap.NewDevelopment(
 				zap.WithCaller(false),
 				zap.AddStacktrace(zap.FatalLevel), // disable stack trace for errors
@@ -23,7 +23,7 @@ func init() {
 				return nil, err
 			}
 
-			return &langserver.Server{
+			return &lsp.Server{
 				In:      os.Stdin,
 				Out:     os.Stdout,
 				Version: version,

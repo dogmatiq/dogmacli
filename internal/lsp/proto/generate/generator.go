@@ -1,11 +1,11 @@
-package generator
+package main
 
 import (
 	"strconv"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/dogmacli/langserver/lsp/generate/metamodel"
+	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 	"golang.org/x/exp/constraints"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
@@ -24,8 +24,8 @@ type typeInfo struct {
 	omittable bool
 }
 
-// Generate generates the Go representation of the LSP model.
-func Generate(gen *jen.File) {
+// generate generates the Go representation of the LSP model.
+func generate(gen *jen.File) {
 	g := &generator{
 		root:  metamodel.Get(),
 		names: map[string]typeInfo{},
