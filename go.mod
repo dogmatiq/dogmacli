@@ -8,7 +8,7 @@ require (
 	github.com/dogmatiq/harpy v0.8.2
 	github.com/dogmatiq/imbue v0.7.0
 	github.com/google/uuid v1.3.0
-	github.com/onsi/ginkgo/v2 v2.9.3
+	github.com/onsi/ginkgo/v2 v2.9.4
 	github.com/onsi/gomega v1.27.6
 	github.com/spf13/cobra v1.7.0
 	go.uber.org/zap v1.24.0
