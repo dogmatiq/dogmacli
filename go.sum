@@ -8,8 +8,8 @@ github.com/dave/jennifer v1.6.1/go.mod h1:nXbxhEmQfOZhWml3D1cDK5M1FLnMSozpbFN/m3
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
-github.com/dogmatiq/configkit v0.12.1-0.20230421074222-ed737547c58c h1:FDLZaJxAgU/wBH2b2xrd3Z+dslLTiM+LlIXwW1sbnb4=
-github.com/dogmatiq/configkit v0.12.1-0.20230421074222-ed737547c58c/go.mod h1:Y1P2CUURkcey3Sl0o6xEOS3X+Tm9SywUHjKIwI96Dc8=
+github.com/dogmatiq/configkit v0.12.1 h1:p992Z+JwdBJ5B4nBllpMQQ3pnbfEjUUvm/g3EuE0dqw=
+github.com/dogmatiq/configkit v0.12.1/go.mod h1:Y1P2CUURkcey3Sl0o6xEOS3X+Tm9SywUHjKIwI96Dc8=
 github.com/dogmatiq/dogma v0.12.0 h1:hUvAbdrcLGAP2IrpBKvdbUSGubgNKzqa5QfFarIQPfU=
 github.com/dogmatiq/dogma v0.12.0/go.mod h1:op4IjAGC593ONvvUPhh2xNyk/3Ezv9HkCPRlzdbkX9Y=
 github.com/dogmatiq/harpy v0.8.2 h1:/Fa0FXTw+TEbYIobRjTmoq6OSsTA4u/Gr4aEqjbxtgU=
