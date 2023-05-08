@@ -36,21 +36,24 @@ func (h *handler) HandleTextDocumentDiagnostic(
 			continue
 		}
 
+		// TODO: the character position is _supposed_ to be measured in UTF-16
+		// code units by default, but it appears to work correctly when
+		// measuring bytes?
 		rep.Items = append(
 			rep.Items,
 			proto.Diagnostic{
 				Range: proto.Range{
 					Start: proto.Position{
-						Line:      uint32(d.Begin.Line),
-						Character: uint32(d.Begin.Column), // UTF-16 hack
+						Line:      uint32(d.Begin.Line - 1),
+						Character: uint32(d.Begin.Column - 1),
 					},
 					End: proto.Position{
-						Line:      uint32(d.End.Line),
-						Character: uint32(d.End.Column), // UTF-16 hack
+						Line:      uint32(d.End.Line - 1),
+						Character: uint32(d.End.Column - 1),
 					},
 				},
 				Severity: severity(d.Severity),
-				Source:   "dogma/identity",
+				Source:   "dogma",
 				Message:  d.Message,
 			},
 		)
