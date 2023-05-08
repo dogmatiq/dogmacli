@@ -1,6 +1,7 @@
 package lint
 
 import (
+	"fmt"
 	"go/ast"
 	"go/types"
 
@@ -64,18 +65,16 @@ func buildEntities(ctx *Context) {
 		if m, ok := m.(*ssa.Type); ok {
 			t := m.Type()
 
-			// TODO: skip type aliases
-
-			if t, ok := implements(t, ctx.Dogma.Application); ok {
-				buildApplication(ctx, t)
-			} else if t, ok := implements(t, ctx.Dogma.AggregateMessageHandler); ok {
-				buildAggregate(ctx, t)
-			} else if t, ok := implements(t, ctx.Dogma.ProcessMessageHandler); ok {
-				buildProcess(ctx, t)
-			} else if t, ok := implements(t, ctx.Dogma.IntegrationMessageHandler); ok {
-				buildIntegration(ctx, t)
-			} else if t, ok := implements(t, ctx.Dogma.ProjectionMessageHandler); ok {
-				buildProjection(ctx, t)
+			if impl, ok := implements(t, ctx.Dogma.Application); ok {
+				buildApplication(ctx, impl)
+			} else if impl, ok := implements(t, ctx.Dogma.AggregateMessageHandler); ok {
+				buildAggregate(ctx, impl)
+			} else if impl, ok := implements(t, ctx.Dogma.ProcessMessageHandler); ok {
+				buildProcess(ctx, impl)
+			} else if impl, ok := implements(t, ctx.Dogma.IntegrationMessageHandler); ok {
+				buildIntegration(ctx, impl)
+			} else if impl, ok := implements(t, ctx.Dogma.ProjectionMessageHandler); ok {
+				buildProjection(ctx, impl)
 			}
 		}
 	}
@@ -85,6 +84,13 @@ func buildEntities(ctx *Context) {
 //
 // It returns the actual type that implements the interface, either t or *t.
 func implements(t types.Type, i *types.Interface) (types.Type, bool) {
+	// TODO: skip type aliases
+
+	// If t is itself an interface, then it cannot implement i.
+	if _, ok := t.Underlying().(*types.Interface); ok {
+		return nil, false
+	}
+
 	// The sequence of the if-blocks below is important as a type
 	// implements an interface only if the methods in the interface's
 	// method set have non-pointer receivers. Hence the implementation
@@ -101,7 +107,11 @@ func implements(t types.Type, i *types.Interface) (types.Type, bool) {
 }
 
 func buildEntity(ctx *Context, t types.Type) Entity {
-	fn := ctx.SSAProgram.LookupMethod(t, ctx.SSAPackage.Pkg, "Configure")
+	fn := ctx.SSAProgram.LookupMethod(t, ctx.Package.Types, "Configure")
+
+	if fn == nil {
+		panic(fmt.Sprintf("could not find Configure() method for %s", t))
+	}
 
 	e := Entity{
 		Type: t,

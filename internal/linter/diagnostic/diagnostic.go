@@ -49,12 +49,6 @@ func (s Severity) String() string {
 	}
 }
 
-// DapperString returns the string representation of the diagnostic severity for
-// use with dogmatiq/dapper.
-func (s Severity) DapperString() string {
-	return s.String()
-}
-
 // Change is related set of edits to a document.
 type Change struct {
 	Message string
