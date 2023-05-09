@@ -125,8 +125,8 @@ func (g *generator) generateTuples(gen *jen.File) {
 				),
 			)
 
-		gen.Line()
-		gen.Func().
+		gen.Line().
+			Func().
 			Params(jen.Id("x").Add(fullType)).
 			Id("MarshalJSON").
 			Params().
@@ -146,8 +146,7 @@ func (g *generator) generateTuples(gen *jen.File) {
 				),
 			)
 
-		gen.Line()
-		gen.
+		gen.Line().
 			Func().
 			Params(jen.Id("x").Add(fullType)).
 			Id("UnmarshalJSON").
@@ -163,51 +162,53 @@ func (g *generator) generateTuples(gen *jen.File) {
 					Index(jen.Lit(arity)).
 					Qual("encoding/json", "RawMessage")
 
-				gen.Line()
-				gen.If(
-					jen.Err().
-						Op(":=").
-						Id("unmarshal").
-						Call(
-							jen.Id("data"),
-							jen.Op("&").
-								Id("elements"),
-						),
-					jen.Err().
-						Op("!=").
-						Nil(),
-				).Block(
-					jen.Return(
-						jen.Err(),
-					),
-				)
-
-				for i := 0; i < arity; i++ {
-					gen.Line()
-					gen.If(
+				gen.Line().
+					If(
 						jen.Err().
 							Op(":=").
 							Id("unmarshal").
 							Call(
-								jen.Id("elements").
-									Index(jen.Lit(i)),
+								jen.Id("data"),
 								jen.Op("&").
-									Add(fieldExpressions[i]),
+									Id("elements"),
 							),
 						jen.Err().
 							Op("!=").
 							Nil(),
-					).Block(
+					).
+					Block(
 						jen.Return(
 							jen.Err(),
 						),
 					)
+
+				for i := 0; i < arity; i++ {
+					gen.Line().
+						If(
+							jen.Err().
+								Op(":=").
+								Id("unmarshal").
+								Call(
+									jen.Id("elements").
+										Index(jen.Lit(i)),
+									jen.Op("&").
+										Add(fieldExpressions[i]),
+								),
+							jen.Err().
+								Op("!=").
+								Nil(),
+						).
+						Block(
+							jen.Return(
+								jen.Err(),
+							),
+						)
 				}
 
-				gen.Line()
-				gen.Return(
-					jen.Nil(),
-				)
+				gen.Line().
+					Return(
+						jen.Nil(),
+					)
 			})
 	}
 }

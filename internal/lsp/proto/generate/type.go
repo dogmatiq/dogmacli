@@ -121,6 +121,53 @@ func (g *generator) arrayTypeExpr(t *metamodel.Type) jen.Code {
 	)
 }
 
+func (g *generator) zeroValue(t *metamodel.Type) (jen.Code, bool) {
+	switch t.Kind {
+	case "base":
+		switch t.Name {
+		case "boolean":
+			return jen.False(), true
+		case "string":
+			return jen.Lit(""), true
+		case "decimal", "integer", "uinteger":
+			return jen.Lit(0), true
+		default:
+			expr := g.typeExpr(t)
+			return jen.Parens(
+				jen.Add(expr).Values(),
+			), true
+		}
+	case "reference":
+		if strings.HasPrefix(t.Name, "LSP") {
+			return jen.Nil(), true
+		}
+		for _, m := range g.root.Enumerations {
+			if m.Name == t.Name {
+				return g.zeroValue(m.Type)
+			}
+		}
+		for _, m := range g.root.TypeAliases {
+			if m.Name == t.Name {
+				return g.zeroValue(m.Type)
+			}
+		}
+	case "or":
+		t, _ := normalizeUnion(t)
+		if t.Kind != "or" {
+			return g.zeroValue(t)
+		}
+		return nil, false
+	case "literal":
+		return nil, false
+	case "stringLiteral":
+		return nil, false
+	case "map", "array":
+		return jen.Nil(), true
+	}
+
+	return nil, false
+}
+
 func (g *generator) generateUniqueName(desired string) (actual, suffix string) {
 	if _, ok := g.names[desired]; !ok {
 		g.names[desired] = struct{}{}

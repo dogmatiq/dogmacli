@@ -132,8 +132,8 @@ func (g *generator) generateUnions(gen *jen.File) {
 					})
 			})
 
-		gen.Line()
-		gen.Func().
+		gen.Line().
+			Func().
 			Params(jen.Id("x").Op("*").Add(fullType)).
 			Id("UnmarshalJSON").
 			Params(
@@ -149,16 +149,16 @@ func (g *generator) generateUnions(gen *jen.File) {
 					Add(fullType).
 					Values()
 
-				gen.Line()
-				gen.Var().
+				gen.Line().
+					Var().
 					Defs(
 						jen.Id("errs").Index().Error(),
 						jen.Id("err").Error(),
 					)
 
 				for _, f := range fieldExpressions {
-					gen.Line()
-					gen.Err().
+					gen.Line().
+						Err().
 						Op("=").
 						Id("unmarshal").
 						Call(
@@ -184,11 +184,11 @@ func (g *generator) generateUnions(gen *jen.File) {
 						)
 				}
 
-				gen.Line()
-				gen.Return(
-					jen.Qual("errors", "Join").
-						Call(jen.Id("errs").Op("...")),
-				)
+				gen.Line().
+					Return(
+						jen.Qual("errors", "Join").
+							Call(jen.Id("errs").Op("...")),
+					)
 			})
 	}
 }

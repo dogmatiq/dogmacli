@@ -3,10 +3,9 @@
 package proto
 
 import (
-	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
-	"fmt"
 	harpy "github.com/dogmatiq/harpy"
 )
 
@@ -1419,6 +1418,19 @@ type AnnotatedTextEdit struct {
 	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
 }
 
+func (x *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
+	type plain AnnotatedTextEdit
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.AnnotationId == "" {
+		return errors.New("\"annotationId\" property is required")
+	}
+
+	return nil
+}
+
 // The parameters passed via an apply workspace edit request.
 type ApplyWorkspaceEditParams struct {
 	// An optional label of the workspace edit. This label is
@@ -1427,6 +1439,17 @@ type ApplyWorkspaceEditParams struct {
 	Label string `json:"label,omitempty"`
 	// The edits to apply.
 	Edit WorkspaceEdit `json:"edit"`
+}
+
+func (x *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
+	type plain ApplyWorkspaceEditParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Edit
+
+	return nil
 }
 
 // The result returned from the apply workspace edit request.
@@ -1443,6 +1466,19 @@ type ApplyWorkspaceEditResult struct {
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
 	FailedChange uint32 `json:"failedChange,omitempty"`
+}
+
+func (x *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
+	type plain ApplyWorkspaceEditResult
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Applied == false {
+		return errors.New("\"applied\" property is required")
+	}
+
+	return nil
 }
 
 // A base for all symbol information.
@@ -1462,12 +1498,38 @@ type BaseSymbolInformation struct {
 	ContainerName string `json:"containerName,omitempty"`
 }
 
+func (x *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
+	type plain BaseSymbolInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Name == "" {
+		return errors.New("\"name\" property is required")
+	}
+
+	if x.Kind == 0 {
+		return errors.New("\"kind\" property is required")
+	}
+
+	return nil
+}
+
 // @since 3.16.0
 type CallHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+}
+
+func (x *CallHierarchyClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Represents an incoming call, e.g. a caller of a method or constructor.
@@ -1481,6 +1543,21 @@ type CallHierarchyIncomingCall struct {
 	FromRanges []Range `json:"fromRanges"`
 }
 
+func (x *CallHierarchyIncomingCall) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyIncomingCall
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.From
+
+	if x.FromRanges == nil {
+		return errors.New("\"fromRanges\" property is required")
+	}
+
+	return nil
+}
+
 // The parameter of a `callHierarchy/incomingCalls` request.
 //
 // @since 3.16.0
@@ -1488,6 +1565,17 @@ type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	Item CallHierarchyItem `json:"item"`
+}
+
+func (x *CallHierarchyIncomingCallsParams) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyIncomingCallsParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Item
+
+	return nil
 }
 
 // Represents programming constructs like functions or constructors in the context
@@ -1515,11 +1603,45 @@ type CallHierarchyItem struct {
 	Data any `json:"data,omitempty"`
 }
 
+func (x *CallHierarchyItem) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Name == "" {
+		return errors.New("\"name\" property is required")
+	}
+
+	if x.Kind == 0 {
+		return errors.New("\"kind\" property is required")
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	var _ json.Unmarshaler = &x.SelectionRange
+
+	return nil
+}
+
 // Call hierarchy options used during static registration.
 //
 // @since 3.16.0
 type CallHierarchyOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *CallHierarchyOptions) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
@@ -1534,6 +1656,21 @@ type CallHierarchyOutgoingCall struct {
 	FromRanges []Range `json:"fromRanges"`
 }
 
+func (x *CallHierarchyOutgoingCall) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyOutgoingCall
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.To
+
+	if x.FromRanges == nil {
+		return errors.New("\"fromRanges\" property is required")
+	}
+
+	return nil
+}
+
 // The parameter of a `callHierarchy/outgoingCalls` request.
 //
 // @since 3.16.0
@@ -1543,12 +1680,32 @@ type CallHierarchyOutgoingCallsParams struct {
 	Item CallHierarchyItem `json:"item"`
 }
 
+func (x *CallHierarchyOutgoingCallsParams) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyOutgoingCallsParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Item
+
+	return nil
+}
+
 // The parameter of a `textDocument/prepareCallHierarchy` request.
 //
 // @since 3.16.0
 type CallHierarchyPrepareParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+}
+
+func (x *CallHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyPrepareParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Call hierarchy options used during static or dynamic registration.
@@ -1560,9 +1717,29 @@ type CallHierarchyRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x *CallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain CallHierarchyRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type CancelParams struct {
 	// The request id to cancel.
 	Id OneOf2[int32, string] `json:"id"`
+}
+
+func (x *CancelParams) UnmarshalJSON(data []byte) error {
+	type plain CancelParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Id
+
+	return nil
 }
 
 // Additional information that describes document changes.
@@ -1578,6 +1755,19 @@ type ChangeAnnotation struct {
 	// A human-readable string which is rendered less prominent in
 	// the user interface.
 	Description string `json:"description,omitempty"`
+}
+
+func (x *ChangeAnnotation) UnmarshalJSON(data []byte) error {
+	type plain ChangeAnnotation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Label == "" {
+		return errors.New("\"label\" property is required")
+	}
+
+	return nil
 }
 
 // Defines the capabilities provided by the client.
@@ -1598,6 +1788,15 @@ type ClientCapabilities struct {
 	General *GeneralClientCapabilities `json:"general,omitempty"`
 	// Experimental client capabilities.
 	Experimental any `json:"experimental,omitempty"`
+}
+
+func (x *ClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain ClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A code action represents a change that can be performed in code, e.g. to fix a problem or
@@ -1649,11 +1848,38 @@ type CodeAction struct {
 	// @since 3.16.0
 	Data any `json:"data,omitempty"`
 }
+
+func (x *CodeAction) UnmarshalJSON(data []byte) error {
+	type plain CodeAction
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Title == "" {
+		return errors.New("\"title\" property is required")
+	}
+
+	return nil
+}
+
 type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
 	//
 	// This is displayed in the code actions UI.
 	Reason string `json:"reason"`
+}
+
+func (x *CodeActionDisabled) UnmarshalJSON(data []byte) error {
+	type plain CodeActionDisabled
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Reason == "" {
+		return errors.New("\"reason\" property is required")
+	}
+
+	return nil
 }
 
 // The Client Capabilities of a {@link CodeActionRequest}.
@@ -1694,11 +1920,16 @@ type CodeActionClientCapabilities struct {
 	// @since 3.16.0
 	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitempty"`
 }
-type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
-	// The code action kind is support with the following value
-	// set.
-	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind `json:"codeActionKind"`
+
+func (x *CodeActionClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain CodeActionClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
+
 type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 	// The code action kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -1706,9 +1937,53 @@ type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 	// to a default value when unknown.
 	ValueSet []CodeActionKind `json:"valueSet"`
 }
+
+func (x *CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) UnmarshalJSON(data []byte) error {
+	type plain CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ValueSet == nil {
+		return errors.New("\"valueSet\" property is required")
+	}
+
+	return nil
+}
+
+type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
+	// The code action kind is support with the following value
+	// set.
+	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind `json:"codeActionKind"`
+}
+
+func (x *CodeActionClientCapabilitiesCodeActionLiteralSupport) UnmarshalJSON(data []byte) error {
+	type plain CodeActionClientCapabilitiesCodeActionLiteralSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.CodeActionKind
+
+	return nil
+}
+
 type CodeActionClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily.
 	Properties []string `json:"properties"`
+}
+
+func (x *CodeActionClientCapabilitiesResolveSupport) UnmarshalJSON(data []byte) error {
+	type plain CodeActionClientCapabilitiesResolveSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Properties == nil {
+		return errors.New("\"properties\" property is required")
+	}
+
+	return nil
 }
 
 // Contains additional diagnostic information about the context in which
@@ -1731,6 +2006,19 @@ type CodeActionContext struct {
 	TriggerKind CodeActionTriggerKind `json:"triggerKind,omitempty"`
 }
 
+func (x *CodeActionContext) UnmarshalJSON(data []byte) error {
+	type plain CodeActionContext
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Diagnostics == nil {
+		return errors.New("\"diagnostics\" property is required")
+	}
+
+	return nil
+}
+
 // Provider options for a {@link CodeActionRequest}.
 type CodeActionOptions struct {
 	WorkDoneProgressOptions
@@ -1746,6 +2034,15 @@ type CodeActionOptions struct {
 	ResolveProvider bool `json:"resolveProvider,omitempty"`
 }
 
+func (x *CodeActionOptions) UnmarshalJSON(data []byte) error {
+	type plain CodeActionOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The parameters of a {@link CodeActionRequest}.
 type CodeActionParams struct {
 	WorkDoneProgressParams
@@ -1758,10 +2055,34 @@ type CodeActionParams struct {
 	Context CodeActionContext `json:"context"`
 }
 
+func (x *CodeActionParams) UnmarshalJSON(data []byte) error {
+	type plain CodeActionParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Range
+
+	var _ json.Unmarshaler = &x.Context
+
+	return nil
+}
+
 // Registration options for a {@link CodeActionRequest}.
 type CodeActionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeActionOptions
+}
+
+func (x *CodeActionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain CodeActionRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Structure to capture a description for an error code.
@@ -1770,6 +2091,19 @@ type CodeActionRegistrationOptions struct {
 type CodeDescription struct {
 	// An URI to open with more information about the diagnostic error.
 	Href URI `json:"href"`
+}
+
+func (x *CodeDescription) UnmarshalJSON(data []byte) error {
+	type plain CodeDescription
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Href == (URI{}) {
+		return errors.New("\"href\" property is required")
+	}
+
+	return nil
 }
 
 // A code lens represents a {@link Command command} that should be shown along with
@@ -1788,10 +2122,30 @@ type CodeLens struct {
 	Data any `json:"data,omitempty"`
 }
 
+func (x *CodeLens) UnmarshalJSON(data []byte) error {
+	type plain CodeLens
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
+}
+
 // The client capabilities  of a {@link CodeLensRequest}.
 type CodeLensClientCapabilities struct {
 	// Whether code lens supports dynamic registration.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+}
+
+func (x *CodeLensClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain CodeLensClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Code Lens provider options of a {@link CodeLensRequest}.
@@ -1799,6 +2153,15 @@ type CodeLensOptions struct {
 	WorkDoneProgressOptions
 	// Code lens has a resolve provider as well.
 	ResolveProvider bool `json:"resolveProvider,omitempty"`
+}
+
+func (x *CodeLensOptions) UnmarshalJSON(data []byte) error {
+	type plain CodeLensOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameters of a {@link CodeLensRequest}.
@@ -1809,10 +2172,30 @@ type CodeLensParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (x *CodeLensParams) UnmarshalJSON(data []byte) error {
+	type plain CodeLensParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 // Registration options for a {@link CodeLensRequest}.
 type CodeLensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeLensOptions
+}
+
+func (x *CodeLensRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain CodeLensRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -1827,6 +2210,15 @@ type CodeLensWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitempty"`
 }
 
+func (x *CodeLensWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain CodeLensWorkspaceClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Represents a color in RGBA space.
 type Color struct {
 	// The red component of this color in the range [0-1].
@@ -1839,12 +2231,50 @@ type Color struct {
 	Alpha float64 `json:"alpha"`
 }
 
+func (x *Color) UnmarshalJSON(data []byte) error {
+	type plain Color
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Red == 0 {
+		return errors.New("\"red\" property is required")
+	}
+
+	if x.Green == 0 {
+		return errors.New("\"green\" property is required")
+	}
+
+	if x.Blue == 0 {
+		return errors.New("\"blue\" property is required")
+	}
+
+	if x.Alpha == 0 {
+		return errors.New("\"alpha\" property is required")
+	}
+
+	return nil
+}
+
 // Represents a color range from a document.
 type ColorInformation struct {
 	// The range in the document where this color appears.
 	Range Range `json:"range"`
 	// The actual color value for this color range.
 	Color Color `json:"color"`
+}
+
+func (x *ColorInformation) UnmarshalJSON(data []byte) error {
+	type plain ColorInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	var _ json.Unmarshaler = &x.Color
+
+	return nil
 }
 
 type ColorPresentation struct {
@@ -1861,6 +2291,19 @@ type ColorPresentation struct {
 	AdditionalTextEdits []TextEdit `json:"additionalTextEdits,omitempty"`
 }
 
+func (x *ColorPresentation) UnmarshalJSON(data []byte) error {
+	type plain ColorPresentation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Label == "" {
+		return errors.New("\"label\" property is required")
+	}
+
+	return nil
+}
+
 // Parameters for a {@link ColorPresentationRequest}.
 type ColorPresentationParams struct {
 	WorkDoneProgressParams
@@ -1871,6 +2314,21 @@ type ColorPresentationParams struct {
 	Color Color `json:"color"`
 	// The range where the color would be inserted. Serves as a context.
 	Range Range `json:"range"`
+}
+
+func (x *ColorPresentationParams) UnmarshalJSON(data []byte) error {
+	type plain ColorPresentationParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Color
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
 }
 
 // Represents a reference to a command. Provides a title which
@@ -1885,6 +2343,23 @@ type Command struct {
 	// Arguments that the command handler should be
 	// invoked with.
 	Arguments []any `json:"arguments,omitempty"`
+}
+
+func (x *Command) UnmarshalJSON(data []byte) error {
+	type plain Command
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Title == "" {
+		return errors.New("\"title\" property is required")
+	}
+
+	if x.Command == "" {
+		return errors.New("\"command\" property is required")
+	}
+
+	return nil
 }
 
 // Completion client capabilities
@@ -1910,6 +2385,69 @@ type CompletionClientCapabilities struct {
 	// @since 3.17.0
 	CompletionList *CompletionClientCapabilitiesCompletionList `json:"completionList,omitempty"`
 }
+
+func (x *CompletionClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain CompletionClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type CompletionClientCapabilitiesCompletionItemTagSupport struct {
+	// The tags supported by the client.
+	ValueSet []CompletionItemTag `json:"valueSet"`
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemTagSupport) UnmarshalJSON(data []byte) error {
+	type plain CompletionClientCapabilitiesCompletionItemTagSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ValueSet == nil {
+		return errors.New("\"valueSet\" property is required")
+	}
+
+	return nil
+}
+
+type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
+	// The properties that a client can resolve lazily.
+	Properties []string `json:"properties"`
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemResolveSupport) UnmarshalJSON(data []byte) error {
+	type plain CompletionClientCapabilitiesCompletionItemResolveSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Properties == nil {
+		return errors.New("\"properties\" property is required")
+	}
+
+	return nil
+}
+
+type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
+	ValueSet []InsertTextMode `json:"valueSet"`
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) UnmarshalJSON(data []byte) error {
+	type plain CompletionClientCapabilitiesCompletionItemInsertTextModeSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ValueSet == nil {
+		return errors.New("\"valueSet\" property is required")
+	}
+
+	return nil
+}
+
 type CompletionClientCapabilitiesCompletionItem struct {
 	// Client supports snippets as insert text.
 	//
@@ -1957,17 +2495,16 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// @since 3.17.0
 	LabelDetailsSupport bool `json:"labelDetailsSupport,omitempty"`
 }
-type CompletionClientCapabilitiesCompletionItemTagSupport struct {
-	// The tags supported by the client.
-	ValueSet []CompletionItemTag `json:"valueSet"`
+
+func (x *CompletionClientCapabilitiesCompletionItem) UnmarshalJSON(data []byte) error {
+	type plain CompletionClientCapabilitiesCompletionItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
-type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
-	// The properties that a client can resolve lazily.
-	Properties []string `json:"properties"`
-}
-type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
-	ValueSet []InsertTextMode `json:"valueSet"`
-}
+
 type CompletionClientCapabilitiesCompletionItemKind struct {
 	// The completion item kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -1979,6 +2516,16 @@ type CompletionClientCapabilitiesCompletionItemKind struct {
 	// the initial version of the protocol.
 	ValueSet []CompletionItemKind `json:"valueSet,omitempty"`
 }
+
+func (x *CompletionClientCapabilitiesCompletionItemKind) UnmarshalJSON(data []byte) error {
+	type plain CompletionClientCapabilitiesCompletionItemKind
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type CompletionClientCapabilitiesCompletionList struct {
 	// The client supports the following itemDefaults on
 	// a completion list.
@@ -1991,6 +2538,15 @@ type CompletionClientCapabilitiesCompletionList struct {
 	ItemDefaults []string `json:"itemDefaults,omitempty"`
 }
 
+func (x *CompletionClientCapabilitiesCompletionList) UnmarshalJSON(data []byte) error {
+	type plain CompletionClientCapabilitiesCompletionList
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Contains additional information about the context in which a completion request is triggered.
 type CompletionContext struct {
 	// How the completion was triggered.
@@ -1998,6 +2554,19 @@ type CompletionContext struct {
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
 	TriggerCharacter string `json:"triggerCharacter,omitempty"`
+}
+
+func (x *CompletionContext) UnmarshalJSON(data []byte) error {
+	type plain CompletionContext
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.TriggerKind == 0 {
+		return errors.New("\"triggerKind\" property is required")
+	}
+
+	return nil
 }
 
 // A completion item represents a text snippet that is
@@ -2122,6 +2691,19 @@ type CompletionItem struct {
 	Data any `json:"data,omitempty"`
 }
 
+func (x *CompletionItem) UnmarshalJSON(data []byte) error {
+	type plain CompletionItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Label == "" {
+		return errors.New("\"label\" property is required")
+	}
+
+	return nil
+}
+
 // Additional details for a completion item label.
 //
 // @since 3.17.0
@@ -2132,6 +2714,15 @@ type CompletionItemLabelDetails struct {
 	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
 	// for fully qualified names and file paths.
 	Description string `json:"description,omitempty"`
+}
+
+func (x *CompletionItemLabelDetails) UnmarshalJSON(data []byte) error {
+	type plain CompletionItemLabelDetails
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Represents a collection of {@link CompletionItem completion items} to be presented
@@ -2159,6 +2750,42 @@ type CompletionList struct {
 	// The completion items.
 	Items []CompletionItem `json:"items"`
 }
+
+func (x *CompletionList) UnmarshalJSON(data []byte) error {
+	type plain CompletionList
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.IsIncomplete == false {
+		return errors.New("\"isIncomplete\" property is required")
+	}
+
+	if x.Items == nil {
+		return errors.New("\"items\" property is required")
+	}
+
+	return nil
+}
+
+type CompletionListItemDefaultsEditRange struct {
+	Insert  Range `json:"insert"`
+	Replace Range `json:"replace"`
+}
+
+func (x *CompletionListItemDefaultsEditRange) UnmarshalJSON(data []byte) error {
+	type plain CompletionListItemDefaultsEditRange
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Insert
+
+	var _ json.Unmarshaler = &x.Replace
+
+	return nil
+}
+
 type CompletionListItemDefaults struct {
 	// A default commit character set.
 	//
@@ -2181,9 +2808,14 @@ type CompletionListItemDefaults struct {
 	// @since 3.17.0
 	Data any `json:"data,omitempty"`
 }
-type CompletionListItemDefaultsEditRange struct {
-	Insert  Range `json:"insert"`
-	Replace Range `json:"replace"`
+
+func (x *CompletionListItemDefaults) UnmarshalJSON(data []byte) error {
+	type plain CompletionListItemDefaults
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Completion options.
@@ -2216,6 +2848,16 @@ type CompletionOptions struct {
 	// @since 3.17.0
 	CompletionItem *CompletionOptionsCompletionItem `json:"completionItem,omitempty"`
 }
+
+func (x *CompletionOptions) UnmarshalJSON(data []byte) error {
+	type plain CompletionOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type CompletionOptionsCompletionItem struct {
 	// The server has support for completion item label
 	// details (see also `CompletionItemLabelDetails`) when
@@ -2223,6 +2865,15 @@ type CompletionOptionsCompletionItem struct {
 	//
 	// @since 3.17.0
 	LabelDetailsSupport bool `json:"labelDetailsSupport,omitempty"`
+}
+
+func (x *CompletionOptionsCompletionItem) UnmarshalJSON(data []byte) error {
+	type plain CompletionOptionsCompletionItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Completion parameters
@@ -2235,10 +2886,28 @@ type CompletionParams struct {
 	Context *CompletionContext `json:"context,omitempty"`
 }
 
+func (x *CompletionParams) UnmarshalJSON(data []byte) error {
+	type plain CompletionParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Registration options for a {@link CompletionRequest}.
 type CompletionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CompletionOptions
+}
+
+func (x *CompletionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain CompletionRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type ConfigurationItem struct {
@@ -2248,9 +2917,31 @@ type ConfigurationItem struct {
 	Section string `json:"section,omitempty"`
 }
 
+func (x *ConfigurationItem) UnmarshalJSON(data []byte) error {
+	type plain ConfigurationItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The parameters of a configuration request.
 type ConfigurationParams struct {
 	Items []ConfigurationItem `json:"items"`
+}
+
+func (x *ConfigurationParams) UnmarshalJSON(data []byte) error {
+	type plain ConfigurationParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Items == nil {
+		return errors.New("\"items\" property is required")
+	}
+
+	return nil
 }
 
 // Create file operation.
@@ -2264,19 +2955,38 @@ type CreateFile struct {
 	Options *CreateFileOptions `json:"options,omitempty"`
 }
 
+func (x *CreateFile) UnmarshalJSON(data []byte) error {
+	type plain CreateFile
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
+}
+
 // createLiteral is a type that must be represented as the JSON-string "create".
 type createLiteral struct{}
 
-var createJSON = []byte("\"create\"")
-
 func (createLiteral) MarshalJSON() ([]byte, error) {
-	return createJSON, nil
+	return marshal("create")
 }
 func (*createLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, createJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, createJSON)
+
+	if value != "create" {
+		return errors.New("value must be \"create\"")
+	}
+
+	return nil
 }
 
 // Options to create a file.
@@ -2287,6 +2997,15 @@ type CreateFileOptions struct {
 	IgnoreIfExists bool `json:"ignoreIfExists,omitempty"`
 }
 
+func (x *CreateFileOptions) UnmarshalJSON(data []byte) error {
+	type plain CreateFileOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The parameters sent in notifications/requests for user-initiated creation of
 // files.
 //
@@ -2294,6 +3013,19 @@ type CreateFileOptions struct {
 type CreateFilesParams struct {
 	// An array of all files/folders created in this operation.
 	Files []FileCreate `json:"files"`
+}
+
+func (x *CreateFilesParams) UnmarshalJSON(data []byte) error {
+	type plain CreateFilesParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Files == nil {
+		return errors.New("\"files\" property is required")
+	}
+
+	return nil
 }
 
 // @since 3.14.0
@@ -2306,8 +3038,26 @@ type DeclarationClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitempty"`
 }
 
+func (x *DeclarationClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DeclarationClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type DeclarationOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *DeclarationOptions) UnmarshalJSON(data []byte) error {
+	type plain DeclarationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type DeclarationParams struct {
@@ -2316,10 +3066,28 @@ type DeclarationParams struct {
 	PartialResultParams
 }
 
+func (x *DeclarationParams) UnmarshalJSON(data []byte) error {
+	type plain DeclarationParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type DeclarationRegistrationOptions struct {
 	DeclarationOptions
 	TextDocumentRegistrationOptions
 	StaticRegistrationOptions
+}
+
+func (x *DeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DeclarationRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Client Capabilities for a {@link DefinitionRequest}.
@@ -2332,9 +3100,27 @@ type DefinitionClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitempty"`
 }
 
+func (x *DefinitionClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DefinitionClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Server Capabilities for a {@link DefinitionRequest}.
 type DefinitionOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *DefinitionOptions) UnmarshalJSON(data []byte) error {
+	type plain DefinitionOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parameters for a {@link DefinitionRequest}.
@@ -2344,10 +3130,28 @@ type DefinitionParams struct {
 	PartialResultParams
 }
 
+func (x *DefinitionParams) UnmarshalJSON(data []byte) error {
+	type plain DefinitionParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Registration options for a {@link DefinitionRequest}.
 type DefinitionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DefinitionOptions
+}
+
+func (x *DefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DefinitionRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Delete file operation
@@ -2361,19 +3165,38 @@ type DeleteFile struct {
 	Options *DeleteFileOptions `json:"options,omitempty"`
 }
 
+func (x *DeleteFile) UnmarshalJSON(data []byte) error {
+	type plain DeleteFile
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
+}
+
 // deleteLiteral is a type that must be represented as the JSON-string "delete".
 type deleteLiteral struct{}
 
-var deleteJSON = []byte("\"delete\"")
-
 func (deleteLiteral) MarshalJSON() ([]byte, error) {
-	return deleteJSON, nil
+	return marshal("delete")
 }
 func (*deleteLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, deleteJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, deleteJSON)
+
+	if value != "delete" {
+		return errors.New("value must be \"delete\"")
+	}
+
+	return nil
 }
 
 // Delete file options
@@ -2384,6 +3207,15 @@ type DeleteFileOptions struct {
 	IgnoreIfNotExists bool `json:"ignoreIfNotExists,omitempty"`
 }
 
+func (x *DeleteFileOptions) UnmarshalJSON(data []byte) error {
+	type plain DeleteFileOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The parameters sent in notifications/requests for user-initiated deletes of
 // files.
 //
@@ -2391,6 +3223,19 @@ type DeleteFileOptions struct {
 type DeleteFilesParams struct {
 	// An array of all files/folders deleted in this operation.
 	Files []FileDelete `json:"files"`
+}
+
+func (x *DeleteFilesParams) UnmarshalJSON(data []byte) error {
+	type plain DeleteFilesParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Files == nil {
+		return errors.New("\"files\" property is required")
+	}
+
+	return nil
 }
 
 // Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
@@ -2428,6 +3273,21 @@ type Diagnostic struct {
 	Data any `json:"data,omitempty"`
 }
 
+func (x *Diagnostic) UnmarshalJSON(data []byte) error {
+	type plain Diagnostic
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	if x.Message == "" {
+		return errors.New("\"message\" property is required")
+	}
+
+	return nil
+}
+
 // Client capabilities specific to diagnostic pull requests.
 //
 // @since 3.17.0
@@ -2438,6 +3298,15 @@ type DiagnosticClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 	// Whether the clients supports related documents for document diagnostic pulls.
 	RelatedDocumentSupport bool `json:"relatedDocumentSupport,omitempty"`
+}
+
+func (x *DiagnosticClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DiagnosticClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Diagnostic options.
@@ -2457,6 +3326,23 @@ type DiagnosticOptions struct {
 	WorkspaceDiagnostics bool `json:"workspaceDiagnostics"`
 }
 
+func (x *DiagnosticOptions) UnmarshalJSON(data []byte) error {
+	type plain DiagnosticOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.InterFileDependencies == false {
+		return errors.New("\"interFileDependencies\" property is required")
+	}
+
+	if x.WorkspaceDiagnostics == false {
+		return errors.New("\"workspaceDiagnostics\" property is required")
+	}
+
+	return nil
+}
+
 // Diagnostic registration options.
 //
 // @since 3.17.0
@@ -2464,6 +3350,15 @@ type DiagnosticRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DiagnosticOptions
 	StaticRegistrationOptions
+}
+
+func (x *DiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DiagnosticRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Represents a related message and source code location for a diagnostic. This should be
@@ -2476,11 +3371,39 @@ type DiagnosticRelatedInformation struct {
 	Message string `json:"message"`
 }
 
+func (x *DiagnosticRelatedInformation) UnmarshalJSON(data []byte) error {
+	type plain DiagnosticRelatedInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Location
+
+	if x.Message == "" {
+		return errors.New("\"message\" property is required")
+	}
+
+	return nil
+}
+
 // Cancellation data returned from a diagnostic request.
 //
 // @since 3.17.0
 type DiagnosticServerCancellationData struct {
 	RetriggerRequest bool `json:"retriggerRequest"`
+}
+
+func (x *DiagnosticServerCancellationData) UnmarshalJSON(data []byte) error {
+	type plain DiagnosticServerCancellationData
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.RetriggerRequest == false {
+		return errors.New("\"retriggerRequest\" property is required")
+	}
+
+	return nil
 }
 
 // Workspace client capabilities specific to diagnostic pull requests.
@@ -2497,9 +3420,27 @@ type DiagnosticWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitempty"`
 }
 
+func (x *DiagnosticWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DiagnosticWorkspaceClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type DidChangeConfigurationClientCapabilities struct {
 	// Did change configuration notification supports dynamic registration.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+}
+
+func (x *DidChangeConfigurationClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DidChangeConfigurationClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameters of a change configuration notification.
@@ -2508,8 +3449,30 @@ type DidChangeConfigurationParams struct {
 	Settings any `json:"settings"`
 }
 
+func (x *DidChangeConfigurationParams) UnmarshalJSON(data []byte) error {
+	type plain DidChangeConfigurationParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Settings == nil {
+		return errors.New("\"settings\" property is required")
+	}
+
+	return nil
+}
+
 type DidChangeConfigurationRegistrationOptions struct {
 	Section *OneOf2[string, []string] `json:"section,omitempty"`
+}
+
+func (x *DidChangeConfigurationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DidChangeConfigurationRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The params sent in a change notebook document notification.
@@ -2537,6 +3500,19 @@ type DidChangeNotebookDocumentParams struct {
 	Change NotebookDocumentChangeEvent `json:"change"`
 }
 
+func (x *DidChangeNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidChangeNotebookDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.NotebookDocument
+
+	var _ json.Unmarshaler = &x.Change
+
+	return nil
+}
+
 // The change text document notification's parameters.
 type DidChangeTextDocumentParams struct {
 	// The document that did change. The version number points
@@ -2557,6 +3533,21 @@ type DidChangeTextDocumentParams struct {
 	ContentChanges []TextDocumentContentChangeEvent `json:"contentChanges"`
 }
 
+func (x *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidChangeTextDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	if x.ContentChanges == nil {
+		return errors.New("\"contentChanges\" property is required")
+	}
+
+	return nil
+}
+
 type DidChangeWatchedFilesClientCapabilities struct {
 	// Did change watched files notification supports dynamic registration. Please note
 	// that the current protocol doesn't support static configuration for file changes
@@ -2569,10 +3560,32 @@ type DidChangeWatchedFilesClientCapabilities struct {
 	RelativePatternSupport bool `json:"relativePatternSupport,omitempty"`
 }
 
+func (x *DidChangeWatchedFilesClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DidChangeWatchedFilesClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The watched files change notification's parameters.
 type DidChangeWatchedFilesParams struct {
 	// The actual file events.
 	Changes []FileEvent `json:"changes"`
+}
+
+func (x *DidChangeWatchedFilesParams) UnmarshalJSON(data []byte) error {
+	type plain DidChangeWatchedFilesParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Changes == nil {
+		return errors.New("\"changes\" property is required")
+	}
+
+	return nil
 }
 
 // Describe options to be used when registered for text document change events.
@@ -2581,10 +3594,34 @@ type DidChangeWatchedFilesRegistrationOptions struct {
 	Watchers []FileSystemWatcher `json:"watchers"`
 }
 
+func (x *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DidChangeWatchedFilesRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Watchers == nil {
+		return errors.New("\"watchers\" property is required")
+	}
+
+	return nil
+}
+
 // The parameters of a `workspace/didChangeWorkspaceFolders` notification.
 type DidChangeWorkspaceFoldersParams struct {
 	// The actual workspace folder change event.
 	Event WorkspaceFoldersChangeEvent `json:"event"`
+}
+
+func (x *DidChangeWorkspaceFoldersParams) UnmarshalJSON(data []byte) error {
+	type plain DidChangeWorkspaceFoldersParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Event
+
+	return nil
 }
 
 // The params sent in a close notebook document notification.
@@ -2598,10 +3635,36 @@ type DidCloseNotebookDocumentParams struct {
 	CellTextDocuments []TextDocumentIdentifier `json:"cellTextDocuments"`
 }
 
+func (x *DidCloseNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidCloseNotebookDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.NotebookDocument
+
+	if x.CellTextDocuments == nil {
+		return errors.New("\"cellTextDocuments\" property is required")
+	}
+
+	return nil
+}
+
 // The parameters sent in a close text document notification
 type DidCloseTextDocumentParams struct {
 	// The document that was closed.
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
+}
+
+func (x *DidCloseTextDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidCloseTextDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
 }
 
 // The params sent in an open notebook document notification.
@@ -2615,10 +3678,36 @@ type DidOpenNotebookDocumentParams struct {
 	CellTextDocuments []TextDocumentItem `json:"cellTextDocuments"`
 }
 
+func (x *DidOpenNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidOpenNotebookDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.NotebookDocument
+
+	if x.CellTextDocuments == nil {
+		return errors.New("\"cellTextDocuments\" property is required")
+	}
+
+	return nil
+}
+
 // The parameters sent in an open text document notification
 type DidOpenTextDocumentParams struct {
 	// The document that was opened.
 	TextDocument TextDocumentItem `json:"textDocument"`
+}
+
+func (x *DidOpenTextDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidOpenTextDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
 }
 
 // The params sent in a save notebook document notification.
@@ -2627,6 +3716,17 @@ type DidOpenTextDocumentParams struct {
 type DidSaveNotebookDocumentParams struct {
 	// The notebook document that got saved.
 	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
+}
+
+func (x *DidSaveNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidSaveNotebookDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.NotebookDocument
+
+	return nil
 }
 
 // The parameters sent in a save text document notification
@@ -2638,6 +3738,17 @@ type DidSaveTextDocumentParams struct {
 	Text string `json:"text,omitempty"`
 }
 
+func (x *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain DidSaveTextDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 type DocumentColorClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `DocumentColorRegistrationOptions` return value
@@ -2645,8 +3756,26 @@ type DocumentColorClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *DocumentColorClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DocumentColorClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type DocumentColorOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *DocumentColorOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentColorOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parameters for a {@link DocumentColorRequest}.
@@ -2657,10 +3786,30 @@ type DocumentColorParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (x *DocumentColorParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentColorParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 type DocumentColorRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentColorOptions
 	StaticRegistrationOptions
+}
+
+func (x *DocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentColorRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parameters of the document diagnostic request.
@@ -2677,11 +3826,35 @@ type DocumentDiagnosticParams struct {
 	PreviousResultId string `json:"previousResultId,omitempty"`
 }
 
+func (x *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentDiagnosticParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 // A partial result for a document diagnostic report.
 //
 // @since 3.17.0
 type DocumentDiagnosticReportPartialResult struct {
 	RelatedDocuments map[DocumentURI]OneOf2[FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport] `json:"relatedDocuments"`
+}
+
+func (x *DocumentDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
+	type plain DocumentDiagnosticReportPartialResult
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.RelatedDocuments == nil {
+		return errors.New("\"relatedDocuments\" property is required")
+	}
+
+	return nil
 }
 
 // Client capabilities of a {@link DocumentFormattingRequest}.
@@ -2690,9 +3863,27 @@ type DocumentFormattingClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *DocumentFormattingClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DocumentFormattingClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Provider options for a {@link DocumentFormattingRequest}.
 type DocumentFormattingOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *DocumentFormattingOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentFormattingOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameters of a {@link DocumentFormattingRequest}.
@@ -2704,10 +3895,32 @@ type DocumentFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
+func (x *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentFormattingParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Options
+
+	return nil
+}
+
 // Registration options for a {@link DocumentFormattingRequest}.
 type DocumentFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentFormattingOptions
+}
+
+func (x *DocumentFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentFormattingRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A document highlight is a range inside a text document which deserves
@@ -2720,15 +3933,44 @@ type DocumentHighlight struct {
 	Kind DocumentHighlightKind `json:"kind,omitempty"`
 }
 
+func (x *DocumentHighlight) UnmarshalJSON(data []byte) error {
+	type plain DocumentHighlight
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
+}
+
 // Client Capabilities for a {@link DocumentHighlightRequest}.
 type DocumentHighlightClientCapabilities struct {
 	// Whether document highlight supports dynamic registration.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *DocumentHighlightClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DocumentHighlightClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Provider options for a {@link DocumentHighlightRequest}.
 type DocumentHighlightOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *DocumentHighlightOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentHighlightOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parameters for a {@link DocumentHighlightRequest}.
@@ -2738,10 +3980,28 @@ type DocumentHighlightParams struct {
 	PartialResultParams
 }
 
+func (x *DocumentHighlightParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentHighlightParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Registration options for a {@link DocumentHighlightRequest}.
 type DocumentHighlightRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentHighlightOptions
+}
+
+func (x *DocumentHighlightRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentHighlightRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A document link is a range in a text document that links to an internal or external resource, like another
@@ -2764,6 +4024,17 @@ type DocumentLink struct {
 	Data any `json:"data,omitempty"`
 }
 
+func (x *DocumentLink) UnmarshalJSON(data []byte) error {
+	type plain DocumentLink
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
+}
+
 // The client capabilities of a {@link DocumentLinkRequest}.
 type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
@@ -2774,11 +4045,29 @@ type DocumentLinkClientCapabilities struct {
 	TooltipSupport bool `json:"tooltipSupport,omitempty"`
 }
 
+func (x *DocumentLinkClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DocumentLinkClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Provider options for a {@link DocumentLinkRequest}.
 type DocumentLinkOptions struct {
 	WorkDoneProgressOptions
 	// Document links have a resolve provider as well.
 	ResolveProvider bool `json:"resolveProvider,omitempty"`
+}
+
+func (x *DocumentLinkOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentLinkOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameters of a {@link DocumentLinkRequest}.
@@ -2789,10 +4078,30 @@ type DocumentLinkParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (x *DocumentLinkParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentLinkParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 // Registration options for a {@link DocumentLinkRequest}.
 type DocumentLinkRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentLinkOptions
+}
+
+func (x *DocumentLinkRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentLinkRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Client capabilities of a {@link DocumentOnTypeFormattingRequest}.
@@ -2801,12 +4110,34 @@ type DocumentOnTypeFormattingClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *DocumentOnTypeFormattingClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DocumentOnTypeFormattingClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Provider options for a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingOptions struct {
 	// A character on which formatting should be triggered, like `{`.
 	FirstTriggerCharacter string `json:"firstTriggerCharacter"`
 	// More trigger characters.
 	MoreTriggerCharacter []string `json:"moreTriggerCharacter,omitempty"`
+}
+
+func (x *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentOnTypeFormattingOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.FirstTriggerCharacter == "" {
+		return errors.New("\"firstTriggerCharacter\" property is required")
+	}
+
+	return nil
 }
 
 // The parameters of a {@link DocumentOnTypeFormattingRequest}.
@@ -2826,10 +4157,38 @@ type DocumentOnTypeFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
+func (x *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentOnTypeFormattingParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Position
+
+	if x.Ch == "" {
+		return errors.New("\"ch\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.Options
+
+	return nil
+}
+
 // Registration options for a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentOnTypeFormattingOptions
+}
+
+func (x *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentOnTypeFormattingRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Client capabilities of a {@link DocumentRangeFormattingRequest}.
@@ -2838,9 +4197,27 @@ type DocumentRangeFormattingClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *DocumentRangeFormattingClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DocumentRangeFormattingClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Provider options for a {@link DocumentRangeFormattingRequest}.
 type DocumentRangeFormattingOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *DocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentRangeFormattingOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameters of a {@link DocumentRangeFormattingRequest}.
@@ -2854,10 +4231,34 @@ type DocumentRangeFormattingParams struct {
 	Options FormattingOptions `json:"options"`
 }
 
+func (x *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentRangeFormattingParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Range
+
+	var _ json.Unmarshaler = &x.Options
+
+	return nil
+}
+
 // Registration options for a {@link DocumentRangeFormattingRequest}.
 type DocumentRangeFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentRangeFormattingOptions
+}
+
+func (x *DocumentRangeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentRangeFormattingRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Represents programming constructs like variables, classes, interfaces etc.
@@ -2891,6 +4292,27 @@ type DocumentSymbol struct {
 	Children []DocumentSymbol `json:"children,omitempty"`
 }
 
+func (x *DocumentSymbol) UnmarshalJSON(data []byte) error {
+	type plain DocumentSymbol
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Name == "" {
+		return errors.New("\"name\" property is required")
+	}
+
+	if x.Kind == 0 {
+		return errors.New("\"kind\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	var _ json.Unmarshaler = &x.SelectionRange
+
+	return nil
+}
+
 // Client Capabilities for a {@link DocumentSymbolRequest}.
 type DocumentSymbolClientCapabilities struct {
 	// Whether document symbol supports dynamic registration.
@@ -2912,6 +4334,16 @@ type DocumentSymbolClientCapabilities struct {
 	// @since 3.16.0
 	LabelSupport bool `json:"labelSupport,omitempty"`
 }
+
+func (x *DocumentSymbolClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain DocumentSymbolClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type DocumentSymbolClientCapabilitiesSymbolKind struct {
 	// The symbol kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -2923,9 +4355,32 @@ type DocumentSymbolClientCapabilitiesSymbolKind struct {
 	// the initial version of the protocol.
 	ValueSet []SymbolKind `json:"valueSet,omitempty"`
 }
+
+func (x *DocumentSymbolClientCapabilitiesSymbolKind) UnmarshalJSON(data []byte) error {
+	type plain DocumentSymbolClientCapabilitiesSymbolKind
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type DocumentSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag `json:"valueSet"`
+}
+
+func (x *DocumentSymbolClientCapabilitiesTagSupport) UnmarshalJSON(data []byte) error {
+	type plain DocumentSymbolClientCapabilitiesTagSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ValueSet == nil {
+		return errors.New("\"valueSet\" property is required")
+	}
+
+	return nil
 }
 
 // Provider options for a {@link DocumentSymbolRequest}.
@@ -2938,6 +4393,15 @@ type DocumentSymbolOptions struct {
 	Label string `json:"label,omitempty"`
 }
 
+func (x *DocumentSymbolOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentSymbolOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Parameters for a {@link DocumentSymbolRequest}.
 type DocumentSymbolParams struct {
 	WorkDoneProgressParams
@@ -2946,10 +4410,30 @@ type DocumentSymbolParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (x *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
+	type plain DocumentSymbolParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 // Registration options for a {@link DocumentSymbolRequest}.
 type DocumentSymbolRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentSymbolOptions
+}
+
+func (x *DocumentSymbolRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain DocumentSymbolRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The client capabilities of a {@link ExecuteCommandRequest}.
@@ -2958,11 +4442,33 @@ type ExecuteCommandClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *ExecuteCommandClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain ExecuteCommandClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The server capabilities of a {@link ExecuteCommandRequest}.
 type ExecuteCommandOptions struct {
 	WorkDoneProgressOptions
 	// The commands to be executed on the server
 	Commands []string `json:"commands"`
+}
+
+func (x *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
+	type plain ExecuteCommandOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Commands == nil {
+		return errors.New("\"commands\" property is required")
+	}
+
+	return nil
 }
 
 // The parameters of a {@link ExecuteCommandRequest}.
@@ -2974,9 +4480,31 @@ type ExecuteCommandParams struct {
 	Arguments []any `json:"arguments,omitempty"`
 }
 
+func (x *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
+	type plain ExecuteCommandParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Command == "" {
+		return errors.New("\"command\" property is required")
+	}
+
+	return nil
+}
+
 // Registration options for a {@link ExecuteCommandRequest}.
 type ExecuteCommandRegistrationOptions struct {
 	ExecuteCommandOptions
+}
+
+func (x *ExecuteCommandRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain ExecuteCommandRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type ExecutionSummary struct {
@@ -2989,12 +4517,38 @@ type ExecutionSummary struct {
 	Success bool `json:"success,omitempty"`
 }
 
+func (x *ExecutionSummary) UnmarshalJSON(data []byte) error {
+	type plain ExecutionSummary
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ExecutionOrder == 0 {
+		return errors.New("\"executionOrder\" property is required")
+	}
+
+	return nil
+}
+
 // Represents information on a file/folder create.
 //
 // @since 3.16.0
 type FileCreate struct {
 	// A file:// URI for the location of the file/folder being created.
 	URI string `json:"uri"`
+}
+
+func (x *FileCreate) UnmarshalJSON(data []byte) error {
+	type plain FileCreate
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == "" {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
 }
 
 // Represents information on a file/folder delete.
@@ -3005,12 +4559,42 @@ type FileDelete struct {
 	URI string `json:"uri"`
 }
 
+func (x *FileDelete) UnmarshalJSON(data []byte) error {
+	type plain FileDelete
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == "" {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
+}
+
 // An event describing a file change.
 type FileEvent struct {
 	// The file's uri.
 	URI DocumentURI `json:"uri"`
 	// The change type.
 	Type FileChangeType `json:"type"`
+}
+
+func (x *FileEvent) UnmarshalJSON(data []byte) error {
+	type plain FileEvent
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.Type == 0 {
+		return errors.New("\"type\" property is required")
+	}
+
+	return nil
 }
 
 // Capabilities relating to events from file operations by the user in the client.
@@ -3036,6 +4620,15 @@ type FileOperationClientCapabilities struct {
 	WillDelete bool `json:"willDelete,omitempty"`
 }
 
+func (x *FileOperationClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain FileOperationClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // A filter to describe in which file operation requests or notifications
 // the server is interested in receiving.
 //
@@ -3045,6 +4638,17 @@ type FileOperationFilter struct {
 	Scheme string `json:"scheme,omitempty"`
 	// The actual file operation pattern.
 	Pattern FileOperationPattern `json:"pattern"`
+}
+
+func (x *FileOperationFilter) UnmarshalJSON(data []byte) error {
+	type plain FileOperationFilter
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Pattern
+
+	return nil
 }
 
 // Options for notifications/requests for user operations on files.
@@ -3063,6 +4667,15 @@ type FileOperationOptions struct {
 	DidDelete *FileOperationRegistrationOptions `json:"didDelete,omitempty"`
 	// The server is interested in receiving willDeleteFiles file requests.
 	WillDelete *FileOperationRegistrationOptions `json:"willDelete,omitempty"`
+}
+
+func (x *FileOperationOptions) UnmarshalJSON(data []byte) error {
+	type plain FileOperationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A pattern to describe in which file operation requests or notifications
@@ -3086,6 +4699,19 @@ type FileOperationPattern struct {
 	Options *FileOperationPatternOptions `json:"options,omitempty"`
 }
 
+func (x *FileOperationPattern) UnmarshalJSON(data []byte) error {
+	type plain FileOperationPattern
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Glob == "" {
+		return errors.New("\"glob\" property is required")
+	}
+
+	return nil
+}
+
 // Matching options for the file operation pattern.
 //
 // @since 3.16.0
@@ -3094,12 +4720,34 @@ type FileOperationPatternOptions struct {
 	IgnoreCase bool `json:"ignoreCase,omitempty"`
 }
 
+func (x *FileOperationPatternOptions) UnmarshalJSON(data []byte) error {
+	type plain FileOperationPatternOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The options to register for file operations.
 //
 // @since 3.16.0
 type FileOperationRegistrationOptions struct {
 	// The actual filters.
 	Filters []FileOperationFilter `json:"filters"`
+}
+
+func (x *FileOperationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain FileOperationRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Filters == nil {
+		return errors.New("\"filters\" property is required")
+	}
+
+	return nil
 }
 
 // Represents information on a file/folder rename.
@@ -3112,6 +4760,23 @@ type FileRename struct {
 	NewURI string `json:"newUri"`
 }
 
+func (x *FileRename) UnmarshalJSON(data []byte) error {
+	type plain FileRename
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.OldURI == "" {
+		return errors.New("\"oldUri\" property is required")
+	}
+
+	if x.NewURI == "" {
+		return errors.New("\"newUri\" property is required")
+	}
+
+	return nil
+}
+
 type FileSystemWatcher struct {
 	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
 	//
@@ -3121,6 +4786,17 @@ type FileSystemWatcher struct {
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
 	Kind WatchKind `json:"kind,omitempty"`
+}
+
+func (x *FileSystemWatcher) UnmarshalJSON(data []byte) error {
+	type plain FileSystemWatcher
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.GlobPattern
+
+	return nil
 }
 
 // Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
@@ -3148,6 +4824,23 @@ type FoldingRange struct {
 	CollapsedText string `json:"collapsedText,omitempty"`
 }
 
+func (x *FoldingRange) UnmarshalJSON(data []byte) error {
+	type plain FoldingRange
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.StartLine == 0 {
+		return errors.New("\"startLine\" property is required")
+	}
+
+	if x.EndLine == 0 {
+		return errors.New("\"endLine\" property is required")
+	}
+
+	return nil
+}
+
 type FoldingRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration for folding range
 	// providers. If this is set to `true` the client supports the new
@@ -3171,6 +4864,16 @@ type FoldingRangeClientCapabilities struct {
 	// @since 3.17.0
 	FoldingRange *FoldingRangeClientCapabilitiesFoldingRange `json:"foldingRange,omitempty"`
 }
+
+func (x *FoldingRangeClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain FoldingRangeClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
 	// The folding range kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -3178,6 +4881,16 @@ type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
 	// to a default value when unknown.
 	ValueSet []FoldingRangeKind `json:"valueSet,omitempty"`
 }
+
+func (x *FoldingRangeClientCapabilitiesFoldingRangeKind) UnmarshalJSON(data []byte) error {
+	type plain FoldingRangeClientCapabilitiesFoldingRangeKind
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type FoldingRangeClientCapabilitiesFoldingRange struct {
 	// If set, the client signals that it supports setting collapsedText on
 	// folding ranges to display custom labels instead of the default text.
@@ -3186,8 +4899,26 @@ type FoldingRangeClientCapabilitiesFoldingRange struct {
 	CollapsedText bool `json:"collapsedText,omitempty"`
 }
 
+func (x *FoldingRangeClientCapabilitiesFoldingRange) UnmarshalJSON(data []byte) error {
+	type plain FoldingRangeClientCapabilitiesFoldingRange
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type FoldingRangeOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *FoldingRangeOptions) UnmarshalJSON(data []byte) error {
+	type plain FoldingRangeOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parameters for a {@link FoldingRangeRequest}.
@@ -3198,10 +4929,30 @@ type FoldingRangeParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (x *FoldingRangeParams) UnmarshalJSON(data []byte) error {
+	type plain FoldingRangeParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 type FoldingRangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	FoldingRangeOptions
 	StaticRegistrationOptions
+}
+
+func (x *FoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain FoldingRangeRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Value-object describing what options formatting should use.
@@ -3224,6 +4975,23 @@ type FormattingOptions struct {
 	TrimFinalNewlines bool `json:"trimFinalNewlines,omitempty"`
 }
 
+func (x *FormattingOptions) UnmarshalJSON(data []byte) error {
+	type plain FormattingOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.TabSize == 0 {
+		return errors.New("\"tabSize\" property is required")
+	}
+
+	if x.InsertSpaces == false {
+		return errors.New("\"insertSpaces\" property is required")
+	}
+
+	return nil
+}
+
 // A diagnostic report with a full set of problems.
 //
 // @since 3.17.0
@@ -3238,19 +5006,38 @@ type FullDocumentDiagnosticReport struct {
 	Items []Diagnostic `json:"items"`
 }
 
+func (x *FullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	type plain FullDocumentDiagnosticReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	if x.Items == nil {
+		return errors.New("\"items\" property is required")
+	}
+
+	return nil
+}
+
 // fullLiteral is a type that must be represented as the JSON-string "full".
 type fullLiteral struct{}
 
-var fullJSON = []byte("\"full\"")
-
 func (fullLiteral) MarshalJSON() ([]byte, error) {
-	return fullJSON, nil
+	return marshal("full")
 }
 func (*fullLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, fullJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, fullJSON)
+
+	if value != "full" {
+		return errors.New("value must be \"full\"")
+	}
+
+	return nil
 }
 
 // General client capabilities.
@@ -3292,6 +5079,16 @@ type GeneralClientCapabilities struct {
 	// @since 3.17.0
 	PositionEncodings []PositionEncodingKind `json:"positionEncodings,omitempty"`
 }
+
+func (x *GeneralClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain GeneralClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type GeneralClientCapabilitiesStaleRequestSupport struct {
 	// The client will actively cancel the request.
 	Cancel bool `json:"cancel"`
@@ -3299,6 +5096,23 @@ type GeneralClientCapabilitiesStaleRequestSupport struct {
 	// will retry the request if it receives a
 	// response with error code `ContentModified`
 	RetryOnContentModified []string `json:"retryOnContentModified"`
+}
+
+func (x *GeneralClientCapabilitiesStaleRequestSupport) UnmarshalJSON(data []byte) error {
+	type plain GeneralClientCapabilitiesStaleRequestSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Cancel == false {
+		return errors.New("\"cancel\" property is required")
+	}
+
+	if x.RetryOnContentModified == nil {
+		return errors.New("\"retryOnContentModified\" property is required")
+	}
+
+	return nil
 }
 
 // The result of a hover request.
@@ -3310,6 +5124,17 @@ type Hover struct {
 	Range *Range `json:"range,omitempty"`
 }
 
+func (x *Hover) UnmarshalJSON(data []byte) error {
+	type plain Hover
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Contents
+
+	return nil
+}
+
 type HoverClientCapabilities struct {
 	// Whether hover supports dynamic registration.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
@@ -3318,9 +5143,27 @@ type HoverClientCapabilities struct {
 	ContentFormat []MarkupKind `json:"contentFormat,omitempty"`
 }
 
+func (x *HoverClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain HoverClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Hover options.
 type HoverOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *HoverOptions) UnmarshalJSON(data []byte) error {
+	type plain HoverOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parameters for a {@link HoverRequest}.
@@ -3329,10 +5172,28 @@ type HoverParams struct {
 	WorkDoneProgressParams
 }
 
+func (x *HoverParams) UnmarshalJSON(data []byte) error {
+	type plain HoverParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Registration options for a {@link HoverRequest}.
 type HoverRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	HoverOptions
+}
+
+func (x *HoverRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain HoverRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.6.0
@@ -3347,8 +5208,26 @@ type ImplementationClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitempty"`
 }
 
+func (x *ImplementationClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain ImplementationClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type ImplementationOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *ImplementationOptions) UnmarshalJSON(data []byte) error {
+	type plain ImplementationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type ImplementationParams struct {
@@ -3357,10 +5236,28 @@ type ImplementationParams struct {
 	PartialResultParams
 }
 
+func (x *ImplementationParams) UnmarshalJSON(data []byte) error {
+	type plain ImplementationParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type ImplementationRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	ImplementationOptions
 	StaticRegistrationOptions
+}
+
+func (x *ImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain ImplementationRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The data type of the ResponseError if the
@@ -3373,9 +5270,31 @@ type InitializeError struct {
 	Retry bool `json:"retry"`
 }
 
+func (x *InitializeError) UnmarshalJSON(data []byte) error {
+	type plain InitializeError
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Retry == false {
+		return errors.New("\"retry\" property is required")
+	}
+
+	return nil
+}
+
 type InitializeParams struct {
 	_InitializeParams
 	WorkspaceFoldersInitializeParams
+}
+
+func (x *InitializeParams) UnmarshalJSON(data []byte) error {
+	type plain InitializeParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The result returned from an initialize request.
@@ -3387,6 +5306,18 @@ type InitializeResult struct {
 	// @since 3.15.0
 	ServerInfo *InitializeResultServerInfo `json:"serverInfo,omitempty"`
 }
+
+func (x *InitializeResult) UnmarshalJSON(data []byte) error {
+	type plain InitializeResult
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Capabilities
+
+	return nil
+}
+
 type InitializeResultServerInfo struct {
 	// The name of the server as defined by the server.
 	Name string `json:"name"`
@@ -3394,7 +5325,29 @@ type InitializeResultServerInfo struct {
 	Version string `json:"version,omitempty"`
 }
 
+func (x *InitializeResultServerInfo) UnmarshalJSON(data []byte) error {
+	type plain InitializeResultServerInfo
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Name == "" {
+		return errors.New("\"name\" property is required")
+	}
+
+	return nil
+}
+
 type InitializedParams struct{}
+
+func (x *InitializedParams) UnmarshalJSON(data []byte) error {
+	type plain InitializedParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // Inlay hint information.
 //
@@ -3435,6 +5388,19 @@ type InlayHint struct {
 	Data any `json:"data,omitempty"`
 }
 
+func (x *InlayHint) UnmarshalJSON(data []byte) error {
+	type plain InlayHint
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Position
+
+	var _ json.Unmarshaler = &x.Label
+
+	return nil
+}
+
 // Inlay hint client capabilities.
 //
 // @since 3.17.0
@@ -3445,9 +5411,32 @@ type InlayHintClientCapabilities struct {
 	// hint.
 	ResolveSupport *InlayHintClientCapabilitiesResolveSupport `json:"resolveSupport,omitempty"`
 }
+
+func (x *InlayHintClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain InlayHintClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type InlayHintClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily.
 	Properties []string `json:"properties"`
+}
+
+func (x *InlayHintClientCapabilitiesResolveSupport) UnmarshalJSON(data []byte) error {
+	type plain InlayHintClientCapabilitiesResolveSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Properties == nil {
+		return errors.New("\"properties\" property is required")
+	}
+
+	return nil
 }
 
 // An inlay hint label part allows for interactive and composite labels
@@ -3480,6 +5469,19 @@ type InlayHintLabelPart struct {
 	Command *Command `json:"command,omitempty"`
 }
 
+func (x *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
+	type plain InlayHintLabelPart
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Value == "" {
+		return errors.New("\"value\" property is required")
+	}
+
+	return nil
+}
+
 // Inlay hint options used during static registration.
 //
 // @since 3.17.0
@@ -3488,6 +5490,15 @@ type InlayHintOptions struct {
 	// The server provides support to resolve additional
 	// information for an inlay hint item.
 	ResolveProvider bool `json:"resolveProvider,omitempty"`
+}
+
+func (x *InlayHintOptions) UnmarshalJSON(data []byte) error {
+	type plain InlayHintOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A parameter literal used in inlay hint requests.
@@ -3501,6 +5512,19 @@ type InlayHintParams struct {
 	Range Range `json:"range"`
 }
 
+func (x *InlayHintParams) UnmarshalJSON(data []byte) error {
+	type plain InlayHintParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
+}
+
 // Inlay hint options used during static or dynamic registration.
 //
 // @since 3.17.0
@@ -3508,6 +5532,15 @@ type InlayHintRegistrationOptions struct {
 	InlayHintOptions
 	TextDocumentRegistrationOptions
 	StaticRegistrationOptions
+}
+
+func (x *InlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain InlayHintRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Client workspace capabilities specific to inlay hints.
@@ -3524,12 +5557,30 @@ type InlayHintWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitempty"`
 }
 
+func (x *InlayHintWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain InlayHintWorkspaceClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Client capabilities specific to inline values.
 //
 // @since 3.17.0
 type InlineValueClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline value providers.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+}
+
+func (x *InlineValueClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain InlineValueClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.17.0
@@ -3539,6 +5590,21 @@ type InlineValueContext struct {
 	// The document range where execution has stopped.
 	// Typically the end position of the range denotes the line where the inline values are shown.
 	StoppedLocation Range `json:"stoppedLocation"`
+}
+
+func (x *InlineValueContext) UnmarshalJSON(data []byte) error {
+	type plain InlineValueContext
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.FrameId == 0 {
+		return errors.New("\"frameId\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.StoppedLocation
+
+	return nil
 }
 
 // Provide an inline value through an expression evaluation.
@@ -3554,11 +5620,31 @@ type InlineValueEvaluatableExpression struct {
 	Expression string `json:"expression,omitempty"`
 }
 
+func (x *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
+	type plain InlineValueEvaluatableExpression
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
+}
+
 // Inline value options used during static registration.
 //
 // @since 3.17.0
 type InlineValueOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *InlineValueOptions) UnmarshalJSON(data []byte) error {
+	type plain InlineValueOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A parameter literal used in inline value requests.
@@ -3575,6 +5661,21 @@ type InlineValueParams struct {
 	Context InlineValueContext `json:"context"`
 }
 
+func (x *InlineValueParams) UnmarshalJSON(data []byte) error {
+	type plain InlineValueParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Range
+
+	var _ json.Unmarshaler = &x.Context
+
+	return nil
+}
+
 // Inline value options used during static or dynamic registration.
 //
 // @since 3.17.0
@@ -3582,6 +5683,15 @@ type InlineValueRegistrationOptions struct {
 	InlineValueOptions
 	TextDocumentRegistrationOptions
 	StaticRegistrationOptions
+}
+
+func (x *InlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain InlineValueRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Provide inline value as text.
@@ -3592,6 +5702,21 @@ type InlineValueText struct {
 	Range Range `json:"range"`
 	// The text of the inline value.
 	Text string `json:"text"`
+}
+
+func (x *InlineValueText) UnmarshalJSON(data []byte) error {
+	type plain InlineValueText
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	if x.Text == "" {
+		return errors.New("\"text\" property is required")
+	}
+
+	return nil
 }
 
 // Provide inline value through a variable lookup.
@@ -3609,6 +5734,21 @@ type InlineValueVariableLookup struct {
 	CaseSensitiveLookup bool `json:"caseSensitiveLookup"`
 }
 
+func (x *InlineValueVariableLookup) UnmarshalJSON(data []byte) error {
+	type plain InlineValueVariableLookup
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	if x.CaseSensitiveLookup == false {
+		return errors.New("\"caseSensitiveLookup\" property is required")
+	}
+
+	return nil
+}
+
 // Client workspace capabilities specific to inline values.
 //
 // @since 3.17.0
@@ -3623,6 +5763,15 @@ type InlineValueWorkspaceClientCapabilities struct {
 	RefreshSupport bool `json:"refreshSupport,omitempty"`
 }
 
+func (x *InlineValueWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain InlineValueWorkspaceClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // A special text edit to provide an insert and a replace operation.
 //
 // @since 3.16.0
@@ -3635,6 +5784,23 @@ type InsertReplaceEdit struct {
 	Replace Range `json:"replace"`
 }
 
+func (x *InsertReplaceEdit) UnmarshalJSON(data []byte) error {
+	type plain InsertReplaceEdit
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.NewText == "" {
+		return errors.New("\"newText\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.Insert
+
+	var _ json.Unmarshaler = &x.Replace
+
+	return nil
+}
+
 // Client capabilities for the linked editing range request.
 //
 // @since 3.16.0
@@ -3645,8 +5811,26 @@ type LinkedEditingRangeClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *LinkedEditingRangeClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain LinkedEditingRangeClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type LinkedEditingRangeOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *LinkedEditingRangeOptions) UnmarshalJSON(data []byte) error {
+	type plain LinkedEditingRangeOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type LinkedEditingRangeParams struct {
@@ -3654,10 +5838,28 @@ type LinkedEditingRangeParams struct {
 	WorkDoneProgressParams
 }
 
+func (x *LinkedEditingRangeParams) UnmarshalJSON(data []byte) error {
+	type plain LinkedEditingRangeParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type LinkedEditingRangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	LinkedEditingRangeOptions
 	StaticRegistrationOptions
+}
+
+func (x *LinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain LinkedEditingRangeRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The result of a linked editing range request.
@@ -3673,11 +5875,39 @@ type LinkedEditingRanges struct {
 	WordPattern string `json:"wordPattern,omitempty"`
 }
 
+func (x *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
+	type plain LinkedEditingRanges
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Ranges == nil {
+		return errors.New("\"ranges\" property is required")
+	}
+
+	return nil
+}
+
 // Represents a location inside a resource, such as a line
 // inside a text file.
 type Location struct {
 	URI   DocumentURI `json:"uri"`
 	Range Range       `json:"range"`
+}
+
+func (x *Location) UnmarshalJSON(data []byte) error {
+	type plain Location
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
 }
 
 // Represents the connection of two locations. Provides additional metadata over normal {@link Location locations},
@@ -3699,6 +5929,23 @@ type LocationLink struct {
 	TargetSelectionRange Range `json:"targetSelectionRange"`
 }
 
+func (x *LocationLink) UnmarshalJSON(data []byte) error {
+	type plain LocationLink
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.TargetURI == (DocumentURI{}) {
+		return errors.New("\"targetUri\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.TargetRange
+
+	var _ json.Unmarshaler = &x.TargetSelectionRange
+
+	return nil
+}
+
 // The log message parameters.
 type LogMessageParams struct {
 	// The message type. See {@link MessageType}
@@ -3707,9 +5954,39 @@ type LogMessageParams struct {
 	Message string `json:"message"`
 }
 
+func (x *LogMessageParams) UnmarshalJSON(data []byte) error {
+	type plain LogMessageParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Type == 0 {
+		return errors.New("\"type\" property is required")
+	}
+
+	if x.Message == "" {
+		return errors.New("\"message\" property is required")
+	}
+
+	return nil
+}
+
 type LogTraceParams struct {
 	Message string `json:"message"`
 	Verbose string `json:"verbose,omitempty"`
+}
+
+func (x *LogTraceParams) UnmarshalJSON(data []byte) error {
+	type plain LogTraceParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Message == "" {
+		return errors.New("\"message\" property is required")
+	}
+
+	return nil
 }
 
 // Client capabilities specific to the used markdown parser.
@@ -3725,6 +6002,19 @@ type MarkdownClientCapabilities struct {
 	//
 	// @since 3.17.0
 	AllowedTags []string `json:"allowedTags,omitempty"`
+}
+
+func (x *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain MarkdownClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Parser == "" {
+		return errors.New("\"parser\" property is required")
+	}
+
+	return nil
 }
 
 // A `MarkupContent` literal represents a string value which content is interpreted base on its
@@ -3758,9 +6048,39 @@ type MarkupContent struct {
 	Value string `json:"value"`
 }
 
+func (x *MarkupContent) UnmarshalJSON(data []byte) error {
+	type plain MarkupContent
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Kind == "" {
+		return errors.New("\"kind\" property is required")
+	}
+
+	if x.Value == "" {
+		return errors.New("\"value\" property is required")
+	}
+
+	return nil
+}
+
 type MessageActionItem struct {
 	// A short title like 'Retry', 'Open Log' etc.
 	Title string `json:"title"`
+}
+
+func (x *MessageActionItem) UnmarshalJSON(data []byte) error {
+	type plain MessageActionItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Title == "" {
+		return errors.New("\"title\" property is required")
+	}
+
+	return nil
 }
 
 // Moniker definition to match LSIF 0.5 moniker definition.
@@ -3778,6 +6098,27 @@ type Moniker struct {
 	Kind MonikerKind `json:"kind,omitempty"`
 }
 
+func (x *Moniker) UnmarshalJSON(data []byte) error {
+	type plain Moniker
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Scheme == "" {
+		return errors.New("\"scheme\" property is required")
+	}
+
+	if x.Identifier == "" {
+		return errors.New("\"identifier\" property is required")
+	}
+
+	if x.Unique == "" {
+		return errors.New("\"unique\" property is required")
+	}
+
+	return nil
+}
+
 // Client capabilities specific to the moniker request.
 //
 // @since 3.16.0
@@ -3788,8 +6129,26 @@ type MonikerClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *MonikerClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain MonikerClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type MonikerOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *MonikerOptions) UnmarshalJSON(data []byte) error {
+	type plain MonikerOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type MonikerParams struct {
@@ -3798,9 +6157,27 @@ type MonikerParams struct {
 	PartialResultParams
 }
 
+func (x *MonikerParams) UnmarshalJSON(data []byte) error {
+	type plain MonikerParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type MonikerRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	MonikerOptions
+}
+
+func (x *MonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain MonikerRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A notebook cell.
@@ -3825,6 +6202,23 @@ type NotebookCell struct {
 	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitempty"`
 }
 
+func (x *NotebookCell) UnmarshalJSON(data []byte) error {
+	type plain NotebookCell
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Kind == 0 {
+		return errors.New("\"kind\" property is required")
+	}
+
+	if x.Document == (DocumentURI{}) {
+		return errors.New("\"document\" property is required")
+	}
+
+	return nil
+}
+
 // A change describing how to move a `NotebookCell`
 // array from state S to S'.
 //
@@ -3836,6 +6230,23 @@ type NotebookCellArrayChange struct {
 	DeleteCount uint32 `json:"deleteCount"`
 	// The new cells, if any
 	Cells []NotebookCell `json:"cells,omitempty"`
+}
+
+func (x *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
+	type plain NotebookCellArrayChange
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Start == 0 {
+		return errors.New("\"start\" property is required")
+	}
+
+	if x.DeleteCount == 0 {
+		return errors.New("\"deleteCount\" property is required")
+	}
+
+	return nil
 }
 
 // A notebook cell text document filter denotes a cell text
@@ -3853,6 +6264,17 @@ type NotebookCellTextDocumentFilter struct {
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
 	Language string `json:"language,omitempty"`
+}
+
+func (x *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+	type plain NotebookCellTextDocumentFilter
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Notebook
+
+	return nil
 }
 
 // A notebook document.
@@ -3875,6 +6297,31 @@ type NotebookDocument struct {
 	Cells []NotebookCell `json:"cells"`
 }
 
+func (x *NotebookDocument) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocument
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (URI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.NotebookType == "" {
+		return errors.New("\"notebookType\" property is required")
+	}
+
+	if x.Version == 0 {
+		return errors.New("\"version\" property is required")
+	}
+
+	if x.Cells == nil {
+		return errors.New("\"cells\" property is required")
+	}
+
+	return nil
+}
+
 // A change event for a notebook document.
 //
 // @since 3.17.0
@@ -3886,6 +6333,56 @@ type NotebookDocumentChangeEvent struct {
 	// Changes to cells
 	Cells *NotebookDocumentChangeEventCells `json:"cells,omitempty"`
 }
+
+func (x *NotebookDocumentChangeEvent) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentChangeEvent
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type NotebookDocumentChangeEventCellsStructure struct {
+	// The change to the cell array.
+	Array NotebookCellArrayChange `json:"array"`
+	// Additional opened cell text documents.
+	DidOpen []TextDocumentItem `json:"didOpen,omitempty"`
+	// Additional closed cell text documents.
+	DidClose []TextDocumentIdentifier `json:"didClose,omitempty"`
+}
+
+func (x *NotebookDocumentChangeEventCellsStructure) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentChangeEventCellsStructure
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Array
+
+	return nil
+}
+
+type NotebookDocumentChangeEventCellsTextContent struct {
+	Document VersionedTextDocumentIdentifier  `json:"document"`
+	Changes  []TextDocumentContentChangeEvent `json:"changes"`
+}
+
+func (x *NotebookDocumentChangeEventCellsTextContent) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentChangeEventCellsTextContent
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Document
+
+	if x.Changes == nil {
+		return errors.New("\"changes\" property is required")
+	}
+
+	return nil
+}
+
 type NotebookDocumentChangeEventCells struct {
 	// Changes to the cell structure to add or
 	// remove cells.
@@ -3896,17 +6393,14 @@ type NotebookDocumentChangeEventCells struct {
 	// Changes to the text content of notebook cells.
 	TextContent []NotebookDocumentChangeEventCellsTextContent `json:"textContent,omitempty"`
 }
-type NotebookDocumentChangeEventCellsStructure struct {
-	// The change to the cell array.
-	Array NotebookCellArrayChange `json:"array"`
-	// Additional opened cell text documents.
-	DidOpen []TextDocumentItem `json:"didOpen,omitempty"`
-	// Additional closed cell text documents.
-	DidClose []TextDocumentIdentifier `json:"didClose,omitempty"`
-}
-type NotebookDocumentChangeEventCellsTextContent struct {
-	Document VersionedTextDocumentIdentifier  `json:"document"`
-	Changes  []TextDocumentContentChangeEvent `json:"changes"`
+
+func (x *NotebookDocumentChangeEventCells) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentChangeEventCells
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Capabilities specific to the notebook document support.
@@ -3919,12 +6413,36 @@ type NotebookDocumentClientCapabilities struct {
 	Synchronization NotebookDocumentSyncClientCapabilities `json:"synchronization"`
 }
 
+func (x *NotebookDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Synchronization
+
+	return nil
+}
+
 // A literal to identify a notebook document in the client.
 //
 // @since 3.17.0
 type NotebookDocumentIdentifier struct {
 	// The notebook document's uri.
 	URI URI `json:"uri"`
+}
+
+func (x *NotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentIdentifier
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (URI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
 }
 
 // Notebook specific client capabilities.
@@ -3938,6 +6456,15 @@ type NotebookDocumentSyncClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 	// The client supports sending execution summary data per cell.
 	ExecutionSummarySupport bool `json:"executionSummarySupport,omitempty"`
+}
+
+func (x *NotebookDocumentSyncClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentSyncClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Options specific to a notebook plus its cells
@@ -3960,6 +6487,37 @@ type NotebookDocumentSyncOptions struct {
 	// the server. Will only be honored if mode === `notebook`.
 	Save bool `json:"save,omitempty"`
 }
+
+func (x *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentSyncOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.NotebookSelector == nil {
+		return errors.New("\"notebookSelector\" property is required")
+	}
+
+	return nil
+}
+
+type NotebookDocumentSyncOptionsNotebookSelectorCells struct {
+	Language string `json:"language"`
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorCells) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentSyncOptionsNotebookSelectorCells
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Language == "" {
+		return errors.New("\"language\" property is required")
+	}
+
+	return nil
+}
+
 type NotebookDocumentSyncOptionsNotebookSelector struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
@@ -3968,9 +6526,35 @@ type NotebookDocumentSyncOptionsNotebookSelector struct {
 	// The cells of the matching notebook to be synced.
 	Cells []NotebookDocumentSyncOptionsNotebookSelectorCells `json:"cells,omitempty"`
 }
-type NotebookDocumentSyncOptionsNotebookSelectorCells struct {
+
+func (x *NotebookDocumentSyncOptionsNotebookSelector) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentSyncOptionsNotebookSelector
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Notebook
+
+	return nil
+}
+
+type NotebookDocumentSyncOptionsNotebookSelector1Cells struct {
 	Language string `json:"language"`
 }
+
+func (x *NotebookDocumentSyncOptionsNotebookSelector1Cells) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentSyncOptionsNotebookSelector1Cells
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Language == "" {
+		return errors.New("\"language\" property is required")
+	}
+
+	return nil
+}
+
 type NotebookDocumentSyncOptionsNotebookSelector1 struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
@@ -3979,8 +6563,18 @@ type NotebookDocumentSyncOptionsNotebookSelector1 struct {
 	// The cells of the matching notebook to be synced.
 	Cells []NotebookDocumentSyncOptionsNotebookSelector1Cells `json:"cells"`
 }
-type NotebookDocumentSyncOptionsNotebookSelector1Cells struct {
-	Language string `json:"language"`
+
+func (x *NotebookDocumentSyncOptionsNotebookSelector1) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentSyncOptionsNotebookSelector1
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Cells == nil {
+		return errors.New("\"cells\" property is required")
+	}
+
+	return nil
 }
 
 // Registration options specific to a notebook.
@@ -3989,6 +6583,15 @@ type NotebookDocumentSyncOptionsNotebookSelector1Cells struct {
 type NotebookDocumentSyncRegistrationOptions struct {
 	NotebookDocumentSyncOptions
 	StaticRegistrationOptions
+}
+
+func (x *NotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentSyncRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A text document identifier to optionally denote a specific version of a text document.
@@ -4000,6 +6603,19 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
 	Version int32 `json:"version"`
+}
+
+func (x *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	type plain OptionalVersionedTextDocumentIdentifier
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Version == 0 {
+		return errors.New("\"version\" property is required")
+	}
+
+	return nil
 }
 
 // Represents a parameter of a callable-signature. A parameter can
@@ -4019,10 +6635,30 @@ type ParameterInformation struct {
 	Documentation *OneOf2[string, MarkupContent] `json:"documentation,omitempty"`
 }
 
+func (x *ParameterInformation) UnmarshalJSON(data []byte) error {
+	type plain ParameterInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Label
+
+	return nil
+}
+
 type PartialResultParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
 	PartialResultToken *ProgressToken `json:"partialResultToken,omitempty"`
+}
+
+func (x *PartialResultParams) UnmarshalJSON(data []byte) error {
+	type plain PartialResultParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Position in a text document expressed as zero-based line and character
@@ -4068,9 +6704,35 @@ type Position struct {
 	Character uint32 `json:"character"`
 }
 
+func (x *Position) UnmarshalJSON(data []byte) error {
+	type plain Position
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Line == 0 {
+		return errors.New("\"line\" property is required")
+	}
+
+	if x.Character == 0 {
+		return errors.New("\"character\" property is required")
+	}
+
+	return nil
+}
+
 type PrepareRenameParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+}
+
+func (x *PrepareRenameParams) UnmarshalJSON(data []byte) error {
+	type plain PrepareRenameParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A previous result id in a workspace pull request.
@@ -4084,11 +6746,43 @@ type PreviousResultId struct {
 	Value string `json:"value"`
 }
 
+func (x *PreviousResultId) UnmarshalJSON(data []byte) error {
+	type plain PreviousResultId
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.Value == "" {
+		return errors.New("\"value\" property is required")
+	}
+
+	return nil
+}
+
 type ProgressParams struct {
 	// The progress token provided by the client or server.
 	Token ProgressToken `json:"token"`
 	// The progress data.
 	Value any `json:"value"`
+}
+
+func (x *ProgressParams) UnmarshalJSON(data []byte) error {
+	type plain ProgressParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Token
+
+	if x.Value == nil {
+		return errors.New("\"value\" property is required")
+	}
+
+	return nil
 }
 
 // The publish diagnostic client capabilities.
@@ -4116,9 +6810,32 @@ type PublishDiagnosticsClientCapabilities struct {
 	// @since 3.16.0
 	DataSupport bool `json:"dataSupport,omitempty"`
 }
+
+func (x *PublishDiagnosticsClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain PublishDiagnosticsClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []DiagnosticTag `json:"valueSet"`
+}
+
+func (x *PublishDiagnosticsClientCapabilitiesTagSupport) UnmarshalJSON(data []byte) error {
+	type plain PublishDiagnosticsClientCapabilitiesTagSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ValueSet == nil {
+		return errors.New("\"valueSet\" property is required")
+	}
+
+	return nil
 }
 
 // The publish diagnostic notification's parameters.
@@ -4131,6 +6848,23 @@ type PublishDiagnosticsParams struct {
 	Version int32 `json:"version,omitempty"`
 	// An array of diagnostic information items.
 	Diagnostics []Diagnostic `json:"diagnostics"`
+}
+
+func (x *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
+	type plain PublishDiagnosticsParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.Diagnostics == nil {
+		return errors.New("\"diagnostics\" property is required")
+	}
+
+	return nil
 }
 
 // A range in a text document expressed as (zero-based) start and end positions.
@@ -4153,10 +6887,32 @@ type Range struct {
 	End Position `json:"end"`
 }
 
+func (x *Range) UnmarshalJSON(data []byte) error {
+	type plain Range
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Start
+
+	var _ json.Unmarshaler = &x.End
+
+	return nil
+}
+
 // Client Capabilities for a {@link ReferencesRequest}.
 type ReferenceClientCapabilities struct {
 	// Whether references supports dynamic registration.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+}
+
+func (x *ReferenceClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain ReferenceClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Value-object that contains additional information when
@@ -4166,9 +6922,31 @@ type ReferenceContext struct {
 	IncludeDeclaration bool `json:"includeDeclaration"`
 }
 
+func (x *ReferenceContext) UnmarshalJSON(data []byte) error {
+	type plain ReferenceContext
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.IncludeDeclaration == false {
+		return errors.New("\"includeDeclaration\" property is required")
+	}
+
+	return nil
+}
+
 // Reference options.
 type ReferenceOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *ReferenceOptions) UnmarshalJSON(data []byte) error {
+	type plain ReferenceOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Parameters for a {@link ReferencesRequest}.
@@ -4179,10 +6957,30 @@ type ReferenceParams struct {
 	Context ReferenceContext `json:"context"`
 }
 
+func (x *ReferenceParams) UnmarshalJSON(data []byte) error {
+	type plain ReferenceParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Context
+
+	return nil
+}
+
 // Registration options for a {@link ReferencesRequest}.
 type ReferenceRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	ReferenceOptions
+}
+
+func (x *ReferenceRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain ReferenceRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // General parameters to to register for an notification or to register a provider.
@@ -4196,8 +6994,38 @@ type Registration struct {
 	RegisterOptions any `json:"registerOptions,omitempty"`
 }
 
+func (x *Registration) UnmarshalJSON(data []byte) error {
+	type plain Registration
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Id == "" {
+		return errors.New("\"id\" property is required")
+	}
+
+	if x.Method == "" {
+		return errors.New("\"method\" property is required")
+	}
+
+	return nil
+}
+
 type RegistrationParams struct {
 	Registrations []Registration `json:"registrations"`
+}
+
+func (x *RegistrationParams) UnmarshalJSON(data []byte) error {
+	type plain RegistrationParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Registrations == nil {
+		return errors.New("\"registrations\" property is required")
+	}
+
+	return nil
 }
 
 // Client capabilities specific to regular expressions.
@@ -4208,6 +7036,19 @@ type RegularExpressionsClientCapabilities struct {
 	Engine string `json:"engine"`
 	// The engine's version.
 	Version string `json:"version,omitempty"`
+}
+
+func (x *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain RegularExpressionsClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Engine == "" {
+		return errors.New("\"engine\" property is required")
+	}
+
+	return nil
 }
 
 // A full diagnostic report with a set of related documents.
@@ -4225,6 +7066,15 @@ type RelatedFullDocumentDiagnosticReport struct {
 	RelatedDocuments map[DocumentURI]OneOf2[FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport] `json:"relatedDocuments,omitempty"`
 }
 
+func (x *RelatedFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	type plain RelatedFullDocumentDiagnosticReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // An unchanged diagnostic report with a set of related documents.
 //
 // @since 3.17.0
@@ -4240,6 +7090,15 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	RelatedDocuments map[DocumentURI]OneOf2[FullDocumentDiagnosticReport, UnchangedDocumentDiagnosticReport] `json:"relatedDocuments,omitempty"`
 }
 
+func (x *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	type plain RelatedUnchangedDocumentDiagnosticReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // A relative pattern is a helper to construct glob patterns that are matched
 // relatively to a base URI. The common value for a `baseUri` is a workspace
 // folder root, but it can be another absolute URI as well.
@@ -4251,6 +7110,21 @@ type RelativePattern struct {
 	BaseURI OneOf2[WorkspaceFolder, URI] `json:"baseUri"`
 	// The actual glob pattern;
 	Pattern Pattern `json:"pattern"`
+}
+
+func (x *RelativePattern) UnmarshalJSON(data []byte) error {
+	type plain RelativePattern
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.BaseURI
+
+	if x.Pattern == "" {
+		return errors.New("\"pattern\" property is required")
+	}
+
+	return nil
 }
 
 type RenameClientCapabilities struct {
@@ -4278,6 +7152,15 @@ type RenameClientCapabilities struct {
 	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitempty"`
 }
 
+func (x *RenameClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain RenameClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Rename file operation
 type RenameFile struct {
 	ResourceOperation
@@ -4291,19 +7174,42 @@ type RenameFile struct {
 	Options *RenameFileOptions `json:"options,omitempty"`
 }
 
+func (x *RenameFile) UnmarshalJSON(data []byte) error {
+	type plain RenameFile
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	if x.OldURI == (DocumentURI{}) {
+		return errors.New("\"oldUri\" property is required")
+	}
+
+	if x.NewURI == (DocumentURI{}) {
+		return errors.New("\"newUri\" property is required")
+	}
+
+	return nil
+}
+
 // renameLiteral is a type that must be represented as the JSON-string "rename".
 type renameLiteral struct{}
 
-var renameJSON = []byte("\"rename\"")
-
 func (renameLiteral) MarshalJSON() ([]byte, error) {
-	return renameJSON, nil
+	return marshal("rename")
 }
 func (*renameLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, renameJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, renameJSON)
+
+	if value != "rename" {
+		return errors.New("value must be \"rename\"")
+	}
+
+	return nil
 }
 
 // Rename file options
@@ -4312,6 +7218,15 @@ type RenameFileOptions struct {
 	Overwrite bool `json:"overwrite,omitempty"`
 	// Ignores if target exists.
 	IgnoreIfExists bool `json:"ignoreIfExists,omitempty"`
+}
+
+func (x *RenameFileOptions) UnmarshalJSON(data []byte) error {
+	type plain RenameFileOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameters sent in notifications/requests for user-initiated renames of
@@ -4324,6 +7239,19 @@ type RenameFilesParams struct {
 	Files []FileRename `json:"files"`
 }
 
+func (x *RenameFilesParams) UnmarshalJSON(data []byte) error {
+	type plain RenameFilesParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Files == nil {
+		return errors.New("\"files\" property is required")
+	}
+
+	return nil
+}
+
 // Provider options for a {@link RenameRequest}.
 type RenameOptions struct {
 	WorkDoneProgressOptions
@@ -4331,6 +7259,15 @@ type RenameOptions struct {
 	//
 	// @since version 3.12.0
 	PrepareProvider bool `json:"prepareProvider,omitempty"`
+}
+
+func (x *RenameOptions) UnmarshalJSON(data []byte) error {
+	type plain RenameOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameters of a {@link RenameRequest}.
@@ -4346,10 +7283,36 @@ type RenameParams struct {
 	NewName string `json:"newName"`
 }
 
+func (x *RenameParams) UnmarshalJSON(data []byte) error {
+	type plain RenameParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Position
+
+	if x.NewName == "" {
+		return errors.New("\"newName\" property is required")
+	}
+
+	return nil
+}
+
 // Registration options for a {@link RenameRequest}.
 type RenameRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	RenameOptions
+}
+
+func (x *RenameRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain RenameRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A generic resource operation.
@@ -4362,10 +7325,32 @@ type ResourceOperation struct {
 	AnnotationId ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
 }
 
+func (x *ResourceOperation) UnmarshalJSON(data []byte) error {
+	type plain ResourceOperation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Kind == "" {
+		return errors.New("\"kind\" property is required")
+	}
+
+	return nil
+}
+
 // Save options.
 type SaveOptions struct {
 	// The client is supposed to include the content on save.
 	IncludeText bool `json:"includeText,omitempty"`
+}
+
+func (x *SaveOptions) UnmarshalJSON(data []byte) error {
+	type plain SaveOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A selection range represents a part of a selection hierarchy. A selection range
@@ -4377,6 +7362,17 @@ type SelectionRange struct {
 	Parent *SelectionRange `json:"parent,omitempty"`
 }
 
+func (x *SelectionRange) UnmarshalJSON(data []byte) error {
+	type plain SelectionRange
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
+}
+
 type SelectionRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
 	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
@@ -4384,8 +7380,26 @@ type SelectionRangeClientCapabilities struct {
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
 }
 
+func (x *SelectionRangeClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain SelectionRangeClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type SelectionRangeOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *SelectionRangeOptions) UnmarshalJSON(data []byte) error {
+	type plain SelectionRangeOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A parameter literal used in selection range requests.
@@ -4398,10 +7412,34 @@ type SelectionRangeParams struct {
 	Positions []Position `json:"positions"`
 }
 
+func (x *SelectionRangeParams) UnmarshalJSON(data []byte) error {
+	type plain SelectionRangeParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	if x.Positions == nil {
+		return errors.New("\"positions\" property is required")
+	}
+
+	return nil
+}
+
 type SelectionRangeRegistrationOptions struct {
 	SelectionRangeOptions
 	TextDocumentRegistrationOptions
 	StaticRegistrationOptions
+}
+
+func (x *SelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain SelectionRangeRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4413,6 +7451,19 @@ type SemanticTokens struct {
 	ResultId string `json:"resultId,omitempty"`
 	// The actual tokens.
 	Data []uint32 `json:"data"`
+}
+
+func (x *SemanticTokens) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokens
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Data == nil {
+		return errors.New("\"data\" property is required")
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4459,6 +7510,56 @@ type SemanticTokensClientCapabilities struct {
 	// @since 3.17.0
 	AugmentsSyntaxTokens bool `json:"augmentsSyntaxTokens,omitempty"`
 }
+
+func (x *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Requests
+
+	if x.TokenTypes == nil {
+		return errors.New("\"tokenTypes\" property is required")
+	}
+
+	if x.TokenModifiers == nil {
+		return errors.New("\"tokenModifiers\" property is required")
+	}
+
+	if x.Formats == nil {
+		return errors.New("\"formats\" property is required")
+	}
+
+	return nil
+}
+
+type SemanticTokensClientCapabilitiesRequestsRange struct{}
+
+func (x *SemanticTokensClientCapabilitiesRequestsRange) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensClientCapabilitiesRequestsRange
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type SemanticTokensClientCapabilitiesRequestsFull struct {
+	// The client will send the `textDocument/semanticTokens/full/delta` request if
+	// the server provides a corresponding handler.
+	Delta bool `json:"delta,omitempty"`
+}
+
+func (x *SemanticTokensClientCapabilitiesRequestsFull) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensClientCapabilitiesRequestsFull
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type SemanticTokensClientCapabilitiesRequests struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
@@ -4467,11 +7568,14 @@ type SemanticTokensClientCapabilitiesRequests struct {
 	// the server provides a corresponding handler.
 	Full *OneOf2[bool, SemanticTokensClientCapabilitiesRequestsFull] `json:"full,omitempty"`
 }
-type SemanticTokensClientCapabilitiesRequestsRange struct{}
-type SemanticTokensClientCapabilitiesRequestsFull struct {
-	// The client will send the `textDocument/semanticTokens/full/delta` request if
-	// the server provides a corresponding handler.
-	Delta bool `json:"delta,omitempty"`
+
+func (x *SemanticTokensClientCapabilitiesRequests) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensClientCapabilitiesRequests
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4479,6 +7583,19 @@ type SemanticTokensDelta struct {
 	ResultId string `json:"resultId,omitempty"`
 	// The semantic token edits to transform a previous result into a new result.
 	Edits []SemanticTokensEdit `json:"edits"`
+}
+
+func (x *SemanticTokensDelta) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensDelta
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Edits == nil {
+		return errors.New("\"edits\" property is required")
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4492,9 +7609,37 @@ type SemanticTokensDeltaParams struct {
 	PreviousResultId string `json:"previousResultId"`
 }
 
+func (x *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensDeltaParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	if x.PreviousResultId == "" {
+		return errors.New("\"previousResultId\" property is required")
+	}
+
+	return nil
+}
+
 // @since 3.16.0
 type SemanticTokensDeltaPartialResult struct {
 	Edits []SemanticTokensEdit `json:"edits"`
+}
+
+func (x *SemanticTokensDeltaPartialResult) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensDeltaPartialResult
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Edits == nil {
+		return errors.New("\"edits\" property is required")
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4507,12 +7652,46 @@ type SemanticTokensEdit struct {
 	Data []uint32 `json:"data,omitempty"`
 }
 
+func (x *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensEdit
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Start == 0 {
+		return errors.New("\"start\" property is required")
+	}
+
+	if x.DeleteCount == 0 {
+		return errors.New("\"deleteCount\" property is required")
+	}
+
+	return nil
+}
+
 // @since 3.16.0
 type SemanticTokensLegend struct {
 	// The token types a server uses.
 	TokenTypes []string `json:"tokenTypes"`
 	// The token modifiers a server uses.
 	TokenModifiers []string `json:"tokenModifiers"`
+}
+
+func (x *SemanticTokensLegend) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensLegend
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.TokenTypes == nil {
+		return errors.New("\"tokenTypes\" property is required")
+	}
+
+	if x.TokenModifiers == nil {
+		return errors.New("\"tokenModifiers\" property is required")
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4526,10 +7705,41 @@ type SemanticTokensOptions struct {
 	// Server supports providing semantic tokens for a full document.
 	Full *OneOf2[bool, SemanticTokensOptionsFull] `json:"full,omitempty"`
 }
+
+func (x *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Legend
+
+	return nil
+}
+
 type SemanticTokensOptionsRange struct{}
+
+func (x *SemanticTokensOptionsRange) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensOptionsRange
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type SemanticTokensOptionsFull struct {
 	// The server supports deltas for full documents.
 	Delta bool `json:"delta,omitempty"`
+}
+
+func (x *SemanticTokensOptionsFull) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensOptionsFull
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4540,9 +7750,33 @@ type SemanticTokensParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 }
 
+func (x *SemanticTokensParams) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	return nil
+}
+
 // @since 3.16.0
 type SemanticTokensPartialResult struct {
 	Data []uint32 `json:"data"`
+}
+
+func (x *SemanticTokensPartialResult) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensPartialResult
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Data == nil {
+		return errors.New("\"data\" property is required")
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4555,11 +7789,33 @@ type SemanticTokensRangeParams struct {
 	Range Range `json:"range"`
 }
 
+func (x *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensRangeParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Range
+
+	return nil
+}
+
 // @since 3.16.0
 type SemanticTokensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SemanticTokensOptions
 	StaticRegistrationOptions
+}
+
+func (x *SemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.16.0
@@ -4572,6 +7828,15 @@ type SemanticTokensWorkspaceClientCapabilities struct {
 	// and is useful for situation where a server for example detects a project
 	// wide change that requires such a calculation.
 	RefreshSupport bool `json:"refreshSupport,omitempty"`
+}
+
+func (x *SemanticTokensWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain SemanticTokensWorkspaceClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Defines the capabilities provided by a language
@@ -4680,6 +7945,16 @@ type ServerCapabilities struct {
 	// Experimental server capabilities.
 	Experimental any `json:"experimental,omitempty"`
 }
+
+func (x *ServerCapabilities) UnmarshalJSON(data []byte) error {
+	type plain ServerCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type ServerCapabilitiesWorkspace struct {
 	// The server supports workspace folder.
 	//
@@ -4691,8 +7966,30 @@ type ServerCapabilitiesWorkspace struct {
 	FileOperations *FileOperationOptions `json:"fileOperations,omitempty"`
 }
 
+func (x *ServerCapabilitiesWorkspace) UnmarshalJSON(data []byte) error {
+	type plain ServerCapabilitiesWorkspace
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type SetTraceParams struct {
 	Value TraceValues `json:"value"`
+}
+
+func (x *SetTraceParams) UnmarshalJSON(data []byte) error {
+	type plain SetTraceParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Value == "" {
+		return errors.New("\"value\" property is required")
+	}
+
+	return nil
 }
 
 // Client capabilities for the showDocument request.
@@ -4702,6 +7999,19 @@ type ShowDocumentClientCapabilities struct {
 	// The client has support for the showDocument
 	// request.
 	Support bool `json:"support"`
+}
+
+func (x *ShowDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain ShowDocumentClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Support == false {
+		return errors.New("\"support\" property is required")
+	}
+
+	return nil
 }
 
 // Params to show a resource in the UI.
@@ -4726,12 +8036,38 @@ type ShowDocumentParams struct {
 	Selection *Range `json:"selection,omitempty"`
 }
 
+func (x *ShowDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain ShowDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (URI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
+}
+
 // The result of a showDocument request.
 //
 // @since 3.16.0
 type ShowDocumentResult struct {
 	// A boolean indicating if the show was successful.
 	Success bool `json:"success"`
+}
+
+func (x *ShowDocumentResult) UnmarshalJSON(data []byte) error {
+	type plain ShowDocumentResult
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Success == false {
+		return errors.New("\"success\" property is required")
+	}
+
+	return nil
 }
 
 // The parameters of a notification message.
@@ -4742,16 +8078,52 @@ type ShowMessageParams struct {
 	Message string `json:"message"`
 }
 
+func (x *ShowMessageParams) UnmarshalJSON(data []byte) error {
+	type plain ShowMessageParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Type == 0 {
+		return errors.New("\"type\" property is required")
+	}
+
+	if x.Message == "" {
+		return errors.New("\"message\" property is required")
+	}
+
+	return nil
+}
+
 // Show message request client capabilities
 type ShowMessageRequestClientCapabilities struct {
 	// Capabilities specific to the `MessageActionItem` type.
 	MessageActionItem *ShowMessageRequestClientCapabilitiesMessageActionItem `json:"messageActionItem,omitempty"`
 }
+
+func (x *ShowMessageRequestClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain ShowMessageRequestClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
 	// Whether the client supports additional attributes which
 	// are preserved and send back to the server in the
 	// request's response.
 	AdditionalPropertiesSupport bool `json:"additionalPropertiesSupport,omitempty"`
+}
+
+func (x *ShowMessageRequestClientCapabilitiesMessageActionItem) UnmarshalJSON(data []byte) error {
+	type plain ShowMessageRequestClientCapabilitiesMessageActionItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type ShowMessageRequestParams struct {
@@ -4761,6 +8133,23 @@ type ShowMessageRequestParams struct {
 	Message string `json:"message"`
 	// The message action items to present.
 	Actions []MessageActionItem `json:"actions,omitempty"`
+}
+
+func (x *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
+	type plain ShowMessageRequestParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Type == 0 {
+		return errors.New("\"type\" property is required")
+	}
+
+	if x.Message == "" {
+		return errors.New("\"message\" property is required")
+	}
+
+	return nil
 }
 
 // Signature help represents the signature of something
@@ -4789,6 +8178,19 @@ type SignatureHelp struct {
 	ActiveParameter uint32 `json:"activeParameter,omitempty"`
 }
 
+func (x *SignatureHelp) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelp
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Signatures == nil {
+		return errors.New("\"signatures\" property is required")
+	}
+
+	return nil
+}
+
 // Client Capabilities for a {@link SignatureHelpRequest}.
 type SignatureHelpClientCapabilities struct {
 	// Whether signature help supports dynamic registration.
@@ -4804,6 +8206,33 @@ type SignatureHelpClientCapabilities struct {
 	// @since 3.15.0
 	ContextSupport bool `json:"contextSupport,omitempty"`
 }
+
+func (x *SignatureHelpClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelpClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct {
+	// The client supports processing label offsets instead of a
+	// simple label string.
+	//
+	// @since 3.14.0
+	LabelOffsetSupport bool `json:"labelOffsetSupport,omitempty"`
+}
+
+func (x *SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelpClientCapabilitiesSignatureInformationParameterInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type SignatureHelpClientCapabilitiesSignatureInformation struct {
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
@@ -4816,12 +8245,14 @@ type SignatureHelpClientCapabilitiesSignatureInformation struct {
 	// @since 3.16.0
 	ActiveParameterSupport bool `json:"activeParameterSupport,omitempty"`
 }
-type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct {
-	// The client supports processing label offsets instead of a
-	// simple label string.
-	//
-	// @since 3.14.0
-	LabelOffsetSupport bool `json:"labelOffsetSupport,omitempty"`
+
+func (x *SignatureHelpClientCapabilitiesSignatureInformation) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelpClientCapabilitiesSignatureInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Additional information about the context in which a signature help request was triggered.
@@ -4846,6 +8277,23 @@ type SignatureHelpContext struct {
 	ActiveSignatureHelp *SignatureHelp `json:"activeSignatureHelp,omitempty"`
 }
 
+func (x *SignatureHelpContext) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelpContext
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.TriggerKind == 0 {
+		return errors.New("\"triggerKind\" property is required")
+	}
+
+	if x.IsRetrigger == false {
+		return errors.New("\"isRetrigger\" property is required")
+	}
+
+	return nil
+}
+
 // Server Capabilities for a {@link SignatureHelpRequest}.
 type SignatureHelpOptions struct {
 	WorkDoneProgressOptions
@@ -4860,6 +8308,15 @@ type SignatureHelpOptions struct {
 	RetriggerCharacters []string `json:"retriggerCharacters,omitempty"`
 }
 
+func (x *SignatureHelpOptions) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelpOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Parameters for a {@link SignatureHelpRequest}.
 type SignatureHelpParams struct {
 	TextDocumentPositionParams
@@ -4871,10 +8328,28 @@ type SignatureHelpParams struct {
 	Context *SignatureHelpContext `json:"context,omitempty"`
 }
 
+func (x *SignatureHelpParams) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelpParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Registration options for a {@link SignatureHelpRequest}.
 type SignatureHelpRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SignatureHelpOptions
+}
+
+func (x *SignatureHelpRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain SignatureHelpRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Represents the signature of something callable. A signature
@@ -4897,12 +8372,34 @@ type SignatureInformation struct {
 	ActiveParameter uint32 `json:"activeParameter,omitempty"`
 }
 
+func (x *SignatureInformation) UnmarshalJSON(data []byte) error {
+	type plain SignatureInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Label == "" {
+		return errors.New("\"label\" property is required")
+	}
+
+	return nil
+}
+
 // Static registration options to be returned in the initialize
 // request.
 type StaticRegistrationOptions struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again. See also Registration#id.
 	Id string `json:"id,omitempty"`
+}
+
+func (x *StaticRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain StaticRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Represents information about programming constructs like variables, classes,
@@ -4925,11 +8422,35 @@ type SymbolInformation struct {
 	Location Location `json:"location"`
 }
 
+func (x *SymbolInformation) UnmarshalJSON(data []byte) error {
+	type plain SymbolInformation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Location
+
+	return nil
+}
+
 // Describe options to be used when registered for text document change events.
 type TextDocumentChangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	// How documents are synced to the server.
 	SyncKind TextDocumentSyncKind `json:"syncKind"`
+}
+
+func (x *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentChangeRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.SyncKind == 0 {
+		return errors.New("\"syncKind\" property is required")
+	}
+
+	return nil
 }
 
 // Text document specific client capabilities.
@@ -5025,6 +8546,15 @@ type TextDocumentClientCapabilities struct {
 	Diagnostic *DiagnosticClientCapabilities `json:"diagnostic,omitempty"`
 }
 
+func (x *TextDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Describes textual changes on a text document. A TextDocumentEdit describes all changes
 // on a document version Si and after they are applied move the document to version Si+1.
 // So the creator of a TextDocumentEdit doesn't need to sort the array of edits or do any
@@ -5039,10 +8569,38 @@ type TextDocumentEdit struct {
 	Edits []OneOf2[TextEdit, AnnotatedTextEdit] `json:"edits"`
 }
 
+func (x *TextDocumentEdit) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentEdit
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	if x.Edits == nil {
+		return errors.New("\"edits\" property is required")
+	}
+
+	return nil
+}
+
 // A literal to identify a text document in the client.
 type TextDocumentIdentifier struct {
 	// The text document's uri.
 	URI DocumentURI `json:"uri"`
+}
+
+func (x *TextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentIdentifier
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
 }
 
 // An item to transfer a text document from the client to the
@@ -5059,6 +8617,31 @@ type TextDocumentItem struct {
 	Text string `json:"text"`
 }
 
+func (x *TextDocumentItem) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.LanguageId == "" {
+		return errors.New("\"languageId\" property is required")
+	}
+
+	if x.Version == 0 {
+		return errors.New("\"version\" property is required")
+	}
+
+	if x.Text == "" {
+		return errors.New("\"text\" property is required")
+	}
+
+	return nil
+}
+
 // A parameter literal used in requests to pass a text document and a position inside that
 // document.
 type TextDocumentPositionParams struct {
@@ -5068,6 +8651,19 @@ type TextDocumentPositionParams struct {
 	Position Position `json:"position"`
 }
 
+func (x *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentPositionParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	var _ json.Unmarshaler = &x.Position
+
+	return nil
+}
+
 // General text document registration options.
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
@@ -5075,10 +8671,32 @@ type TextDocumentRegistrationOptions struct {
 	DocumentSelector DocumentSelector `json:"documentSelector"`
 }
 
+func (x *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.DocumentSelector == nil {
+		return errors.New("\"documentSelector\" property is required")
+	}
+
+	return nil
+}
+
 // Save registration options.
 type TextDocumentSaveRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SaveOptions
+}
+
+func (x *TextDocumentSaveRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentSaveRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type TextDocumentSyncClientCapabilities struct {
@@ -5092,6 +8710,15 @@ type TextDocumentSyncClientCapabilities struct {
 	WillSaveWaitUntil bool `json:"willSaveWaitUntil,omitempty"`
 	// The client supports did save notifications.
 	DidSave bool `json:"didSave,omitempty"`
+}
+
+func (x *TextDocumentSyncClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentSyncClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type TextDocumentSyncOptions struct {
@@ -5112,6 +8739,15 @@ type TextDocumentSyncOptions struct {
 	Save *OneOf2[bool, SaveOptions] `json:"save,omitempty"`
 }
 
+func (x *TextDocumentSyncOptions) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentSyncOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // A text edit applicable to a text document.
 type TextEdit struct {
 	// The range of the text document to be manipulated. To insert
@@ -5120,6 +8756,21 @@ type TextEdit struct {
 	// The string to be inserted. For delete operations use an
 	// empty string.
 	NewText string `json:"newText"`
+}
+
+func (x *TextEdit) UnmarshalJSON(data []byte) error {
+	type plain TextEdit
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	if x.NewText == "" {
+		return errors.New("\"newText\" property is required")
+	}
+
+	return nil
 }
 
 // Since 3.6.0
@@ -5134,8 +8785,26 @@ type TypeDefinitionClientCapabilities struct {
 	LinkSupport bool `json:"linkSupport,omitempty"`
 }
 
+func (x *TypeDefinitionClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain TypeDefinitionClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type TypeDefinitionOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *TypeDefinitionOptions) UnmarshalJSON(data []byte) error {
+	type plain TypeDefinitionOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type TypeDefinitionParams struct {
@@ -5144,10 +8813,28 @@ type TypeDefinitionParams struct {
 	PartialResultParams
 }
 
+func (x *TypeDefinitionParams) UnmarshalJSON(data []byte) error {
+	type plain TypeDefinitionParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type TypeDefinitionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	TypeDefinitionOptions
 	StaticRegistrationOptions
+}
+
+func (x *TypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain TypeDefinitionRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.17.0
@@ -5156,6 +8843,15 @@ type TypeHierarchyClientCapabilities struct {
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
 	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+}
+
+func (x *TypeHierarchyClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain TypeHierarchyClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // @since 3.17.0
@@ -5184,11 +8880,45 @@ type TypeHierarchyItem struct {
 	Data any `json:"data,omitempty"`
 }
 
+func (x *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
+	type plain TypeHierarchyItem
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Name == "" {
+		return errors.New("\"name\" property is required")
+	}
+
+	if x.Kind == 0 {
+		return errors.New("\"kind\" property is required")
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	var _ json.Unmarshaler = &x.SelectionRange
+
+	return nil
+}
+
 // Type hierarchy options used during static registration.
 //
 // @since 3.17.0
 type TypeHierarchyOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x *TypeHierarchyOptions) UnmarshalJSON(data []byte) error {
+	type plain TypeHierarchyOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // The parameter of a `textDocument/prepareTypeHierarchy` request.
@@ -5197,6 +8927,15 @@ type TypeHierarchyOptions struct {
 type TypeHierarchyPrepareParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+}
+
+func (x *TypeHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
+	type plain TypeHierarchyPrepareParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // Type hierarchy options used during static or dynamic registration.
@@ -5208,6 +8947,15 @@ type TypeHierarchyRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x *TypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain TypeHierarchyRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The parameter of a `typeHierarchy/subtypes` request.
 //
 // @since 3.17.0
@@ -5217,6 +8965,17 @@ type TypeHierarchySubtypesParams struct {
 	Item TypeHierarchyItem `json:"item"`
 }
 
+func (x *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
+	type plain TypeHierarchySubtypesParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Item
+
+	return nil
+}
+
 // The parameter of a `typeHierarchy/supertypes` request.
 //
 // @since 3.17.0
@@ -5224,6 +8983,17 @@ type TypeHierarchySupertypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	Item TypeHierarchyItem `json:"item"`
+}
+
+func (x *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
+	type plain TypeHierarchySupertypesParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Item
+
+	return nil
 }
 
 // A diagnostic report indicating that the last returned
@@ -5241,19 +9011,38 @@ type UnchangedDocumentDiagnosticReport struct {
 	ResultId string `json:"resultId"`
 }
 
+func (x *UnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	type plain UnchangedDocumentDiagnosticReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	if x.ResultId == "" {
+		return errors.New("\"resultId\" property is required")
+	}
+
+	return nil
+}
+
 // unchangedLiteral is a type that must be represented as the JSON-string "unchanged".
 type unchangedLiteral struct{}
 
-var unchangedJSON = []byte("\"unchanged\"")
-
 func (unchangedLiteral) MarshalJSON() ([]byte, error) {
-	return unchangedJSON, nil
+	return marshal("unchanged")
 }
 func (*unchangedLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, unchangedJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, unchangedJSON)
+
+	if value != "unchanged" {
+		return errors.New("value must be \"unchanged\"")
+	}
+
+	return nil
 }
 
 // General parameters to unregister a request or notification.
@@ -5265,8 +9054,38 @@ type Unregistration struct {
 	Method string `json:"method"`
 }
 
+func (x *Unregistration) UnmarshalJSON(data []byte) error {
+	type plain Unregistration
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Id == "" {
+		return errors.New("\"id\" property is required")
+	}
+
+	if x.Method == "" {
+		return errors.New("\"method\" property is required")
+	}
+
+	return nil
+}
+
 type UnregistrationParams struct {
 	Unregisterations []Unregistration `json:"unregisterations"`
+}
+
+func (x *UnregistrationParams) UnmarshalJSON(data []byte) error {
+	type plain UnregistrationParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Unregisterations == nil {
+		return errors.New("\"unregisterations\" property is required")
+	}
+
+	return nil
 }
 
 // A versioned notebook document identifier.
@@ -5279,11 +9098,41 @@ type VersionedNotebookDocumentIdentifier struct {
 	URI URI `json:"uri"`
 }
 
+func (x *VersionedNotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	type plain VersionedNotebookDocumentIdentifier
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Version == 0 {
+		return errors.New("\"version\" property is required")
+	}
+
+	if x.URI == (URI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
+}
+
 // A text document identifier to denote a specific version of a text document.
 type VersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
 	// The version number of this document.
 	Version int32 `json:"version"`
+}
+
+func (x *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	type plain VersionedTextDocumentIdentifier
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Version == 0 {
+		return errors.New("\"version\" property is required")
+	}
+
+	return nil
 }
 
 // The parameters sent in a will save text document notification.
@@ -5292,6 +9141,21 @@ type WillSaveTextDocumentParams struct {
 	TextDocument TextDocumentIdentifier `json:"textDocument"`
 	// The 'TextDocumentSaveReason'.
 	Reason TextDocumentSaveReason `json:"reason"`
+}
+
+func (x *WillSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
+	type plain WillSaveTextDocumentParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.TextDocument
+
+	if x.Reason == 0 {
+		return errors.New("\"reason\" property is required")
+	}
+
+	return nil
 }
 
 type WindowClientCapabilities struct {
@@ -5313,6 +9177,15 @@ type WindowClientCapabilities struct {
 	//
 	// @since 3.16.0
 	ShowDocument *ShowDocumentClientCapabilities `json:"showDocument,omitempty"`
+}
+
+func (x *WindowClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain WindowClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type WorkDoneProgressBegin struct {
@@ -5341,19 +9214,38 @@ type WorkDoneProgressBegin struct {
 	Percentage uint32 `json:"percentage,omitempty"`
 }
 
+func (x *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
+	type plain WorkDoneProgressBegin
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	if x.Title == "" {
+		return errors.New("\"title\" property is required")
+	}
+
+	return nil
+}
+
 // beginLiteral is a type that must be represented as the JSON-string "begin".
 type beginLiteral struct{}
 
-var beginJSON = []byte("\"begin\"")
-
 func (beginLiteral) MarshalJSON() ([]byte, error) {
-	return beginJSON, nil
+	return marshal("begin")
 }
 func (*beginLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, beginJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, beginJSON)
+
+	if value != "begin" {
+		return errors.New("value must be \"begin\"")
+	}
+
+	return nil
 }
 
 type WorkDoneProgressCancelParams struct {
@@ -5361,9 +9253,31 @@ type WorkDoneProgressCancelParams struct {
 	Token ProgressToken `json:"token"`
 }
 
+func (x *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
+	type plain WorkDoneProgressCancelParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Token
+
+	return nil
+}
+
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
 	Token ProgressToken `json:"token"`
+}
+
+func (x *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
+	type plain WorkDoneProgressCreateParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Token
+
+	return nil
 }
 
 type WorkDoneProgressEnd struct {
@@ -5373,28 +9287,61 @@ type WorkDoneProgressEnd struct {
 	Message string `json:"message,omitempty"`
 }
 
+func (x *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
+	type plain WorkDoneProgressEnd
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	return nil
+}
+
 // endLiteral is a type that must be represented as the JSON-string "end".
 type endLiteral struct{}
 
-var endJSON = []byte("\"end\"")
-
 func (endLiteral) MarshalJSON() ([]byte, error) {
-	return endJSON, nil
+	return marshal("end")
 }
 func (*endLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, endJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, endJSON)
+
+	if value != "end" {
+		return errors.New("value must be \"end\"")
+	}
+
+	return nil
 }
 
 type WorkDoneProgressOptions struct {
 	WorkDoneProgress bool `json:"workDoneProgress,omitempty"`
 }
 
+func (x *WorkDoneProgressOptions) UnmarshalJSON(data []byte) error {
+	type plain WorkDoneProgressOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type WorkDoneProgressParams struct {
 	// An optional token that a server can use to report work done progress.
 	WorkDoneToken *ProgressToken `json:"workDoneToken,omitempty"`
+}
+
+func (x *WorkDoneProgressParams) UnmarshalJSON(data []byte) error {
+	type plain WorkDoneProgressParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type WorkDoneProgressReport struct {
@@ -5419,19 +9366,34 @@ type WorkDoneProgressReport struct {
 	Percentage uint32 `json:"percentage,omitempty"`
 }
 
+func (x *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
+	type plain WorkDoneProgressReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Kind
+
+	return nil
+}
+
 // reportLiteral is a type that must be represented as the JSON-string "report".
 type reportLiteral struct{}
 
-var reportJSON = []byte("\"report\"")
-
 func (reportLiteral) MarshalJSON() ([]byte, error) {
-	return reportJSON, nil
+	return marshal("report")
 }
 func (*reportLiteral) UnmarshalJSON(data []byte) error {
-	if bytes.Equal(data, reportJSON) {
-		return nil
+	var value string
+	if err := unmarshal(data, &value); err != nil {
+		return err
 	}
-	return fmt.Errorf("unexpected JSON (%s), expected %s", data, reportJSON)
+
+	if value != "report" {
+		return errors.New("value must be \"report\"")
+	}
+
+	return nil
 }
 
 // Workspace specific client capabilities.
@@ -5489,6 +9451,15 @@ type WorkspaceClientCapabilities struct {
 	Diagnostics *DiagnosticWorkspaceClientCapabilities `json:"diagnostics,omitempty"`
 }
 
+func (x *WorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Parameters of the workspace diagnostic request.
 //
 // @since 3.17.0
@@ -5502,6 +9473,19 @@ type WorkspaceDiagnosticParams struct {
 	PreviousResultIds []PreviousResultId `json:"previousResultIds"`
 }
 
+func (x *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceDiagnosticParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.PreviousResultIds == nil {
+		return errors.New("\"previousResultIds\" property is required")
+	}
+
+	return nil
+}
+
 // A workspace diagnostic report.
 //
 // @since 3.17.0
@@ -5509,11 +9493,37 @@ type WorkspaceDiagnosticReport struct {
 	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
 }
 
+func (x *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceDiagnosticReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Items == nil {
+		return errors.New("\"items\" property is required")
+	}
+
+	return nil
+}
+
 // A partial result for a workspace diagnostic report.
 //
 // @since 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
 	Items []WorkspaceDocumentDiagnosticReport `json:"items"`
+}
+
+func (x *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceDiagnosticReportPartialResult
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Items == nil {
+		return errors.New("\"items\" property is required")
+	}
+
+	return nil
 }
 
 // A workspace edit represents changes to many resources managed in the workspace. The edit
@@ -5551,6 +9561,15 @@ type WorkspaceEdit struct {
 	ChangeAnnotations map[ChangeAnnotationIdentifier]ChangeAnnotation `json:"changeAnnotations,omitempty"`
 }
 
+func (x *WorkspaceEdit) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceEdit
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type WorkspaceEditClientCapabilities struct {
 	// The client supports versioned document changes in `WorkspaceEdit`s
 	DocumentChanges bool `json:"documentChanges,omitempty"`
@@ -5578,11 +9597,30 @@ type WorkspaceEditClientCapabilities struct {
 	// @since 3.16.0
 	ChangeAnnotationSupport *WorkspaceEditClientCapabilitiesChangeAnnotationSupport `json:"changeAnnotationSupport,omitempty"`
 }
+
+func (x *WorkspaceEditClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceEditClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
 	// Whether the client groups edits with equal labels into tree nodes,
 	// for instance all edits labelled with "Changes in Strings" would
 	// be a tree node.
 	GroupsOnLabel bool `json:"groupsOnLabel,omitempty"`
+}
+
+func (x *WorkspaceEditClientCapabilitiesChangeAnnotationSupport) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceEditClientCapabilitiesChangeAnnotationSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // A workspace folder inside a client.
@@ -5594,12 +9632,46 @@ type WorkspaceFolder struct {
 	Name string `json:"name"`
 }
 
+func (x *WorkspaceFolder) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceFolder
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (URI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.Name == "" {
+		return errors.New("\"name\" property is required")
+	}
+
+	return nil
+}
+
 // The workspace folder change event.
 type WorkspaceFoldersChangeEvent struct {
 	// The array of added workspace folders
 	Added []WorkspaceFolder `json:"added"`
 	// The array of the removed workspace folders
 	Removed []WorkspaceFolder `json:"removed"`
+}
+
+func (x *WorkspaceFoldersChangeEvent) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceFoldersChangeEvent
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Added == nil {
+		return errors.New("\"added\" property is required")
+	}
+
+	if x.Removed == nil {
+		return errors.New("\"removed\" property is required")
+	}
+
+	return nil
 }
 
 type WorkspaceFoldersInitializeParams struct {
@@ -5611,6 +9683,15 @@ type WorkspaceFoldersInitializeParams struct {
 	//
 	// @since 3.6.0
 	WorkspaceFolders []WorkspaceFolder `json:"workspaceFolders,omitempty"`
+}
+
+func (x *WorkspaceFoldersInitializeParams) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceFoldersInitializeParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 type WorkspaceFoldersServerCapabilities struct {
@@ -5626,6 +9707,15 @@ type WorkspaceFoldersServerCapabilities struct {
 	ChangeNotifications *OneOf2[string, bool] `json:"changeNotifications,omitempty"`
 }
 
+func (x *WorkspaceFoldersServerCapabilities) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceFoldersServerCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // A full document diagnostic report for a workspace diagnostic result.
 //
 // @since 3.17.0
@@ -5636,6 +9726,23 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
 	Version int32 `json:"version"`
+}
+
+func (x *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceFullDocumentDiagnosticReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.Version == 0 {
+		return errors.New("\"version\" property is required")
+	}
+
+	return nil
 }
 
 // A special workspace symbol that supports locations without a range.
@@ -5655,8 +9762,33 @@ type WorkspaceSymbol struct {
 	// workspace symbol request and a workspace symbol resolve request.
 	Data any `json:"data,omitempty"`
 }
+
+func (x *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbol
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Location
+
+	return nil
+}
+
 type WorkspaceSymbolLocation struct {
 	URI DocumentURI `json:"uri"`
+}
+
+func (x *WorkspaceSymbolLocation) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolLocation
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	return nil
 }
 
 // Client capabilities for a {@link WorkspaceSymbolRequest}.
@@ -5677,6 +9809,16 @@ type WorkspaceSymbolClientCapabilities struct {
 	// @since 3.17.0
 	ResolveSupport *WorkspaceSymbolClientCapabilitiesResolveSupport `json:"resolveSupport,omitempty"`
 }
+
+func (x *WorkspaceSymbolClientCapabilities) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolClientCapabilities
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 	// The symbol kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -5688,14 +9830,51 @@ type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 	// the initial version of the protocol.
 	ValueSet []SymbolKind `json:"valueSet,omitempty"`
 }
+
+func (x *WorkspaceSymbolClientCapabilitiesSymbolKind) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolClientCapabilitiesSymbolKind
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 type WorkspaceSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag `json:"valueSet"`
 }
+
+func (x *WorkspaceSymbolClientCapabilitiesTagSupport) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolClientCapabilitiesTagSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ValueSet == nil {
+		return errors.New("\"valueSet\" property is required")
+	}
+
+	return nil
+}
+
 type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily. Usually
 	// `location.range`
 	Properties []string `json:"properties"`
+}
+
+func (x *WorkspaceSymbolClientCapabilitiesResolveSupport) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolClientCapabilitiesResolveSupport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Properties == nil {
+		return errors.New("\"properties\" property is required")
+	}
+
+	return nil
 }
 
 // Server capabilities for a {@link WorkspaceSymbolRequest}.
@@ -5708,6 +9887,15 @@ type WorkspaceSymbolOptions struct {
 	ResolveProvider bool `json:"resolveProvider,omitempty"`
 }
 
+func (x *WorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // The parameters of a {@link WorkspaceSymbolRequest}.
 type WorkspaceSymbolParams struct {
 	WorkDoneProgressParams
@@ -5717,9 +9905,31 @@ type WorkspaceSymbolParams struct {
 	Query string `json:"query"`
 }
 
+func (x *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Query == "" {
+		return errors.New("\"query\" property is required")
+	}
+
+	return nil
+}
+
 // Registration options for a {@link WorkspaceSymbolRequest}.
 type WorkspaceSymbolRegistrationOptions struct {
 	WorkspaceSymbolOptions
+}
+
+func (x *WorkspaceSymbolRegistrationOptions) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceSymbolRegistrationOptions
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // An unchanged document diagnostic report for a workspace diagnostic result.
@@ -5732,6 +9942,23 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
 	Version int32 `json:"version"`
+}
+
+func (x *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	type plain WorkspaceUnchangedDocumentDiagnosticReport
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.URI == (DocumentURI{}) {
+		return errors.New("\"uri\" property is required")
+	}
+
+	if x.Version == 0 {
+		return errors.New("\"version\" property is required")
+	}
+
+	return nil
 }
 
 // The initialize parameters
@@ -5774,11 +10001,44 @@ type _InitializeParams struct {
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace TraceValues `json:"trace,omitempty"`
 }
+
+func (x *_InitializeParams) UnmarshalJSON(data []byte) error {
+	type plain _InitializeParams
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.ProcessId == 0 {
+		return errors.New("\"processId\" property is required")
+	}
+
+	if x.RootURI == (DocumentURI{}) {
+		return errors.New("\"rootUri\" property is required")
+	}
+
+	var _ json.Unmarshaler = &x.Capabilities
+
+	return nil
+}
+
 type _InitializeParamsClientInfo struct {
 	// The name of the client as defined by the client.
 	Name string `json:"name"`
 	// The client's version as defined by the client.
 	Version string `json:"version,omitempty"`
+}
+
+func (x *_InitializeParamsClientInfo) UnmarshalJSON(data []byte) error {
+	type plain _InitializeParamsClientInfo
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Name == "" {
+		return errors.New("\"name\" property is required")
+	}
+
+	return nil
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -6490,6 +10750,23 @@ type MarkedString1 struct {
 	Value    string `json:"value"`
 }
 
+func (x *MarkedString1) UnmarshalJSON(data []byte) error {
+	type plain MarkedString1
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Language == "" {
+		return errors.New("\"language\" property is required")
+	}
+
+	if x.Value == "" {
+		return errors.New("\"value\" property is required")
+	}
+
+	return nil
+}
+
 // A notebook document filter denotes a notebook document by
 // different properties. The properties will be match
 // against the notebook's URI (same as with documents)
@@ -6504,6 +10781,20 @@ type NotebookDocumentFilter1 struct {
 	// A glob pattern.
 	Pattern string `json:"pattern,omitempty"`
 }
+
+func (x *NotebookDocumentFilter1) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentFilter1
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.NotebookType == "" {
+		return errors.New("\"notebookType\" property is required")
+	}
+
+	return nil
+}
+
 type NotebookDocumentFilter2 struct {
 	// The type of the enclosing notebook.
 	NotebookType string `json:"notebookType,omitempty"`
@@ -6512,6 +10803,20 @@ type NotebookDocumentFilter2 struct {
 	// A glob pattern.
 	Pattern string `json:"pattern,omitempty"`
 }
+
+func (x *NotebookDocumentFilter2) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentFilter2
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Scheme == "" {
+		return errors.New("\"scheme\" property is required")
+	}
+
+	return nil
+}
+
 type NotebookDocumentFilter3 struct {
 	// The type of the enclosing notebook.
 	NotebookType string `json:"notebookType,omitempty"`
@@ -6519,6 +10824,19 @@ type NotebookDocumentFilter3 struct {
 	Scheme string `json:"scheme,omitempty"`
 	// A glob pattern.
 	Pattern string `json:"pattern"`
+}
+
+func (x *NotebookDocumentFilter3) UnmarshalJSON(data []byte) error {
+	type plain NotebookDocumentFilter3
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Pattern == "" {
+		return errors.New("\"pattern\" property is required")
+	}
+
+	return nil
 }
 
 // The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
@@ -6537,8 +10855,37 @@ type PrepareRenameResult1 struct {
 	Range       Range  `json:"range"`
 	Placeholder string `json:"placeholder"`
 }
+
+func (x *PrepareRenameResult1) UnmarshalJSON(data []byte) error {
+	type plain PrepareRenameResult1
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	if x.Placeholder == "" {
+		return errors.New("\"placeholder\" property is required")
+	}
+
+	return nil
+}
+
 type PrepareRenameResult2 struct {
 	DefaultBehavior bool `json:"defaultBehavior"`
+}
+
+func (x *PrepareRenameResult2) UnmarshalJSON(data []byte) error {
+	type plain PrepareRenameResult2
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.DefaultBehavior == false {
+		return errors.New("\"defaultBehavior\" property is required")
+	}
+
+	return nil
 }
 
 type ProgressToken = OneOf2[int32, string]
@@ -6556,9 +10903,38 @@ type TextDocumentContentChangeEvent1 struct {
 	// The new text for the provided range.
 	Text string `json:"text"`
 }
+
+func (x *TextDocumentContentChangeEvent1) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentContentChangeEvent1
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	var _ json.Unmarshaler = &x.Range
+
+	if x.Text == "" {
+		return errors.New("\"text\" property is required")
+	}
+
+	return nil
+}
+
 type TextDocumentContentChangeEvent2 struct {
 	// The new text of the whole document.
 	Text string `json:"text"`
+}
+
+func (x *TextDocumentContentChangeEvent2) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentContentChangeEvent2
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Text == "" {
+		return errors.New("\"text\" property is required")
+	}
+
+	return nil
 }
 
 // A document filter denotes a document by different properties like
@@ -6586,6 +10962,20 @@ type TextDocumentFilter1 struct {
 	// A glob pattern, like `*.{ts,js}`.
 	Pattern string `json:"pattern,omitempty"`
 }
+
+func (x *TextDocumentFilter1) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentFilter1
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Language == "" {
+		return errors.New("\"language\" property is required")
+	}
+
+	return nil
+}
+
 type TextDocumentFilter2 struct {
 	// A language id, like `typescript`.
 	Language string `json:"language,omitempty"`
@@ -6594,6 +10984,20 @@ type TextDocumentFilter2 struct {
 	// A glob pattern, like `*.{ts,js}`.
 	Pattern string `json:"pattern,omitempty"`
 }
+
+func (x *TextDocumentFilter2) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentFilter2
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Scheme == "" {
+		return errors.New("\"scheme\" property is required")
+	}
+
+	return nil
+}
+
 type TextDocumentFilter3 struct {
 	// A language id, like `typescript`.
 	Language string `json:"language,omitempty"`
@@ -6601,6 +11005,19 @@ type TextDocumentFilter3 struct {
 	Scheme string `json:"scheme,omitempty"`
 	// A glob pattern, like `*.{ts,js}`.
 	Pattern string `json:"pattern"`
+}
+
+func (x *TextDocumentFilter3) UnmarshalJSON(data []byte) error {
+	type plain TextDocumentFilter3
+	if err := unmarshal(data, (*plain)(x)); err != nil {
+		return err
+	}
+
+	if x.Pattern == "" {
+		return errors.New("\"pattern\" property is required")
+	}
+
+	return nil
 }
 
 // A workspace diagnostic document report.

@@ -24,16 +24,12 @@ func (g *generator) literalStructTypeExpr(t *metamodel.Type) jen.Code {
 }
 
 func (g *generator) generateLiteralStruct(name string, t *metamodel.Type) {
-	// Add the statement to the pending list _before_ generating its body, which
-	// may contain further literals.
-	gen := &jen.Statement{}
-	g.pending = append(g.pending, gen)
-
-	gen.Type().
-		Id(name).
-		StructFunc(func(gen *jen.Group) {
-			for _, p := range t.LiteralStructProperties() {
-				g.generateStructProperty(gen, p)
-			}
-		})
+	g.pending = append(
+		g.pending,
+		g.generateStructType(
+			name,
+			nil,
+			t.LiteralStructProperties(),
+		),
+	)
 }

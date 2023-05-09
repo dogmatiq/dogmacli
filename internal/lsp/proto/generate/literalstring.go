@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
@@ -12,21 +14,12 @@ func (g *generator) literalStringTypeExpr(t *metamodel.Type) jen.Code {
 }
 
 func (g *generator) generateLiteralString(name string, t *metamodel.Type) {
-	data := t.LiteralString() + "JSON"
-
 	g.pending = append(
 		g.pending,
 		jen.Commentf("%s is a type that must be represented as the JSON-string %q.", name, t.LiteralString()),
 		jen.Type().
 			Id(name).
 			Struct(),
-
-		jen.Var().
-			Id(data).
-			Op("=").
-			Index().
-			Byte().
-			Call(jen.Lit(string(t.RawValue))),
 
 		jen.Func().
 			Params(jen.Id(name)).
@@ -38,8 +31,9 @@ func (g *generator) generateLiteralString(name string, t *metamodel.Type) {
 			).
 			Block(
 				jen.Return(
-					jen.Id(data),
-					jen.Nil(),
+					jen.Id("marshal").Call(
+						jen.Lit(t.LiteralString()),
+					),
 				),
 			),
 
@@ -55,25 +49,43 @@ func (g *generator) generateLiteralString(name string, t *metamodel.Type) {
 				jen.Error(),
 			).
 			Block(
+				jen.Var().Id("value").String(),
 				jen.If(
-					jen.Qual("bytes", "Equal").
-						Call(
-							jen.Id("data"),
-							jen.Id(data),
-						),
+					jen.Err().Op(":=").Id("unmarshal").Call(
+						jen.Id("data"),
+						jen.Op("&").Id("value"),
+					),
+					jen.Err().Op("!=").Nil(),
 				).Block(
 					jen.Return(
-						jen.Nil(),
+						jen.Err(),
 					),
 				),
-				jen.Return(
-					jen.Qual("fmt", "Errorf").
-						Call(
-							jen.Lit("unexpected JSON (%s), expected %s"),
-							jen.Id("data"),
-							jen.Id(data),
+
+				jen.Line().
+					If(
+						jen.Id("value").
+							Op("!=").
+							Lit(t.LiteralString()),
+					).
+					Block(
+						jen.Return(
+							jen.Qual("errors", "New").
+								Call(
+									jen.Lit(
+										fmt.Sprintf(
+											"value must be %q",
+											t.LiteralString(),
+										),
+									),
+								),
 						),
-				),
+					),
+
+				jen.Line().
+					Return(
+						jen.Nil(),
+					),
 			),
 	)
 }
