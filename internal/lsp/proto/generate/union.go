@@ -11,46 +11,74 @@ func unionName(arity int) string {
 	return fmt.Sprintf("OneOf%d", arity)
 }
 
-func (g *generator) unionRef(t *metamodel.Type) jen.Code {
+func normalizeUnion(t *metamodel.Type) (*metamodel.Type, bool) {
+	if t.Kind != "or" {
+		panic("not a union type")
+	}
+
 	var (
 		items    []*metamodel.Type
-		types    []jen.Code
-		optional bool
+		nullable bool
 	)
 
 	for _, item := range t.Items {
 		if item.IsNull() {
-			optional = true
+			nullable = true
 		} else {
 			items = append(items, item)
-			types = append(types, g.typeRef(item))
 		}
 	}
 
-	union := types[0]
+	n := len(items)
 
-	n := len(types)
-	if n > 1 {
-		if g.unionArities == nil {
-			g.unionArities = map[int]struct{}{}
+	if n == 1 {
+		return items[0], nullable
+	}
+
+	return &metamodel.Type{
+		Kind:  "or",
+		Items: items,
+	}, nullable
+}
+
+func (g *generator) unionTypeExpr(t *metamodel.Type) jen.Code {
+	t, nullable := normalizeUnion(t)
+
+	if t.Kind != "or" {
+		expr := g.typeExpr(t)
+
+		if g.isOmittable(t) {
+			return expr
 		}
-		g.unionArities[n] = struct{}{}
 
-		union = jen.
-			Id(unionName(n)).
-			Types(types...)
-	} else if g.isOmittable(items[0]) {
-		optional = false
+		return jen.Op("*").Add(expr)
 	}
 
-	if optional {
-		return jen.Op("*").Add(union)
+	arity := len(t.Items)
+	g.unionArities[arity] = struct{}{}
+
+	expr := jen.
+		Id(unionName(arity)).
+		TypesFunc(func(gen *jen.Group) {
+			for _, item := range t.Items {
+				gen.Add(g.typeExpr(item))
+			}
+		})
+
+	if nullable {
+		return jen.Op("*").Add(expr)
 	}
 
-	return union
+	return expr
 }
 
 func (g *generator) generateUnions(gen *jen.File) {
+	if len(g.unionArities) == 0 {
+		return
+	}
+
+	generateBanner(gen, "UNIONS")
+
 	for _, arity := range sortedKeys(g.unionArities) {
 		var (
 			types            []jen.Code

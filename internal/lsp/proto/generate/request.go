@@ -5,14 +5,20 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
 
+func (g *generator) generateRequests(gen *jen.File) {
+	generateBanner(gen, "REQUESTS")
+
+	for _, m := range g.root.Requests {
+		if m.Direction == "clientToServer" {
+			g.generateRequest(gen, m)
+		}
+	}
+}
+
 func (g *generator) generateRequest(
 	gen *jen.File,
 	m metamodel.Request,
 ) {
-	if m.Direction != "clientToServer" {
-		return
-	}
-
 	name := normalizeName(m.Method)
 	handlerName := name + "Handler"
 	methodName := "Handle" + name
@@ -27,13 +33,13 @@ func (g *generator) generateRequest(
 				ParamsFunc(func(gen *jen.Group) {
 					gen.Line().Qual("context", "Context")
 					if m.Params != nil {
-						gen.Line().Add(g.typeRef(m.Params))
+						gen.Line().Add(g.typeExpr(m.Params))
 					}
 					gen.Line()
 				}).
 				ParamsFunc(func(gen *jen.Group) {
 					if !m.Result.IsNull() {
-						gen.Add(g.typeRef(m.Result))
+						gen.Add(g.typeExpr(m.Result))
 					}
 					gen.Error()
 				})
@@ -63,14 +69,14 @@ func (g *generator) generateRequest(
 									if m.Params == nil {
 										gen.Id("_").Struct()
 									} else {
-										gen.Id("p").Add(g.typeRef(m.Params))
+										gen.Id("p").Add(g.typeExpr(m.Params))
 									}
 								}).
 								ParamsFunc(func(gen *jen.Group) {
 									if m.Result.IsNull() {
 										gen.Any()
 									} else {
-										gen.Add(g.typeRef(m.Result))
+										gen.Add(g.typeExpr(m.Result))
 									}
 
 									gen.Error()

@@ -5,14 +5,14 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
 
-func (g *generator) literalStringRef(t *metamodel.Type) jen.Code {
-	name := t.LiteralString() + "Literal"
+func (g *generator) literalStringTypeExpr(t *metamodel.Type) jen.Code {
+	name := normalizeUnexportedName(t.LiteralString() + "Literal")
+	g.generateLiteralString(name, t)
+	return jen.Id(name)
+}
 
-	if _, ok := g.names[name]; ok {
-		return jen.Id(name)
-	}
-
-	dataVar := t.LiteralString() + "JSON"
+func (g *generator) generateLiteralString(name string, t *metamodel.Type) {
+	data := t.LiteralString() + "JSON"
 
 	g.pending = append(
 		g.pending,
@@ -22,7 +22,7 @@ func (g *generator) literalStringRef(t *metamodel.Type) jen.Code {
 			Struct(),
 
 		jen.Var().
-			Id(dataVar).
+			Id(data).
 			Op("=").
 			Index().
 			Byte().
@@ -38,7 +38,7 @@ func (g *generator) literalStringRef(t *metamodel.Type) jen.Code {
 			).
 			Block(
 				jen.Return(
-					jen.Id(dataVar),
+					jen.Id(data),
 					jen.Nil(),
 				),
 			),
@@ -59,7 +59,7 @@ func (g *generator) literalStringRef(t *metamodel.Type) jen.Code {
 					jen.Qual("bytes", "Equal").
 						Call(
 							jen.Id("data"),
-							jen.Id(dataVar),
+							jen.Id(data),
 						),
 				).Block(
 					jen.Return(
@@ -71,11 +71,9 @@ func (g *generator) literalStringRef(t *metamodel.Type) jen.Code {
 						Call(
 							jen.Lit("unexpected JSON (%s), expected %s"),
 							jen.Id("data"),
-							jen.Id(dataVar),
+							jen.Id(data),
 						),
 				),
 			),
 	)
-
-	return jen.Id(name)
 }

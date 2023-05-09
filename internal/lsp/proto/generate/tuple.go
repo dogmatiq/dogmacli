@@ -25,42 +25,41 @@ func tupleName(arity int) string {
 	return fmt.Sprintf("%sOf", name)
 }
 
-func (g *generator) tupleRef(t *metamodel.Type) jen.Code {
-	n := len(t.Items)
-
-	first := t.Items[0]
+func (g *generator) tupleTypeExpr(t *metamodel.Type) jen.Code {
 	array := true
 	for _, item := range t.Items[1:] {
-		if !reflect.DeepEqual(item, first) {
+		if !reflect.DeepEqual(item, t.Items[0]) {
 			array = false
 			break
 		}
 	}
 
+	length := len(t.Items)
+
 	if array {
-		return jen.Index(
-			jen.Lit(n),
-		).Add(
-			g.typeRef(first),
-		)
+		return jen.
+			Index(jen.Lit(length)).
+			Add(g.typeExpr(t.Items[0]))
 	}
 
-	var types []jen.Code
-	for _, item := range t.Items {
-		types = append(types, g.typeRef(item))
-	}
-
-	if g.tupleArities == nil {
-		g.tupleArities = map[int]struct{}{}
-	}
-	g.tupleArities[n] = struct{}{}
+	g.tupleArities[length] = struct{}{}
 
 	return jen.
-		Id(tupleName(n)).
-		Types(types...)
+		Id(tupleName(length)).
+		TypesFunc(func(gen *jen.Group) {
+			for _, item := range t.Items {
+				gen.Add(g.typeExpr(item))
+			}
+		})
 }
 
 func (g *generator) generateTuples(gen *jen.File) {
+	if len(g.tupleArities) == 0 {
+		return
+	}
+
+	generateBanner(gen, "TUPLES")
+
 	for _, arity := range sortedKeys(g.tupleArities) {
 		name, ok := tupleNames[arity]
 		if !ok {

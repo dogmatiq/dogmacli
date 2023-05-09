@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strconv"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -15,16 +16,25 @@ func (g *generator) isOmittable(t *metamodel.Type) bool {
 		if strings.HasPrefix(t.Name, "LSP") {
 			return true
 		}
-		return g.names[normalizeName(t.Name)].omittable
-	case "tuple":
-		return false
-	case "or":
-		for _, item := range t.Items {
-			if item.IsNull() {
-				return true
+		for _, m := range g.root.Enumerations {
+			if m.Name == t.Name {
+				return g.isOmittable(m.Type)
+			}
+		}
+		for _, m := range g.root.TypeAliases {
+			if m.Name == t.Name {
+				return g.isOmittable(m.Type)
 			}
 		}
 		return false
+	case "tuple":
+		return false
+	case "or":
+		t, _ := normalizeUnion(t)
+		if t.Kind == "or" {
+			return false
+		}
+		return g.isOmittable(t)
 	case "literal":
 		return false
 	case "stringLiteral":
@@ -38,33 +48,30 @@ func (g *generator) isOmittable(t *metamodel.Type) bool {
 	}
 }
 
-func (g *generator) typeRef(t *metamodel.Type) jen.Code {
+func (g *generator) typeExpr(t *metamodel.Type) jen.Code {
 	switch t.Kind {
 	case "base":
-		return g.baseRef(t)
+		return g.baseTypeExpr(t)
 	case "reference":
-		return g.namedRef(t)
+		return g.refTypeExpr(t)
 	case "tuple":
-		return g.tupleRef(t)
+		return g.tupleTypeExpr(t)
 	case "or":
-		return g.unionRef(t)
+		return g.unionTypeExpr(t)
 	case "literal":
-		return g.literalStructRef(t)
+		return g.literalStructTypeExpr(t)
 	case "stringLiteral":
-		return g.literalStringRef(t)
+		return g.literalStringTypeExpr(t)
 	case "map":
-		k := g.typeRef(t.MapKey)
-		v := g.typeRef(t.MapValue())
-		return jen.Map(k).Add(v)
+		return g.mapTypeExpr(t)
 	case "array":
-		e := g.typeRef(t.ArrayElement)
-		return jen.Index().Add(e)
+		return g.arrayTypeExpr(t)
 	default:
 		panic("unsupported kind: " + t.Kind)
 	}
 }
 
-func (g *generator) baseRef(t *metamodel.Type) jen.Code {
+func (g *generator) baseTypeExpr(t *metamodel.Type) jen.Code {
 	switch t.Name {
 	case "boolean":
 		return jen.Bool()
@@ -81,23 +88,55 @@ func (g *generator) baseRef(t *metamodel.Type) jen.Code {
 	case "URI":
 		return jen.Id("URI")
 	case "null":
-		return jen.Id("Null")
+		panic("unexpected reference to null type")
 	default:
 		panic("unsupported base type: " + t.Name)
 	}
 }
 
-func (g *generator) namedRef(t *metamodel.Type) jen.Code {
+func (g *generator) refTypeExpr(t *metamodel.Type) jen.Code {
 	switch t.Name {
 	case "LSPObject":
-		k := jen.String()
-		v := jen.Any()
-		return jen.Map(k).Add(v)
+		return jen.Map(jen.String()).Add(jen.Any())
 	case "LSPArray":
 		return jen.Index().Any()
 	case "LSPAny":
 		return jen.Any()
 	default:
 		return jen.Id(normalizeName(t.Name))
+	}
+}
+
+func (g *generator) mapTypeExpr(t *metamodel.Type) jen.Code {
+	return jen.Map(
+		g.typeExpr(t.MapKey),
+	).Add(
+		g.typeExpr(t.MapValue()),
+	)
+}
+
+func (g *generator) arrayTypeExpr(t *metamodel.Type) jen.Code {
+	return jen.Index().Add(
+		g.typeExpr(t.ArrayElement),
+	)
+}
+
+func (g *generator) generateUniqueName(desired string) (actual, suffix string) {
+	if _, ok := g.names[desired]; !ok {
+		g.names[desired] = struct{}{}
+		return desired, ""
+	}
+
+	i := 0
+	for {
+		i++
+
+		suffix := strconv.Itoa(i)
+		candidate := desired + suffix
+
+		if _, ok := g.names[candidate]; !ok {
+			g.names[candidate] = struct{}{}
+			return candidate, suffix
+		}
 	}
 }

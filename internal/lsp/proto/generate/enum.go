@@ -5,6 +5,15 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
 
+func (g *generator) generateEnums(gen *jen.File) {
+	generateBanner(gen, "ENUMERATIONS")
+
+	for _, m := range g.root.Enumerations {
+		g.generateEnum(gen, m)
+		g.flushPending(gen)
+	}
+}
+
 func (g *generator) generateEnum(
 	gen *jen.File,
 	m metamodel.Enumeration,
@@ -20,7 +29,7 @@ func (g *generator) generateEnum(
 
 	gen.Type().
 		Id(normalizeName(m.Name)).
-		Add(g.typeRef(m.Type))
+		Add(g.typeExpr(m.Type))
 
 	gen.Const().
 		DefsFunc(func(gen *jen.Group) {

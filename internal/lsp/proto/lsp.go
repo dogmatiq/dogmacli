@@ -44,3 +44,8 @@ func unmarshal(data []byte, v any) error {
 func marshal(v any) ([]byte, error) {
 	return json.Marshal(v)
 }
+
+// Ptr returns a pointer to v.
+func Ptr[T any](v T) *T {
+	return &v
+}

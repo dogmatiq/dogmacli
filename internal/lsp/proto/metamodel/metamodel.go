@@ -110,6 +110,14 @@ type Structure struct {
 	Mixins        []*Type    `json:"mixins"`
 }
 
+// Embeds returns the types that this structure embeds.
+func (s Structure) Embeds() []*Type {
+	return append(
+		slices.Clone(s.Extends),
+		s.Mixins...,
+	)
+}
+
 // Property is a member of a structure.
 type Property struct {
 	Documentation string `json:"documentation"`

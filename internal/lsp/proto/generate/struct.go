@@ -5,6 +5,15 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
 
+func (g *generator) generateStructs(gen *jen.File) {
+	generateBanner(gen, "STRUCTURES")
+
+	for _, m := range g.root.Structures {
+		g.generateStruct(gen, m)
+		g.flushPending(gen)
+	}
+}
+
 func (g *generator) generateStruct(
 	gen *jen.File,
 	m metamodel.Structure,
@@ -18,13 +27,12 @@ func (g *generator) generateStruct(
 		generateDocs(gen, m.Documentation)
 	}
 
+	name := normalizeName(m.Name)
+
 	gen.Type().
-		Id(normalizeName(m.Name)).
+		Id(name).
 		StructFunc(func(gen *jen.Group) {
-			for _, p := range m.Extends {
-				gen.Id(normalizeName(p.Name))
-			}
-			for _, p := range m.Mixins {
+			for _, p := range m.Embeds() {
 				gen.Id(normalizeName(p.Name))
 			}
 			for _, p := range m.Properties {
@@ -42,21 +50,21 @@ func (g *generator) generateStructProperty(
 
 	generateDocs(gen, m.Documentation)
 
-	ref := g.typeRef(m.Type)
+	expr := g.typeExpr(m.Type)
 	tag := m.Name
 
 	if m.Optional {
 		tag += ",omitempty"
 
 		if !g.isOmittable(m.Type) {
-			ref = jen.
+			expr = jen.
 				Op("*").
-				Add(ref)
+				Add(expr)
 		}
 	}
 
 	gen.Id(normalizeName(m.Name)).
-		Add(ref).
+		Add(expr).
 		Tag(map[string]string{
 			"json": tag,
 		})

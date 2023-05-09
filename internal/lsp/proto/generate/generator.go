@@ -1,7 +1,6 @@
 package main
 
 import (
-	"strconv"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -13,109 +12,49 @@ import (
 
 type generator struct {
 	root          metamodel.Root
-	names         map[string]typeInfo
+	names         map[string]struct{}
 	unionArities  map[int]struct{}
 	tupleArities  map[int]struct{}
 	namingContext []string
 	pending       []jen.Code
 }
 
-type typeInfo struct {
-	omittable bool
-}
-
 // generate generates the Go representation of the LSP model.
 func generate(gen *jen.File) {
 	g := &generator{
-		root:  metamodel.Get(),
-		names: map[string]typeInfo{},
+		root:         metamodel.Get(),
+		names:        map[string]struct{}{},
+		unionArities: map[int]struct{}{},
+		tupleArities: map[int]struct{}{},
 	}
 
 	for _, m := range g.root.Structures {
-		g.names[normalizeName(m.Name)] = typeInfo{omittable: false}
+		g.names[normalizeName(m.Name)] = struct{}{}
 	}
 	for _, m := range g.root.Enumerations {
-		g.names[normalizeName(m.Name)] = typeInfo{omittable: true}
+		g.names[normalizeName(m.Name)] = struct{}{}
 	}
 	for _, m := range g.root.TypeAliases {
-		g.names[normalizeName(m.Name)] = typeInfo{omittable: g.isOmittable(m.Type)}
+		g.names[normalizeName(m.Name)] = struct{}{}
 	}
 
-	banner := func(text string) {
-		sep := strings.Repeat("-", 120-3)
-		gen.Comment(sep)
-		gen.Comment(text)
-		gen.Comment(sep)
-		gen.Line()
-	}
+	g.generateRequests(gen)
+	g.generateNotifications(gen)
 
-	banner("REQUESTS")
-	for _, m := range g.root.Requests {
-		g.generateRequest(gen, m)
-	}
+	g.generateStructs(gen)
+	g.generateEnums(gen)
+	g.generateAliases(gen)
 
-	banner("NOTIFICATIONS")
-	for _, m := range g.root.Notifications {
-		g.generateNotification(gen, m)
-	}
-
-	banner("STRUCTURES")
-	for _, m := range g.root.Structures {
-		g.generateStruct(gen, m)
-		g.flushPending(gen)
-	}
-
-	banner("ENUMERATIONS")
-	for _, m := range g.root.Enumerations {
-		g.generateEnum(gen, m)
-		g.flushPending(gen)
-	}
-
-	banner("TYPE ALIASES")
-	for _, m := range g.root.TypeAliases {
-		g.generateAlias(gen, m)
-		g.flushPending(gen)
-	}
-
-	if len(g.unionArities) != 0 {
-		banner("UNIONS")
-		g.generateUnions(gen)
-	}
-
-	if len(g.tupleArities) != 0 {
-		banner("TUPLES")
-		g.generateTuples(gen)
-	}
+	g.generateUnions(gen)
+	g.generateTuples(gen)
 }
 
-func (g *generator) pushName(n string) {
-	g.namingContext = append(g.namingContext, normalizeName(n))
+func (g *generator) pushName(name string) {
+	g.namingContext = append(g.namingContext, normalizeName(name))
 }
 
 func (g *generator) popName() {
 	g.namingContext = g.namingContext[:len(g.namingContext)-1]
-}
-
-func (g *generator) uniqueName(desired string, info typeInfo) (actual, suffix string) {
-	defer func() {
-		g.names[actual] = info
-	}()
-
-	if _, ok := g.names[desired]; !ok {
-		return desired, ""
-	}
-
-	i := 0
-	for {
-		i++
-
-		suffix := strconv.Itoa(i)
-		candidate := desired + suffix
-
-		if _, ok := g.names[candidate]; !ok {
-			return candidate, suffix
-		}
-	}
 }
 
 func (g *generator) flushPending(gen *jen.File) {
@@ -125,6 +64,16 @@ func (g *generator) flushPending(gen *jen.File) {
 	g.pending = nil
 }
 
+// generateBanner writes a generateBanner comment to the generated file.
+func generateBanner(gen *jen.File, text string) {
+	sep := strings.Repeat("-", 120-3)
+	gen.Comment(sep)
+	gen.Comment(text)
+	gen.Comment(sep)
+	gen.Line()
+}
+
+// generateDocs writes documentation comments to the generated file.
 func generateDocs(
 	gen interface{ Comment(string) *jen.Statement },
 	docs string,
@@ -143,6 +92,11 @@ func normalizeName(n string) string {
 	n = strings.ReplaceAll(n, " ", "")
 	n = strings.ReplaceAll(n, "Uri", "URI")
 	return n
+}
+
+func normalizeUnexportedName(n string) string {
+	n = normalizeName(n)
+	return strings.ToLower(n[:1]) + n[1:]
 }
 
 func sortedKeys[M map[K]V, K constraints.Ordered, V any](m M) []K {

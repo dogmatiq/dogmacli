@@ -5,14 +5,20 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
 
+func (g *generator) generateNotifications(gen *jen.File) {
+	generateBanner(gen, "NOTIFICATIONS")
+
+	for _, m := range g.root.Notifications {
+		if m.Direction == "clientToServer" {
+			g.generateNotification(gen, m)
+		}
+	}
+}
+
 func (g *generator) generateNotification(
 	gen *jen.File,
 	m metamodel.Notification,
 ) {
-	if m.Direction != "clientToServer" {
-		return
-	}
-
 	name := normalizeName(m.Method)
 	handlerName := name + "Handler"
 	methodName := "Handle" + name
@@ -27,7 +33,7 @@ func (g *generator) generateNotification(
 				ParamsFunc(func(gen *jen.Group) {
 					gen.Line().Qual("context", "Context")
 					if m.Params != nil {
-						gen.Line().Add(g.typeRef(m.Params))
+						gen.Line().Add(g.typeExpr(m.Params))
 					}
 					gen.Line()
 				}).
@@ -57,7 +63,7 @@ func (g *generator) generateNotification(
 								if m.Params == nil {
 									gen.Id("_").Struct()
 								} else {
-									gen.Id("p").Add(g.typeRef(m.Params))
+									gen.Id("p").Add(g.typeExpr(m.Params))
 								}
 							}).
 							Params(
