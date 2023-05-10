@@ -13,7 +13,7 @@ require (
 	github.com/spf13/cobra v1.7.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
-	golang.org/x/tools v0.9.0
+	golang.org/x/tools v0.9.1
 )
 
 require (
