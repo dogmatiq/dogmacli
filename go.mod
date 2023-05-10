@@ -5,14 +5,14 @@ go 1.20
 require (
 	github.com/dave/jennifer v1.6.1
 	github.com/dogmatiq/configkit v0.12.1
-	github.com/dogmatiq/harpy v0.8.2
+	github.com/dogmatiq/harpy v0.9.1
 	github.com/dogmatiq/imbue v0.7.0
 	github.com/google/uuid v1.3.0
 	github.com/onsi/ginkgo/v2 v2.9.4
 	github.com/onsi/gomega v1.27.6
 	github.com/spf13/cobra v1.7.0
 	go.uber.org/zap v1.24.0
-	golang.org/x/exp v0.0.0-20220613132600-b0d781184e0d
+	golang.org/x/exp v0.0.0-20230425010034-47ecfdc1ba53
 	golang.org/x/tools v0.9.1
 )
 
