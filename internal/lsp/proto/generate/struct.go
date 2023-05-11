@@ -67,6 +67,20 @@ func (g *generator) generateStructType(
 			jen.Error(),
 		).
 		BlockFunc(func(gen *jen.Group) {
+			for _, p := range embeds {
+				gen.
+					If(
+						jen.Err().
+							Op(":=").
+							Id("x").Dot(normalizeName(p.Name)).
+							Dot("Validate").Call(),
+						jen.Err().Op("!=").Nil(),
+					).
+					Block(
+						jen.Return(jen.Err()),
+					)
+			}
+
 			for _, p := range properties {
 				pname := normalizeName(p.Name)
 				info := g.typeInfo(p.Type)
@@ -92,7 +106,7 @@ func (g *generator) generateStructType(
 
 				if p.Optional {
 					if info.IsValidateable {
-						if info.IsNillable {
+						if info.AddPointer {
 							gen.
 								If(
 									jen.Id("x").Dot(pname).
@@ -105,7 +119,7 @@ func (g *generator) generateStructType(
 						}
 					}
 				} else {
-					if info.IsNillable {
+					if info.AddPointer {
 						gen.
 							If(
 								jen.Id("x").Dot(pname).
@@ -155,7 +169,7 @@ func (g *generator) generateStructProperty(
 	expr := g.typeExpr(m.Type)
 	info := g.typeInfo(m.Type)
 
-	if info.UsePointer {
+	if info.AddPointer {
 		expr = jen.Op("*").Add(expr)
 	}
 

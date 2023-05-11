@@ -37,6 +37,13 @@ type DocumentURI = URI
 // Array is an array of T.
 type Array[T any] []T
 
+func (a Array[T]) MarshalJSON() ([]byte, error) {
+	if a == nil {
+		return []byte("[]"), nil
+	}
+	return json.Marshal([]T(a))
+}
+
 // Validate validates each element of the array.
 func (a Array[T]) Validate() error {
 	for _, v := range a {
@@ -49,6 +56,13 @@ func (a Array[T]) Validate() error {
 
 // Map is a map of K to V.
 type Map[K comparable, V any] map[K]V
+
+func (m Map[K, V]) MarshalJSON() ([]byte, error) {
+	if m == nil {
+		return []byte("{}"), nil
+	}
+	return json.Marshal(map[K]V(m))
+}
 
 // Validate validates each key and value of the map.
 func (m Map[K, V]) Validate() error {

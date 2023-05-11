@@ -18,15 +18,21 @@ func (h *handler) HandleWorkspaceDidChangeWorkspaceFolders(
 	p proto.DidChangeWorkspaceFoldersParams,
 ) error {
 	for _, f := range p.Event.Removed {
-		h.removeWorkspaceFolder(f)
+		if err := h.removeWorkspaceFolder(ctx, f); err != nil {
+			return err
+		}
 	}
+
 	for _, f := range p.Event.Added {
-		h.addWorkspaceFolder(f)
+		if err := h.addWorkspaceFolder(ctx, f); err != nil {
+			return err
+		}
 	}
+
 	return nil
 }
 
-func (h *handler) addWorkspaceFolder(f proto.WorkspaceFolder) {
+func (h *handler) addWorkspaceFolder(ctx context.Context, f proto.WorkspaceFolder) error {
 	if h.workspaceFolders == nil {
 		h.workspaceFolders = map[proto.URI]*workspaceFolder{}
 	}
@@ -42,9 +48,11 @@ func (h *handler) addWorkspaceFolder(f proto.WorkspaceFolder) {
 		slog.String("name", *f.Name),
 		slog.String("path", f.URI.Path),
 	)
+
+	return h.lint(ctx, wf)
 }
 
-func (h *handler) removeWorkspaceFolder(f proto.WorkspaceFolder) {
+func (h *handler) removeWorkspaceFolder(ctx context.Context, f proto.WorkspaceFolder) error {
 	delete(h.workspaceFolders, *f.URI)
 
 	h.Logger.Debug(
@@ -52,4 +60,6 @@ func (h *handler) removeWorkspaceFolder(f proto.WorkspaceFolder) {
 		slog.String("name", *f.Name),
 		slog.String("path", f.URI.Path),
 	)
+
+	return nil
 }

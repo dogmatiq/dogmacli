@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/dave/jennifer/jen"
@@ -71,22 +70,16 @@ func (g *generator) typeExpr(t *metamodel.Type) jen.Code {
 
 type typeInfo struct {
 	IsNillable     bool
-	UsePointer     bool
+	AddPointer     bool
 	IsValidateable bool
 }
 
 func (g *generator) typeInfo(t *metamodel.Type) (info typeInfo) {
-	defer func() {
-		if info.UsePointer && !info.IsNillable {
-			panic(fmt.Sprintf("%q uses a pointer but is not nillable", t.Kind))
-		}
-	}()
-
 	switch t.Kind {
 	case "base":
 		return typeInfo{
-			IsNillable:     true,
-			UsePointer:     true,
+			IsNillable:     false,
+			AddPointer:     true,
 			IsValidateable: false,
 		}
 	case "reference":
@@ -94,19 +87,19 @@ func (g *generator) typeInfo(t *metamodel.Type) (info typeInfo) {
 		case "LSPObject":
 			return typeInfo{
 				IsNillable:     true,
-				UsePointer:     false,
+				AddPointer:     false,
 				IsValidateable: true,
 			}
 		case "LSPArray":
 			return typeInfo{
 				IsNillable:     true,
-				UsePointer:     false,
+				AddPointer:     false,
 				IsValidateable: true,
 			}
 		case "LSPAny":
 			return typeInfo{
 				IsNillable:     true,
-				UsePointer:     false,
+				AddPointer:     false,
 				IsValidateable: false,
 			}
 		}
@@ -120,21 +113,21 @@ func (g *generator) typeInfo(t *metamodel.Type) (info typeInfo) {
 			if m.Name == t.Name {
 				return typeInfo{
 					IsNillable:     false,
-					UsePointer:     false,
+					AddPointer:     false,
 					IsValidateable: true,
 				}
 			}
 		}
 
 		return typeInfo{
-			IsNillable:     true,
-			UsePointer:     true,
+			IsNillable:     false,
+			AddPointer:     true,
 			IsValidateable: true,
 		}
 	case "tuple":
 		return typeInfo{
 			IsNillable:     false,
-			UsePointer:     true,
+			AddPointer:     true,
 			IsValidateable: true,
 		}
 	case "or":
@@ -143,32 +136,32 @@ func (g *generator) typeInfo(t *metamodel.Type) (info typeInfo) {
 			return g.typeInfo(t)
 		}
 		return typeInfo{
-			IsNillable:     true,
-			UsePointer:     true,
+			IsNillable:     false,
+			AddPointer:     true,
 			IsValidateable: true,
 		}
 	case "literal":
 		return typeInfo{
-			IsNillable:     true,
-			UsePointer:     true,
+			IsNillable:     false,
+			AddPointer:     true,
 			IsValidateable: true,
 		}
 	case "stringLiteral":
 		return typeInfo{
 			IsNillable:     false,
-			UsePointer:     false,
-			IsValidateable: true,
+			AddPointer:     false,
+			IsValidateable: false,
 		}
 	case "map":
 		return typeInfo{
 			IsNillable:     true,
-			UsePointer:     false,
+			AddPointer:     false,
 			IsValidateable: true,
 		}
 	case "array":
 		return typeInfo{
 			IsNillable:     true,
-			UsePointer:     false,
+			AddPointer:     false,
 			IsValidateable: true,
 		}
 	default:

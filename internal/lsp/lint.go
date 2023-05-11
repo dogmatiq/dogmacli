@@ -17,7 +17,7 @@ func (h *handler) lint(ctx context.Context, f *workspaceFolder) error {
 		Overlay: h.overlay,
 	}
 
-	pkgs, err := packages.Load(cfg, ".")
+	pkgs, err := packages.Load(cfg, "./...")
 	if err != nil {
 		if ctx.Err() != nil {
 			return ctx.Err()

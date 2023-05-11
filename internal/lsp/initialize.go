@@ -11,7 +11,9 @@ func (h *handler) HandleInitialize(
 	p proto.InitializeParams,
 ) (proto.InitializeResult, error) {
 	for _, f := range p.WorkspaceFolders {
-		h.addWorkspaceFolder(f)
+		if err := h.addWorkspaceFolder(ctx, f); err != nil {
+			return proto.InitializeResult{}, err
+		}
 	}
 
 	return proto.InitializeResult{
@@ -20,6 +22,7 @@ func (h *handler) HandleInitialize(
 			Version: proto.V(h.Version),
 		},
 		Capabilities: &proto.ServerCapabilities{
+			PositionEncoding: proto.PositionEncodingKindUTF16,
 			TextDocumentSync: &proto.OneOf2[proto.TextDocumentSyncOptions, proto.TextDocumentSyncKind]{
 				First: &proto.TextDocumentSyncOptions{
 					OpenClose: proto.V(true),

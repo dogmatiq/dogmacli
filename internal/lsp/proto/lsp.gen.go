@@ -451,7 +451,7 @@ type TextDocumentHoverHandler interface {
 	HandleTextDocumentHover(
 		context.Context,
 		HoverParams,
-	) (Hover, error)
+	) (*Hover, error)
 }
 
 // TextDocumentHoverRoute returns a route for the "textDocument/hover" request.
@@ -532,7 +532,7 @@ type TextDocumentLinkedEditingRangeHandler interface {
 	HandleTextDocumentLinkedEditingRange(
 		context.Context,
 		LinkedEditingRangeParams,
-	) (LinkedEditingRanges, error)
+	) (*LinkedEditingRanges, error)
 }
 
 // TextDocumentLinkedEditingRangeRoute returns a route for the "textDocument/linkedEditingRange" request.
@@ -607,7 +607,7 @@ type TextDocumentPrepareRenameHandler interface {
 	HandleTextDocumentPrepareRename(
 		context.Context,
 		PrepareRenameParams,
-	) (PrepareRenameResult, error)
+	) (*PrepareRenameResult, error)
 }
 
 // TextDocumentPrepareRenameRoute returns a route for the "textDocument/prepareRename" request.
@@ -681,7 +681,7 @@ type TextDocumentRenameHandler interface {
 	HandleTextDocumentRename(
 		context.Context,
 		RenameParams,
-	) (WorkspaceEdit, error)
+	) (*WorkspaceEdit, error)
 }
 
 // TextDocumentRenameRoute returns a route for the "textDocument/rename" request.
@@ -718,7 +718,7 @@ type TextDocumentSemanticTokensFullHandler interface {
 	HandleTextDocumentSemanticTokensFull(
 		context.Context,
 		SemanticTokensParams,
-	) (SemanticTokens, error)
+	) (*SemanticTokens, error)
 }
 
 // TextDocumentSemanticTokensFullRoute returns a route for the "textDocument/semanticTokens/full" request.
@@ -752,7 +752,7 @@ type TextDocumentSemanticTokensRangeHandler interface {
 	HandleTextDocumentSemanticTokensRange(
 		context.Context,
 		SemanticTokensRangeParams,
-	) (SemanticTokens, error)
+	) (*SemanticTokens, error)
 }
 
 // TextDocumentSemanticTokensRangeRoute returns a route for the "textDocument/semanticTokens/range" request.
@@ -768,7 +768,7 @@ type TextDocumentSignatureHelpHandler interface {
 	HandleTextDocumentSignatureHelp(
 		context.Context,
 		SignatureHelpParams,
-	) (SignatureHelp, error)
+	) (*SignatureHelp, error)
 }
 
 // TextDocumentSignatureHelpRoute returns a route for the "textDocument/signatureHelp" request.
@@ -934,7 +934,7 @@ type WorkspaceWillCreateFilesHandler interface {
 	HandleWorkspaceWillCreateFiles(
 		context.Context,
 		CreateFilesParams,
-	) (WorkspaceEdit, error)
+	) (*WorkspaceEdit, error)
 }
 
 // WorkspaceWillCreateFilesRoute returns a route for the "workspace/willCreateFiles" request.
@@ -954,7 +954,7 @@ type WorkspaceWillDeleteFilesHandler interface {
 	HandleWorkspaceWillDeleteFiles(
 		context.Context,
 		DeleteFilesParams,
-	) (WorkspaceEdit, error)
+	) (*WorkspaceEdit, error)
 }
 
 // WorkspaceWillDeleteFilesRoute returns a route for the "workspace/willDeleteFiles" request.
@@ -974,7 +974,7 @@ type WorkspaceWillRenameFilesHandler interface {
 	HandleWorkspaceWillRenameFiles(
 		context.Context,
 		RenameFilesParams,
-	) (WorkspaceEdit, error)
+	) (*WorkspaceEdit, error)
 }
 
 // WorkspaceWillRenameFilesRoute returns a route for the "workspace/willRenameFiles" request.
@@ -1420,6 +1420,9 @@ type AnnotatedTextEdit struct {
 }
 
 func (x AnnotatedTextEdit) Validate() error {
+	if err := x.TextEdit.Validate(); err != nil {
+		return err
+	}
 	if x.AnnotationID == nil {
 		return errors.New("missing required field \"annotationId\"")
 	}
@@ -1493,10 +1496,8 @@ func (x BaseSymbolInformation) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-	if x.Tags != nil {
-		if err := x.Tags.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Tags\": %w", err)
-		}
+	if err := x.Tags.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Tags\": %w", err)
 	}
 	return nil
 }
@@ -1531,9 +1532,6 @@ func (x CallHierarchyIncomingCall) Validate() error {
 	if err := x.From.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"From\": %w", err)
 	}
-	if x.FromRanges == nil {
-		return errors.New("missing required field \"fromRanges\"")
-	}
 	if err := x.FromRanges.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"FromRanges\": %w", err)
 	}
@@ -1550,6 +1548,12 @@ type CallHierarchyIncomingCallsParams struct {
 }
 
 func (x CallHierarchyIncomingCallsParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.Item == nil {
 		return errors.New("missing required field \"item\"")
 	}
@@ -1591,10 +1595,8 @@ func (x CallHierarchyItem) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-	if x.Tags != nil {
-		if err := x.Tags.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Tags\": %w", err)
-		}
+	if err := x.Tags.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Tags\": %w", err)
 	}
 	if x.URI == nil {
 		return errors.New("missing required field \"uri\"")
@@ -1622,6 +1624,9 @@ type CallHierarchyOptions struct {
 }
 
 func (x CallHierarchyOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1644,9 +1649,6 @@ func (x CallHierarchyOutgoingCall) Validate() error {
 	if err := x.To.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"To\": %w", err)
 	}
-	if x.FromRanges == nil {
-		return errors.New("missing required field \"fromRanges\"")
-	}
 	if err := x.FromRanges.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"FromRanges\": %w", err)
 	}
@@ -1663,6 +1665,12 @@ type CallHierarchyOutgoingCallsParams struct {
 }
 
 func (x CallHierarchyOutgoingCallsParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.Item == nil {
 		return errors.New("missing required field \"item\"")
 	}
@@ -1681,6 +1689,12 @@ type CallHierarchyPrepareParams struct {
 }
 
 func (x CallHierarchyPrepareParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1694,6 +1708,15 @@ type CallHierarchyRegistrationOptions struct {
 }
 
 func (x CallHierarchyRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.CallHierarchyOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -1840,10 +1863,8 @@ func (x CodeAction) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-	if x.Diagnostics != nil {
-		if err := x.Diagnostics.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
-		}
+	if err := x.Diagnostics.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
 	}
 	if x.Disabled != nil {
 		if err := x.Disabled.Validate(); err != nil {
@@ -1939,9 +1960,6 @@ type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 }
 
 func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) Validate() error {
-	if x.ValueSet == nil {
-		return errors.New("missing required field \"valueSet\"")
-	}
 	if err := x.ValueSet.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
@@ -1970,9 +1988,6 @@ type CodeActionClientCapabilitiesResolveSupport struct {
 }
 
 func (x CodeActionClientCapabilitiesResolveSupport) Validate() error {
-	if x.Properties == nil {
-		return errors.New("missing required field \"properties\"")
-	}
 	if err := x.Properties.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Properties\": %w", err)
 	}
@@ -2000,16 +2015,11 @@ type CodeActionContext struct {
 }
 
 func (x CodeActionContext) Validate() error {
-	if x.Diagnostics == nil {
-		return errors.New("missing required field \"diagnostics\"")
-	}
 	if err := x.Diagnostics.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
 	}
-	if x.Only != nil {
-		if err := x.Only.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Only\": %w", err)
-		}
+	if err := x.Only.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Only\": %w", err)
 	}
 	if err := x.TriggerKind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TriggerKind\": %w", err)
@@ -2033,10 +2043,11 @@ type CodeActionOptions struct {
 }
 
 func (x CodeActionOptions) Validate() error {
-	if x.CodeActionKinds != nil {
-		if err := x.CodeActionKinds.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"CodeActionKinds\": %w", err)
-		}
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.CodeActionKinds.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"CodeActionKinds\": %w", err)
 	}
 	return nil
 }
@@ -2054,6 +2065,12 @@ type CodeActionParams struct {
 }
 
 func (x CodeActionParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -2082,6 +2099,12 @@ type CodeActionRegistrationOptions struct {
 }
 
 func (x CodeActionRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.CodeActionOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2149,6 +2172,9 @@ type CodeLensOptions struct {
 }
 
 func (x CodeLensOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2161,6 +2187,12 @@ type CodeLensParams struct {
 }
 
 func (x CodeLensParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -2177,6 +2209,12 @@ type CodeLensRegistrationOptions struct {
 }
 
 func (x CodeLensRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.CodeLensOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2271,10 +2309,8 @@ func (x ColorPresentation) Validate() error {
 			return fmt.Errorf("invalid field \"TextEdit\": %w", err)
 		}
 	}
-	if x.AdditionalTextEdits != nil {
-		if err := x.AdditionalTextEdits.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"AdditionalTextEdits\": %w", err)
-		}
+	if err := x.AdditionalTextEdits.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"AdditionalTextEdits\": %w", err)
 	}
 	return nil
 }
@@ -2292,6 +2328,12 @@ type ColorPresentationParams struct {
 }
 
 func (x ColorPresentationParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -2334,10 +2376,8 @@ func (x Command) Validate() error {
 	if x.Command == nil {
 		return errors.New("missing required field \"command\"")
 	}
-	if x.Arguments != nil {
-		if err := x.Arguments.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Arguments\": %w", err)
-		}
+	if err := x.Arguments.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Arguments\": %w", err)
 	}
 	return nil
 }
@@ -2394,9 +2434,6 @@ type CompletionClientCapabilitiesCompletionItemTagSupport struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItemTagSupport) Validate() error {
-	if x.ValueSet == nil {
-		return errors.New("missing required field \"valueSet\"")
-	}
 	if err := x.ValueSet.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
@@ -2409,9 +2446,6 @@ type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItemResolveSupport) Validate() error {
-	if x.Properties == nil {
-		return errors.New("missing required field \"properties\"")
-	}
 	if err := x.Properties.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Properties\": %w", err)
 	}
@@ -2423,9 +2457,6 @@ type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) Validate() error {
-	if x.ValueSet == nil {
-		return errors.New("missing required field \"valueSet\"")
-	}
 	if err := x.ValueSet.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
@@ -2481,10 +2512,8 @@ type CompletionClientCapabilitiesCompletionItem struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItem) Validate() error {
-	if x.DocumentationFormat != nil {
-		if err := x.DocumentationFormat.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"DocumentationFormat\": %w", err)
-		}
+	if err := x.DocumentationFormat.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"DocumentationFormat\": %w", err)
 	}
 	if x.TagSupport != nil {
 		if err := x.TagSupport.Validate(); err != nil {
@@ -2517,10 +2546,8 @@ type CompletionClientCapabilitiesCompletionItemKind struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItemKind) Validate() error {
-	if x.ValueSet != nil {
-		if err := x.ValueSet.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
-		}
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
 	return nil
 }
@@ -2538,10 +2565,8 @@ type CompletionClientCapabilitiesCompletionList struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionList) Validate() error {
-	if x.ItemDefaults != nil {
-		if err := x.ItemDefaults.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ItemDefaults\": %w", err)
-		}
+	if err := x.ItemDefaults.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ItemDefaults\": %w", err)
 	}
 	return nil
 }
@@ -2696,10 +2721,8 @@ func (x CompletionItem) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-	if x.Tags != nil {
-		if err := x.Tags.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Tags\": %w", err)
-		}
+	if err := x.Tags.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Tags\": %w", err)
 	}
 	if x.Documentation != nil {
 		if err := x.Documentation.Validate(); err != nil {
@@ -2717,15 +2740,11 @@ func (x CompletionItem) Validate() error {
 			return fmt.Errorf("invalid field \"TextEdit\": %w", err)
 		}
 	}
-	if x.AdditionalTextEdits != nil {
-		if err := x.AdditionalTextEdits.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"AdditionalTextEdits\": %w", err)
-		}
+	if err := x.AdditionalTextEdits.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"AdditionalTextEdits\": %w", err)
 	}
-	if x.CommitCharacters != nil {
-		if err := x.CommitCharacters.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"CommitCharacters\": %w", err)
-		}
+	if err := x.CommitCharacters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"CommitCharacters\": %w", err)
 	}
 	if x.Command != nil {
 		if err := x.Command.Validate(); err != nil {
@@ -2786,9 +2805,6 @@ func (x CompletionList) Validate() error {
 			return fmt.Errorf("invalid field \"ItemDefaults\": %w", err)
 		}
 	}
-	if x.Items == nil {
-		return errors.New("missing required field \"items\"")
-	}
 	if err := x.Items.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Items\": %w", err)
 	}
@@ -2840,10 +2856,8 @@ type CompletionListItemDefaults struct {
 }
 
 func (x CompletionListItemDefaults) Validate() error {
-	if x.CommitCharacters != nil {
-		if err := x.CommitCharacters.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"CommitCharacters\": %w", err)
-		}
+	if err := x.CommitCharacters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"CommitCharacters\": %w", err)
 	}
 	if x.EditRange != nil {
 		if err := x.EditRange.Validate(); err != nil {
@@ -2891,15 +2905,14 @@ type CompletionOptions struct {
 }
 
 func (x CompletionOptions) Validate() error {
-	if x.TriggerCharacters != nil {
-		if err := x.TriggerCharacters.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"TriggerCharacters\": %w", err)
-		}
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
 	}
-	if x.AllCommitCharacters != nil {
-		if err := x.AllCommitCharacters.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"AllCommitCharacters\": %w", err)
-		}
+	if err := x.TriggerCharacters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TriggerCharacters\": %w", err)
+	}
+	if err := x.AllCommitCharacters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"AllCommitCharacters\": %w", err)
 	}
 	if x.CompletionItem != nil {
 		if err := x.CompletionItem.Validate(); err != nil {
@@ -2933,6 +2946,15 @@ type CompletionParams struct {
 }
 
 func (x CompletionParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.Context != nil {
 		if err := x.Context.Validate(); err != nil {
 			return fmt.Errorf("invalid field \"Context\": %w", err)
@@ -2948,6 +2970,12 @@ type CompletionRegistrationOptions struct {
 }
 
 func (x CompletionRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.CompletionOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -2968,9 +2996,6 @@ type ConfigurationParams struct {
 }
 
 func (x ConfigurationParams) Validate() error {
-	if x.Items == nil {
-		return errors.New("missing required field \"items\"")
-	}
 	if err := x.Items.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Items\": %w", err)
 	}
@@ -2989,8 +3014,8 @@ type CreateFile struct {
 }
 
 func (x CreateFile) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	if err := x.ResourceOperation.Validate(); err != nil {
+		return err
 	}
 	if x.URI == nil {
 		return errors.New("missing required field \"uri\"")
@@ -3004,10 +3029,18 @@ func (x CreateFile) Validate() error {
 }
 
 // createLiteral is a type that must be represented as the JSON-string "create".
-type createLiteral string
+type createLiteral struct{}
 
-func (x createLiteral) Validate() error {
-	if x != "create" {
+func (x createLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("create")
+}
+
+func (x *createLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "create" {
 		return errors.New("value must be \"create\"")
 	}
 	return nil
@@ -3035,9 +3068,6 @@ type CreateFilesParams struct {
 }
 
 func (x CreateFilesParams) Validate() error {
-	if x.Files == nil {
-		return errors.New("missing required field \"files\"")
-	}
 	if err := x.Files.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Files\": %w", err)
 	}
@@ -3063,6 +3093,9 @@ type DeclarationOptions struct {
 }
 
 func (x DeclarationOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3073,6 +3106,15 @@ type DeclarationParams struct {
 }
 
 func (x DeclarationParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3083,6 +3125,15 @@ type DeclarationRegistrationOptions struct {
 }
 
 func (x DeclarationRegistrationOptions) Validate() error {
+	if err := x.DeclarationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3106,6 +3157,9 @@ type DefinitionOptions struct {
 }
 
 func (x DefinitionOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3117,6 +3171,15 @@ type DefinitionParams struct {
 }
 
 func (x DefinitionParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3127,6 +3190,12 @@ type DefinitionRegistrationOptions struct {
 }
 
 func (x DefinitionRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DefinitionOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3142,8 +3211,8 @@ type DeleteFile struct {
 }
 
 func (x DeleteFile) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	if err := x.ResourceOperation.Validate(); err != nil {
+		return err
 	}
 	if x.URI == nil {
 		return errors.New("missing required field \"uri\"")
@@ -3157,10 +3226,18 @@ func (x DeleteFile) Validate() error {
 }
 
 // deleteLiteral is a type that must be represented as the JSON-string "delete".
-type deleteLiteral string
+type deleteLiteral struct{}
 
-func (x deleteLiteral) Validate() error {
-	if x != "delete" {
+func (x deleteLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("delete")
+}
+
+func (x *deleteLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "delete" {
 		return errors.New("value must be \"delete\"")
 	}
 	return nil
@@ -3188,9 +3265,6 @@ type DeleteFilesParams struct {
 }
 
 func (x DeleteFilesParams) Validate() error {
-	if x.Files == nil {
-		return errors.New("missing required field \"files\"")
-	}
 	if err := x.Files.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Files\": %w", err)
 	}
@@ -3255,15 +3329,11 @@ func (x Diagnostic) Validate() error {
 	if x.Message == nil {
 		return errors.New("missing required field \"message\"")
 	}
-	if x.Tags != nil {
-		if err := x.Tags.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Tags\": %w", err)
-		}
+	if err := x.Tags.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Tags\": %w", err)
 	}
-	if x.RelatedInformation != nil {
-		if err := x.RelatedInformation.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"RelatedInformation\": %w", err)
-		}
+	if err := x.RelatedInformation.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"RelatedInformation\": %w", err)
 	}
 	return nil
 }
@@ -3302,6 +3372,9 @@ type DiagnosticOptions struct {
 }
 
 func (x DiagnosticOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	if x.InterFileDependencies == nil {
 		return errors.New("missing required field \"interFileDependencies\"")
 	}
@@ -3321,6 +3394,15 @@ type DiagnosticRegistrationOptions struct {
 }
 
 func (x DiagnosticRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DiagnosticOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3395,9 +3477,6 @@ type DidChangeConfigurationParams struct {
 }
 
 func (x DidChangeConfigurationParams) Validate() error {
-	if x.Settings == nil {
-		return errors.New("missing required field \"settings\"")
-	}
 	return nil
 }
 
@@ -3482,9 +3561,6 @@ func (x DidChangeTextDocumentParams) Validate() error {
 	if err := x.TextDocument.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-	if x.ContentChanges == nil {
-		return errors.New("missing required field \"contentChanges\"")
-	}
 	if err := x.ContentChanges.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"ContentChanges\": %w", err)
 	}
@@ -3514,9 +3590,6 @@ type DidChangeWatchedFilesParams struct {
 }
 
 func (x DidChangeWatchedFilesParams) Validate() error {
-	if x.Changes == nil {
-		return errors.New("missing required field \"changes\"")
-	}
 	if err := x.Changes.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Changes\": %w", err)
 	}
@@ -3530,9 +3603,6 @@ type DidChangeWatchedFilesRegistrationOptions struct {
 }
 
 func (x DidChangeWatchedFilesRegistrationOptions) Validate() error {
-	if x.Watchers == nil {
-		return errors.New("missing required field \"watchers\"")
-	}
 	if err := x.Watchers.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Watchers\": %w", err)
 	}
@@ -3573,9 +3643,6 @@ func (x DidCloseNotebookDocumentParams) Validate() error {
 	if err := x.NotebookDocument.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"NotebookDocument\": %w", err)
 	}
-	if x.CellTextDocuments == nil {
-		return errors.New("missing required field \"cellTextDocuments\"")
-	}
 	if err := x.CellTextDocuments.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"CellTextDocuments\": %w", err)
 	}
@@ -3615,9 +3682,6 @@ func (x DidOpenNotebookDocumentParams) Validate() error {
 	}
 	if err := x.NotebookDocument.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"NotebookDocument\": %w", err)
-	}
-	if x.CellTextDocuments == nil {
-		return errors.New("missing required field \"cellTextDocuments\"")
 	}
 	if err := x.CellTextDocuments.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"CellTextDocuments\": %w", err)
@@ -3694,6 +3758,9 @@ type DocumentColorOptions struct {
 }
 
 func (x DocumentColorOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3706,6 +3773,12 @@ type DocumentColorParams struct {
 }
 
 func (x DocumentColorParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -3722,6 +3795,15 @@ type DocumentColorRegistrationOptions struct {
 }
 
 func (x DocumentColorRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DocumentColorOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3740,6 +3822,12 @@ type DocumentDiagnosticParams struct {
 }
 
 func (x DocumentDiagnosticParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -3757,9 +3845,6 @@ type DocumentDiagnosticReportPartialResult struct {
 }
 
 func (x DocumentDiagnosticReportPartialResult) Validate() error {
-	if x.RelatedDocuments == nil {
-		return errors.New("missing required field \"relatedDocuments\"")
-	}
 	if err := x.RelatedDocuments.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
 	}
@@ -3782,6 +3867,9 @@ type DocumentFormattingOptions struct {
 }
 
 func (x DocumentFormattingOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3795,6 +3883,9 @@ type DocumentFormattingParams struct {
 }
 
 func (x DocumentFormattingParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -3817,6 +3908,12 @@ type DocumentFormattingRegistrationOptions struct {
 }
 
 func (x DocumentFormattingRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DocumentFormattingOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3859,6 +3956,9 @@ type DocumentHighlightOptions struct {
 }
 
 func (x DocumentHighlightOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3870,6 +3970,15 @@ type DocumentHighlightParams struct {
 }
 
 func (x DocumentHighlightParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3880,6 +3989,12 @@ type DocumentHighlightRegistrationOptions struct {
 }
 
 func (x DocumentHighlightRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DocumentHighlightOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3935,6 +4050,9 @@ type DocumentLinkOptions struct {
 }
 
 func (x DocumentLinkOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3947,6 +4065,12 @@ type DocumentLinkParams struct {
 }
 
 func (x DocumentLinkParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -3963,6 +4087,12 @@ type DocumentLinkRegistrationOptions struct {
 }
 
 func (x DocumentLinkRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DocumentLinkOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -3988,10 +4118,8 @@ func (x DocumentOnTypeFormattingOptions) Validate() error {
 	if x.FirstTriggerCharacter == nil {
 		return errors.New("missing required field \"firstTriggerCharacter\"")
 	}
-	if x.MoreTriggerCharacter != nil {
-		if err := x.MoreTriggerCharacter.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"MoreTriggerCharacter\": %w", err)
-		}
+	if err := x.MoreTriggerCharacter.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"MoreTriggerCharacter\": %w", err)
 	}
 	return nil
 }
@@ -4045,6 +4173,12 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 }
 
 func (x DocumentOnTypeFormattingRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DocumentOnTypeFormattingOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4064,6 +4198,9 @@ type DocumentRangeFormattingOptions struct {
 }
 
 func (x DocumentRangeFormattingOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4079,6 +4216,9 @@ type DocumentRangeFormattingParams struct {
 }
 
 func (x DocumentRangeFormattingParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -4107,6 +4247,12 @@ type DocumentRangeFormattingRegistrationOptions struct {
 }
 
 func (x DocumentRangeFormattingRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DocumentRangeFormattingOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4148,10 +4294,8 @@ func (x DocumentSymbol) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-	if x.Tags != nil {
-		if err := x.Tags.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Tags\": %w", err)
-		}
+	if err := x.Tags.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Tags\": %w", err)
 	}
 	if x.Range == nil {
 		return errors.New("missing required field \"range\"")
@@ -4165,10 +4309,8 @@ func (x DocumentSymbol) Validate() error {
 	if err := x.SelectionRange.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"SelectionRange\": %w", err)
 	}
-	if x.Children != nil {
-		if err := x.Children.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Children\": %w", err)
-		}
+	if err := x.Children.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Children\": %w", err)
 	}
 	return nil
 }
@@ -4222,10 +4364,8 @@ type DocumentSymbolClientCapabilitiesSymbolKind struct {
 }
 
 func (x DocumentSymbolClientCapabilitiesSymbolKind) Validate() error {
-	if x.ValueSet != nil {
-		if err := x.ValueSet.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
-		}
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
 	return nil
 }
@@ -4236,9 +4376,6 @@ type DocumentSymbolClientCapabilitiesTagSupport struct {
 }
 
 func (x DocumentSymbolClientCapabilitiesTagSupport) Validate() error {
-	if x.ValueSet == nil {
-		return errors.New("missing required field \"valueSet\"")
-	}
 	if err := x.ValueSet.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
@@ -4256,6 +4393,9 @@ type DocumentSymbolOptions struct {
 }
 
 func (x DocumentSymbolOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4268,6 +4408,12 @@ type DocumentSymbolParams struct {
 }
 
 func (x DocumentSymbolParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -4284,6 +4430,12 @@ type DocumentSymbolRegistrationOptions struct {
 }
 
 func (x DocumentSymbolRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.DocumentSymbolOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4305,8 +4457,8 @@ type ExecuteCommandOptions struct {
 }
 
 func (x ExecuteCommandOptions) Validate() error {
-	if x.Commands == nil {
-		return errors.New("missing required field \"commands\"")
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
 	}
 	if err := x.Commands.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Commands\": %w", err)
@@ -4324,13 +4476,14 @@ type ExecuteCommandParams struct {
 }
 
 func (x ExecuteCommandParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.Command == nil {
 		return errors.New("missing required field \"command\"")
 	}
-	if x.Arguments != nil {
-		if err := x.Arguments.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Arguments\": %w", err)
-		}
+	if err := x.Arguments.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Arguments\": %w", err)
 	}
 	return nil
 }
@@ -4341,6 +4494,9 @@ type ExecuteCommandRegistrationOptions struct {
 }
 
 func (x ExecuteCommandRegistrationOptions) Validate() error {
+	if err := x.ExecuteCommandOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4566,9 +4722,6 @@ type FileOperationRegistrationOptions struct {
 }
 
 func (x FileOperationRegistrationOptions) Validate() error {
-	if x.Filters == nil {
-		return errors.New("missing required field \"filters\"")
-	}
 	if err := x.Filters.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Filters\": %w", err)
 	}
@@ -4704,10 +4857,8 @@ type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
 }
 
 func (x FoldingRangeClientCapabilitiesFoldingRangeKind) Validate() error {
-	if x.ValueSet != nil {
-		if err := x.ValueSet.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
-		}
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
 	return nil
 }
@@ -4729,6 +4880,9 @@ type FoldingRangeOptions struct {
 }
 
 func (x FoldingRangeOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4741,6 +4895,12 @@ type FoldingRangeParams struct {
 }
 
 func (x FoldingRangeParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -4757,6 +4917,15 @@ type FoldingRangeRegistrationOptions struct {
 }
 
 func (x FoldingRangeRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.FoldingRangeOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4805,12 +4974,6 @@ type FullDocumentDiagnosticReport struct {
 }
 
 func (x FullDocumentDiagnosticReport) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
-	}
-	if x.Items == nil {
-		return errors.New("missing required field \"items\"")
-	}
 	if err := x.Items.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Items\": %w", err)
 	}
@@ -4818,10 +4981,18 @@ func (x FullDocumentDiagnosticReport) Validate() error {
 }
 
 // fullLiteral is a type that must be represented as the JSON-string "full".
-type fullLiteral string
+type fullLiteral struct{}
 
-func (x fullLiteral) Validate() error {
-	if x != "full" {
+func (x fullLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("full")
+}
+
+func (x *fullLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "full" {
 		return errors.New("value must be \"full\"")
 	}
 	return nil
@@ -4883,10 +5054,8 @@ func (x GeneralClientCapabilities) Validate() error {
 			return fmt.Errorf("invalid field \"Markdown\": %w", err)
 		}
 	}
-	if x.PositionEncodings != nil {
-		if err := x.PositionEncodings.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"PositionEncodings\": %w", err)
-		}
+	if err := x.PositionEncodings.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"PositionEncodings\": %w", err)
 	}
 	return nil
 }
@@ -4903,9 +5072,6 @@ type GeneralClientCapabilitiesStaleRequestSupport struct {
 func (x GeneralClientCapabilitiesStaleRequestSupport) Validate() error {
 	if x.Cancel == nil {
 		return errors.New("missing required field \"cancel\"")
-	}
-	if x.RetryOnContentModified == nil {
-		return errors.New("missing required field \"retryOnContentModified\"")
 	}
 	if err := x.RetryOnContentModified.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"RetryOnContentModified\": %w", err)
@@ -4946,10 +5112,8 @@ type HoverClientCapabilities struct {
 }
 
 func (x HoverClientCapabilities) Validate() error {
-	if x.ContentFormat != nil {
-		if err := x.ContentFormat.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ContentFormat\": %w", err)
-		}
+	if err := x.ContentFormat.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ContentFormat\": %w", err)
 	}
 	return nil
 }
@@ -4960,6 +5124,9 @@ type HoverOptions struct {
 }
 
 func (x HoverOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4970,6 +5137,12 @@ type HoverParams struct {
 }
 
 func (x HoverParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -4980,6 +5153,12 @@ type HoverRegistrationOptions struct {
 }
 
 func (x HoverRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.HoverOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5004,6 +5183,9 @@ type ImplementationOptions struct {
 }
 
 func (x ImplementationOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5014,6 +5196,15 @@ type ImplementationParams struct {
 }
 
 func (x ImplementationParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5024,6 +5215,15 @@ type ImplementationRegistrationOptions struct {
 }
 
 func (x ImplementationRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.ImplementationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5050,6 +5250,12 @@ type InitializeParams struct {
 }
 
 func (x InitializeParams) Validate() error {
+	if err := x._InitializeParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkspaceFoldersInitializeParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5153,10 +5359,8 @@ func (x InlayHint) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-	if x.TextEdits != nil {
-		if err := x.TextEdits.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"TextEdits\": %w", err)
-		}
+	if err := x.TextEdits.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextEdits\": %w", err)
 	}
 	if x.Tooltip != nil {
 		if err := x.Tooltip.Validate(); err != nil {
@@ -5192,9 +5396,6 @@ type InlayHintClientCapabilitiesResolveSupport struct {
 }
 
 func (x InlayHintClientCapabilitiesResolveSupport) Validate() error {
-	if x.Properties == nil {
-		return errors.New("missing required field \"properties\"")
-	}
 	if err := x.Properties.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Properties\": %w", err)
 	}
@@ -5264,6 +5465,9 @@ type InlayHintOptions struct {
 }
 
 func (x InlayHintOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5279,6 +5483,9 @@ type InlayHintParams struct {
 }
 
 func (x InlayHintParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -5304,6 +5511,15 @@ type InlayHintRegistrationOptions struct {
 }
 
 func (x InlayHintRegistrationOptions) Validate() error {
+	if err := x.InlayHintOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5390,6 +5606,9 @@ type InlineValueOptions struct {
 }
 
 func (x InlineValueOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5408,6 +5627,9 @@ type InlineValueParams struct {
 }
 
 func (x InlineValueParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -5439,6 +5661,15 @@ type InlineValueRegistrationOptions struct {
 }
 
 func (x InlineValueRegistrationOptions) Validate() error {
+	if err := x.InlineValueOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5561,6 +5792,9 @@ type LinkedEditingRangeOptions struct {
 }
 
 func (x LinkedEditingRangeOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5570,6 +5804,12 @@ type LinkedEditingRangeParams struct {
 }
 
 func (x LinkedEditingRangeParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5580,6 +5820,15 @@ type LinkedEditingRangeRegistrationOptions struct {
 }
 
 func (x LinkedEditingRangeRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.LinkedEditingRangeOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5597,9 +5846,6 @@ type LinkedEditingRanges struct {
 }
 
 func (x LinkedEditingRanges) Validate() error {
-	if x.Ranges == nil {
-		return errors.New("missing required field \"ranges\"")
-	}
 	if err := x.Ranges.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Ranges\": %w", err)
 	}
@@ -5718,10 +5964,8 @@ func (x MarkdownClientCapabilities) Validate() error {
 	if x.Parser == nil {
 		return errors.New("missing required field \"parser\"")
 	}
-	if x.AllowedTags != nil {
-		if err := x.AllowedTags.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"AllowedTags\": %w", err)
-		}
+	if err := x.AllowedTags.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"AllowedTags\": %w", err)
 	}
 	return nil
 }
@@ -5829,6 +6073,9 @@ type MonikerOptions struct {
 }
 
 func (x MonikerOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5839,6 +6086,15 @@ type MonikerParams struct {
 }
 
 func (x MonikerParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5848,6 +6104,12 @@ type MonikerRegistrationOptions struct {
 }
 
 func (x MonikerRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.MonikerOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -5880,10 +6142,8 @@ func (x NotebookCell) Validate() error {
 	if x.Document == nil {
 		return errors.New("missing required field \"document\"")
 	}
-	if x.Metadata != nil {
-		if err := x.Metadata.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Metadata\": %w", err)
-		}
+	if err := x.Metadata.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Metadata\": %w", err)
 	}
 	if x.ExecutionSummary != nil {
 		if err := x.ExecutionSummary.Validate(); err != nil {
@@ -5913,10 +6173,8 @@ func (x NotebookCellArrayChange) Validate() error {
 	if x.DeleteCount == nil {
 		return errors.New("missing required field \"deleteCount\"")
 	}
-	if x.Cells != nil {
-		if err := x.Cells.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Cells\": %w", err)
-		}
+	if err := x.Cells.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Cells\": %w", err)
 	}
 	return nil
 }
@@ -5978,13 +6236,8 @@ func (x NotebookDocument) Validate() error {
 	if x.Version == nil {
 		return errors.New("missing required field \"version\"")
 	}
-	if x.Metadata != nil {
-		if err := x.Metadata.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Metadata\": %w", err)
-		}
-	}
-	if x.Cells == nil {
-		return errors.New("missing required field \"cells\"")
+	if err := x.Metadata.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Metadata\": %w", err)
 	}
 	if err := x.Cells.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Cells\": %w", err)
@@ -6005,10 +6258,8 @@ type NotebookDocumentChangeEvent struct {
 }
 
 func (x NotebookDocumentChangeEvent) Validate() error {
-	if x.Metadata != nil {
-		if err := x.Metadata.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Metadata\": %w", err)
-		}
+	if err := x.Metadata.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Metadata\": %w", err)
 	}
 	if x.Cells != nil {
 		if err := x.Cells.Validate(); err != nil {
@@ -6034,15 +6285,11 @@ func (x NotebookDocumentChangeEventCellsStructure) Validate() error {
 	if err := x.Array.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Array\": %w", err)
 	}
-	if x.DidOpen != nil {
-		if err := x.DidOpen.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"DidOpen\": %w", err)
-		}
+	if err := x.DidOpen.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"DidOpen\": %w", err)
 	}
-	if x.DidClose != nil {
-		if err := x.DidClose.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"DidClose\": %w", err)
-		}
+	if err := x.DidClose.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"DidClose\": %w", err)
 	}
 	return nil
 }
@@ -6058,9 +6305,6 @@ func (x NotebookDocumentChangeEventCellsTextContent) Validate() error {
 	}
 	if err := x.Document.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Document\": %w", err)
-	}
-	if x.Changes == nil {
-		return errors.New("missing required field \"changes\"")
 	}
 	if err := x.Changes.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Changes\": %w", err)
@@ -6085,15 +6329,11 @@ func (x NotebookDocumentChangeEventCells) Validate() error {
 			return fmt.Errorf("invalid field \"Structure\": %w", err)
 		}
 	}
-	if x.Data != nil {
-		if err := x.Data.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Data\": %w", err)
-		}
+	if err := x.Data.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Data\": %w", err)
 	}
-	if x.TextContent != nil {
-		if err := x.TextContent.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"TextContent\": %w", err)
-		}
+	if err := x.TextContent.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextContent\": %w", err)
 	}
 	return nil
 }
@@ -6172,9 +6412,6 @@ type NotebookDocumentSyncOptions struct {
 }
 
 func (x NotebookDocumentSyncOptions) Validate() error {
-	if x.NotebookSelector == nil {
-		return errors.New("missing required field \"notebookSelector\"")
-	}
 	if err := x.NotebookSelector.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"NotebookSelector\": %w", err)
 	}
@@ -6208,10 +6445,8 @@ func (x NotebookDocumentSyncOptionsNotebookSelector) Validate() error {
 	if err := x.Notebook.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Notebook\": %w", err)
 	}
-	if x.Cells != nil {
-		if err := x.Cells.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Cells\": %w", err)
-		}
+	if err := x.Cells.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Cells\": %w", err)
 	}
 	return nil
 }
@@ -6242,9 +6477,6 @@ func (x NotebookDocumentSyncOptionsNotebookSelector1) Validate() error {
 			return fmt.Errorf("invalid field \"Notebook\": %w", err)
 		}
 	}
-	if x.Cells == nil {
-		return errors.New("missing required field \"cells\"")
-	}
 	if err := x.Cells.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Cells\": %w", err)
 	}
@@ -6260,6 +6492,12 @@ type NotebookDocumentSyncRegistrationOptions struct {
 }
 
 func (x NotebookDocumentSyncRegistrationOptions) Validate() error {
+	if err := x.NotebookDocumentSyncOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -6271,10 +6509,13 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
-	Version *int32 `json:"version"`
+	Version **int32 `json:"version"`
 }
 
 func (x OptionalVersionedTextDocumentIdentifier) Validate() error {
+	if err := x.TextDocumentIdentifier.Validate(); err != nil {
+		return err
+	}
 	if x.Version == nil {
 		return errors.New("missing required field \"version\"")
 	}
@@ -6387,6 +6628,12 @@ type PrepareRenameParams struct {
 }
 
 func (x PrepareRenameParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -6424,9 +6671,6 @@ func (x ProgressParams) Validate() error {
 	}
 	if err := x.Token.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Token\": %w", err)
-	}
-	if x.Value == nil {
-		return errors.New("missing required field \"value\"")
 	}
 	return nil
 }
@@ -6472,9 +6716,6 @@ type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 }
 
 func (x PublishDiagnosticsClientCapabilitiesTagSupport) Validate() error {
-	if x.ValueSet == nil {
-		return errors.New("missing required field \"valueSet\"")
-	}
 	if err := x.ValueSet.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
@@ -6496,9 +6737,6 @@ type PublishDiagnosticsParams struct {
 func (x PublishDiagnosticsParams) Validate() error {
 	if x.URI == nil {
 		return errors.New("missing required field \"uri\"")
-	}
-	if x.Diagnostics == nil {
-		return errors.New("missing required field \"diagnostics\"")
 	}
 	if err := x.Diagnostics.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
@@ -6572,6 +6810,9 @@ type ReferenceOptions struct {
 }
 
 func (x ReferenceOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -6584,6 +6825,15 @@ type ReferenceParams struct {
 }
 
 func (x ReferenceParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.Context == nil {
 		return errors.New("missing required field \"context\"")
 	}
@@ -6600,6 +6850,12 @@ type ReferenceRegistrationOptions struct {
 }
 
 func (x ReferenceRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.ReferenceOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -6629,9 +6885,6 @@ type RegistrationParams struct {
 }
 
 func (x RegistrationParams) Validate() error {
-	if x.Registrations == nil {
-		return errors.New("missing required field \"registrations\"")
-	}
 	if err := x.Registrations.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Registrations\": %w", err)
 	}
@@ -6671,10 +6924,11 @@ type RelatedFullDocumentDiagnosticReport struct {
 }
 
 func (x RelatedFullDocumentDiagnosticReport) Validate() error {
-	if x.RelatedDocuments != nil {
-		if err := x.RelatedDocuments.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
-		}
+	if err := x.FullDocumentDiagnosticReport.Validate(); err != nil {
+		return err
+	}
+	if err := x.RelatedDocuments.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
 	}
 	return nil
 }
@@ -6695,10 +6949,11 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 }
 
 func (x RelatedUnchangedDocumentDiagnosticReport) Validate() error {
-	if x.RelatedDocuments != nil {
-		if err := x.RelatedDocuments.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
-		}
+	if err := x.UnchangedDocumentDiagnosticReport.Validate(); err != nil {
+		return err
+	}
+	if err := x.RelatedDocuments.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
 	}
 	return nil
 }
@@ -6775,8 +7030,8 @@ type RenameFile struct {
 }
 
 func (x RenameFile) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	if err := x.ResourceOperation.Validate(); err != nil {
+		return err
 	}
 	if x.OldURI == nil {
 		return errors.New("missing required field \"oldUri\"")
@@ -6793,10 +7048,18 @@ func (x RenameFile) Validate() error {
 }
 
 // renameLiteral is a type that must be represented as the JSON-string "rename".
-type renameLiteral string
+type renameLiteral struct{}
 
-func (x renameLiteral) Validate() error {
-	if x != "rename" {
+func (x renameLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("rename")
+}
+
+func (x *renameLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "rename" {
 		return errors.New("value must be \"rename\"")
 	}
 	return nil
@@ -6825,9 +7088,6 @@ type RenameFilesParams struct {
 }
 
 func (x RenameFilesParams) Validate() error {
-	if x.Files == nil {
-		return errors.New("missing required field \"files\"")
-	}
 	if err := x.Files.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Files\": %w", err)
 	}
@@ -6844,6 +7104,9 @@ type RenameOptions struct {
 }
 
 func (x RenameOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -6861,6 +7124,9 @@ type RenameParams struct {
 }
 
 func (x RenameParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -6886,6 +7152,12 @@ type RenameRegistrationOptions struct {
 }
 
 func (x RenameRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.RenameOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -6956,6 +7228,9 @@ type SelectionRangeOptions struct {
 }
 
 func (x SelectionRangeOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -6970,14 +7245,17 @@ type SelectionRangeParams struct {
 }
 
 func (x SelectionRangeParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
 	if err := x.TextDocument.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
-	}
-	if x.Positions == nil {
-		return errors.New("missing required field \"positions\"")
 	}
 	if err := x.Positions.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Positions\": %w", err)
@@ -6992,6 +7270,15 @@ type SelectionRangeRegistrationOptions struct {
 }
 
 func (x SelectionRangeRegistrationOptions) Validate() error {
+	if err := x.SelectionRangeOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -7007,9 +7294,6 @@ type SemanticTokens struct {
 }
 
 func (x SemanticTokens) Validate() error {
-	if x.Data == nil {
-		return errors.New("missing required field \"data\"")
-	}
 	if err := x.Data.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Data\": %w", err)
 	}
@@ -7068,20 +7352,11 @@ func (x SemanticTokensClientCapabilities) Validate() error {
 	if err := x.Requests.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Requests\": %w", err)
 	}
-	if x.TokenTypes == nil {
-		return errors.New("missing required field \"tokenTypes\"")
-	}
 	if err := x.TokenTypes.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TokenTypes\": %w", err)
 	}
-	if x.TokenModifiers == nil {
-		return errors.New("missing required field \"tokenModifiers\"")
-	}
 	if err := x.TokenModifiers.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TokenModifiers\": %w", err)
-	}
-	if x.Formats == nil {
-		return errors.New("missing required field \"formats\"")
 	}
 	if err := x.Formats.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Formats\": %w", err)
@@ -7136,9 +7411,6 @@ type SemanticTokensDelta struct {
 }
 
 func (x SemanticTokensDelta) Validate() error {
-	if x.Edits == nil {
-		return errors.New("missing required field \"edits\"")
-	}
 	if err := x.Edits.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Edits\": %w", err)
 	}
@@ -7157,6 +7429,12 @@ type SemanticTokensDeltaParams struct {
 }
 
 func (x SemanticTokensDeltaParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -7175,9 +7453,6 @@ type SemanticTokensDeltaPartialResult struct {
 }
 
 func (x SemanticTokensDeltaPartialResult) Validate() error {
-	if x.Edits == nil {
-		return errors.New("missing required field \"edits\"")
-	}
 	if err := x.Edits.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Edits\": %w", err)
 	}
@@ -7201,10 +7476,8 @@ func (x SemanticTokensEdit) Validate() error {
 	if x.DeleteCount == nil {
 		return errors.New("missing required field \"deleteCount\"")
 	}
-	if x.Data != nil {
-		if err := x.Data.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Data\": %w", err)
-		}
+	if err := x.Data.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Data\": %w", err)
 	}
 	return nil
 }
@@ -7218,14 +7491,8 @@ type SemanticTokensLegend struct {
 }
 
 func (x SemanticTokensLegend) Validate() error {
-	if x.TokenTypes == nil {
-		return errors.New("missing required field \"tokenTypes\"")
-	}
 	if err := x.TokenTypes.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TokenTypes\": %w", err)
-	}
-	if x.TokenModifiers == nil {
-		return errors.New("missing required field \"tokenModifiers\"")
 	}
 	if err := x.TokenModifiers.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TokenModifiers\": %w", err)
@@ -7246,6 +7513,9 @@ type SemanticTokensOptions struct {
 }
 
 func (x SemanticTokensOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	if x.Legend == nil {
 		return errors.New("missing required field \"legend\"")
 	}
@@ -7289,6 +7559,12 @@ type SemanticTokensParams struct {
 }
 
 func (x SemanticTokensParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -7304,9 +7580,6 @@ type SemanticTokensPartialResult struct {
 }
 
 func (x SemanticTokensPartialResult) Validate() error {
-	if x.Data == nil {
-		return errors.New("missing required field \"data\"")
-	}
 	if err := x.Data.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Data\": %w", err)
 	}
@@ -7324,6 +7597,12 @@ type SemanticTokensRangeParams struct {
 }
 
 func (x SemanticTokensRangeParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.TextDocument == nil {
 		return errors.New("missing required field \"textDocument\"")
 	}
@@ -7347,6 +7626,15 @@ type SemanticTokensRegistrationOptions struct {
 }
 
 func (x SemanticTokensRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.SemanticTokensOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -7806,10 +8094,8 @@ func (x ShowMessageRequestParams) Validate() error {
 	if x.Message == nil {
 		return errors.New("missing required field \"message\"")
 	}
-	if x.Actions != nil {
-		if err := x.Actions.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Actions\": %w", err)
-		}
+	if err := x.Actions.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Actions\": %w", err)
 	}
 	return nil
 }
@@ -7841,9 +8127,6 @@ type SignatureHelp struct {
 }
 
 func (x SignatureHelp) Validate() error {
-	if x.Signatures == nil {
-		return errors.New("missing required field \"signatures\"")
-	}
 	if err := x.Signatures.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Signatures\": %w", err)
 	}
@@ -7901,10 +8184,8 @@ type SignatureHelpClientCapabilitiesSignatureInformation struct {
 }
 
 func (x SignatureHelpClientCapabilitiesSignatureInformation) Validate() error {
-	if x.DocumentationFormat != nil {
-		if err := x.DocumentationFormat.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"DocumentationFormat\": %w", err)
-		}
+	if err := x.DocumentationFormat.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"DocumentationFormat\": %w", err)
 	}
 	if x.ParameterInformation != nil {
 		if err := x.ParameterInformation.Validate(); err != nil {
@@ -7966,15 +8247,14 @@ type SignatureHelpOptions struct {
 }
 
 func (x SignatureHelpOptions) Validate() error {
-	if x.TriggerCharacters != nil {
-		if err := x.TriggerCharacters.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"TriggerCharacters\": %w", err)
-		}
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
 	}
-	if x.RetriggerCharacters != nil {
-		if err := x.RetriggerCharacters.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"RetriggerCharacters\": %w", err)
-		}
+	if err := x.TriggerCharacters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TriggerCharacters\": %w", err)
+	}
+	if err := x.RetriggerCharacters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"RetriggerCharacters\": %w", err)
 	}
 	return nil
 }
@@ -7991,6 +8271,12 @@ type SignatureHelpParams struct {
 }
 
 func (x SignatureHelpParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.Context != nil {
 		if err := x.Context.Validate(); err != nil {
 			return fmt.Errorf("invalid field \"Context\": %w", err)
@@ -8006,6 +8292,12 @@ type SignatureHelpRegistrationOptions struct {
 }
 
 func (x SignatureHelpRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.SignatureHelpOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8038,10 +8330,8 @@ func (x SignatureInformation) Validate() error {
 			return fmt.Errorf("invalid field \"Documentation\": %w", err)
 		}
 	}
-	if x.Parameters != nil {
-		if err := x.Parameters.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Parameters\": %w", err)
-		}
+	if err := x.Parameters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Parameters\": %w", err)
 	}
 	return nil
 }
@@ -8079,6 +8369,9 @@ type SymbolInformation struct {
 }
 
 func (x SymbolInformation) Validate() error {
+	if err := x.BaseSymbolInformation.Validate(); err != nil {
+		return err
+	}
 	if x.Location == nil {
 		return errors.New("missing required field \"location\"")
 	}
@@ -8096,6 +8389,9 @@ type TextDocumentChangeRegistrationOptions struct {
 }
 
 func (x TextDocumentChangeRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	if err := x.SyncKind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"SyncKind\": %w", err)
 	}
@@ -8370,9 +8666,6 @@ func (x TextDocumentEdit) Validate() error {
 	if err := x.TextDocument.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-	if x.Edits == nil {
-		return errors.New("missing required field \"edits\"")
-	}
 	if err := x.Edits.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Edits\": %w", err)
 	}
@@ -8455,9 +8748,6 @@ type TextDocumentRegistrationOptions struct {
 }
 
 func (x TextDocumentRegistrationOptions) Validate() error {
-	if x.DocumentSelector == nil {
-		return errors.New("missing required field \"documentSelector\"")
-	}
 	if err := x.DocumentSelector.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"DocumentSelector\": %w", err)
 	}
@@ -8471,6 +8761,12 @@ type TextDocumentSaveRegistrationOptions struct {
 }
 
 func (x TextDocumentSaveRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.SaveOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8565,6 +8861,9 @@ type TypeDefinitionOptions struct {
 }
 
 func (x TypeDefinitionOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8575,6 +8874,15 @@ type TypeDefinitionParams struct {
 }
 
 func (x TypeDefinitionParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8585,6 +8893,15 @@ type TypeDefinitionRegistrationOptions struct {
 }
 
 func (x TypeDefinitionRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.TypeDefinitionOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8633,10 +8950,8 @@ func (x TypeHierarchyItem) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-	if x.Tags != nil {
-		if err := x.Tags.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Tags\": %w", err)
-		}
+	if err := x.Tags.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Tags\": %w", err)
 	}
 	if x.URI == nil {
 		return errors.New("missing required field \"uri\"")
@@ -8664,6 +8979,9 @@ type TypeHierarchyOptions struct {
 }
 
 func (x TypeHierarchyOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8676,6 +8994,12 @@ type TypeHierarchyPrepareParams struct {
 }
 
 func (x TypeHierarchyPrepareParams) Validate() error {
+	if err := x.TextDocumentPositionParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8689,6 +9013,15 @@ type TypeHierarchyRegistrationOptions struct {
 }
 
 func (x TypeHierarchyRegistrationOptions) Validate() error {
+	if err := x.TextDocumentRegistrationOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.TypeHierarchyOptions.Validate(); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -8702,6 +9035,12 @@ type TypeHierarchySubtypesParams struct {
 }
 
 func (x TypeHierarchySubtypesParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.Item == nil {
 		return errors.New("missing required field \"item\"")
 	}
@@ -8721,6 +9060,12 @@ type TypeHierarchySupertypesParams struct {
 }
 
 func (x TypeHierarchySupertypesParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.Item == nil {
 		return errors.New("missing required field \"item\"")
 	}
@@ -8746,9 +9091,6 @@ type UnchangedDocumentDiagnosticReport struct {
 }
 
 func (x UnchangedDocumentDiagnosticReport) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
-	}
 	if x.ResultID == nil {
 		return errors.New("missing required field \"resultId\"")
 	}
@@ -8756,10 +9098,18 @@ func (x UnchangedDocumentDiagnosticReport) Validate() error {
 }
 
 // unchangedLiteral is a type that must be represented as the JSON-string "unchanged".
-type unchangedLiteral string
+type unchangedLiteral struct{}
 
-func (x unchangedLiteral) Validate() error {
-	if x != "unchanged" {
+func (x unchangedLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("unchanged")
+}
+
+func (x *unchangedLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "unchanged" {
 		return errors.New("value must be \"unchanged\"")
 	}
 	return nil
@@ -8789,9 +9139,6 @@ type UnregistrationParams struct {
 }
 
 func (x UnregistrationParams) Validate() error {
-	if x.Unregisterations == nil {
-		return errors.New("missing required field \"unregisterations\"")
-	}
 	if err := x.Unregisterations.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Unregisterations\": %w", err)
 	}
@@ -8826,6 +9173,9 @@ type VersionedTextDocumentIdentifier struct {
 }
 
 func (x VersionedTextDocumentIdentifier) Validate() error {
+	if err := x.TextDocumentIdentifier.Validate(); err != nil {
+		return err
+	}
 	if x.Version == nil {
 		return errors.New("missing required field \"version\"")
 	}
@@ -8915,9 +9265,6 @@ type WorkDoneProgressBegin struct {
 }
 
 func (x WorkDoneProgressBegin) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
-	}
 	if x.Title == nil {
 		return errors.New("missing required field \"title\"")
 	}
@@ -8925,10 +9272,18 @@ func (x WorkDoneProgressBegin) Validate() error {
 }
 
 // beginLiteral is a type that must be represented as the JSON-string "begin".
-type beginLiteral string
+type beginLiteral struct{}
 
-func (x beginLiteral) Validate() error {
-	if x != "begin" {
+func (x beginLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("begin")
+}
+
+func (x *beginLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "begin" {
 		return errors.New("value must be \"begin\"")
 	}
 	return nil
@@ -8972,17 +9327,22 @@ type WorkDoneProgressEnd struct {
 }
 
 func (x WorkDoneProgressEnd) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
-	}
 	return nil
 }
 
 // endLiteral is a type that must be represented as the JSON-string "end".
-type endLiteral string
+type endLiteral struct{}
 
-func (x endLiteral) Validate() error {
-	if x != "end" {
+func (x endLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("end")
+}
+
+func (x *endLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "end" {
 		return errors.New("value must be \"end\"")
 	}
 	return nil
@@ -9033,17 +9393,22 @@ type WorkDoneProgressReport struct {
 }
 
 func (x WorkDoneProgressReport) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return fmt.Errorf("invalid field \"Kind\": %w", err)
-	}
 	return nil
 }
 
 // reportLiteral is a type that must be represented as the JSON-string "report".
-type reportLiteral string
+type reportLiteral struct{}
 
-func (x reportLiteral) Validate() error {
-	if x != "report" {
+func (x reportLiteral) MarshalJSON() ([]byte, error) {
+	return json.Marshal("report")
+}
+
+func (x *reportLiteral) UnmarshalJSON(data []byte) error {
+	var v string
+	if err := json.Unmarshal(data, &v); err != nil {
+		return err
+	}
+	if v != "report" {
 		return errors.New("value must be \"report\"")
 	}
 	return nil
@@ -9177,8 +9542,11 @@ type WorkspaceDiagnosticParams struct {
 }
 
 func (x WorkspaceDiagnosticParams) Validate() error {
-	if x.PreviousResultIds == nil {
-		return errors.New("missing required field \"previousResultIds\"")
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
 	}
 	if err := x.PreviousResultIds.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"PreviousResultIds\": %w", err)
@@ -9194,9 +9562,6 @@ type WorkspaceDiagnosticReport struct {
 }
 
 func (x WorkspaceDiagnosticReport) Validate() error {
-	if x.Items == nil {
-		return errors.New("missing required field \"items\"")
-	}
 	if err := x.Items.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Items\": %w", err)
 	}
@@ -9211,9 +9576,6 @@ type WorkspaceDiagnosticReportPartialResult struct {
 }
 
 func (x WorkspaceDiagnosticReportPartialResult) Validate() error {
-	if x.Items == nil {
-		return errors.New("missing required field \"items\"")
-	}
 	if err := x.Items.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Items\": %w", err)
 	}
@@ -9256,20 +9618,14 @@ type WorkspaceEdit struct {
 }
 
 func (x WorkspaceEdit) Validate() error {
-	if x.Changes != nil {
-		if err := x.Changes.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"Changes\": %w", err)
-		}
+	if err := x.Changes.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Changes\": %w", err)
 	}
-	if x.DocumentChanges != nil {
-		if err := x.DocumentChanges.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"DocumentChanges\": %w", err)
-		}
+	if err := x.DocumentChanges.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"DocumentChanges\": %w", err)
 	}
-	if x.ChangeAnnotations != nil {
-		if err := x.ChangeAnnotations.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ChangeAnnotations\": %w", err)
-		}
+	if err := x.ChangeAnnotations.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ChangeAnnotations\": %w", err)
 	}
 	return nil
 }
@@ -9303,10 +9659,8 @@ type WorkspaceEditClientCapabilities struct {
 }
 
 func (x WorkspaceEditClientCapabilities) Validate() error {
-	if x.ResourceOperations != nil {
-		if err := x.ResourceOperations.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ResourceOperations\": %w", err)
-		}
+	if err := x.ResourceOperations.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ResourceOperations\": %w", err)
 	}
 	if err := x.FailureHandling.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"FailureHandling\": %w", err)
@@ -9358,14 +9712,8 @@ type WorkspaceFoldersChangeEvent struct {
 }
 
 func (x WorkspaceFoldersChangeEvent) Validate() error {
-	if x.Added == nil {
-		return errors.New("missing required field \"added\"")
-	}
 	if err := x.Added.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Added\": %w", err)
-	}
-	if x.Removed == nil {
-		return errors.New("missing required field \"removed\"")
 	}
 	if err := x.Removed.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Removed\": %w", err)
@@ -9385,10 +9733,8 @@ type WorkspaceFoldersInitializeParams struct {
 }
 
 func (x WorkspaceFoldersInitializeParams) Validate() error {
-	if x.WorkspaceFolders != nil {
-		if err := x.WorkspaceFolders.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"WorkspaceFolders\": %w", err)
-		}
+	if err := x.WorkspaceFolders.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"WorkspaceFolders\": %w", err)
 	}
 	return nil
 }
@@ -9424,10 +9770,13 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 	URI *DocumentURI `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version *int32 `json:"version"`
+	Version **int32 `json:"version"`
 }
 
 func (x WorkspaceFullDocumentDiagnosticReport) Validate() error {
+	if err := x.FullDocumentDiagnosticReport.Validate(); err != nil {
+		return err
+	}
 	if x.URI == nil {
 		return errors.New("missing required field \"uri\"")
 	}
@@ -9456,6 +9805,9 @@ type WorkspaceSymbol struct {
 }
 
 func (x WorkspaceSymbol) Validate() error {
+	if err := x.BaseSymbolInformation.Validate(); err != nil {
+		return err
+	}
 	if x.Location == nil {
 		return errors.New("missing required field \"location\"")
 	}
@@ -9527,10 +9879,8 @@ type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 }
 
 func (x WorkspaceSymbolClientCapabilitiesSymbolKind) Validate() error {
-	if x.ValueSet != nil {
-		if err := x.ValueSet.Validate(); err != nil {
-			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
-		}
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
 	return nil
 }
@@ -9541,9 +9891,6 @@ type WorkspaceSymbolClientCapabilitiesTagSupport struct {
 }
 
 func (x WorkspaceSymbolClientCapabilitiesTagSupport) Validate() error {
-	if x.ValueSet == nil {
-		return errors.New("missing required field \"valueSet\"")
-	}
 	if err := x.ValueSet.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 	}
@@ -9557,9 +9904,6 @@ type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
 }
 
 func (x WorkspaceSymbolClientCapabilitiesResolveSupport) Validate() error {
-	if x.Properties == nil {
-		return errors.New("missing required field \"properties\"")
-	}
 	if err := x.Properties.Validate(); err != nil {
 		return fmt.Errorf("invalid field \"Properties\": %w", err)
 	}
@@ -9577,6 +9921,9 @@ type WorkspaceSymbolOptions struct {
 }
 
 func (x WorkspaceSymbolOptions) Validate() error {
+	if err := x.WorkDoneProgressOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -9590,6 +9937,12 @@ type WorkspaceSymbolParams struct {
 }
 
 func (x WorkspaceSymbolParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.Validate(); err != nil {
+		return err
+	}
 	if x.Query == nil {
 		return errors.New("missing required field \"query\"")
 	}
@@ -9602,6 +9955,9 @@ type WorkspaceSymbolRegistrationOptions struct {
 }
 
 func (x WorkspaceSymbolRegistrationOptions) Validate() error {
+	if err := x.WorkspaceSymbolOptions.Validate(); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -9614,10 +9970,13 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	URI *DocumentURI `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version *int32 `json:"version"`
+	Version **int32 `json:"version"`
 }
 
 func (x WorkspaceUnchangedDocumentDiagnosticReport) Validate() error {
+	if err := x.UnchangedDocumentDiagnosticReport.Validate(); err != nil {
+		return err
+	}
 	if x.URI == nil {
 		return errors.New("missing required field \"uri\"")
 	}
@@ -9635,7 +9994,7 @@ type _InitializeParams struct {
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
-	ProcessID *int32 `json:"processId"`
+	ProcessID **int32 `json:"processId"`
 	// Information about the client
 	//
 	// @since 3.15.0
@@ -9653,13 +10012,13 @@ type _InitializeParams struct {
 	// if no folder is open.
 	//
 	// @deprecated in favour of rootUri.
-	RootPath *string `json:"rootPath,omitempty"`
+	RootPath **string `json:"rootPath,omitempty"`
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
 	//
 	// @deprecated in favour of workspaceFolders.
-	RootURI *DocumentURI `json:"rootUri"`
+	RootURI **DocumentURI `json:"rootUri"`
 	// The capabilities provided by the client (editor or tool)
 	Capabilities *ClientCapabilities `json:"capabilities"`
 	// User provided initialization options.
@@ -9669,6 +10028,9 @@ type _InitializeParams struct {
 }
 
 func (x _InitializeParams) Validate() error {
+	if err := x.WorkDoneProgressParams.Validate(); err != nil {
+		return err
+	}
 	if x.ProcessID == nil {
 		return errors.New("missing required field \"processId\"")
 	}

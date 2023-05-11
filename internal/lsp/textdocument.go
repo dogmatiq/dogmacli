@@ -2,13 +2,13 @@ package lsp
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 
 	"github.com/dogmatiq/dogmacli/internal/linter/diagnostic"
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto"
-	"github.com/google/go-cmp/cmp"
 )
 
 func (h *handler) HandleTextDocumentDidOpen(
@@ -50,9 +50,6 @@ func (h *handler) HandleTextDocumentDidChange(
 
 	h.overlay[p.TextDocument.URI.Path] = []byte(after)
 
-	diff := cmp.Diff(before, after)
-	fmt.Fprintln(os.Stderr, diff)
-
 	for _, f := range h.workspaceFolders {
 		_, err := filepath.Rel(f.Dir, p.TextDocument.URI.Path)
 		if err != nil {
@@ -72,7 +69,7 @@ func (h *handler) HandleTextDocumentDidClose(
 	ctx context.Context,
 	p proto.DidCloseTextDocumentParams,
 ) error {
-	delete(h.overlay, p.TextDocument.URI.Path)
+	// delete(h.overlay, p.TextDocument.URI.Path)
 	return nil
 }
 
@@ -105,6 +102,9 @@ func (h *handler) HandleTextDocumentDiagnostic(
 			)
 		}
 	}
+
+	x, err := json.Marshal(rep)
+	fmt.Fprintln(os.Stderr, string(x), err)
 
 	return proto.DocumentDiagnosticReport{First: &rep}, nil
 }
