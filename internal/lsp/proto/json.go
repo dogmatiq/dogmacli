@@ -6,7 +6,7 @@ import (
 )
 
 // structUnmarshal is a helper for unmarshaling as strictly as possible.
-func strictUnmarshal(data []byte, v any) error {
+func strictUnmarshal[T any](data []byte, v *T) error {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.DisallowUnknownFields()
 
@@ -14,7 +14,7 @@ func strictUnmarshal(data []byte, v any) error {
 		return err
 	}
 
-	return validate(v)
+	return validate(*v)
 }
 
 // validate recursively validates a value.
@@ -23,7 +23,7 @@ func validate(v any) error {
 		Validate() error
 	}
 
-	if v, ok := any(v).(validatable); ok {
+	if v, ok := v.(validatable); ok {
 		return v.Validate()
 	}
 	return nil

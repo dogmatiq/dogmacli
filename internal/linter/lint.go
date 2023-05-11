@@ -40,11 +40,14 @@ func Lint(pkgs ...*packages.Package) []diagnostic.Diagnostic {
 const (
 	// PackageLoadMode is the packages.LoadMode required by the linter.
 	PackageLoadMode = packages.NeedName |
+		packages.NeedFiles |
 		packages.NeedCompiledGoFiles |
 		packages.NeedSyntax |
 		packages.NeedTypes |
 		packages.NeedTypesInfo |
-		packages.NeedImports
+		packages.NeedTypesSizes |
+		packages.NeedImports |
+		packages.NeedDeps
 
 	// SSABuilderMode is the ssa.BuilderMode required by the linter.
 	SSABuilderMode = ssa.SanityCheckFunctions | ssa.GlobalDebug

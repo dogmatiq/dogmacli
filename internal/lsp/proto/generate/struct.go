@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
@@ -66,40 +68,68 @@ func (g *generator) generateStructType(
 		).
 		BlockFunc(func(gen *jen.Group) {
 			for _, p := range properties {
-				if !g.hasValidateMethod(p.Type) {
-					continue
-				}
+				pname := normalizeName(p.Name)
+				info := g.typeInfo(p.Type)
 
 				validate := jen.
 					If(
 						jen.Err().
 							Op(":=").
-							Id("x").Dot(normalizeName(p.Name)).
+							Id("x").Dot(pname).
 							Dot("Validate").Call(),
 						jen.Err().Op("!=").Nil(),
 					).
 					Block(
-						jen.Return(jen.Err()),
+						jen.Return(
+							jen.Qual("fmt", "Errorf").Call(
+								jen.Lit(
+									fmt.Sprintf("invalid field %q: %%w", pname),
+								),
+								jen.Err(),
+							),
+						),
 					)
 
 				if p.Optional {
-					zero := jen.Nil()
-					if g.isOmittable(p.Type) {
-						zero = g.zeroValue(p.Type)
+					if info.IsValidateable {
+						if info.IsNillable {
+							gen.
+								If(
+									jen.Id("x").Dot(pname).
+										Op("!=").
+										Nil(),
+								).
+								Block(validate)
+						} else {
+							gen.Add(validate)
+						}
+					}
+				} else {
+					if info.IsNillable {
+						gen.
+							If(
+								jen.Id("x").Dot(pname).
+									Op("==").
+									Nil(),
+							).
+							Block(
+								jen.Return(
+									jen.Qual("errors", "New").Call(
+										jen.Lit(
+											fmt.Sprintf(
+												"missing required field %q",
+												p.Name,
+											),
+										),
+									),
+								),
+							)
 					}
 
-					gen.
-						If(
-							jen.Id("x").Dot(normalizeName(p.Name)).
-								Op("!=").
-								Add(zero),
-						).
-						Block(validate)
-				} else {
-					gen.Add(validate)
+					if info.IsValidateable {
+						gen.Add(validate)
+					}
 				}
-
-				gen.Line()
 			}
 
 			gen.Return(jen.Nil())
@@ -117,17 +147,16 @@ func (g *generator) generateStructProperty(
 
 	generateDocs(gen, m.Documentation)
 
-	expr := g.typeExpr(m.Type)
 	tag := m.Name
-
 	if m.Optional {
 		tag += ",omitempty"
+	}
 
-		if !g.isOmittable(m.Type) {
-			expr = jen.
-				Op("*").
-				Add(expr)
-		}
+	expr := g.typeExpr(m.Type)
+	info := g.typeInfo(m.Type)
+
+	if info.UsePointer {
+		expr = jen.Op("*").Add(expr)
 	}
 
 	gen.Id(normalizeName(m.Name)).

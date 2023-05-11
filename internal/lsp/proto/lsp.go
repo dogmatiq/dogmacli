@@ -63,7 +63,7 @@ func (m Map[K, V]) Validate() error {
 	return nil
 }
 
-// Ptr returns a pointer to v.
-func Ptr[T any](v T) *T {
+// V returns a pointer to v.
+func V[T any](v T) *T {
 	return &v
 }

@@ -45,9 +45,10 @@ func (g *generator) unionTypeExpr(t *metamodel.Type) jen.Code {
 	t, nullable := normalizeUnion(t)
 
 	if t.Kind != "or" {
+		info := g.typeInfo(t)
 		expr := g.typeExpr(t)
 
-		if g.isOmittable(t) {
+		if info.IsNillable {
 			return expr
 		}
 
@@ -155,7 +156,7 @@ func (g *generator) generateUnions(gen *jen.File) {
 				gen.Var().
 					Id("errs").Index().Error()
 
-				for _, f := range fieldExpressions {
+				for i, f := range fieldExpressions {
 					gen.Line().
 						If(
 							jen.Err().
@@ -171,7 +172,12 @@ func (g *generator) generateUnions(gen *jen.File) {
 							jen.Add(f).Op("=").Nil(),
 							jen.Id("errs").Op("=").Append(
 								jen.Id("errs"),
-								jen.Err(),
+								jen.Qual("fmt", "Errorf").Call(
+									jen.Lit(
+										fmt.Sprintf("invalid field %q: %%w", ordinalFieldNames[i]),
+									),
+									jen.Err(),
+								),
 							),
 						).
 						Else().
@@ -198,12 +204,30 @@ func (g *generator) generateUnions(gen *jen.File) {
 			Block(
 				jen.Switch().
 					BlockFunc(func(gen *jen.Group) {
-						for _, f := range fieldExpressions {
+						for i, f := range fieldExpressions {
 							gen.Case(jen.Add(f).Op("!=").Nil()).
-								Return(
-									jen.Id("validate").
-										Call(f),
+								If(
+									jen.Err().
+										Op(":=").
+										Id("validate").
+										Call(
+											jen.Op("*").Add(f),
+										),
+									jen.Err().Op("!=").Nil(),
+								).
+								Block(
+									jen.Return(
+										jen.Qual("fmt", "Errorf").Call(
+											jen.Lit(
+												fmt.Sprintf("invalid field %q: %%w", ordinalFieldNames[i]),
+											),
+											jen.Err(),
+										),
+									),
 								)
+							gen.Return(
+								jen.Nil(),
+							)
 						}
 
 						gen.Default().

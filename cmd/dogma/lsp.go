@@ -6,7 +6,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/lsp"
 	"github.com/dogmatiq/harpy"
 	"github.com/dogmatiq/imbue"
-	"go.uber.org/zap"
+	"golang.org/x/exp/slog"
 )
 
 func init() {
@@ -15,21 +15,18 @@ func init() {
 		func(
 			ctx imbue.Context,
 		) (*lsp.Server, error) {
-			logger, err := zap.NewDevelopment(
-				zap.WithCaller(false),
-				zap.AddStacktrace(zap.FatalLevel), // disable stack trace for errors
+			logger := slog.New(
+				slog.HandlerOptions{
+					Level: slog.LevelDebug,
+				}.NewTextHandler(os.Stderr),
 			)
-			if err != nil {
-				return nil, err
-			}
 
 			return &lsp.Server{
-				In:      os.Stdin,
-				Out:     os.Stdout,
-				Version: version,
-				Logger: harpy.ZapExchangeLogger{
-					Target: logger,
-				},
+				In:             os.Stdin,
+				Out:            os.Stdout,
+				Version:        version,
+				Logger:         logger,
+				ExchangeLogger: harpy.NewSLogExchangeLogger(logger),
 			}, nil
 		},
 	)

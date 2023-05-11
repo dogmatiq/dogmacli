@@ -91,6 +91,11 @@ func normalizeName(n string) string {
 	n = strings.Title(n)
 	n = strings.ReplaceAll(n, " ", "")
 	n = strings.ReplaceAll(n, "Uri", "URI")
+
+	if n, ok := strings.CutSuffix(n, "Id"); ok {
+		return n + "ID"
+	}
+
 	return n
 }
 

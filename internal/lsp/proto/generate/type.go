@@ -1,59 +1,52 @@
 package main
 
 import (
+	"fmt"
 	"strconv"
-	"strings"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
 
-func (g *generator) isOmittable(t *metamodel.Type) bool {
-	switch t.Kind {
-	case "base":
-		return true
-	case "reference":
-		if strings.HasPrefix(t.Name, "LSP") {
-			return true
-		}
-		for _, m := range g.root.Enumerations {
-			if m.Name == t.Name {
-				return g.isOmittable(m.Type)
-			}
-		}
-		for _, m := range g.root.TypeAliases {
-			if m.Name == t.Name {
-				return g.isOmittable(m.Type)
-			}
-		}
-		return false
-	case "tuple":
-		return false
-	case "or":
-		t, _ := normalizeUnion(t)
-		if t.Kind == "or" {
-			return false
-		}
-		return g.isOmittable(t)
-	case "literal":
-		return false
-	case "stringLiteral":
-		return false
-	case "map":
-		return true
-	case "array":
-		return true
-	default:
-		panic("unsupported kind: " + t.Kind)
-	}
-}
-
 func (g *generator) typeExpr(t *metamodel.Type) jen.Code {
 	switch t.Kind {
 	case "base":
-		return g.baseTypeExpr(t)
+		switch t.Name {
+		case "boolean":
+			return jen.Bool()
+		case "decimal":
+			return jen.Float64()
+		case "string":
+			return jen.String()
+		case "integer":
+			return jen.Int32()
+		case "uinteger":
+			return jen.Uint32()
+		case "DocumentUri":
+			return jen.Id("DocumentURI")
+		case "URI":
+			return jen.Id("URI")
+		case "null":
+			panic("unexpected reference to null type")
+		default:
+			panic("unsupported base type: " + t.Name)
+		}
 	case "reference":
-		return g.refTypeExpr(t)
+		switch t.Name {
+		case "LSPObject":
+			return jen.Id("Map").Types(
+				jen.String(),
+				jen.Any(),
+			)
+		case "LSPArray":
+			return jen.Id("Array").Types(
+				jen.Any(),
+			)
+		case "LSPAny":
+			return jen.Any()
+		default:
+			return jen.Id(normalizeName(t.Name))
+		}
 	case "tuple":
 		return g.tupleTypeExpr(t)
 	case "or":
@@ -63,126 +56,124 @@ func (g *generator) typeExpr(t *metamodel.Type) jen.Code {
 	case "stringLiteral":
 		return g.literalStringTypeExpr(t)
 	case "map":
-		return g.mapTypeExpr(t)
+		return jen.Id("Map").Types(
+			g.typeExpr(t.MapKey),
+			g.typeExpr(t.MapValue()),
+		)
 	case "array":
-		return g.arrayTypeExpr(t)
+		return jen.Id("Array").Types(
+			g.typeExpr(t.ArrayElement),
+		)
 	default:
 		panic("unsupported kind: " + t.Kind)
 	}
 }
 
-func (g *generator) baseTypeExpr(t *metamodel.Type) jen.Code {
-	switch t.Name {
-	case "boolean":
-		return jen.Bool()
-	case "decimal":
-		return jen.Float64()
-	case "string":
-		return jen.String()
-	case "integer":
-		return jen.Int32()
-	case "uinteger":
-		return jen.Uint32()
-	case "DocumentUri":
-		return jen.Id("DocumentURI")
-	case "URI":
-		return jen.Id("URI")
-	case "null":
-		panic("unexpected reference to null type")
-	default:
-		panic("unsupported base type: " + t.Name)
-	}
+type typeInfo struct {
+	IsNillable     bool
+	UsePointer     bool
+	IsValidateable bool
 }
 
-func (g *generator) refTypeExpr(t *metamodel.Type) jen.Code {
-	switch t.Name {
-	case "LSPObject":
-		return jen.Map(jen.String()).Add(jen.Any())
-	case "LSPArray":
-		return jen.Index().Any()
-	case "LSPAny":
-		return jen.Any()
-	default:
-		return jen.Id(normalizeName(t.Name))
-	}
-}
+func (g *generator) typeInfo(t *metamodel.Type) (info typeInfo) {
+	defer func() {
+		if info.UsePointer && !info.IsNillable {
+			panic(fmt.Sprintf("%q uses a pointer but is not nillable", t.Kind))
+		}
+	}()
 
-func (g *generator) mapTypeExpr(t *metamodel.Type) jen.Code {
-	return jen.Id("Map").Types(
-		g.typeExpr(t.MapKey),
-		g.typeExpr(t.MapValue()),
-	)
-}
-
-func (g *generator) arrayTypeExpr(t *metamodel.Type) jen.Code {
-	return jen.Id("Array").Types(
-		g.typeExpr(t.ArrayElement),
-	)
-}
-
-func (g *generator) hasValidateMethod(t *metamodel.Type) bool {
 	switch t.Kind {
 	case "base":
-		return false
-	case "reference":
-		if strings.HasPrefix(t.Name, "LSP") {
-			return false
+		return typeInfo{
+			IsNillable:     true,
+			UsePointer:     true,
+			IsValidateable: false,
 		}
-		for _, m := range g.root.TypeAliases {
-			if m.Name == t.Name {
-				return g.hasValidateMethod(m.Type)
+	case "reference":
+		switch t.Name {
+		case "LSPObject":
+			return typeInfo{
+				IsNillable:     true,
+				UsePointer:     false,
+				IsValidateable: true,
+			}
+		case "LSPArray":
+			return typeInfo{
+				IsNillable:     true,
+				UsePointer:     false,
+				IsValidateable: true,
+			}
+		case "LSPAny":
+			return typeInfo{
+				IsNillable:     true,
+				UsePointer:     false,
+				IsValidateable: false,
 			}
 		}
-	case "or":
-		t, _ := normalizeUnion(t)
-		if t.Kind != "or" {
-			return g.hasValidateMethod(t)
-		}
-	}
 
-	return true
-}
-
-func (g *generator) zeroValue(t *metamodel.Type) *jen.Statement {
-	switch t.Kind {
-	case "base":
-		switch t.Name {
-		case "boolean":
-			return jen.False()
-		case "string":
-			return jen.Lit("")
-		case "decimal", "integer", "uinteger":
-			return jen.Lit(0)
-		}
-	case "reference":
-		if strings.HasPrefix(t.Name, "LSP") {
-			return jen.Nil()
+		for _, m := range g.root.TypeAliases {
+			if m.Name == t.Name {
+				return g.typeInfo(m.Type)
+			}
 		}
 		for _, m := range g.root.Enumerations {
 			if m.Name == t.Name {
-				return g.zeroValue(m.Type)
+				return typeInfo{
+					IsNillable:     false,
+					UsePointer:     false,
+					IsValidateable: true,
+				}
 			}
 		}
-		for _, m := range g.root.TypeAliases {
-			if m.Name == t.Name {
-				return g.zeroValue(m.Type)
-			}
+
+		return typeInfo{
+			IsNillable:     true,
+			UsePointer:     true,
+			IsValidateable: true,
+		}
+	case "tuple":
+		return typeInfo{
+			IsNillable:     false,
+			UsePointer:     true,
+			IsValidateable: true,
 		}
 	case "or":
 		t, _ := normalizeUnion(t)
 		if t.Kind != "or" {
-			return g.zeroValue(t)
+			return g.typeInfo(t)
+		}
+		return typeInfo{
+			IsNillable:     true,
+			UsePointer:     true,
+			IsValidateable: true,
+		}
+	case "literal":
+		return typeInfo{
+			IsNillable:     true,
+			UsePointer:     true,
+			IsValidateable: true,
 		}
 	case "stringLiteral":
-		return jen.Lit("")
-	case "map", "array":
-		return jen.Nil()
+		return typeInfo{
+			IsNillable:     false,
+			UsePointer:     false,
+			IsValidateable: true,
+		}
+	case "map":
+		return typeInfo{
+			IsNillable:     true,
+			UsePointer:     false,
+			IsValidateable: true,
+		}
+	case "array":
+		return typeInfo{
+			IsNillable:     true,
+			UsePointer:     false,
+			IsValidateable: true,
+		}
+	default:
+		panic("unsupported kind: " + t.Kind)
 	}
-
-	expr := g.typeExpr(t)
-	return jen.Parens(
-		jen.Add(expr).Values(),
-	)
 }
 
 func (g *generator) generateUniqueName(desired string) (actual, suffix string) {

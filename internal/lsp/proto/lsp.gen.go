@@ -451,7 +451,7 @@ type TextDocumentHoverHandler interface {
 	HandleTextDocumentHover(
 		context.Context,
 		HoverParams,
-	) (*Hover, error)
+	) (Hover, error)
 }
 
 // TextDocumentHoverRoute returns a route for the "textDocument/hover" request.
@@ -532,7 +532,7 @@ type TextDocumentLinkedEditingRangeHandler interface {
 	HandleTextDocumentLinkedEditingRange(
 		context.Context,
 		LinkedEditingRangeParams,
-	) (*LinkedEditingRanges, error)
+	) (LinkedEditingRanges, error)
 }
 
 // TextDocumentLinkedEditingRangeRoute returns a route for the "textDocument/linkedEditingRange" request.
@@ -607,7 +607,7 @@ type TextDocumentPrepareRenameHandler interface {
 	HandleTextDocumentPrepareRename(
 		context.Context,
 		PrepareRenameParams,
-	) (*PrepareRenameResult, error)
+	) (PrepareRenameResult, error)
 }
 
 // TextDocumentPrepareRenameRoute returns a route for the "textDocument/prepareRename" request.
@@ -681,7 +681,7 @@ type TextDocumentRenameHandler interface {
 	HandleTextDocumentRename(
 		context.Context,
 		RenameParams,
-	) (*WorkspaceEdit, error)
+	) (WorkspaceEdit, error)
 }
 
 // TextDocumentRenameRoute returns a route for the "textDocument/rename" request.
@@ -718,7 +718,7 @@ type TextDocumentSemanticTokensFullHandler interface {
 	HandleTextDocumentSemanticTokensFull(
 		context.Context,
 		SemanticTokensParams,
-	) (*SemanticTokens, error)
+	) (SemanticTokens, error)
 }
 
 // TextDocumentSemanticTokensFullRoute returns a route for the "textDocument/semanticTokens/full" request.
@@ -752,7 +752,7 @@ type TextDocumentSemanticTokensRangeHandler interface {
 	HandleTextDocumentSemanticTokensRange(
 		context.Context,
 		SemanticTokensRangeParams,
-	) (*SemanticTokens, error)
+	) (SemanticTokens, error)
 }
 
 // TextDocumentSemanticTokensRangeRoute returns a route for the "textDocument/semanticTokens/range" request.
@@ -768,7 +768,7 @@ type TextDocumentSignatureHelpHandler interface {
 	HandleTextDocumentSignatureHelp(
 		context.Context,
 		SignatureHelpParams,
-	) (*SignatureHelp, error)
+	) (SignatureHelp, error)
 }
 
 // TextDocumentSignatureHelpRoute returns a route for the "textDocument/signatureHelp" request.
@@ -934,7 +934,7 @@ type WorkspaceWillCreateFilesHandler interface {
 	HandleWorkspaceWillCreateFiles(
 		context.Context,
 		CreateFilesParams,
-	) (*WorkspaceEdit, error)
+	) (WorkspaceEdit, error)
 }
 
 // WorkspaceWillCreateFilesRoute returns a route for the "workspace/willCreateFiles" request.
@@ -954,7 +954,7 @@ type WorkspaceWillDeleteFilesHandler interface {
 	HandleWorkspaceWillDeleteFiles(
 		context.Context,
 		DeleteFilesParams,
-	) (*WorkspaceEdit, error)
+	) (WorkspaceEdit, error)
 }
 
 // WorkspaceWillDeleteFilesRoute returns a route for the "workspace/willDeleteFiles" request.
@@ -974,7 +974,7 @@ type WorkspaceWillRenameFilesHandler interface {
 	HandleWorkspaceWillRenameFiles(
 		context.Context,
 		RenameFilesParams,
-	) (*WorkspaceEdit, error)
+	) (WorkspaceEdit, error)
 }
 
 // WorkspaceWillRenameFilesRoute returns a route for the "workspace/willRenameFiles" request.
@@ -1416,10 +1416,13 @@ func SetTraceRoute(h SetTraceHandler) harpy.RouterOption {
 type AnnotatedTextEdit struct {
 	TextEdit
 	// The actual identifier of the change annotation
-	AnnotationId ChangeAnnotationIdentifier `json:"annotationId"`
+	AnnotationID *ChangeAnnotationIdentifier `json:"annotationId"`
 }
 
 func (x AnnotatedTextEdit) Validate() error {
+	if x.AnnotationID == nil {
+		return errors.New("missing required field \"annotationId\"")
+	}
 	return nil
 }
 
@@ -1428,16 +1431,18 @@ type ApplyWorkspaceEditParams struct {
 	// An optional label of the workspace edit. This label is
 	// presented in the user interface for example on an undo
 	// stack to undo the workspace edit.
-	Label string `json:"label,omitempty"`
+	Label *string `json:"label,omitempty"`
 	// The edits to apply.
-	Edit WorkspaceEdit `json:"edit"`
+	Edit *WorkspaceEdit `json:"edit"`
 }
 
 func (x ApplyWorkspaceEditParams) Validate() error {
-	if err := x.Edit.Validate(); err != nil {
-		return err
+	if x.Edit == nil {
+		return errors.New("missing required field \"edit\"")
 	}
-
+	if err := x.Edit.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Edit\": %w", err)
+	}
 	return nil
 }
 
@@ -1446,25 +1451,28 @@ func (x ApplyWorkspaceEditParams) Validate() error {
 // @since 3.17 renamed from ApplyWorkspaceEditResponse
 type ApplyWorkspaceEditResult struct {
 	// Indicates whether the edit was applied or not.
-	Applied bool `json:"applied"`
+	Applied *bool `json:"applied"`
 	// An optional textual description for why the edit was not applied.
 	// This may be used by the server for diagnostic logging or to provide
 	// a suitable error for a request that triggered the edit.
-	FailureReason string `json:"failureReason,omitempty"`
+	FailureReason *string `json:"failureReason,omitempty"`
 	// Depending on the client's failure handling strategy `failedChange` might
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
-	FailedChange uint32 `json:"failedChange,omitempty"`
+	FailedChange *uint32 `json:"failedChange,omitempty"`
 }
 
 func (x ApplyWorkspaceEditResult) Validate() error {
+	if x.Applied == nil {
+		return errors.New("missing required field \"applied\"")
+	}
 	return nil
 }
 
 // A base for all symbol information.
 type BaseSymbolInformation struct {
 	// The name of this symbol.
-	Name string `json:"name"`
+	Name *string `json:"name"`
 	// The kind of this symbol.
 	Kind SymbolKind `json:"kind"`
 	// Tags for this symbol.
@@ -1475,20 +1483,21 @@ type BaseSymbolInformation struct {
 	// user interface purposes (e.g. to render a qualifier in the user interface
 	// if necessary). It can't be used to re-infer a hierarchy for the document
 	// symbols.
-	ContainerName string `json:"containerName,omitempty"`
+	ContainerName *string `json:"containerName,omitempty"`
 }
 
 func (x BaseSymbolInformation) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return err
+	if x.Name == nil {
+		return errors.New("missing required field \"name\"")
 	}
-
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	}
 	if x.Tags != nil {
 		if err := x.Tags.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tags\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -1497,7 +1506,7 @@ type CallHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x CallHierarchyClientCapabilities) Validate() error {
@@ -1509,21 +1518,25 @@ func (x CallHierarchyClientCapabilities) Validate() error {
 // @since 3.16.0
 type CallHierarchyIncomingCall struct {
 	// The item that makes the call.
-	From CallHierarchyItem `json:"from"`
+	From *CallHierarchyItem `json:"from"`
 	// The ranges at which the calls appear. This is relative to the caller
 	// denoted by {@link CallHierarchyIncomingCall.from `this.from`}.
 	FromRanges Array[Range] `json:"fromRanges"`
 }
 
 func (x CallHierarchyIncomingCall) Validate() error {
+	if x.From == nil {
+		return errors.New("missing required field \"from\"")
+	}
 	if err := x.From.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"From\": %w", err)
 	}
-
+	if x.FromRanges == nil {
+		return errors.New("missing required field \"fromRanges\"")
+	}
 	if err := x.FromRanges.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"FromRanges\": %w", err)
 	}
-
 	return nil
 }
 
@@ -1533,14 +1546,16 @@ func (x CallHierarchyIncomingCall) Validate() error {
 type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item CallHierarchyItem `json:"item"`
+	Item *CallHierarchyItem `json:"item"`
 }
 
 func (x CallHierarchyIncomingCallsParams) Validate() error {
-	if err := x.Item.Validate(); err != nil {
-		return err
+	if x.Item == nil {
+		return errors.New("missing required field \"item\"")
 	}
-
+	if err := x.Item.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Item\": %w", err)
+	}
 	return nil
 }
 
@@ -1550,44 +1565,52 @@ func (x CallHierarchyIncomingCallsParams) Validate() error {
 // @since 3.16.0
 type CallHierarchyItem struct {
 	// The name of this item.
-	Name string `json:"name"`
+	Name *string `json:"name"`
 	// The kind of this item.
 	Kind SymbolKind `json:"kind"`
 	// Tags for this item.
 	Tags Array[SymbolTag] `json:"tags,omitempty"`
 	// More detail for this item, e.g. the signature of a function.
-	Detail string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitempty"`
 	// The resource identifier of this item.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else, e.g. comments and code.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The range that should be selected and revealed when this symbol is being picked, e.g. the name of a function.
 	// Must be contained by the {@link CallHierarchyItem.range `range`}.
-	SelectionRange Range `json:"selectionRange"`
+	SelectionRange *Range `json:"selectionRange"`
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
 	Data any `json:"data,omitempty"`
 }
 
 func (x CallHierarchyItem) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return err
+	if x.Name == nil {
+		return errors.New("missing required field \"name\"")
 	}
-
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	}
 	if x.Tags != nil {
 		if err := x.Tags.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tags\": %w", err)
 		}
 	}
-
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
+	if x.SelectionRange == nil {
+		return errors.New("missing required field \"selectionRange\"")
+	}
 	if err := x.SelectionRange.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"SelectionRange\": %w", err)
 	}
-
 	return nil
 }
 
@@ -1607,7 +1630,7 @@ func (x CallHierarchyOptions) Validate() error {
 // @since 3.16.0
 type CallHierarchyOutgoingCall struct {
 	// The item that is called.
-	To CallHierarchyItem `json:"to"`
+	To *CallHierarchyItem `json:"to"`
 	// The range at which this item is called. This is the range relative to the caller, e.g the item
 	// passed to {@link CallHierarchyItemProvider.provideCallHierarchyOutgoingCalls `provideCallHierarchyOutgoingCalls`}
 	// and not {@link CallHierarchyOutgoingCall.to `this.to`}.
@@ -1615,14 +1638,18 @@ type CallHierarchyOutgoingCall struct {
 }
 
 func (x CallHierarchyOutgoingCall) Validate() error {
+	if x.To == nil {
+		return errors.New("missing required field \"to\"")
+	}
 	if err := x.To.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"To\": %w", err)
 	}
-
+	if x.FromRanges == nil {
+		return errors.New("missing required field \"fromRanges\"")
+	}
 	if err := x.FromRanges.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"FromRanges\": %w", err)
 	}
-
 	return nil
 }
 
@@ -1632,14 +1659,16 @@ func (x CallHierarchyOutgoingCall) Validate() error {
 type CallHierarchyOutgoingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item CallHierarchyItem `json:"item"`
+	Item *CallHierarchyItem `json:"item"`
 }
 
 func (x CallHierarchyOutgoingCallsParams) Validate() error {
-	if err := x.Item.Validate(); err != nil {
-		return err
+	if x.Item == nil {
+		return errors.New("missing required field \"item\"")
 	}
-
+	if err := x.Item.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Item\": %w", err)
+	}
 	return nil
 }
 
@@ -1670,14 +1699,16 @@ func (x CallHierarchyRegistrationOptions) Validate() error {
 
 type CancelParams struct {
 	// The request id to cancel.
-	Id OneOf2[int32, string] `json:"id"`
+	ID *OneOf2[int32, string] `json:"id"`
 }
 
 func (x CancelParams) Validate() error {
-	if err := x.Id.Validate(); err != nil {
-		return err
+	if x.ID == nil {
+		return errors.New("missing required field \"id\"")
 	}
-
+	if err := x.ID.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ID\": %w", err)
+	}
 	return nil
 }
 
@@ -1687,16 +1718,19 @@ func (x CancelParams) Validate() error {
 type ChangeAnnotation struct {
 	// A human-readable string describing the actual change. The string
 	// is rendered prominent in the user interface.
-	Label string `json:"label"`
+	Label *string `json:"label"`
 	// A flag which indicates that user confirmation is needed
 	// before applying the change.
-	NeedsConfirmation bool `json:"needsConfirmation,omitempty"`
+	NeedsConfirmation *bool `json:"needsConfirmation,omitempty"`
 	// A human-readable string which is rendered less prominent in
 	// the user interface.
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 }
 
 func (x ChangeAnnotation) Validate() error {
+	if x.Label == nil {
+		return errors.New("missing required field \"label\"")
+	}
 	return nil
 }
 
@@ -1723,34 +1757,29 @@ type ClientCapabilities struct {
 func (x ClientCapabilities) Validate() error {
 	if x.Workspace != nil {
 		if err := x.Workspace.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Workspace\": %w", err)
 		}
 	}
-
 	if x.TextDocument != nil {
 		if err := x.TextDocument.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 		}
 	}
-
 	if x.NotebookDocument != nil {
 		if err := x.NotebookDocument.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"NotebookDocument\": %w", err)
 		}
 	}
-
 	if x.Window != nil {
 		if err := x.Window.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Window\": %w", err)
 		}
 	}
-
 	if x.General != nil {
 		if err := x.General.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"General\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -1760,7 +1789,7 @@ func (x ClientCapabilities) Validate() error {
 // A CodeAction must set either `edit` and/or a `command`. If both are supplied, the `edit` is applied first, then the `command` is executed.
 type CodeAction struct {
 	// A short, human-readable, title for this code action.
-	Title string `json:"title"`
+	Title *string `json:"title"`
 	// The kind of the code action.
 	//
 	// Used to filter code actions.
@@ -1774,7 +1803,7 @@ type CodeAction struct {
 	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
 	//
 	// @since 3.15.0
-	IsPreferred bool `json:"isPreferred,omitempty"`
+	IsPreferred *bool `json:"isPreferred,omitempty"`
 	// Marks that the code action cannot currently be applied.
 	//
 	// Clients should follow the following guidelines regarding disabled code actions:
@@ -1805,36 +1834,32 @@ type CodeAction struct {
 }
 
 func (x CodeAction) Validate() error {
-	if x.Kind != "" {
-		if err := x.Kind.Validate(); err != nil {
-			return err
-		}
+	if x.Title == nil {
+		return errors.New("missing required field \"title\"")
 	}
-
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	}
 	if x.Diagnostics != nil {
 		if err := x.Diagnostics.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
 		}
 	}
-
 	if x.Disabled != nil {
 		if err := x.Disabled.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Disabled\": %w", err)
 		}
 	}
-
 	if x.Edit != nil {
 		if err := x.Edit.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Edit\": %w", err)
 		}
 	}
-
 	if x.Command != nil {
 		if err := x.Command.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Command\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -1842,17 +1867,20 @@ type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
 	//
 	// This is displayed in the code actions UI.
-	Reason string `json:"reason"`
+	Reason *string `json:"reason"`
 }
 
 func (x CodeActionDisabled) Validate() error {
+	if x.Reason == nil {
+		return errors.New("missing required field \"reason\"")
+	}
 	return nil
 }
 
 // The Client Capabilities of a {@link CodeActionRequest}.
 type CodeActionClientCapabilities struct {
 	// Whether code action supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client support code action literals of type `CodeAction` as a valid
 	// response of the `textDocument/codeAction` request. If the property is not
 	// set the request can only return `Command` literals.
@@ -1862,17 +1890,17 @@ type CodeActionClientCapabilities struct {
 	// Whether code action supports the `isPreferred` property.
 	//
 	// @since 3.15.0
-	IsPreferredSupport bool `json:"isPreferredSupport,omitempty"`
+	IsPreferredSupport *bool `json:"isPreferredSupport,omitempty"`
 	// Whether code action supports the `disabled` property.
 	//
 	// @since 3.16.0
-	DisabledSupport bool `json:"disabledSupport,omitempty"`
+	DisabledSupport *bool `json:"disabledSupport,omitempty"`
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/codeAction` and a
 	// `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	DataSupport bool `json:"dataSupport,omitempty"`
+	DataSupport *bool `json:"dataSupport,omitempty"`
 	// Whether the client supports resolving additional code action
 	// properties via a separate `codeAction/resolve` request.
 	//
@@ -1885,22 +1913,20 @@ type CodeActionClientCapabilities struct {
 	// for confirmation.
 	//
 	// @since 3.16.0
-	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitempty"`
+	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitempty"`
 }
 
 func (x CodeActionClientCapabilities) Validate() error {
 	if x.CodeActionLiteralSupport != nil {
 		if err := x.CodeActionLiteralSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeActionLiteralSupport\": %w", err)
 		}
 	}
-
 	if x.ResolveSupport != nil {
 		if err := x.ResolveSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ResolveSupport\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -1913,24 +1939,28 @@ type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 }
 
 func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) Validate() error {
-	if err := x.ValueSet.Validate(); err != nil {
-		return err
+	if x.ValueSet == nil {
+		return errors.New("missing required field \"valueSet\"")
 	}
-
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
+	}
 	return nil
 }
 
 type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
 	// The code action kind is support with the following value
 	// set.
-	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind `json:"codeActionKind"`
+	CodeActionKind *CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind `json:"codeActionKind"`
 }
 
 func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) Validate() error {
-	if err := x.CodeActionKind.Validate(); err != nil {
-		return err
+	if x.CodeActionKind == nil {
+		return errors.New("missing required field \"codeActionKind\"")
 	}
-
+	if err := x.CodeActionKind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"CodeActionKind\": %w", err)
+	}
 	return nil
 }
 
@@ -1940,10 +1970,12 @@ type CodeActionClientCapabilitiesResolveSupport struct {
 }
 
 func (x CodeActionClientCapabilitiesResolveSupport) Validate() error {
-	if err := x.Properties.Validate(); err != nil {
-		return err
+	if x.Properties == nil {
+		return errors.New("missing required field \"properties\"")
 	}
-
+	if err := x.Properties.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Properties\": %w", err)
+	}
 	return nil
 }
 
@@ -1968,22 +2000,20 @@ type CodeActionContext struct {
 }
 
 func (x CodeActionContext) Validate() error {
-	if err := x.Diagnostics.Validate(); err != nil {
-		return err
+	if x.Diagnostics == nil {
+		return errors.New("missing required field \"diagnostics\"")
 	}
-
+	if err := x.Diagnostics.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
+	}
 	if x.Only != nil {
 		if err := x.Only.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Only\": %w", err)
 		}
 	}
-
-	if x.TriggerKind != 0 {
-		if err := x.TriggerKind.Validate(); err != nil {
-			return err
-		}
+	if err := x.TriggerKind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TriggerKind\": %w", err)
 	}
-
 	return nil
 }
 
@@ -1999,16 +2029,15 @@ type CodeActionOptions struct {
 	// information for a code action.
 	//
 	// @since 3.16.0
-	ResolveProvider bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
 func (x CodeActionOptions) Validate() error {
 	if x.CodeActionKinds != nil {
 		if err := x.CodeActionKinds.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeActionKinds\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2017,26 +2046,32 @@ type CodeActionParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The document in which the command was invoked.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The range for which the command was invoked.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// Context carrying additional information.
-	Context CodeActionContext `json:"context"`
+	Context *CodeActionContext `json:"context"`
 }
 
 func (x CodeActionParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
+	if x.Context == nil {
+		return errors.New("missing required field \"context\"")
+	}
 	if err := x.Context.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Context\": %w", err)
 	}
-
 	return nil
 }
 
@@ -2055,10 +2090,13 @@ func (x CodeActionRegistrationOptions) Validate() error {
 // @since 3.16.0
 type CodeDescription struct {
 	// An URI to open with more information about the diagnostic error.
-	Href URI `json:"href"`
+	Href *URI `json:"href"`
 }
 
 func (x CodeDescription) Validate() error {
+	if x.Href == nil {
+		return errors.New("missing required field \"href\"")
+	}
 	return nil
 }
 
@@ -2069,7 +2107,7 @@ func (x CodeDescription) Validate() error {
 // reasons the creation of a code lens and resolving should be done in two stages.
 type CodeLens struct {
 	// The range in which this code lens is valid. Should only span a single line.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The command this code lens represents.
 	Command *Command `json:"command,omitempty"`
 	// A data entry field that is preserved on a code lens item between
@@ -2079,23 +2117,24 @@ type CodeLens struct {
 }
 
 func (x CodeLens) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
 	if x.Command != nil {
 		if err := x.Command.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Command\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 // The client capabilities  of a {@link CodeLensRequest}.
 type CodeLensClientCapabilities struct {
 	// Whether code lens supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x CodeLensClientCapabilities) Validate() error {
@@ -2106,7 +2145,7 @@ func (x CodeLensClientCapabilities) Validate() error {
 type CodeLensOptions struct {
 	WorkDoneProgressOptions
 	// Code lens has a resolve provider as well.
-	ResolveProvider bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
 func (x CodeLensOptions) Validate() error {
@@ -2118,14 +2157,16 @@ type CodeLensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The document to request code lens for.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 }
 
 func (x CodeLensParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -2148,7 +2189,7 @@ type CodeLensWorkspaceClientCapabilities struct {
 	// code lenses currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detect a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitempty"`
 }
 
 func (x CodeLensWorkspaceClientCapabilities) Validate() error {
@@ -2158,36 +2199,52 @@ func (x CodeLensWorkspaceClientCapabilities) Validate() error {
 // Represents a color in RGBA space.
 type Color struct {
 	// The red component of this color in the range [0-1].
-	Red float64 `json:"red"`
+	Red *float64 `json:"red"`
 	// The green component of this color in the range [0-1].
-	Green float64 `json:"green"`
+	Green *float64 `json:"green"`
 	// The blue component of this color in the range [0-1].
-	Blue float64 `json:"blue"`
+	Blue *float64 `json:"blue"`
 	// The alpha component of this color in the range [0-1].
-	Alpha float64 `json:"alpha"`
+	Alpha *float64 `json:"alpha"`
 }
 
 func (x Color) Validate() error {
+	if x.Red == nil {
+		return errors.New("missing required field \"red\"")
+	}
+	if x.Green == nil {
+		return errors.New("missing required field \"green\"")
+	}
+	if x.Blue == nil {
+		return errors.New("missing required field \"blue\"")
+	}
+	if x.Alpha == nil {
+		return errors.New("missing required field \"alpha\"")
+	}
 	return nil
 }
 
 // Represents a color range from a document.
 type ColorInformation struct {
 	// The range in the document where this color appears.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The actual color value for this color range.
-	Color Color `json:"color"`
+	Color *Color `json:"color"`
 }
 
 func (x ColorInformation) Validate() error {
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
+	if x.Color == nil {
+		return errors.New("missing required field \"color\"")
+	}
 	if err := x.Color.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Color\": %w", err)
 	}
-
 	return nil
 }
 
@@ -2195,7 +2252,7 @@ type ColorPresentation struct {
 	// The label of this color presentation. It will be shown on the color
 	// picker header. By default this is also the text that is inserted when selecting
 	// this color presentation.
-	Label string `json:"label"`
+	Label *string `json:"label"`
 	// An {@link TextEdit edit} which is applied to a document when selecting
 	// this presentation for the color.  When `falsy` the {@link ColorPresentation.label label}
 	// is used.
@@ -2206,18 +2263,19 @@ type ColorPresentation struct {
 }
 
 func (x ColorPresentation) Validate() error {
+	if x.Label == nil {
+		return errors.New("missing required field \"label\"")
+	}
 	if x.TextEdit != nil {
 		if err := x.TextEdit.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TextEdit\": %w", err)
 		}
 	}
-
 	if x.AdditionalTextEdits != nil {
 		if err := x.AdditionalTextEdits.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"AdditionalTextEdits\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2226,26 +2284,32 @@ type ColorPresentationParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The color to request presentations for.
-	Color Color `json:"color"`
+	Color *Color `json:"color"`
 	// The range where the color would be inserted. Serves as a context.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 }
 
 func (x ColorPresentationParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Color == nil {
+		return errors.New("missing required field \"color\"")
+	}
 	if err := x.Color.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Color\": %w", err)
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
 	return nil
 }
 
@@ -2255,28 +2319,33 @@ func (x ColorPresentationParams) Validate() error {
 // function when invoked.
 type Command struct {
 	// Title of the command, like `save`.
-	Title string `json:"title"`
+	Title *string `json:"title"`
 	// The identifier of the actual command handler.
-	Command string `json:"command"`
+	Command *string `json:"command"`
 	// Arguments that the command handler should be
 	// invoked with.
 	Arguments Array[any] `json:"arguments,omitempty"`
 }
 
 func (x Command) Validate() error {
+	if x.Title == nil {
+		return errors.New("missing required field \"title\"")
+	}
+	if x.Command == nil {
+		return errors.New("missing required field \"command\"")
+	}
 	if x.Arguments != nil {
 		if err := x.Arguments.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Arguments\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 // Completion client capabilities
 type CompletionClientCapabilities struct {
 	// Whether completion supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
 	CompletionItem     *CompletionClientCapabilitiesCompletionItem     `json:"completionItem,omitempty"`
@@ -2289,7 +2358,7 @@ type CompletionClientCapabilities struct {
 	InsertTextMode InsertTextMode `json:"insertTextMode,omitempty"`
 	// The client supports to send additional context information for a
 	// `textDocument/completion` request.
-	ContextSupport bool `json:"contextSupport,omitempty"`
+	ContextSupport *bool `json:"contextSupport,omitempty"`
 	// The client supports the following `CompletionList` specific
 	// capabilities.
 	//
@@ -2300,28 +2369,22 @@ type CompletionClientCapabilities struct {
 func (x CompletionClientCapabilities) Validate() error {
 	if x.CompletionItem != nil {
 		if err := x.CompletionItem.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CompletionItem\": %w", err)
 		}
 	}
-
 	if x.CompletionItemKind != nil {
 		if err := x.CompletionItemKind.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CompletionItemKind\": %w", err)
 		}
 	}
-
-	if x.InsertTextMode != 0 {
-		if err := x.InsertTextMode.Validate(); err != nil {
-			return err
-		}
+	if err := x.InsertTextMode.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"InsertTextMode\": %w", err)
 	}
-
 	if x.CompletionList != nil {
 		if err := x.CompletionList.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CompletionList\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2331,10 +2394,12 @@ type CompletionClientCapabilitiesCompletionItemTagSupport struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItemTagSupport) Validate() error {
-	if err := x.ValueSet.Validate(); err != nil {
-		return err
+	if x.ValueSet == nil {
+		return errors.New("missing required field \"valueSet\"")
 	}
-
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
+	}
 	return nil
 }
 
@@ -2344,10 +2409,12 @@ type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItemResolveSupport) Validate() error {
-	if err := x.Properties.Validate(); err != nil {
-		return err
+	if x.Properties == nil {
+		return errors.New("missing required field \"properties\"")
 	}
-
+	if err := x.Properties.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Properties\": %w", err)
+	}
 	return nil
 }
 
@@ -2356,10 +2423,12 @@ type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
 }
 
 func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) Validate() error {
-	if err := x.ValueSet.Validate(); err != nil {
-		return err
+	if x.ValueSet == nil {
+		return errors.New("missing required field \"valueSet\"")
 	}
-
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
+	}
 	return nil
 }
 
@@ -2370,16 +2439,16 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
 	// the end of the snippet. Placeholders with equal identifiers are linked,
 	// that is typing in one will update others too.
-	SnippetSupport bool `json:"snippetSupport,omitempty"`
+	SnippetSupport *bool `json:"snippetSupport,omitempty"`
 	// Client supports commit characters on a completion item.
-	CommitCharactersSupport bool `json:"commitCharactersSupport,omitempty"`
+	CommitCharactersSupport *bool `json:"commitCharactersSupport,omitempty"`
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
 	DocumentationFormat Array[MarkupKind] `json:"documentationFormat,omitempty"`
 	// Client supports the deprecated property on a completion item.
-	DeprecatedSupport bool `json:"deprecatedSupport,omitempty"`
+	DeprecatedSupport *bool `json:"deprecatedSupport,omitempty"`
 	// Client supports the preselect property on a completion item.
-	PreselectSupport bool `json:"preselectSupport,omitempty"`
+	PreselectSupport *bool `json:"preselectSupport,omitempty"`
 	// Client supports the tag property on a completion item. Clients supporting
 	// tags have to handle unknown tags gracefully. Clients especially need to
 	// preserve unknown tags when sending a completion item back to the server in
@@ -2391,7 +2460,7 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// completion item is inserted in the text or should replace text.
 	//
 	// @since 3.16.0
-	InsertReplaceSupport bool `json:"insertReplaceSupport,omitempty"`
+	InsertReplaceSupport *bool `json:"insertReplaceSupport,omitempty"`
 	// Indicates which properties a client can resolve lazily on a completion
 	// item. Before version 3.16.0 only the predefined properties `documentation`
 	// and `details` could be resolved lazily.
@@ -2408,34 +2477,30 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// details (see also `CompletionItemLabelDetails`).
 	//
 	// @since 3.17.0
-	LabelDetailsSupport bool `json:"labelDetailsSupport,omitempty"`
+	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitempty"`
 }
 
 func (x CompletionClientCapabilitiesCompletionItem) Validate() error {
 	if x.DocumentationFormat != nil {
 		if err := x.DocumentationFormat.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentationFormat\": %w", err)
 		}
 	}
-
 	if x.TagSupport != nil {
 		if err := x.TagSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TagSupport\": %w", err)
 		}
 	}
-
 	if x.ResolveSupport != nil {
 		if err := x.ResolveSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ResolveSupport\": %w", err)
 		}
 	}
-
 	if x.InsertTextModeSupport != nil {
 		if err := x.InsertTextModeSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"InsertTextModeSupport\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2454,10 +2519,9 @@ type CompletionClientCapabilitiesCompletionItemKind struct {
 func (x CompletionClientCapabilitiesCompletionItemKind) Validate() error {
 	if x.ValueSet != nil {
 		if err := x.ValueSet.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2476,10 +2540,9 @@ type CompletionClientCapabilitiesCompletionList struct {
 func (x CompletionClientCapabilitiesCompletionList) Validate() error {
 	if x.ItemDefaults != nil {
 		if err := x.ItemDefaults.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ItemDefaults\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2489,14 +2552,13 @@ type CompletionContext struct {
 	TriggerKind CompletionTriggerKind `json:"triggerKind"`
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
-	TriggerCharacter string `json:"triggerCharacter,omitempty"`
+	TriggerCharacter *string `json:"triggerCharacter,omitempty"`
 }
 
 func (x CompletionContext) Validate() error {
 	if err := x.TriggerKind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TriggerKind\": %w", err)
 	}
-
 	return nil
 }
 
@@ -2510,7 +2572,7 @@ type CompletionItem struct {
 	//
 	// If label details are provided the label itself should
 	// be an unqualified name of the completion item.
-	Label string `json:"label"`
+	Label *string `json:"label"`
 	// Additional details for the label
 	//
 	// @since 3.17.0
@@ -2524,26 +2586,26 @@ type CompletionItem struct {
 	Tags Array[CompletionItemTag] `json:"tags,omitempty"`
 	// A human-readable string with additional information
 	// about this item, like type or symbol information.
-	Detail string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitempty"`
 	// A human-readable string that represents a doc-comment.
 	Documentation *OneOf2[string, MarkupContent] `json:"documentation,omitempty"`
 	// Indicates if this item is deprecated.
 	// @deprecated Use `tags` instead.
-	Deprecated bool `json:"deprecated,omitempty"`
+	Deprecated *bool `json:"deprecated,omitempty"`
 	// Select this item when showing.
 	//
 	// *Note* that only one completion item can be selected and that the
 	// tool / client decides which item that is. The rule is that the *first*
 	// item of those that match best is selected.
-	Preselect bool `json:"preselect,omitempty"`
+	Preselect *bool `json:"preselect,omitempty"`
 	// A string that should be used when comparing this item
 	// with other items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
-	SortText string `json:"sortText,omitempty"`
+	SortText *string `json:"sortText,omitempty"`
 	// A string that should be used when filtering a set of
 	// completion items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
-	FilterText string `json:"filterText,omitempty"`
+	FilterText *string `json:"filterText,omitempty"`
 	// A string that should be inserted into a document when selecting
 	// this completion. When `falsy` the {@link CompletionItem.label label}
 	// is used.
@@ -2555,7 +2617,7 @@ type CompletionItem struct {
 	// `console` is provided it will only insert `sole`. Therefore it is
 	// recommended to use `textEdit` instead since it avoids additional client
 	// side interpretation.
-	InsertText string `json:"insertText,omitempty"`
+	InsertText *string `json:"insertText,omitempty"`
 	// The format of the insert text. The format applies to both the
 	// `insertText` property and the `newText` property of a provided
 	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
@@ -2600,7 +2662,7 @@ type CompletionItem struct {
 	// property is used as a text.
 	//
 	// @since 3.17.0
-	TextEditText string `json:"textEditText,omitempty"`
+	TextEditText *string `json:"textEditText,omitempty"`
 	// An optional array of additional {@link TextEdit text edits} that are applied when
 	// selecting this completion. Edits must not overlap (including the same insert position)
 	// with the main {@link CompletionItem.textEdit edit} nor with themselves.
@@ -2623,66 +2685,53 @@ type CompletionItem struct {
 }
 
 func (x CompletionItem) Validate() error {
+	if x.Label == nil {
+		return errors.New("missing required field \"label\"")
+	}
 	if x.LabelDetails != nil {
 		if err := x.LabelDetails.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"LabelDetails\": %w", err)
 		}
 	}
-
-	if x.Kind != 0 {
-		if err := x.Kind.Validate(); err != nil {
-			return err
-		}
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
 	if x.Tags != nil {
 		if err := x.Tags.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tags\": %w", err)
 		}
 	}
-
 	if x.Documentation != nil {
 		if err := x.Documentation.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Documentation\": %w", err)
 		}
 	}
-
-	if x.InsertTextFormat != 0 {
-		if err := x.InsertTextFormat.Validate(); err != nil {
-			return err
-		}
+	if err := x.InsertTextFormat.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"InsertTextFormat\": %w", err)
 	}
-
-	if x.InsertTextMode != 0 {
-		if err := x.InsertTextMode.Validate(); err != nil {
-			return err
-		}
+	if err := x.InsertTextMode.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"InsertTextMode\": %w", err)
 	}
-
 	if x.TextEdit != nil {
 		if err := x.TextEdit.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TextEdit\": %w", err)
 		}
 	}
-
 	if x.AdditionalTextEdits != nil {
 		if err := x.AdditionalTextEdits.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"AdditionalTextEdits\": %w", err)
 		}
 	}
-
 	if x.CommitCharacters != nil {
 		if err := x.CommitCharacters.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CommitCharacters\": %w", err)
 		}
 	}
-
 	if x.Command != nil {
 		if err := x.Command.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Command\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2692,10 +2741,10 @@ func (x CompletionItem) Validate() error {
 type CompletionItemLabelDetails struct {
 	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
 	// without any spacing. Should be used for function signatures and type annotations.
-	Detail string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitempty"`
 	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
 	// for fully qualified names and file paths.
-	Description string `json:"description,omitempty"`
+	Description *string `json:"description,omitempty"`
 }
 
 func (x CompletionItemLabelDetails) Validate() error {
@@ -2709,7 +2758,7 @@ type CompletionList struct {
 	//
 	// Recomputed lists have all their items replaced (not appended) in the
 	// incomplete completion sessions.
-	IsIncomplete bool `json:"isIncomplete"`
+	IsIncomplete *bool `json:"isIncomplete"`
 	// In many cases the items of an actual completion result share the same
 	// value for properties like `commitCharacters` or the range of a text
 	// edit. A completion list can therefore define item defaults which will
@@ -2729,33 +2778,41 @@ type CompletionList struct {
 }
 
 func (x CompletionList) Validate() error {
+	if x.IsIncomplete == nil {
+		return errors.New("missing required field \"isIncomplete\"")
+	}
 	if x.ItemDefaults != nil {
 		if err := x.ItemDefaults.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ItemDefaults\": %w", err)
 		}
 	}
-
-	if err := x.Items.Validate(); err != nil {
-		return err
+	if x.Items == nil {
+		return errors.New("missing required field \"items\"")
 	}
-
+	if err := x.Items.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Items\": %w", err)
+	}
 	return nil
 }
 
 type CompletionListItemDefaultsEditRange struct {
-	Insert  Range `json:"insert"`
-	Replace Range `json:"replace"`
+	Insert  *Range `json:"insert"`
+	Replace *Range `json:"replace"`
 }
 
 func (x CompletionListItemDefaultsEditRange) Validate() error {
+	if x.Insert == nil {
+		return errors.New("missing required field \"insert\"")
+	}
 	if err := x.Insert.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Insert\": %w", err)
 	}
-
+	if x.Replace == nil {
+		return errors.New("missing required field \"replace\"")
+	}
 	if err := x.Replace.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Replace\": %w", err)
 	}
-
 	return nil
 }
 
@@ -2785,28 +2842,20 @@ type CompletionListItemDefaults struct {
 func (x CompletionListItemDefaults) Validate() error {
 	if x.CommitCharacters != nil {
 		if err := x.CommitCharacters.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CommitCharacters\": %w", err)
 		}
 	}
-
 	if x.EditRange != nil {
 		if err := x.EditRange.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"EditRange\": %w", err)
 		}
 	}
-
-	if x.InsertTextFormat != 0 {
-		if err := x.InsertTextFormat.Validate(); err != nil {
-			return err
-		}
+	if err := x.InsertTextFormat.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"InsertTextFormat\": %w", err)
 	}
-
-	if x.InsertTextMode != 0 {
-		if err := x.InsertTextMode.Validate(); err != nil {
-			return err
-		}
+	if err := x.InsertTextMode.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"InsertTextMode\": %w", err)
 	}
-
 	return nil
 }
 
@@ -2833,7 +2882,7 @@ type CompletionOptions struct {
 	AllCommitCharacters Array[string] `json:"allCommitCharacters,omitempty"`
 	// The server provides support to resolve additional
 	// information for a completion item.
-	ResolveProvider bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 	// The server supports the following `CompletionItem` specific
 	// capabilities.
 	//
@@ -2844,22 +2893,19 @@ type CompletionOptions struct {
 func (x CompletionOptions) Validate() error {
 	if x.TriggerCharacters != nil {
 		if err := x.TriggerCharacters.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TriggerCharacters\": %w", err)
 		}
 	}
-
 	if x.AllCommitCharacters != nil {
 		if err := x.AllCommitCharacters.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"AllCommitCharacters\": %w", err)
 		}
 	}
-
 	if x.CompletionItem != nil {
 		if err := x.CompletionItem.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CompletionItem\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2869,7 +2915,7 @@ type CompletionOptionsCompletionItem struct {
 	// receiving a completion item in a resolve call.
 	//
 	// @since 3.17.0
-	LabelDetailsSupport bool `json:"labelDetailsSupport,omitempty"`
+	LabelDetailsSupport *bool `json:"labelDetailsSupport,omitempty"`
 }
 
 func (x CompletionOptionsCompletionItem) Validate() error {
@@ -2889,10 +2935,9 @@ type CompletionParams struct {
 func (x CompletionParams) Validate() error {
 	if x.Context != nil {
 		if err := x.Context.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Context\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2908,9 +2953,9 @@ func (x CompletionRegistrationOptions) Validate() error {
 
 type ConfigurationItem struct {
 	// The scope to get the configuration section for.
-	ScopeURI string `json:"scopeUri,omitempty"`
+	ScopeURI *string `json:"scopeUri,omitempty"`
 	// The configuration section asked for.
-	Section string `json:"section,omitempty"`
+	Section *string `json:"section,omitempty"`
 }
 
 func (x ConfigurationItem) Validate() error {
@@ -2923,10 +2968,12 @@ type ConfigurationParams struct {
 }
 
 func (x ConfigurationParams) Validate() error {
-	if err := x.Items.Validate(); err != nil {
-		return err
+	if x.Items == nil {
+		return errors.New("missing required field \"items\"")
 	}
-
+	if err := x.Items.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Items\": %w", err)
+	}
 	return nil
 }
 
@@ -2936,22 +2983,23 @@ type CreateFile struct {
 	// A create
 	Kind createLiteral `json:"kind"`
 	// The resource to create.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// Additional options
 	Options *CreateFileOptions `json:"options,omitempty"`
 }
 
 func (x CreateFile) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	if x.Options != nil {
 		if err := x.Options.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Options\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -2968,9 +3016,9 @@ func (x createLiteral) Validate() error {
 // Options to create a file.
 type CreateFileOptions struct {
 	// Overwrite existing file. Overwrite wins over `ignoreIfExists`
-	Overwrite bool `json:"overwrite,omitempty"`
+	Overwrite *bool `json:"overwrite,omitempty"`
 	// Ignore if exists.
-	IgnoreIfExists bool `json:"ignoreIfExists,omitempty"`
+	IgnoreIfExists *bool `json:"ignoreIfExists,omitempty"`
 }
 
 func (x CreateFileOptions) Validate() error {
@@ -2987,10 +3035,12 @@ type CreateFilesParams struct {
 }
 
 func (x CreateFilesParams) Validate() error {
-	if err := x.Files.Validate(); err != nil {
-		return err
+	if x.Files == nil {
+		return errors.New("missing required field \"files\"")
 	}
-
+	if err := x.Files.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Files\": %w", err)
+	}
 	return nil
 }
 
@@ -2999,9 +3049,9 @@ type DeclarationClientCapabilities struct {
 	// Whether declaration supports dynamic registration. If this is set to `true`
 	// the client supports the new `DeclarationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports additional metadata in the form of declaration links.
-	LinkSupport bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
 func (x DeclarationClientCapabilities) Validate() error {
@@ -3039,11 +3089,11 @@ func (x DeclarationRegistrationOptions) Validate() error {
 // Client Capabilities for a {@link DefinitionRequest}.
 type DefinitionClientCapabilities struct {
 	// Whether definition supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
-	LinkSupport bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
 func (x DefinitionClientCapabilities) Validate() error {
@@ -3086,22 +3136,23 @@ type DeleteFile struct {
 	// A delete
 	Kind deleteLiteral `json:"kind"`
 	// The file to delete.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// Delete options.
 	Options *DeleteFileOptions `json:"options,omitempty"`
 }
 
 func (x DeleteFile) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	if x.Options != nil {
 		if err := x.Options.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Options\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -3118,9 +3169,9 @@ func (x deleteLiteral) Validate() error {
 // Delete file options
 type DeleteFileOptions struct {
 	// Delete the content recursively if a folder is denoted.
-	Recursive bool `json:"recursive,omitempty"`
+	Recursive *bool `json:"recursive,omitempty"`
 	// Ignore the operation if the file doesn't exist.
-	IgnoreIfNotExists bool `json:"ignoreIfNotExists,omitempty"`
+	IgnoreIfNotExists *bool `json:"ignoreIfNotExists,omitempty"`
 }
 
 func (x DeleteFileOptions) Validate() error {
@@ -3137,10 +3188,12 @@ type DeleteFilesParams struct {
 }
 
 func (x DeleteFilesParams) Validate() error {
-	if err := x.Files.Validate(); err != nil {
-		return err
+	if x.Files == nil {
+		return errors.New("missing required field \"files\"")
 	}
-
+	if err := x.Files.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Files\": %w", err)
+	}
 	return nil
 }
 
@@ -3148,7 +3201,7 @@ func (x DeleteFilesParams) Validate() error {
 // are only valid in the scope of a resource.
 type Diagnostic struct {
 	// The range at which the message applies
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The diagnostic's severity. Can be omitted. If omitted it is up to the
 	// client to interpret diagnostics as error, warning, info or hint.
 	Severity DiagnosticSeverity `json:"severity,omitempty"`
@@ -3162,9 +3215,9 @@ type Diagnostic struct {
 	// A human-readable string describing the source of this
 	// diagnostic, e.g. 'typescript' or 'super lint'. It usually
 	// appears in the user interface.
-	Source string `json:"source,omitempty"`
+	Source *string `json:"source,omitempty"`
 	// The diagnostic's message. It usually appears in the user interface
-	Message string `json:"message"`
+	Message *string `json:"message"`
 	// Additional metadata about the diagnostic.
 	//
 	// @since 3.15.0
@@ -3180,40 +3233,38 @@ type Diagnostic struct {
 }
 
 func (x Diagnostic) Validate() error {
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
-	if x.Severity != 0 {
-		if err := x.Severity.Validate(); err != nil {
-			return err
-		}
+	if err := x.Severity.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Severity\": %w", err)
 	}
-
 	if x.Code != nil {
 		if err := x.Code.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Code\": %w", err)
 		}
 	}
-
 	if x.CodeDescription != nil {
 		if err := x.CodeDescription.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeDescription\": %w", err)
 		}
 	}
-
+	if x.Message == nil {
+		return errors.New("missing required field \"message\"")
+	}
 	if x.Tags != nil {
 		if err := x.Tags.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tags\": %w", err)
 		}
 	}
-
 	if x.RelatedInformation != nil {
 		if err := x.RelatedInformation.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"RelatedInformation\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -3224,9 +3275,9 @@ type DiagnosticClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Whether the clients supports related documents for document diagnostic pulls.
-	RelatedDocumentSupport bool `json:"relatedDocumentSupport,omitempty"`
+	RelatedDocumentSupport *bool `json:"relatedDocumentSupport,omitempty"`
 }
 
 func (x DiagnosticClientCapabilities) Validate() error {
@@ -3240,17 +3291,23 @@ type DiagnosticOptions struct {
 	WorkDoneProgressOptions
 	// An optional identifier under which the diagnostics are
 	// managed by the client.
-	Identifier string `json:"identifier,omitempty"`
+	Identifier *string `json:"identifier,omitempty"`
 	// Whether the language has inter file dependencies meaning that
 	// editing code in one file can result in a different diagnostic
 	// set in another file. Inter file dependencies are common for
 	// most programming languages and typically uncommon for linters.
-	InterFileDependencies bool `json:"interFileDependencies"`
+	InterFileDependencies *bool `json:"interFileDependencies"`
 	// The server provides support for workspace diagnostics as well.
-	WorkspaceDiagnostics bool `json:"workspaceDiagnostics"`
+	WorkspaceDiagnostics *bool `json:"workspaceDiagnostics"`
 }
 
 func (x DiagnosticOptions) Validate() error {
+	if x.InterFileDependencies == nil {
+		return errors.New("missing required field \"interFileDependencies\"")
+	}
+	if x.WorkspaceDiagnostics == nil {
+		return errors.New("missing required field \"workspaceDiagnostics\"")
+	}
 	return nil
 }
 
@@ -3272,16 +3329,21 @@ func (x DiagnosticRegistrationOptions) Validate() error {
 // a symbol in a scope.
 type DiagnosticRelatedInformation struct {
 	// The location of this related diagnostic information.
-	Location Location `json:"location"`
+	Location *Location `json:"location"`
 	// The message of this related diagnostic information.
-	Message string `json:"message"`
+	Message *string `json:"message"`
 }
 
 func (x DiagnosticRelatedInformation) Validate() error {
-	if err := x.Location.Validate(); err != nil {
-		return err
+	if x.Location == nil {
+		return errors.New("missing required field \"location\"")
 	}
-
+	if err := x.Location.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Location\": %w", err)
+	}
+	if x.Message == nil {
+		return errors.New("missing required field \"message\"")
+	}
 	return nil
 }
 
@@ -3289,10 +3351,13 @@ func (x DiagnosticRelatedInformation) Validate() error {
 //
 // @since 3.17.0
 type DiagnosticServerCancellationData struct {
-	RetriggerRequest bool `json:"retriggerRequest"`
+	RetriggerRequest *bool `json:"retriggerRequest"`
 }
 
 func (x DiagnosticServerCancellationData) Validate() error {
+	if x.RetriggerRequest == nil {
+		return errors.New("missing required field \"retriggerRequest\"")
+	}
 	return nil
 }
 
@@ -3307,7 +3372,7 @@ type DiagnosticWorkspaceClientCapabilities struct {
 	// pulled diagnostics currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitempty"`
 }
 
 func (x DiagnosticWorkspaceClientCapabilities) Validate() error {
@@ -3316,7 +3381,7 @@ func (x DiagnosticWorkspaceClientCapabilities) Validate() error {
 
 type DidChangeConfigurationClientCapabilities struct {
 	// Did change configuration notification supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x DidChangeConfigurationClientCapabilities) Validate() error {
@@ -3330,6 +3395,9 @@ type DidChangeConfigurationParams struct {
 }
 
 func (x DidChangeConfigurationParams) Validate() error {
+	if x.Settings == nil {
+		return errors.New("missing required field \"settings\"")
+	}
 	return nil
 }
 
@@ -3340,10 +3408,9 @@ type DidChangeConfigurationRegistrationOptions struct {
 func (x DidChangeConfigurationRegistrationOptions) Validate() error {
 	if x.Section != nil {
 		if err := x.Section.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Section\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -3355,7 +3422,7 @@ type DidChangeNotebookDocumentParams struct {
 	// to the version after all provided changes have been applied. If
 	// only the text document content of a cell changes the notebook version
 	// doesn't necessarily have to change.
-	NotebookDocument VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument *VersionedNotebookDocumentIdentifier `json:"notebookDocument"`
 	// The actual changes to the notebook document.
 	//
 	// The changes describe single state changes to the notebook document.
@@ -3369,18 +3436,22 @@ type DidChangeNotebookDocumentParams struct {
 	//   - apply the 'notebookDocument/didChange' notifications in the order you receive them.
 	//   - apply the `NotebookChangeEvent`s in a single notification in the order
 	//     you receive them.
-	Change NotebookDocumentChangeEvent `json:"change"`
+	Change *NotebookDocumentChangeEvent `json:"change"`
 }
 
 func (x DidChangeNotebookDocumentParams) Validate() error {
+	if x.NotebookDocument == nil {
+		return errors.New("missing required field \"notebookDocument\"")
+	}
 	if err := x.NotebookDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"NotebookDocument\": %w", err)
 	}
-
+	if x.Change == nil {
+		return errors.New("missing required field \"change\"")
+	}
 	if err := x.Change.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Change\": %w", err)
 	}
-
 	return nil
 }
 
@@ -3389,7 +3460,7 @@ type DidChangeTextDocumentParams struct {
 	// The document that did change. The version number points
 	// to the version after all provided content changes have
 	// been applied.
-	TextDocument VersionedTextDocumentIdentifier `json:"textDocument"`
+	TextDocument *VersionedTextDocumentIdentifier `json:"textDocument"`
 	// The actual content changes. The content changes describe single state changes
 	// to the document. So if there are two content changes c1 (at array index 0) and
 	// c2 (at array index 1) for a document in state S then c1 moves the document from
@@ -3405,14 +3476,18 @@ type DidChangeTextDocumentParams struct {
 }
 
 func (x DidChangeTextDocumentParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.ContentChanges == nil {
+		return errors.New("missing required field \"contentChanges\"")
+	}
 	if err := x.ContentChanges.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"ContentChanges\": %w", err)
 	}
-
 	return nil
 }
 
@@ -3420,12 +3495,12 @@ type DidChangeWatchedFilesClientCapabilities struct {
 	// Did change watched files notification supports dynamic registration. Please note
 	// that the current protocol doesn't support static configuration for file changes
 	// from the server side.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Whether the client has support for {@link  RelativePattern relative pattern}
 	// or not.
 	//
 	// @since 3.17.0
-	RelativePatternSupport bool `json:"relativePatternSupport,omitempty"`
+	RelativePatternSupport *bool `json:"relativePatternSupport,omitempty"`
 }
 
 func (x DidChangeWatchedFilesClientCapabilities) Validate() error {
@@ -3439,10 +3514,12 @@ type DidChangeWatchedFilesParams struct {
 }
 
 func (x DidChangeWatchedFilesParams) Validate() error {
-	if err := x.Changes.Validate(); err != nil {
-		return err
+	if x.Changes == nil {
+		return errors.New("missing required field \"changes\"")
 	}
-
+	if err := x.Changes.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Changes\": %w", err)
+	}
 	return nil
 }
 
@@ -3453,24 +3530,28 @@ type DidChangeWatchedFilesRegistrationOptions struct {
 }
 
 func (x DidChangeWatchedFilesRegistrationOptions) Validate() error {
-	if err := x.Watchers.Validate(); err != nil {
-		return err
+	if x.Watchers == nil {
+		return errors.New("missing required field \"watchers\"")
 	}
-
+	if err := x.Watchers.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Watchers\": %w", err)
+	}
 	return nil
 }
 
 // The parameters of a `workspace/didChangeWorkspaceFolders` notification.
 type DidChangeWorkspaceFoldersParams struct {
 	// The actual workspace folder change event.
-	Event WorkspaceFoldersChangeEvent `json:"event"`
+	Event *WorkspaceFoldersChangeEvent `json:"event"`
 }
 
 func (x DidChangeWorkspaceFoldersParams) Validate() error {
-	if err := x.Event.Validate(); err != nil {
-		return err
+	if x.Event == nil {
+		return errors.New("missing required field \"event\"")
 	}
-
+	if err := x.Event.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Event\": %w", err)
+	}
 	return nil
 }
 
@@ -3479,35 +3560,41 @@ func (x DidChangeWorkspaceFoldersParams) Validate() error {
 // @since 3.17.0
 type DidCloseNotebookDocumentParams struct {
 	// The notebook document that got closed.
-	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument *NotebookDocumentIdentifier `json:"notebookDocument"`
 	// The text documents that represent the content
 	// of a notebook cell that got closed.
 	CellTextDocuments Array[TextDocumentIdentifier] `json:"cellTextDocuments"`
 }
 
 func (x DidCloseNotebookDocumentParams) Validate() error {
+	if x.NotebookDocument == nil {
+		return errors.New("missing required field \"notebookDocument\"")
+	}
 	if err := x.NotebookDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"NotebookDocument\": %w", err)
 	}
-
+	if x.CellTextDocuments == nil {
+		return errors.New("missing required field \"cellTextDocuments\"")
+	}
 	if err := x.CellTextDocuments.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"CellTextDocuments\": %w", err)
 	}
-
 	return nil
 }
 
 // The parameters sent in a close text document notification
 type DidCloseTextDocumentParams struct {
 	// The document that was closed.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 }
 
 func (x DidCloseTextDocumentParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -3516,35 +3603,41 @@ func (x DidCloseTextDocumentParams) Validate() error {
 // @since 3.17.0
 type DidOpenNotebookDocumentParams struct {
 	// The notebook document that got opened.
-	NotebookDocument NotebookDocument `json:"notebookDocument"`
+	NotebookDocument *NotebookDocument `json:"notebookDocument"`
 	// The text documents that represent the content
 	// of a notebook cell.
 	CellTextDocuments Array[TextDocumentItem] `json:"cellTextDocuments"`
 }
 
 func (x DidOpenNotebookDocumentParams) Validate() error {
+	if x.NotebookDocument == nil {
+		return errors.New("missing required field \"notebookDocument\"")
+	}
 	if err := x.NotebookDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"NotebookDocument\": %w", err)
 	}
-
+	if x.CellTextDocuments == nil {
+		return errors.New("missing required field \"cellTextDocuments\"")
+	}
 	if err := x.CellTextDocuments.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"CellTextDocuments\": %w", err)
 	}
-
 	return nil
 }
 
 // The parameters sent in an open text document notification
 type DidOpenTextDocumentParams struct {
 	// The document that was opened.
-	TextDocument TextDocumentItem `json:"textDocument"`
+	TextDocument *TextDocumentItem `json:"textDocument"`
 }
 
 func (x DidOpenTextDocumentParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -3553,31 +3646,35 @@ func (x DidOpenTextDocumentParams) Validate() error {
 // @since 3.17.0
 type DidSaveNotebookDocumentParams struct {
 	// The notebook document that got saved.
-	NotebookDocument NotebookDocumentIdentifier `json:"notebookDocument"`
+	NotebookDocument *NotebookDocumentIdentifier `json:"notebookDocument"`
 }
 
 func (x DidSaveNotebookDocumentParams) Validate() error {
-	if err := x.NotebookDocument.Validate(); err != nil {
-		return err
+	if x.NotebookDocument == nil {
+		return errors.New("missing required field \"notebookDocument\"")
 	}
-
+	if err := x.NotebookDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"NotebookDocument\": %w", err)
+	}
 	return nil
 }
 
 // The parameters sent in a save text document notification
 type DidSaveTextDocumentParams struct {
 	// The document that was saved.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
-	Text string `json:"text,omitempty"`
+	Text *string `json:"text,omitempty"`
 }
 
 func (x DidSaveTextDocumentParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -3585,7 +3682,7 @@ type DocumentColorClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `DocumentColorRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x DocumentColorClientCapabilities) Validate() error {
@@ -3605,14 +3702,16 @@ type DocumentColorParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 }
 
 func (x DocumentColorParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -3633,18 +3732,20 @@ type DocumentDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The additional identifier  provided during registration.
-	Identifier string `json:"identifier,omitempty"`
+	Identifier *string `json:"identifier,omitempty"`
 	// The result id of a previous response if provided.
-	PreviousResultId string `json:"previousResultId,omitempty"`
+	PreviousResultID *string `json:"previousResultId,omitempty"`
 }
 
 func (x DocumentDiagnosticParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -3656,17 +3757,19 @@ type DocumentDiagnosticReportPartialResult struct {
 }
 
 func (x DocumentDiagnosticReportPartialResult) Validate() error {
-	if err := x.RelatedDocuments.Validate(); err != nil {
-		return err
+	if x.RelatedDocuments == nil {
+		return errors.New("missing required field \"relatedDocuments\"")
 	}
-
+	if err := x.RelatedDocuments.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
+	}
 	return nil
 }
 
 // Client capabilities of a {@link DocumentFormattingRequest}.
 type DocumentFormattingClientCapabilities struct {
 	// Whether formatting supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x DocumentFormattingClientCapabilities) Validate() error {
@@ -3686,20 +3789,24 @@ func (x DocumentFormattingOptions) Validate() error {
 type DocumentFormattingParams struct {
 	WorkDoneProgressParams
 	// The document to format.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The format options.
-	Options FormattingOptions `json:"options"`
+	Options *FormattingOptions `json:"options"`
 }
 
 func (x DocumentFormattingParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Options == nil {
+		return errors.New("missing required field \"options\"")
+	}
 	if err := x.Options.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Options\": %w", err)
 	}
-
 	return nil
 }
 
@@ -3718,29 +3825,28 @@ func (x DocumentFormattingRegistrationOptions) Validate() error {
 // the background color of its range.
 type DocumentHighlight struct {
 	// The range this highlight applies to.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The highlight kind, default is {@link DocumentHighlightKind.Text text}.
 	Kind DocumentHighlightKind `json:"kind,omitempty"`
 }
 
 func (x DocumentHighlight) Validate() error {
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
-	if x.Kind != 0 {
-		if err := x.Kind.Validate(); err != nil {
-			return err
-		}
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
 	return nil
 }
 
 // Client Capabilities for a {@link DocumentHighlightRequest}.
 type DocumentHighlightClientCapabilities struct {
 	// Whether document highlight supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x DocumentHighlightClientCapabilities) Validate() error {
@@ -3781,9 +3887,9 @@ func (x DocumentHighlightRegistrationOptions) Validate() error {
 // text document or a web site.
 type DocumentLink struct {
 	// The range this link applies to.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The uri this link points to. If missing a resolve request is sent later.
-	Target URI `json:"target,omitempty"`
+	Target *URI `json:"target,omitempty"`
 	// The tooltip text when you hover over this link.
 	//
 	// If a tooltip is provided, is will be displayed in a string that includes instructions on how to
@@ -3791,28 +3897,30 @@ type DocumentLink struct {
 	// user settings, and localization.
 	//
 	// @since 3.15.0
-	Tooltip string `json:"tooltip,omitempty"`
+	Tooltip *string `json:"tooltip,omitempty"`
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
 	Data any `json:"data,omitempty"`
 }
 
 func (x DocumentLink) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
 	return nil
 }
 
 // The client capabilities of a {@link DocumentLinkRequest}.
 type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Whether the client supports the `tooltip` property on `DocumentLink`.
 	//
 	// @since 3.15.0
-	TooltipSupport bool `json:"tooltipSupport,omitempty"`
+	TooltipSupport *bool `json:"tooltipSupport,omitempty"`
 }
 
 func (x DocumentLinkClientCapabilities) Validate() error {
@@ -3823,7 +3931,7 @@ func (x DocumentLinkClientCapabilities) Validate() error {
 type DocumentLinkOptions struct {
 	WorkDoneProgressOptions
 	// Document links have a resolve provider as well.
-	ResolveProvider bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
 func (x DocumentLinkOptions) Validate() error {
@@ -3835,14 +3943,16 @@ type DocumentLinkParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The document to provide document links for.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 }
 
 func (x DocumentLinkParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -3859,7 +3969,7 @@ func (x DocumentLinkRegistrationOptions) Validate() error {
 // Client capabilities of a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingClientCapabilities struct {
 	// Whether on type formatting supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x DocumentOnTypeFormattingClientCapabilities) Validate() error {
@@ -3869,51 +3979,62 @@ func (x DocumentOnTypeFormattingClientCapabilities) Validate() error {
 // Provider options for a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingOptions struct {
 	// A character on which formatting should be triggered, like `{`.
-	FirstTriggerCharacter string `json:"firstTriggerCharacter"`
+	FirstTriggerCharacter *string `json:"firstTriggerCharacter"`
 	// More trigger characters.
 	MoreTriggerCharacter Array[string] `json:"moreTriggerCharacter,omitempty"`
 }
 
 func (x DocumentOnTypeFormattingOptions) Validate() error {
+	if x.FirstTriggerCharacter == nil {
+		return errors.New("missing required field \"firstTriggerCharacter\"")
+	}
 	if x.MoreTriggerCharacter != nil {
 		if err := x.MoreTriggerCharacter.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"MoreTriggerCharacter\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 // The parameters of a {@link DocumentOnTypeFormattingRequest}.
 type DocumentOnTypeFormattingParams struct {
 	// The document to format.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The position around which the on type formatting should happen.
 	// This is not necessarily the exact position where the character denoted
 	// by the property `ch` got typed.
-	Position Position `json:"position"`
+	Position *Position `json:"position"`
 	// The character that has been typed that triggered the formatting
 	// on type request. That is not necessarily the last character that
 	// got inserted into the document since the client could auto insert
 	// characters as well (e.g. like automatic brace completion).
-	Ch string `json:"ch"`
+	Ch *string `json:"ch"`
 	// The formatting options.
-	Options FormattingOptions `json:"options"`
+	Options *FormattingOptions `json:"options"`
 }
 
 func (x DocumentOnTypeFormattingParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Position == nil {
+		return errors.New("missing required field \"position\"")
+	}
 	if err := x.Position.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Position\": %w", err)
 	}
-
+	if x.Ch == nil {
+		return errors.New("missing required field \"ch\"")
+	}
+	if x.Options == nil {
+		return errors.New("missing required field \"options\"")
+	}
 	if err := x.Options.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Options\": %w", err)
 	}
-
 	return nil
 }
 
@@ -3930,7 +4051,7 @@ func (x DocumentOnTypeFormattingRegistrationOptions) Validate() error {
 // Client capabilities of a {@link DocumentRangeFormattingRequest}.
 type DocumentRangeFormattingClientCapabilities struct {
 	// Whether range formatting supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x DocumentRangeFormattingClientCapabilities) Validate() error {
@@ -3950,26 +4071,32 @@ func (x DocumentRangeFormattingOptions) Validate() error {
 type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
 	// The document to format.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The range to format
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The format options
-	Options FormattingOptions `json:"options"`
+	Options *FormattingOptions `json:"options"`
 }
 
 func (x DocumentRangeFormattingParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
+	if x.Options == nil {
+		return errors.New("missing required field \"options\"")
+	}
 	if err := x.Options.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Options\": %w", err)
 	}
-
 	return nil
 }
 
@@ -3990,9 +4117,9 @@ func (x DocumentRangeFormattingRegistrationOptions) Validate() error {
 type DocumentSymbol struct {
 	// The name of this symbol. Will be displayed in the user interface and therefore must not be
 	// an empty string or a string only consisting of white spaces.
-	Name string `json:"name"`
+	Name *string `json:"name"`
 	// More detail for this symbol, e.g the signature of a function.
-	Detail string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitempty"`
 	// The kind of this symbol.
 	Kind SymbolKind `json:"kind"`
 	// Tags for this document symbol.
@@ -4002,55 +4129,59 @@ type DocumentSymbol struct {
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
-	Deprecated bool `json:"deprecated,omitempty"`
+	Deprecated *bool `json:"deprecated,omitempty"`
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to determine if the clients cursor is
 	// inside the symbol to reveal in the symbol in the UI.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
 	// Must be contained by the `range`.
-	SelectionRange Range `json:"selectionRange"`
+	SelectionRange *Range `json:"selectionRange"`
 	// Children of this symbol, e.g. properties of a class.
 	Children Array[DocumentSymbol] `json:"children,omitempty"`
 }
 
 func (x DocumentSymbol) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return err
+	if x.Name == nil {
+		return errors.New("missing required field \"name\"")
 	}
-
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	}
 	if x.Tags != nil {
 		if err := x.Tags.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tags\": %w", err)
 		}
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
+	if x.SelectionRange == nil {
+		return errors.New("missing required field \"selectionRange\"")
+	}
 	if err := x.SelectionRange.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"SelectionRange\": %w", err)
 	}
-
 	if x.Children != nil {
 		if err := x.Children.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Children\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 // Client Capabilities for a {@link DocumentSymbolRequest}.
 type DocumentSymbolClientCapabilities struct {
 	// Whether document symbol supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Specific capabilities for the `SymbolKind` in the
 	// `textDocument/documentSymbol` request.
 	SymbolKind *DocumentSymbolClientCapabilitiesSymbolKind `json:"symbolKind,omitempty"`
 	// The client supports hierarchical document symbols.
-	HierarchicalDocumentSymbolSupport bool `json:"hierarchicalDocumentSymbolSupport,omitempty"`
+	HierarchicalDocumentSymbolSupport *bool `json:"hierarchicalDocumentSymbolSupport,omitempty"`
 	// The client supports tags on `SymbolInformation`. Tags are supported on
 	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
 	// Clients supporting tags have to handle unknown tags gracefully.
@@ -4061,22 +4192,20 @@ type DocumentSymbolClientCapabilities struct {
 	// registering a document symbol provider.
 	//
 	// @since 3.16.0
-	LabelSupport bool `json:"labelSupport,omitempty"`
+	LabelSupport *bool `json:"labelSupport,omitempty"`
 }
 
 func (x DocumentSymbolClientCapabilities) Validate() error {
 	if x.SymbolKind != nil {
 		if err := x.SymbolKind.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SymbolKind\": %w", err)
 		}
 	}
-
 	if x.TagSupport != nil {
 		if err := x.TagSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TagSupport\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4095,10 +4224,9 @@ type DocumentSymbolClientCapabilitiesSymbolKind struct {
 func (x DocumentSymbolClientCapabilitiesSymbolKind) Validate() error {
 	if x.ValueSet != nil {
 		if err := x.ValueSet.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4108,10 +4236,12 @@ type DocumentSymbolClientCapabilitiesTagSupport struct {
 }
 
 func (x DocumentSymbolClientCapabilitiesTagSupport) Validate() error {
-	if err := x.ValueSet.Validate(); err != nil {
-		return err
+	if x.ValueSet == nil {
+		return errors.New("missing required field \"valueSet\"")
 	}
-
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
+	}
 	return nil
 }
 
@@ -4122,7 +4252,7 @@ type DocumentSymbolOptions struct {
 	// are shown for the same document.
 	//
 	// @since 3.16.0
-	Label string `json:"label,omitempty"`
+	Label *string `json:"label,omitempty"`
 }
 
 func (x DocumentSymbolOptions) Validate() error {
@@ -4134,14 +4264,16 @@ type DocumentSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 }
 
 func (x DocumentSymbolParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -4158,7 +4290,7 @@ func (x DocumentSymbolRegistrationOptions) Validate() error {
 // The client capabilities of a {@link ExecuteCommandRequest}.
 type ExecuteCommandClientCapabilities struct {
 	// Execute command supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x ExecuteCommandClientCapabilities) Validate() error {
@@ -4173,10 +4305,12 @@ type ExecuteCommandOptions struct {
 }
 
 func (x ExecuteCommandOptions) Validate() error {
-	if err := x.Commands.Validate(); err != nil {
-		return err
+	if x.Commands == nil {
+		return errors.New("missing required field \"commands\"")
 	}
-
+	if err := x.Commands.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Commands\": %w", err)
+	}
 	return nil
 }
 
@@ -4184,18 +4318,20 @@ func (x ExecuteCommandOptions) Validate() error {
 type ExecuteCommandParams struct {
 	WorkDoneProgressParams
 	// The identifier of the actual command handler.
-	Command string `json:"command"`
+	Command *string `json:"command"`
 	// Arguments that the command should be invoked with.
 	Arguments Array[any] `json:"arguments,omitempty"`
 }
 
 func (x ExecuteCommandParams) Validate() error {
+	if x.Command == nil {
+		return errors.New("missing required field \"command\"")
+	}
 	if x.Arguments != nil {
 		if err := x.Arguments.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Arguments\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4212,13 +4348,16 @@ type ExecutionSummary struct {
 	// A strict monotonically increasing value
 	// indicating the execution order of a cell
 	// inside a notebook.
-	ExecutionOrder uint32 `json:"executionOrder"`
+	ExecutionOrder *uint32 `json:"executionOrder"`
 	// Whether the execution was successful or
 	// not if known by the client.
-	Success bool `json:"success,omitempty"`
+	Success *bool `json:"success,omitempty"`
 }
 
 func (x ExecutionSummary) Validate() error {
+	if x.ExecutionOrder == nil {
+		return errors.New("missing required field \"executionOrder\"")
+	}
 	return nil
 }
 
@@ -4227,10 +4366,13 @@ func (x ExecutionSummary) Validate() error {
 // @since 3.16.0
 type FileCreate struct {
 	// A file:// URI for the location of the file/folder being created.
-	URI string `json:"uri"`
+	URI *string `json:"uri"`
 }
 
 func (x FileCreate) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	return nil
 }
 
@@ -4239,26 +4381,31 @@ func (x FileCreate) Validate() error {
 // @since 3.16.0
 type FileDelete struct {
 	// A file:// URI for the location of the file/folder being deleted.
-	URI string `json:"uri"`
+	URI *string `json:"uri"`
 }
 
 func (x FileDelete) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	return nil
 }
 
 // An event describing a file change.
 type FileEvent struct {
 	// The file's uri.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// The change type.
 	Type FileChangeType `json:"type"`
 }
 
 func (x FileEvent) Validate() error {
-	if err := x.Type.Validate(); err != nil {
-		return err
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
 	}
-
+	if err := x.Type.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Type\": %w", err)
+	}
 	return nil
 }
 
@@ -4270,19 +4417,19 @@ func (x FileEvent) Validate() error {
 // @since 3.16.0
 type FileOperationClientCapabilities struct {
 	// Whether the client supports dynamic registration for file requests/notifications.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client has support for sending didCreateFiles notifications.
-	DidCreate bool `json:"didCreate,omitempty"`
+	DidCreate *bool `json:"didCreate,omitempty"`
 	// The client has support for sending willCreateFiles requests.
-	WillCreate bool `json:"willCreate,omitempty"`
+	WillCreate *bool `json:"willCreate,omitempty"`
 	// The client has support for sending didRenameFiles notifications.
-	DidRename bool `json:"didRename,omitempty"`
+	DidRename *bool `json:"didRename,omitempty"`
 	// The client has support for sending willRenameFiles requests.
-	WillRename bool `json:"willRename,omitempty"`
+	WillRename *bool `json:"willRename,omitempty"`
 	// The client has support for sending didDeleteFiles notifications.
-	DidDelete bool `json:"didDelete,omitempty"`
+	DidDelete *bool `json:"didDelete,omitempty"`
 	// The client has support for sending willDeleteFiles requests.
-	WillDelete bool `json:"willDelete,omitempty"`
+	WillDelete *bool `json:"willDelete,omitempty"`
 }
 
 func (x FileOperationClientCapabilities) Validate() error {
@@ -4295,16 +4442,18 @@ func (x FileOperationClientCapabilities) Validate() error {
 // @since 3.16.0
 type FileOperationFilter struct {
 	// A Uri scheme like `file` or `untitled`.
-	Scheme string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitempty"`
 	// The actual file operation pattern.
-	Pattern FileOperationPattern `json:"pattern"`
+	Pattern *FileOperationPattern `json:"pattern"`
 }
 
 func (x FileOperationFilter) Validate() error {
-	if err := x.Pattern.Validate(); err != nil {
-		return err
+	if x.Pattern == nil {
+		return errors.New("missing required field \"pattern\"")
 	}
-
+	if err := x.Pattern.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Pattern\": %w", err)
+	}
 	return nil
 }
 
@@ -4329,40 +4478,34 @@ type FileOperationOptions struct {
 func (x FileOperationOptions) Validate() error {
 	if x.DidCreate != nil {
 		if err := x.DidCreate.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DidCreate\": %w", err)
 		}
 	}
-
 	if x.WillCreate != nil {
 		if err := x.WillCreate.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WillCreate\": %w", err)
 		}
 	}
-
 	if x.DidRename != nil {
 		if err := x.DidRename.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DidRename\": %w", err)
 		}
 	}
-
 	if x.WillRename != nil {
 		if err := x.WillRename.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WillRename\": %w", err)
 		}
 	}
-
 	if x.DidDelete != nil {
 		if err := x.DidDelete.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DidDelete\": %w", err)
 		}
 	}
-
 	if x.WillDelete != nil {
 		if err := x.WillDelete.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WillDelete\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4378,7 +4521,7 @@ type FileOperationPattern struct {
 	// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
 	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
 	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-	Glob string `json:"glob"`
+	Glob *string `json:"glob"`
 	// Whether to match files or folders with this pattern.
 	//
 	// Matches both if undefined.
@@ -4388,18 +4531,17 @@ type FileOperationPattern struct {
 }
 
 func (x FileOperationPattern) Validate() error {
-	if x.Matches != "" {
-		if err := x.Matches.Validate(); err != nil {
-			return err
-		}
+	if x.Glob == nil {
+		return errors.New("missing required field \"glob\"")
 	}
-
+	if err := x.Matches.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Matches\": %w", err)
+	}
 	if x.Options != nil {
 		if err := x.Options.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Options\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4408,7 +4550,7 @@ func (x FileOperationPattern) Validate() error {
 // @since 3.16.0
 type FileOperationPatternOptions struct {
 	// The pattern should be matched ignoring casing.
-	IgnoreCase bool `json:"ignoreCase,omitempty"`
+	IgnoreCase *bool `json:"ignoreCase,omitempty"`
 }
 
 func (x FileOperationPatternOptions) Validate() error {
@@ -4424,10 +4566,12 @@ type FileOperationRegistrationOptions struct {
 }
 
 func (x FileOperationRegistrationOptions) Validate() error {
-	if err := x.Filters.Validate(); err != nil {
-		return err
+	if x.Filters == nil {
+		return errors.New("missing required field \"filters\"")
 	}
-
+	if err := x.Filters.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Filters\": %w", err)
+	}
 	return nil
 }
 
@@ -4436,12 +4580,18 @@ func (x FileOperationRegistrationOptions) Validate() error {
 // @since 3.16.0
 type FileRename struct {
 	// A file:// URI for the original location of the file/folder being renamed.
-	OldURI string `json:"oldUri"`
+	OldURI *string `json:"oldUri"`
 	// A file:// URI for the new location of the file/folder being renamed.
-	NewURI string `json:"newUri"`
+	NewURI *string `json:"newUri"`
 }
 
 func (x FileRename) Validate() error {
+	if x.OldURI == nil {
+		return errors.New("missing required field \"oldUri\"")
+	}
+	if x.NewURI == nil {
+		return errors.New("missing required field \"newUri\"")
+	}
 	return nil
 }
 
@@ -4449,7 +4599,7 @@ type FileSystemWatcher struct {
 	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
 	//
 	// @since 3.17.0 support for relative patterns.
-	GlobPattern GlobPattern `json:"globPattern"`
+	GlobPattern *GlobPattern `json:"globPattern"`
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
@@ -4457,16 +4607,15 @@ type FileSystemWatcher struct {
 }
 
 func (x FileSystemWatcher) Validate() error {
+	if x.GlobPattern == nil {
+		return errors.New("missing required field \"globPattern\"")
+	}
 	if err := x.GlobPattern.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"GlobPattern\": %w", err)
 	}
-
-	if x.Kind != 0 {
-		if err := x.Kind.Validate(); err != nil {
-			return err
-		}
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
 	return nil
 }
 
@@ -4475,14 +4624,14 @@ func (x FileSystemWatcher) Validate() error {
 type FoldingRange struct {
 	// The zero-based start line of the range to fold. The folded area starts after the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	StartLine uint32 `json:"startLine"`
+	StartLine *uint32 `json:"startLine"`
 	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
-	StartCharacter uint32 `json:"startCharacter,omitempty"`
+	StartCharacter *uint32 `json:"startCharacter,omitempty"`
 	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	EndLine uint32 `json:"endLine"`
+	EndLine *uint32 `json:"endLine"`
 	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
-	EndCharacter uint32 `json:"endCharacter,omitempty"`
+	EndCharacter *uint32 `json:"endCharacter,omitempty"`
 	// Describes the kind of the folding range such as `comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
 	// See {@link FoldingRangeKind} for an enumeration of standardized kinds.
@@ -4492,16 +4641,19 @@ type FoldingRange struct {
 	// will be chosen by the client.
 	//
 	// @since 3.17.0
-	CollapsedText string `json:"collapsedText,omitempty"`
+	CollapsedText *string `json:"collapsedText,omitempty"`
 }
 
 func (x FoldingRange) Validate() error {
-	if x.Kind != "" {
-		if err := x.Kind.Validate(); err != nil {
-			return err
-		}
+	if x.StartLine == nil {
+		return errors.New("missing required field \"startLine\"")
 	}
-
+	if x.EndLine == nil {
+		return errors.New("missing required field \"endLine\"")
+	}
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	}
 	return nil
 }
 
@@ -4510,15 +4662,15 @@ type FoldingRangeClientCapabilities struct {
 	// providers. If this is set to `true` the client supports the new
 	// `FoldingRangeRegistrationOptions` return value for the corresponding
 	// server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The maximum number of folding ranges that the client prefers to receive
 	// per document. The value serves as a hint, servers are free to follow the
 	// limit.
-	RangeLimit uint32 `json:"rangeLimit,omitempty"`
+	RangeLimit *uint32 `json:"rangeLimit,omitempty"`
 	// If set, the client signals that it only supports folding complete lines.
 	// If set, client will ignore specified `startCharacter` and `endCharacter`
 	// properties in a FoldingRange.
-	LineFoldingOnly bool `json:"lineFoldingOnly,omitempty"`
+	LineFoldingOnly *bool `json:"lineFoldingOnly,omitempty"`
 	// Specific options for the folding range kind.
 	//
 	// @since 3.17.0
@@ -4532,16 +4684,14 @@ type FoldingRangeClientCapabilities struct {
 func (x FoldingRangeClientCapabilities) Validate() error {
 	if x.FoldingRangeKind != nil {
 		if err := x.FoldingRangeKind.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"FoldingRangeKind\": %w", err)
 		}
 	}
-
 	if x.FoldingRange != nil {
 		if err := x.FoldingRange.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"FoldingRange\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4556,10 +4706,9 @@ type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
 func (x FoldingRangeClientCapabilitiesFoldingRangeKind) Validate() error {
 	if x.ValueSet != nil {
 		if err := x.ValueSet.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4568,7 +4717,7 @@ type FoldingRangeClientCapabilitiesFoldingRange struct {
 	// folding ranges to display custom labels instead of the default text.
 	//
 	// @since 3.17.0
-	CollapsedText bool `json:"collapsedText,omitempty"`
+	CollapsedText *bool `json:"collapsedText,omitempty"`
 }
 
 func (x FoldingRangeClientCapabilitiesFoldingRange) Validate() error {
@@ -4588,14 +4737,16 @@ type FoldingRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 }
 
 func (x FoldingRangeParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -4612,24 +4763,30 @@ func (x FoldingRangeRegistrationOptions) Validate() error {
 // Value-object describing what options formatting should use.
 type FormattingOptions struct {
 	// Size of a tab in spaces.
-	TabSize uint32 `json:"tabSize"`
+	TabSize *uint32 `json:"tabSize"`
 	// Prefer spaces over tabs.
-	InsertSpaces bool `json:"insertSpaces"`
+	InsertSpaces *bool `json:"insertSpaces"`
 	// Trim trailing whitespace on a line.
 	//
 	// @since 3.15.0
-	TrimTrailingWhitespace bool `json:"trimTrailingWhitespace,omitempty"`
+	TrimTrailingWhitespace *bool `json:"trimTrailingWhitespace,omitempty"`
 	// Insert a newline character at the end of the file if one does not exist.
 	//
 	// @since 3.15.0
-	InsertFinalNewline bool `json:"insertFinalNewline,omitempty"`
+	InsertFinalNewline *bool `json:"insertFinalNewline,omitempty"`
 	// Trim all newlines after the final newline at the end of the file.
 	//
 	// @since 3.15.0
-	TrimFinalNewlines bool `json:"trimFinalNewlines,omitempty"`
+	TrimFinalNewlines *bool `json:"trimFinalNewlines,omitempty"`
 }
 
 func (x FormattingOptions) Validate() error {
+	if x.TabSize == nil {
+		return errors.New("missing required field \"tabSize\"")
+	}
+	if x.InsertSpaces == nil {
+		return errors.New("missing required field \"insertSpaces\"")
+	}
 	return nil
 }
 
@@ -4642,20 +4799,21 @@ type FullDocumentDiagnosticReport struct {
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
 	// same document.
-	ResultId string `json:"resultId,omitempty"`
+	ResultID *string `json:"resultId,omitempty"`
 	// The actual items.
 	Items Array[Diagnostic] `json:"items"`
 }
 
 func (x FullDocumentDiagnosticReport) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
+	if x.Items == nil {
+		return errors.New("missing required field \"items\"")
+	}
 	if err := x.Items.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Items\": %w", err)
 	}
-
 	return nil
 }
 
@@ -4712,34 +4870,30 @@ type GeneralClientCapabilities struct {
 func (x GeneralClientCapabilities) Validate() error {
 	if x.StaleRequestSupport != nil {
 		if err := x.StaleRequestSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"StaleRequestSupport\": %w", err)
 		}
 	}
-
 	if x.RegularExpressions != nil {
 		if err := x.RegularExpressions.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"RegularExpressions\": %w", err)
 		}
 	}
-
 	if x.Markdown != nil {
 		if err := x.Markdown.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Markdown\": %w", err)
 		}
 	}
-
 	if x.PositionEncodings != nil {
 		if err := x.PositionEncodings.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"PositionEncodings\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 type GeneralClientCapabilitiesStaleRequestSupport struct {
 	// The client will actively cancel the request.
-	Cancel bool `json:"cancel"`
+	Cancel *bool `json:"cancel"`
 	// The list of requests for which the client
 	// will retry the request if it receives a
 	// response with error code `ContentModified`
@@ -4747,39 +4901,45 @@ type GeneralClientCapabilitiesStaleRequestSupport struct {
 }
 
 func (x GeneralClientCapabilitiesStaleRequestSupport) Validate() error {
-	if err := x.RetryOnContentModified.Validate(); err != nil {
-		return err
+	if x.Cancel == nil {
+		return errors.New("missing required field \"cancel\"")
 	}
-
+	if x.RetryOnContentModified == nil {
+		return errors.New("missing required field \"retryOnContentModified\"")
+	}
+	if err := x.RetryOnContentModified.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"RetryOnContentModified\": %w", err)
+	}
 	return nil
 }
 
 // The result of a hover request.
 type Hover struct {
 	// The hover's content
-	Contents OneOf3[MarkupContent, MarkedString, Array[MarkedString]] `json:"contents"`
+	Contents *OneOf3[MarkupContent, MarkedString, Array[MarkedString]] `json:"contents"`
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
 	Range *Range `json:"range,omitempty"`
 }
 
 func (x Hover) Validate() error {
-	if err := x.Contents.Validate(); err != nil {
-		return err
+	if x.Contents == nil {
+		return errors.New("missing required field \"contents\"")
 	}
-
+	if err := x.Contents.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Contents\": %w", err)
+	}
 	if x.Range != nil {
 		if err := x.Range.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Range\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 type HoverClientCapabilities struct {
 	// Whether hover supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat Array[MarkupKind] `json:"contentFormat,omitempty"`
@@ -4788,10 +4948,9 @@ type HoverClientCapabilities struct {
 func (x HoverClientCapabilities) Validate() error {
 	if x.ContentFormat != nil {
 		if err := x.ContentFormat.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ContentFormat\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -4829,11 +4988,11 @@ type ImplementationClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `ImplementationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
-	LinkSupport bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
 func (x ImplementationClientCapabilities) Validate() error {
@@ -4875,10 +5034,13 @@ type InitializeError struct {
 	// (1) show the message provided by the ResponseError to the user
 	// (2) user selects retry or cancel
 	// (3) if user selected retry the initialize method is sent again.
-	Retry bool `json:"retry"`
+	Retry *bool `json:"retry"`
 }
 
 func (x InitializeError) Validate() error {
+	if x.Retry == nil {
+		return errors.New("missing required field \"retry\"")
+	}
 	return nil
 }
 
@@ -4894,7 +5056,7 @@ func (x InitializeParams) Validate() error {
 // The result returned from an initialize request.
 type InitializeResult struct {
 	// The capabilities the language server provides.
-	Capabilities ServerCapabilities `json:"capabilities"`
+	Capabilities *ServerCapabilities `json:"capabilities"`
 	// Information about the server.
 	//
 	// @since 3.15.0
@@ -4902,27 +5064,31 @@ type InitializeResult struct {
 }
 
 func (x InitializeResult) Validate() error {
-	if err := x.Capabilities.Validate(); err != nil {
-		return err
+	if x.Capabilities == nil {
+		return errors.New("missing required field \"capabilities\"")
 	}
-
+	if err := x.Capabilities.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Capabilities\": %w", err)
+	}
 	if x.ServerInfo != nil {
 		if err := x.ServerInfo.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ServerInfo\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 type InitializeResultServerInfo struct {
 	// The name of the server as defined by the server.
-	Name string `json:"name"`
+	Name *string `json:"name"`
 	// The server's version as defined by the server.
-	Version string `json:"version,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
 func (x InitializeResultServerInfo) Validate() error {
+	if x.Name == nil {
+		return errors.New("missing required field \"name\"")
+	}
 	return nil
 }
 
@@ -4937,12 +5103,12 @@ func (x InitializedParams) Validate() error {
 // @since 3.17.0
 type InlayHint struct {
 	// The position of this hint.
-	Position Position `json:"position"`
+	Position *Position `json:"position"`
 	// The label of this hint. A human readable string or an array of
 	// InlayHintLabelPart label parts.
 	//
 	// *Note* that neither the string nor the label part can be empty.
-	Label OneOf2[string, Array[InlayHintLabelPart]] `json:"label"`
+	Label *OneOf2[string, Array[InlayHintLabelPart]] `json:"label"`
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
 	Kind InlayHintKind `json:"kind,omitempty"`
@@ -4959,45 +5125,44 @@ type InlayHint struct {
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingLeft bool `json:"paddingLeft,omitempty"`
+	PaddingLeft *bool `json:"paddingLeft,omitempty"`
 	// Render padding after the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingRight bool `json:"paddingRight,omitempty"`
+	PaddingRight *bool `json:"paddingRight,omitempty"`
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
 	Data any `json:"data,omitempty"`
 }
 
 func (x InlayHint) Validate() error {
+	if x.Position == nil {
+		return errors.New("missing required field \"position\"")
+	}
 	if err := x.Position.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Position\": %w", err)
 	}
-
+	if x.Label == nil {
+		return errors.New("missing required field \"label\"")
+	}
 	if err := x.Label.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Label\": %w", err)
 	}
-
-	if x.Kind != 0 {
-		if err := x.Kind.Validate(); err != nil {
-			return err
-		}
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
 	if x.TextEdits != nil {
 		if err := x.TextEdits.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TextEdits\": %w", err)
 		}
 	}
-
 	if x.Tooltip != nil {
 		if err := x.Tooltip.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tooltip\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -5006,7 +5171,7 @@ func (x InlayHint) Validate() error {
 // @since 3.17.0
 type InlayHintClientCapabilities struct {
 	// Whether inlay hints support dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Indicates which properties a client can resolve lazily on an inlay
 	// hint.
 	ResolveSupport *InlayHintClientCapabilitiesResolveSupport `json:"resolveSupport,omitempty"`
@@ -5015,10 +5180,9 @@ type InlayHintClientCapabilities struct {
 func (x InlayHintClientCapabilities) Validate() error {
 	if x.ResolveSupport != nil {
 		if err := x.ResolveSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ResolveSupport\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -5028,10 +5192,12 @@ type InlayHintClientCapabilitiesResolveSupport struct {
 }
 
 func (x InlayHintClientCapabilitiesResolveSupport) Validate() error {
-	if err := x.Properties.Validate(); err != nil {
-		return err
+	if x.Properties == nil {
+		return errors.New("missing required field \"properties\"")
 	}
-
+	if err := x.Properties.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Properties\": %w", err)
+	}
 	return nil
 }
 
@@ -5041,7 +5207,7 @@ func (x InlayHintClientCapabilitiesResolveSupport) Validate() error {
 // @since 3.17.0
 type InlayHintLabelPart struct {
 	// The value of this label part.
-	Value string `json:"value"`
+	Value *string `json:"value"`
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
@@ -5066,24 +5232,24 @@ type InlayHintLabelPart struct {
 }
 
 func (x InlayHintLabelPart) Validate() error {
+	if x.Value == nil {
+		return errors.New("missing required field \"value\"")
+	}
 	if x.Tooltip != nil {
 		if err := x.Tooltip.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tooltip\": %w", err)
 		}
 	}
-
 	if x.Location != nil {
 		if err := x.Location.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Location\": %w", err)
 		}
 	}
-
 	if x.Command != nil {
 		if err := x.Command.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Command\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -5094,7 +5260,7 @@ type InlayHintOptions struct {
 	WorkDoneProgressOptions
 	// The server provides support to resolve additional
 	// information for an inlay hint item.
-	ResolveProvider bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
 func (x InlayHintOptions) Validate() error {
@@ -5107,20 +5273,24 @@ func (x InlayHintOptions) Validate() error {
 type InlayHintParams struct {
 	WorkDoneProgressParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The document range for which inlay hints should be computed.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 }
 
 func (x InlayHintParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
 	return nil
 }
 
@@ -5148,7 +5318,7 @@ type InlayHintWorkspaceClientCapabilities struct {
 	// inlay hints currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitempty"`
 }
 
 func (x InlayHintWorkspaceClientCapabilities) Validate() error {
@@ -5160,7 +5330,7 @@ func (x InlayHintWorkspaceClientCapabilities) Validate() error {
 // @since 3.17.0
 type InlineValueClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline value providers.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x InlineValueClientCapabilities) Validate() error {
@@ -5170,17 +5340,22 @@ func (x InlineValueClientCapabilities) Validate() error {
 // @since 3.17.0
 type InlineValueContext struct {
 	// The stack frame (as a DAP Id) where the execution has stopped.
-	FrameId int32 `json:"frameId"`
+	FrameID *int32 `json:"frameId"`
 	// The document range where execution has stopped.
 	// Typically the end position of the range denotes the line where the inline values are shown.
-	StoppedLocation Range `json:"stoppedLocation"`
+	StoppedLocation *Range `json:"stoppedLocation"`
 }
 
 func (x InlineValueContext) Validate() error {
-	if err := x.StoppedLocation.Validate(); err != nil {
-		return err
+	if x.FrameID == nil {
+		return errors.New("missing required field \"frameId\"")
 	}
-
+	if x.StoppedLocation == nil {
+		return errors.New("missing required field \"stoppedLocation\"")
+	}
+	if err := x.StoppedLocation.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"StoppedLocation\": %w", err)
+	}
 	return nil
 }
 
@@ -5192,16 +5367,18 @@ func (x InlineValueContext) Validate() error {
 type InlineValueEvaluatableExpression struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the evaluatable expression from the underlying document.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// If specified the expression overrides the extracted expression.
-	Expression string `json:"expression,omitempty"`
+	Expression *string `json:"expression,omitempty"`
 }
 
 func (x InlineValueEvaluatableExpression) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
 	return nil
 }
 
@@ -5222,27 +5399,33 @@ func (x InlineValueOptions) Validate() error {
 type InlineValueParams struct {
 	WorkDoneProgressParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The document range for which inline values should be computed.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// Additional information about the context in which inline values were
 	// requested.
-	Context InlineValueContext `json:"context"`
+	Context *InlineValueContext `json:"context"`
 }
 
 func (x InlineValueParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
+	if x.Context == nil {
+		return errors.New("missing required field \"context\"")
+	}
 	if err := x.Context.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Context\": %w", err)
 	}
-
 	return nil
 }
 
@@ -5264,16 +5447,21 @@ func (x InlineValueRegistrationOptions) Validate() error {
 // @since 3.17.0
 type InlineValueText struct {
 	// The document range for which the inline value applies.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The text of the inline value.
-	Text string `json:"text"`
+	Text *string `json:"text"`
 }
 
 func (x InlineValueText) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
+	if x.Text == nil {
+		return errors.New("missing required field \"text\"")
+	}
 	return nil
 }
 
@@ -5285,18 +5473,23 @@ func (x InlineValueText) Validate() error {
 type InlineValueVariableLookup struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the variable name from the underlying document.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// If specified the name of the variable to look up.
-	VariableName string `json:"variableName,omitempty"`
+	VariableName *string `json:"variableName,omitempty"`
 	// How to perform the lookup.
-	CaseSensitiveLookup bool `json:"caseSensitiveLookup"`
+	CaseSensitiveLookup *bool `json:"caseSensitiveLookup"`
 }
 
 func (x InlineValueVariableLookup) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
+	if x.CaseSensitiveLookup == nil {
+		return errors.New("missing required field \"caseSensitiveLookup\"")
+	}
 	return nil
 }
 
@@ -5311,7 +5504,7 @@ type InlineValueWorkspaceClientCapabilities struct {
 	// inline values currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitempty"`
 }
 
 func (x InlineValueWorkspaceClientCapabilities) Validate() error {
@@ -5323,22 +5516,29 @@ func (x InlineValueWorkspaceClientCapabilities) Validate() error {
 // @since 3.16.0
 type InsertReplaceEdit struct {
 	// The string to be inserted.
-	NewText string `json:"newText"`
+	NewText *string `json:"newText"`
 	// The range if the insert is requested
-	Insert Range `json:"insert"`
+	Insert *Range `json:"insert"`
 	// The range if the replace is requested.
-	Replace Range `json:"replace"`
+	Replace *Range `json:"replace"`
 }
 
 func (x InsertReplaceEdit) Validate() error {
+	if x.NewText == nil {
+		return errors.New("missing required field \"newText\"")
+	}
+	if x.Insert == nil {
+		return errors.New("missing required field \"insert\"")
+	}
 	if err := x.Insert.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Insert\": %w", err)
 	}
-
+	if x.Replace == nil {
+		return errors.New("missing required field \"replace\"")
+	}
 	if err := x.Replace.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Replace\": %w", err)
 	}
-
 	return nil
 }
 
@@ -5349,7 +5549,7 @@ type LinkedEditingRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x LinkedEditingRangeClientCapabilities) Validate() error {
@@ -5393,29 +5593,36 @@ type LinkedEditingRanges struct {
 	// An optional word pattern (regular expression) that describes valid contents for
 	// the given ranges. If no pattern is provided, the client configuration's word
 	// pattern will be used.
-	WordPattern string `json:"wordPattern,omitempty"`
+	WordPattern *string `json:"wordPattern,omitempty"`
 }
 
 func (x LinkedEditingRanges) Validate() error {
-	if err := x.Ranges.Validate(); err != nil {
-		return err
+	if x.Ranges == nil {
+		return errors.New("missing required field \"ranges\"")
 	}
-
+	if err := x.Ranges.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Ranges\": %w", err)
+	}
 	return nil
 }
 
 // Represents a location inside a resource, such as a line
 // inside a text file.
 type Location struct {
-	URI   DocumentURI `json:"uri"`
-	Range Range       `json:"range"`
+	URI   *DocumentURI `json:"uri"`
+	Range *Range       `json:"range"`
 }
 
 func (x Location) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
 	return nil
 }
 
@@ -5428,31 +5635,37 @@ type LocationLink struct {
 	// the definition position.
 	OriginSelectionRange *Range `json:"originSelectionRange,omitempty"`
 	// The target resource identifier of this link.
-	TargetURI DocumentURI `json:"targetUri"`
+	TargetURI *DocumentURI `json:"targetUri"`
 	// The full target range of this link. If the target for example is a symbol then target range is the
 	// range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to highlight the range in the editor.
-	TargetRange Range `json:"targetRange"`
+	TargetRange *Range `json:"targetRange"`
 	// The range that should be selected and revealed when this link is being followed, e.g the name of a function.
 	// Must be contained by the `targetRange`. See also `DocumentSymbol#range`
-	TargetSelectionRange Range `json:"targetSelectionRange"`
+	TargetSelectionRange *Range `json:"targetSelectionRange"`
 }
 
 func (x LocationLink) Validate() error {
 	if x.OriginSelectionRange != nil {
 		if err := x.OriginSelectionRange.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"OriginSelectionRange\": %w", err)
 		}
 	}
-
+	if x.TargetURI == nil {
+		return errors.New("missing required field \"targetUri\"")
+	}
+	if x.TargetRange == nil {
+		return errors.New("missing required field \"targetRange\"")
+	}
 	if err := x.TargetRange.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TargetRange\": %w", err)
 	}
-
+	if x.TargetSelectionRange == nil {
+		return errors.New("missing required field \"targetSelectionRange\"")
+	}
 	if err := x.TargetSelectionRange.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TargetSelectionRange\": %w", err)
 	}
-
 	return nil
 }
 
@@ -5461,23 +5674,28 @@ type LogMessageParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType `json:"type"`
 	// The actual message.
-	Message string `json:"message"`
+	Message *string `json:"message"`
 }
 
 func (x LogMessageParams) Validate() error {
 	if err := x.Type.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Type\": %w", err)
 	}
-
+	if x.Message == nil {
+		return errors.New("missing required field \"message\"")
+	}
 	return nil
 }
 
 type LogTraceParams struct {
-	Message string `json:"message"`
-	Verbose string `json:"verbose,omitempty"`
+	Message *string `json:"message"`
+	Verbose *string `json:"verbose,omitempty"`
 }
 
 func (x LogTraceParams) Validate() error {
+	if x.Message == nil {
+		return errors.New("missing required field \"message\"")
+	}
 	return nil
 }
 
@@ -5486,9 +5704,9 @@ func (x LogTraceParams) Validate() error {
 // @since 3.16.0
 type MarkdownClientCapabilities struct {
 	// The name of the parser.
-	Parser string `json:"parser"`
+	Parser *string `json:"parser"`
 	// The version of the parser.
-	Version string `json:"version,omitempty"`
+	Version *string `json:"version,omitempty"`
 	// A list of HTML tags that the client allows / supports in
 	// Markdown.
 	//
@@ -5497,12 +5715,14 @@ type MarkdownClientCapabilities struct {
 }
 
 func (x MarkdownClientCapabilities) Validate() error {
+	if x.Parser == nil {
+		return errors.New("missing required field \"parser\"")
+	}
 	if x.AllowedTags != nil {
 		if err := x.AllowedTags.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"AllowedTags\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -5534,23 +5754,28 @@ type MarkupContent struct {
 	// The type of the Markup
 	Kind MarkupKind `json:"kind"`
 	// The content itself
-	Value string `json:"value"`
+	Value *string `json:"value"`
 }
 
 func (x MarkupContent) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
+	if x.Value == nil {
+		return errors.New("missing required field \"value\"")
+	}
 	return nil
 }
 
 type MessageActionItem struct {
 	// A short title like 'Retry', 'Open Log' etc.
-	Title string `json:"title"`
+	Title *string `json:"title"`
 }
 
 func (x MessageActionItem) Validate() error {
+	if x.Title == nil {
+		return errors.New("missing required field \"title\"")
+	}
 	return nil
 }
 
@@ -5559,10 +5784,10 @@ func (x MessageActionItem) Validate() error {
 // @since 3.16.0
 type Moniker struct {
 	// The scheme of the moniker. For example tsc or .Net
-	Scheme string `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// The identifier of the moniker. The value is opaque in LSIF however
 	// schema owners are allowed to define the structure if they want.
-	Identifier string `json:"identifier"`
+	Identifier *string `json:"identifier"`
 	// The scope in which the moniker is unique
 	Unique UniquenessLevel `json:"unique"`
 	// The moniker kind if known.
@@ -5570,16 +5795,18 @@ type Moniker struct {
 }
 
 func (x Moniker) Validate() error {
+	if x.Scheme == nil {
+		return errors.New("missing required field \"scheme\"")
+	}
+	if x.Identifier == nil {
+		return errors.New("missing required field \"identifier\"")
+	}
 	if err := x.Unique.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Unique\": %w", err)
 	}
-
-	if x.Kind != "" {
-		if err := x.Kind.Validate(); err != nil {
-			return err
-		}
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
 	return nil
 }
 
@@ -5590,7 +5817,7 @@ type MonikerClientCapabilities struct {
 	// Whether moniker supports dynamic registration. If this is set to `true`
 	// the client supports the new `MonikerRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x MonikerClientCapabilities) Validate() error {
@@ -5636,11 +5863,11 @@ type NotebookCell struct {
 	Kind NotebookCellKind `json:"kind"`
 	// The URI of the cell's text document
 	// content.
-	Document DocumentURI `json:"document"`
+	Document *DocumentURI `json:"document"`
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata map[string]any `json:"metadata,omitempty"`
+	Metadata Map[string, any] `json:"metadata,omitempty"`
 	// Additional execution summary information
 	// if supported by the client.
 	ExecutionSummary *ExecutionSummary `json:"executionSummary,omitempty"`
@@ -5648,15 +5875,21 @@ type NotebookCell struct {
 
 func (x NotebookCell) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
-	if x.ExecutionSummary != nil {
-		if err := x.ExecutionSummary.Validate(); err != nil {
-			return err
+	if x.Document == nil {
+		return errors.New("missing required field \"document\"")
+	}
+	if x.Metadata != nil {
+		if err := x.Metadata.Validate(); err != nil {
+			return fmt.Errorf("invalid field \"Metadata\": %w", err)
 		}
 	}
-
+	if x.ExecutionSummary != nil {
+		if err := x.ExecutionSummary.Validate(); err != nil {
+			return fmt.Errorf("invalid field \"ExecutionSummary\": %w", err)
+		}
+	}
 	return nil
 }
 
@@ -5666,20 +5899,25 @@ func (x NotebookCell) Validate() error {
 // @since 3.17.0
 type NotebookCellArrayChange struct {
 	// The start oftest of the cell that changed.
-	Start uint32 `json:"start"`
+	Start *uint32 `json:"start"`
 	// The deleted cells
-	DeleteCount uint32 `json:"deleteCount"`
+	DeleteCount *uint32 `json:"deleteCount"`
 	// The new cells, if any
 	Cells Array[NotebookCell] `json:"cells,omitempty"`
 }
 
 func (x NotebookCellArrayChange) Validate() error {
+	if x.Start == nil {
+		return errors.New("missing required field \"start\"")
+	}
+	if x.DeleteCount == nil {
+		return errors.New("missing required field \"deleteCount\"")
+	}
 	if x.Cells != nil {
 		if err := x.Cells.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Cells\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -5692,19 +5930,21 @@ type NotebookCellTextDocumentFilter struct {
 	// containing the notebook cell. If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook OneOf2[string, NotebookDocumentFilter] `json:"notebook"`
+	Notebook *OneOf2[string, NotebookDocumentFilter] `json:"notebook"`
 	// A language id like `python`.
 	//
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
-	Language string `json:"language,omitempty"`
+	Language *string `json:"language,omitempty"`
 }
 
 func (x NotebookCellTextDocumentFilter) Validate() error {
-	if err := x.Notebook.Validate(); err != nil {
-		return err
+	if x.Notebook == nil {
+		return errors.New("missing required field \"notebook\"")
 	}
-
+	if err := x.Notebook.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Notebook\": %w", err)
+	}
 	return nil
 }
 
@@ -5713,26 +5953,42 @@ func (x NotebookCellTextDocumentFilter) Validate() error {
 // @since 3.17.0
 type NotebookDocument struct {
 	// The notebook document's uri.
-	URI URI `json:"uri"`
+	URI *URI `json:"uri"`
 	// The type of the notebook.
-	NotebookType string `json:"notebookType"`
+	NotebookType *string `json:"notebookType"`
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
-	Version int32 `json:"version"`
+	Version *int32 `json:"version"`
 	// Additional metadata stored with the notebook
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata map[string]any `json:"metadata,omitempty"`
+	Metadata Map[string, any] `json:"metadata,omitempty"`
 	// The cells of a notebook.
 	Cells Array[NotebookCell] `json:"cells"`
 }
 
 func (x NotebookDocument) Validate() error {
-	if err := x.Cells.Validate(); err != nil {
-		return err
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
 	}
-
+	if x.NotebookType == nil {
+		return errors.New("missing required field \"notebookType\"")
+	}
+	if x.Version == nil {
+		return errors.New("missing required field \"version\"")
+	}
+	if x.Metadata != nil {
+		if err := x.Metadata.Validate(); err != nil {
+			return fmt.Errorf("invalid field \"Metadata\": %w", err)
+		}
+	}
+	if x.Cells == nil {
+		return errors.New("missing required field \"cells\"")
+	}
+	if err := x.Cells.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Cells\": %w", err)
+	}
 	return nil
 }
 
@@ -5743,24 +5999,28 @@ type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata map[string]any `json:"metadata,omitempty"`
+	Metadata Map[string, any] `json:"metadata,omitempty"`
 	// Changes to cells
 	Cells *NotebookDocumentChangeEventCells `json:"cells,omitempty"`
 }
 
 func (x NotebookDocumentChangeEvent) Validate() error {
-	if x.Cells != nil {
-		if err := x.Cells.Validate(); err != nil {
-			return err
+	if x.Metadata != nil {
+		if err := x.Metadata.Validate(); err != nil {
+			return fmt.Errorf("invalid field \"Metadata\": %w", err)
 		}
 	}
-
+	if x.Cells != nil {
+		if err := x.Cells.Validate(); err != nil {
+			return fmt.Errorf("invalid field \"Cells\": %w", err)
+		}
+	}
 	return nil
 }
 
 type NotebookDocumentChangeEventCellsStructure struct {
 	// The change to the cell array.
-	Array NotebookCellArrayChange `json:"array"`
+	Array *NotebookCellArrayChange `json:"array"`
 	// Additional opened cell text documents.
 	DidOpen Array[TextDocumentItem] `json:"didOpen,omitempty"`
 	// Additional closed cell text documents.
@@ -5768,39 +6028,43 @@ type NotebookDocumentChangeEventCellsStructure struct {
 }
 
 func (x NotebookDocumentChangeEventCellsStructure) Validate() error {
-	if err := x.Array.Validate(); err != nil {
-		return err
+	if x.Array == nil {
+		return errors.New("missing required field \"array\"")
 	}
-
+	if err := x.Array.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Array\": %w", err)
+	}
 	if x.DidOpen != nil {
 		if err := x.DidOpen.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DidOpen\": %w", err)
 		}
 	}
-
 	if x.DidClose != nil {
 		if err := x.DidClose.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DidClose\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 type NotebookDocumentChangeEventCellsTextContent struct {
-	Document VersionedTextDocumentIdentifier       `json:"document"`
+	Document *VersionedTextDocumentIdentifier      `json:"document"`
 	Changes  Array[TextDocumentContentChangeEvent] `json:"changes"`
 }
 
 func (x NotebookDocumentChangeEventCellsTextContent) Validate() error {
+	if x.Document == nil {
+		return errors.New("missing required field \"document\"")
+	}
 	if err := x.Document.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Document\": %w", err)
 	}
-
+	if x.Changes == nil {
+		return errors.New("missing required field \"changes\"")
+	}
 	if err := x.Changes.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Changes\": %w", err)
 	}
-
 	return nil
 }
 
@@ -5818,22 +6082,19 @@ type NotebookDocumentChangeEventCells struct {
 func (x NotebookDocumentChangeEventCells) Validate() error {
 	if x.Structure != nil {
 		if err := x.Structure.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Structure\": %w", err)
 		}
 	}
-
 	if x.Data != nil {
 		if err := x.Data.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Data\": %w", err)
 		}
 	}
-
 	if x.TextContent != nil {
 		if err := x.TextContent.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TextContent\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -5844,14 +6105,16 @@ type NotebookDocumentClientCapabilities struct {
 	// Capabilities specific to notebook document synchronization
 	//
 	// @since 3.17.0
-	Synchronization NotebookDocumentSyncClientCapabilities `json:"synchronization"`
+	Synchronization *NotebookDocumentSyncClientCapabilities `json:"synchronization"`
 }
 
 func (x NotebookDocumentClientCapabilities) Validate() error {
-	if err := x.Synchronization.Validate(); err != nil {
-		return err
+	if x.Synchronization == nil {
+		return errors.New("missing required field \"synchronization\"")
 	}
-
+	if err := x.Synchronization.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Synchronization\": %w", err)
+	}
 	return nil
 }
 
@@ -5860,10 +6123,13 @@ func (x NotebookDocumentClientCapabilities) Validate() error {
 // @since 3.17.0
 type NotebookDocumentIdentifier struct {
 	// The notebook document's uri.
-	URI URI `json:"uri"`
+	URI *URI `json:"uri"`
 }
 
 func (x NotebookDocumentIdentifier) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	return nil
 }
 
@@ -5875,9 +6141,9 @@ type NotebookDocumentSyncClientCapabilities struct {
 	// set to `true` the client supports the new
 	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports sending execution summary data per cell.
-	ExecutionSummarySupport bool `json:"executionSummarySupport,omitempty"`
+	ExecutionSummarySupport *bool `json:"executionSummarySupport,omitempty"`
 }
 
 func (x NotebookDocumentSyncClientCapabilities) Validate() error {
@@ -5902,22 +6168,27 @@ type NotebookDocumentSyncOptions struct {
 	NotebookSelector Array[OneOf2[NotebookDocumentSyncOptionsNotebookSelector, NotebookDocumentSyncOptionsNotebookSelector1]] `json:"notebookSelector"`
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
-	Save bool `json:"save,omitempty"`
+	Save *bool `json:"save,omitempty"`
 }
 
 func (x NotebookDocumentSyncOptions) Validate() error {
-	if err := x.NotebookSelector.Validate(); err != nil {
-		return err
+	if x.NotebookSelector == nil {
+		return errors.New("missing required field \"notebookSelector\"")
 	}
-
+	if err := x.NotebookSelector.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"NotebookSelector\": %w", err)
+	}
 	return nil
 }
 
 type NotebookDocumentSyncOptionsNotebookSelectorCells struct {
-	Language string `json:"language"`
+	Language *string `json:"language"`
 }
 
 func (x NotebookDocumentSyncOptionsNotebookSelectorCells) Validate() error {
+	if x.Language == nil {
+		return errors.New("missing required field \"language\"")
+	}
 	return nil
 }
 
@@ -5925,30 +6196,34 @@ type NotebookDocumentSyncOptionsNotebookSelector struct {
 	// The notebook to be synced If a string
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
-	Notebook OneOf2[string, NotebookDocumentFilter] `json:"notebook"`
+	Notebook *OneOf2[string, NotebookDocumentFilter] `json:"notebook"`
 	// The cells of the matching notebook to be synced.
 	Cells Array[NotebookDocumentSyncOptionsNotebookSelectorCells] `json:"cells,omitempty"`
 }
 
 func (x NotebookDocumentSyncOptionsNotebookSelector) Validate() error {
-	if err := x.Notebook.Validate(); err != nil {
-		return err
+	if x.Notebook == nil {
+		return errors.New("missing required field \"notebook\"")
 	}
-
+	if err := x.Notebook.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Notebook\": %w", err)
+	}
 	if x.Cells != nil {
 		if err := x.Cells.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Cells\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 type NotebookDocumentSyncOptionsNotebookSelector1Cells struct {
-	Language string `json:"language"`
+	Language *string `json:"language"`
 }
 
 func (x NotebookDocumentSyncOptionsNotebookSelector1Cells) Validate() error {
+	if x.Language == nil {
+		return errors.New("missing required field \"language\"")
+	}
 	return nil
 }
 
@@ -5964,14 +6239,15 @@ type NotebookDocumentSyncOptionsNotebookSelector1 struct {
 func (x NotebookDocumentSyncOptionsNotebookSelector1) Validate() error {
 	if x.Notebook != nil {
 		if err := x.Notebook.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Notebook\": %w", err)
 		}
 	}
-
-	if err := x.Cells.Validate(); err != nil {
-		return err
+	if x.Cells == nil {
+		return errors.New("missing required field \"cells\"")
 	}
-
+	if err := x.Cells.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Cells\": %w", err)
+	}
 	return nil
 }
 
@@ -5995,10 +6271,13 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
-	Version int32 `json:"version"`
+	Version *int32 `json:"version"`
 }
 
 func (x OptionalVersionedTextDocumentIdentifier) Validate() error {
+	if x.Version == nil {
+		return errors.New("missing required field \"version\"")
+	}
 	return nil
 }
 
@@ -6013,23 +6292,24 @@ type ParameterInformation struct {
 	//
 	// *Note*: a label of type string should be a substring of its containing signature label.
 	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
-	Label OneOf2[string, [2]uint32] `json:"label"`
+	Label *OneOf2[string, [2]uint32] `json:"label"`
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
 	Documentation *OneOf2[string, MarkupContent] `json:"documentation,omitempty"`
 }
 
 func (x ParameterInformation) Validate() error {
-	if err := x.Label.Validate(); err != nil {
-		return err
+	if x.Label == nil {
+		return errors.New("missing required field \"label\"")
 	}
-
+	if err := x.Label.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Label\": %w", err)
+	}
 	if x.Documentation != nil {
 		if err := x.Documentation.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Documentation\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6042,10 +6322,9 @@ type PartialResultParams struct {
 func (x PartialResultParams) Validate() error {
 	if x.PartialResultToken != nil {
 		if err := x.PartialResultToken.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"PartialResultToken\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6081,7 +6360,7 @@ type Position struct {
 	//
 	// If a line number is greater than the number of lines in a document, it defaults back to the number of lines in the document.
 	// If a line number is negative, it defaults to 0.
-	Line uint32 `json:"line"`
+	Line *uint32 `json:"line"`
 	// Character offset on a line in a document (zero-based).
 	//
 	// The meaning of this offset is determined by the negotiated
@@ -6089,10 +6368,16 @@ type Position struct {
 	//
 	// If the character value is greater than the line length it defaults back to the
 	// line length.
-	Character uint32 `json:"character"`
+	Character *uint32 `json:"character"`
 }
 
 func (x Position) Validate() error {
+	if x.Line == nil {
+		return errors.New("missing required field \"line\"")
+	}
+	if x.Character == nil {
+		return errors.New("missing required field \"character\"")
+	}
 	return nil
 }
 
@@ -6108,37 +6393,48 @@ func (x PrepareRenameParams) Validate() error {
 // A previous result id in a workspace pull request.
 //
 // @since 3.17.0
-type PreviousResultId struct {
+type PreviousResultID struct {
 	// The URI for which the client knowns a
 	// result id.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// The value of the previous result id.
-	Value string `json:"value"`
+	Value *string `json:"value"`
 }
 
-func (x PreviousResultId) Validate() error {
+func (x PreviousResultID) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
+	if x.Value == nil {
+		return errors.New("missing required field \"value\"")
+	}
 	return nil
 }
 
 type ProgressParams struct {
 	// The progress token provided by the client or server.
-	Token ProgressToken `json:"token"`
+	Token *ProgressToken `json:"token"`
 	// The progress data.
 	Value any `json:"value"`
 }
 
 func (x ProgressParams) Validate() error {
-	if err := x.Token.Validate(); err != nil {
-		return err
+	if x.Token == nil {
+		return errors.New("missing required field \"token\"")
 	}
-
+	if err := x.Token.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Token\": %w", err)
+	}
+	if x.Value == nil {
+		return errors.New("missing required field \"value\"")
+	}
 	return nil
 }
 
 // The publish diagnostic client capabilities.
 type PublishDiagnosticsClientCapabilities struct {
 	// Whether the clients accepts diagnostics with related information.
-	RelatedInformation bool `json:"relatedInformation,omitempty"`
+	RelatedInformation *bool `json:"relatedInformation,omitempty"`
 	// Client supports the tag property to provide meta data about a diagnostic.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
@@ -6148,26 +6444,25 @@ type PublishDiagnosticsClientCapabilities struct {
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
 	// @since 3.15.0
-	VersionSupport bool `json:"versionSupport,omitempty"`
+	VersionSupport *bool `json:"versionSupport,omitempty"`
 	// Client supports a codeDescription property
 	//
 	// @since 3.16.0
-	CodeDescriptionSupport bool `json:"codeDescriptionSupport,omitempty"`
+	CodeDescriptionSupport *bool `json:"codeDescriptionSupport,omitempty"`
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/publishDiagnostics` and
 	// `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
-	DataSupport bool `json:"dataSupport,omitempty"`
+	DataSupport *bool `json:"dataSupport,omitempty"`
 }
 
 func (x PublishDiagnosticsClientCapabilities) Validate() error {
 	if x.TagSupport != nil {
 		if err := x.TagSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TagSupport\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6177,30 +6472,37 @@ type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 }
 
 func (x PublishDiagnosticsClientCapabilitiesTagSupport) Validate() error {
-	if err := x.ValueSet.Validate(); err != nil {
-		return err
+	if x.ValueSet == nil {
+		return errors.New("missing required field \"valueSet\"")
 	}
-
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
+	}
 	return nil
 }
 
 // The publish diagnostic notification's parameters.
 type PublishDiagnosticsParams struct {
 	// The URI for which diagnostic information is reported.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// Optional the version number of the document the diagnostics are published for.
 	//
 	// @since 3.15.0
-	Version int32 `json:"version,omitempty"`
+	Version *int32 `json:"version,omitempty"`
 	// An array of diagnostic information items.
 	Diagnostics Array[Diagnostic] `json:"diagnostics"`
 }
 
 func (x PublishDiagnosticsParams) Validate() error {
-	if err := x.Diagnostics.Validate(); err != nil {
-		return err
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
 	}
-
+	if x.Diagnostics == nil {
+		return errors.New("missing required field \"diagnostics\"")
+	}
+	if err := x.Diagnostics.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
+	}
 	return nil
 }
 
@@ -6219,27 +6521,31 @@ func (x PublishDiagnosticsParams) Validate() error {
 // ```
 type Range struct {
 	// The range's start position.
-	Start Position `json:"start"`
+	Start *Position `json:"start"`
 	// The range's end position.
-	End Position `json:"end"`
+	End *Position `json:"end"`
 }
 
 func (x Range) Validate() error {
+	if x.Start == nil {
+		return errors.New("missing required field \"start\"")
+	}
 	if err := x.Start.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Start\": %w", err)
 	}
-
+	if x.End == nil {
+		return errors.New("missing required field \"end\"")
+	}
 	if err := x.End.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"End\": %w", err)
 	}
-
 	return nil
 }
 
 // Client Capabilities for a {@link ReferencesRequest}.
 type ReferenceClientCapabilities struct {
 	// Whether references supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x ReferenceClientCapabilities) Validate() error {
@@ -6250,10 +6556,13 @@ func (x ReferenceClientCapabilities) Validate() error {
 // requesting references.
 type ReferenceContext struct {
 	// Include the declaration of the current symbol.
-	IncludeDeclaration bool `json:"includeDeclaration"`
+	IncludeDeclaration *bool `json:"includeDeclaration"`
 }
 
 func (x ReferenceContext) Validate() error {
+	if x.IncludeDeclaration == nil {
+		return errors.New("missing required field \"includeDeclaration\"")
+	}
 	return nil
 }
 
@@ -6271,14 +6580,16 @@ type ReferenceParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
-	Context ReferenceContext `json:"context"`
+	Context *ReferenceContext `json:"context"`
 }
 
 func (x ReferenceParams) Validate() error {
-	if err := x.Context.Validate(); err != nil {
-		return err
+	if x.Context == nil {
+		return errors.New("missing required field \"context\"")
 	}
-
+	if err := x.Context.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Context\": %w", err)
+	}
 	return nil
 }
 
@@ -6296,14 +6607,20 @@ func (x ReferenceRegistrationOptions) Validate() error {
 type Registration struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again.
-	Id string `json:"id"`
+	ID *string `json:"id"`
 	// The method / capability to register for.
-	Method string `json:"method"`
+	Method *string `json:"method"`
 	// Options necessary for the registration.
 	RegisterOptions any `json:"registerOptions,omitempty"`
 }
 
 func (x Registration) Validate() error {
+	if x.ID == nil {
+		return errors.New("missing required field \"id\"")
+	}
+	if x.Method == nil {
+		return errors.New("missing required field \"method\"")
+	}
 	return nil
 }
 
@@ -6312,10 +6629,12 @@ type RegistrationParams struct {
 }
 
 func (x RegistrationParams) Validate() error {
-	if err := x.Registrations.Validate(); err != nil {
-		return err
+	if x.Registrations == nil {
+		return errors.New("missing required field \"registrations\"")
 	}
-
+	if err := x.Registrations.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Registrations\": %w", err)
+	}
 	return nil
 }
 
@@ -6324,12 +6643,15 @@ func (x RegistrationParams) Validate() error {
 // @since 3.16.0
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
-	Engine string `json:"engine"`
+	Engine *string `json:"engine"`
 	// The engine's version.
-	Version string `json:"version,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
 func (x RegularExpressionsClientCapabilities) Validate() error {
+	if x.Engine == nil {
+		return errors.New("missing required field \"engine\"")
+	}
 	return nil
 }
 
@@ -6351,10 +6673,9 @@ type RelatedFullDocumentDiagnosticReport struct {
 func (x RelatedFullDocumentDiagnosticReport) Validate() error {
 	if x.RelatedDocuments != nil {
 		if err := x.RelatedDocuments.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6376,10 +6697,9 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 func (x RelatedUnchangedDocumentDiagnosticReport) Validate() error {
 	if x.RelatedDocuments != nil {
 		if err := x.RelatedDocuments.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"RelatedDocuments\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6391,27 +6711,32 @@ func (x RelatedUnchangedDocumentDiagnosticReport) Validate() error {
 type RelativePattern struct {
 	// A workspace folder or a base URI to which this pattern will be matched
 	// against relatively.
-	BaseURI OneOf2[WorkspaceFolder, URI] `json:"baseUri"`
+	BaseURI *OneOf2[WorkspaceFolder, URI] `json:"baseUri"`
 	// The actual glob pattern;
-	Pattern Pattern `json:"pattern"`
+	Pattern *Pattern `json:"pattern"`
 }
 
 func (x RelativePattern) Validate() error {
-	if err := x.BaseURI.Validate(); err != nil {
-		return err
+	if x.BaseURI == nil {
+		return errors.New("missing required field \"baseUri\"")
 	}
-
+	if err := x.BaseURI.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"BaseURI\": %w", err)
+	}
+	if x.Pattern == nil {
+		return errors.New("missing required field \"pattern\"")
+	}
 	return nil
 }
 
 type RenameClientCapabilities struct {
 	// Whether rename supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Client supports testing for validity of rename operations
 	// before execution.
 	//
 	// @since 3.12.0
-	PrepareSupport bool `json:"prepareSupport,omitempty"`
+	PrepareSupport *bool `json:"prepareSupport,omitempty"`
 	// Client supports the default behavior result.
 	//
 	// The value indicates the default behavior used by the
@@ -6426,16 +6751,13 @@ type RenameClientCapabilities struct {
 	// for confirmation.
 	//
 	// @since 3.16.0
-	HonorsChangeAnnotations bool `json:"honorsChangeAnnotations,omitempty"`
+	HonorsChangeAnnotations *bool `json:"honorsChangeAnnotations,omitempty"`
 }
 
 func (x RenameClientCapabilities) Validate() error {
-	if x.PrepareSupportDefaultBehavior != 0 {
-		if err := x.PrepareSupportDefaultBehavior.Validate(); err != nil {
-			return err
-		}
+	if err := x.PrepareSupportDefaultBehavior.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"PrepareSupportDefaultBehavior\": %w", err)
 	}
-
 	return nil
 }
 
@@ -6445,24 +6767,28 @@ type RenameFile struct {
 	// A rename
 	Kind renameLiteral `json:"kind"`
 	// The old (existing) location.
-	OldURI DocumentURI `json:"oldUri"`
+	OldURI *DocumentURI `json:"oldUri"`
 	// The new location.
-	NewURI DocumentURI `json:"newUri"`
+	NewURI *DocumentURI `json:"newUri"`
 	// Rename options.
 	Options *RenameFileOptions `json:"options,omitempty"`
 }
 
 func (x RenameFile) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
+	if x.OldURI == nil {
+		return errors.New("missing required field \"oldUri\"")
+	}
+	if x.NewURI == nil {
+		return errors.New("missing required field \"newUri\"")
+	}
 	if x.Options != nil {
 		if err := x.Options.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Options\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6479,9 +6805,9 @@ func (x renameLiteral) Validate() error {
 // Rename file options
 type RenameFileOptions struct {
 	// Overwrite target if existing. Overwrite wins over `ignoreIfExists`
-	Overwrite bool `json:"overwrite,omitempty"`
+	Overwrite *bool `json:"overwrite,omitempty"`
 	// Ignores if target exists.
-	IgnoreIfExists bool `json:"ignoreIfExists,omitempty"`
+	IgnoreIfExists *bool `json:"ignoreIfExists,omitempty"`
 }
 
 func (x RenameFileOptions) Validate() error {
@@ -6499,10 +6825,12 @@ type RenameFilesParams struct {
 }
 
 func (x RenameFilesParams) Validate() error {
-	if err := x.Files.Validate(); err != nil {
-		return err
+	if x.Files == nil {
+		return errors.New("missing required field \"files\"")
 	}
-
+	if err := x.Files.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Files\": %w", err)
+	}
 	return nil
 }
 
@@ -6512,7 +6840,7 @@ type RenameOptions struct {
 	// Renames should be checked and tested before being executed.
 	//
 	// @since version 3.12.0
-	PrepareProvider bool `json:"prepareProvider,omitempty"`
+	PrepareProvider *bool `json:"prepareProvider,omitempty"`
 }
 
 func (x RenameOptions) Validate() error {
@@ -6523,24 +6851,31 @@ func (x RenameOptions) Validate() error {
 type RenameParams struct {
 	WorkDoneProgressParams
 	// The document to rename.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The position at which this request was sent.
-	Position Position `json:"position"`
+	Position *Position `json:"position"`
 	// The new name of the symbol. If the given name is not valid the
 	// request must return a {@link ResponseError} with an
 	// appropriate message set.
-	NewName string `json:"newName"`
+	NewName *string `json:"newName"`
 }
 
 func (x RenameParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Position == nil {
+		return errors.New("missing required field \"position\"")
+	}
 	if err := x.Position.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Position\": %w", err)
 	}
-
+	if x.NewName == nil {
+		return errors.New("missing required field \"newName\"")
+	}
 	return nil
 }
 
@@ -6557,21 +6892,24 @@ func (x RenameRegistrationOptions) Validate() error {
 // A generic resource operation.
 type ResourceOperation struct {
 	// The resource operation kind.
-	Kind string `json:"kind"`
+	Kind *string `json:"kind"`
 	// An optional annotation identifier describing the operation.
 	//
 	// @since 3.16.0
-	AnnotationId ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
+	AnnotationID *ChangeAnnotationIdentifier `json:"annotationId,omitempty"`
 }
 
 func (x ResourceOperation) Validate() error {
+	if x.Kind == nil {
+		return errors.New("missing required field \"kind\"")
+	}
 	return nil
 }
 
 // Save options.
 type SaveOptions struct {
 	// The client is supposed to include the content on save.
-	IncludeText bool `json:"includeText,omitempty"`
+	IncludeText *bool `json:"includeText,omitempty"`
 }
 
 func (x SaveOptions) Validate() error {
@@ -6582,22 +6920,23 @@ func (x SaveOptions) Validate() error {
 // may have a parent selection range that contains it.
 type SelectionRange struct {
 	// The {@link Range range} of this selection range.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
 	Parent *SelectionRange `json:"parent,omitempty"`
 }
 
 func (x SelectionRange) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
 	if x.Parent != nil {
 		if err := x.Parent.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Parent\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6605,7 +6944,7 @@ type SelectionRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
 	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
 	// capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x SelectionRangeClientCapabilities) Validate() error {
@@ -6625,20 +6964,24 @@ type SelectionRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The positions inside the text document.
 	Positions Array[Position] `json:"positions"`
 }
 
 func (x SelectionRangeParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Positions == nil {
+		return errors.New("missing required field \"positions\"")
+	}
 	if err := x.Positions.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Positions\": %w", err)
 	}
-
 	return nil
 }
 
@@ -6658,16 +7001,18 @@ type SemanticTokens struct {
 	// the client will include the result id in the next semantic token request.
 	// A server can then instead of computing all semantic tokens again simply
 	// send a delta.
-	ResultId string `json:"resultId,omitempty"`
+	ResultID *string `json:"resultId,omitempty"`
 	// The actual tokens.
 	Data Array[uint32] `json:"data"`
 }
 
 func (x SemanticTokens) Validate() error {
-	if err := x.Data.Validate(); err != nil {
-		return err
+	if x.Data == nil {
+		return errors.New("missing required field \"data\"")
 	}
-
+	if err := x.Data.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Data\": %w", err)
+	}
 	return nil
 }
 
@@ -6676,7 +7021,7 @@ type SemanticTokensClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Which requests the client supports and might send to the server
 	// depending on the server's capability. Please note that clients might not
 	// show semantic tokens or degrade some of the user experience if a range
@@ -6685,7 +7030,7 @@ type SemanticTokensClientCapabilities struct {
 	// `request.range` are both set to true but the server only provides a
 	// range provider the client might not render a minimap correctly or might
 	// even decide to not show any semantic tokens at all.
-	Requests SemanticTokensClientCapabilitiesRequests `json:"requests"`
+	Requests *SemanticTokensClientCapabilitiesRequests `json:"requests"`
 	// The token types that the client supports.
 	TokenTypes Array[string] `json:"tokenTypes"`
 	// The token modifiers that the client supports.
@@ -6693,16 +7038,16 @@ type SemanticTokensClientCapabilities struct {
 	// The token formats the clients supports.
 	Formats Array[TokenFormat] `json:"formats"`
 	// Whether the client supports tokens that can overlap each other.
-	OverlappingTokenSupport bool `json:"overlappingTokenSupport,omitempty"`
+	OverlappingTokenSupport *bool `json:"overlappingTokenSupport,omitempty"`
 	// Whether the client supports tokens that can span multiple lines.
-	MultilineTokenSupport bool `json:"multilineTokenSupport,omitempty"`
+	MultilineTokenSupport *bool `json:"multilineTokenSupport,omitempty"`
 	// Whether the client allows the server to actively cancel a
 	// semantic token request, e.g. supports returning
 	// LSPErrorCodes.ServerCancelled. If a server does the client
 	// needs to retrigger the request.
 	//
 	// @since 3.17.0
-	ServerCancelSupport bool `json:"serverCancelSupport,omitempty"`
+	ServerCancelSupport *bool `json:"serverCancelSupport,omitempty"`
 	// Whether the client uses semantic tokens to augment existing
 	// syntax tokens. If set to `true` client side created syntax
 	// tokens and semantic tokens are both used for colorization. If
@@ -6713,26 +7058,34 @@ type SemanticTokensClientCapabilities struct {
 	// specified.
 	//
 	// @since 3.17.0
-	AugmentsSyntaxTokens bool `json:"augmentsSyntaxTokens,omitempty"`
+	AugmentsSyntaxTokens *bool `json:"augmentsSyntaxTokens,omitempty"`
 }
 
 func (x SemanticTokensClientCapabilities) Validate() error {
+	if x.Requests == nil {
+		return errors.New("missing required field \"requests\"")
+	}
 	if err := x.Requests.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Requests\": %w", err)
 	}
-
+	if x.TokenTypes == nil {
+		return errors.New("missing required field \"tokenTypes\"")
+	}
 	if err := x.TokenTypes.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TokenTypes\": %w", err)
 	}
-
+	if x.TokenModifiers == nil {
+		return errors.New("missing required field \"tokenModifiers\"")
+	}
 	if err := x.TokenModifiers.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TokenModifiers\": %w", err)
 	}
-
+	if x.Formats == nil {
+		return errors.New("missing required field \"formats\"")
+	}
 	if err := x.Formats.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Formats\": %w", err)
 	}
-
 	return nil
 }
 
@@ -6745,7 +7098,7 @@ func (x SemanticTokensClientCapabilitiesRequestsRange) Validate() error {
 type SemanticTokensClientCapabilitiesRequestsFull struct {
 	// The client will send the `textDocument/semanticTokens/full/delta` request if
 	// the server provides a corresponding handler.
-	Delta bool `json:"delta,omitempty"`
+	Delta *bool `json:"delta,omitempty"`
 }
 
 func (x SemanticTokensClientCapabilitiesRequestsFull) Validate() error {
@@ -6764,31 +7117,31 @@ type SemanticTokensClientCapabilitiesRequests struct {
 func (x SemanticTokensClientCapabilitiesRequests) Validate() error {
 	if x.Range != nil {
 		if err := x.Range.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Range\": %w", err)
 		}
 	}
-
 	if x.Full != nil {
 		if err := x.Full.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Full\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 // @since 3.16.0
 type SemanticTokensDelta struct {
-	ResultId string `json:"resultId,omitempty"`
+	ResultID *string `json:"resultId,omitempty"`
 	// The semantic token edits to transform a previous result into a new result.
 	Edits Array[SemanticTokensEdit] `json:"edits"`
 }
 
 func (x SemanticTokensDelta) Validate() error {
-	if err := x.Edits.Validate(); err != nil {
-		return err
+	if x.Edits == nil {
+		return errors.New("missing required field \"edits\"")
 	}
-
+	if err := x.Edits.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Edits\": %w", err)
+	}
 	return nil
 }
 
@@ -6797,17 +7150,22 @@ type SemanticTokensDeltaParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The result id of a previous response. The result Id can either point to a full response
 	// or a delta response depending on what was received last.
-	PreviousResultId string `json:"previousResultId"`
+	PreviousResultID *string `json:"previousResultId"`
 }
 
 func (x SemanticTokensDeltaParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
+	if x.PreviousResultID == nil {
+		return errors.New("missing required field \"previousResultId\"")
+	}
 	return nil
 }
 
@@ -6817,30 +7175,37 @@ type SemanticTokensDeltaPartialResult struct {
 }
 
 func (x SemanticTokensDeltaPartialResult) Validate() error {
-	if err := x.Edits.Validate(); err != nil {
-		return err
+	if x.Edits == nil {
+		return errors.New("missing required field \"edits\"")
 	}
-
+	if err := x.Edits.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Edits\": %w", err)
+	}
 	return nil
 }
 
 // @since 3.16.0
 type SemanticTokensEdit struct {
 	// The start offset of the edit.
-	Start uint32 `json:"start"`
+	Start *uint32 `json:"start"`
 	// The count of elements to remove.
-	DeleteCount uint32 `json:"deleteCount"`
+	DeleteCount *uint32 `json:"deleteCount"`
 	// The elements to insert.
 	Data Array[uint32] `json:"data,omitempty"`
 }
 
 func (x SemanticTokensEdit) Validate() error {
+	if x.Start == nil {
+		return errors.New("missing required field \"start\"")
+	}
+	if x.DeleteCount == nil {
+		return errors.New("missing required field \"deleteCount\"")
+	}
 	if x.Data != nil {
 		if err := x.Data.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Data\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6853,14 +7218,18 @@ type SemanticTokensLegend struct {
 }
 
 func (x SemanticTokensLegend) Validate() error {
+	if x.TokenTypes == nil {
+		return errors.New("missing required field \"tokenTypes\"")
+	}
 	if err := x.TokenTypes.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TokenTypes\": %w", err)
 	}
-
+	if x.TokenModifiers == nil {
+		return errors.New("missing required field \"tokenModifiers\"")
+	}
 	if err := x.TokenModifiers.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TokenModifiers\": %w", err)
 	}
-
 	return nil
 }
 
@@ -6868,7 +7237,7 @@ func (x SemanticTokensLegend) Validate() error {
 type SemanticTokensOptions struct {
 	WorkDoneProgressOptions
 	// The legend used by the server
-	Legend SemanticTokensLegend `json:"legend"`
+	Legend *SemanticTokensLegend `json:"legend"`
 	// Server supports providing semantic tokens for a specific range
 	// of a document.
 	Range *OneOf2[bool, SemanticTokensOptionsRange] `json:"range,omitempty"`
@@ -6877,22 +7246,22 @@ type SemanticTokensOptions struct {
 }
 
 func (x SemanticTokensOptions) Validate() error {
-	if err := x.Legend.Validate(); err != nil {
-		return err
+	if x.Legend == nil {
+		return errors.New("missing required field \"legend\"")
 	}
-
+	if err := x.Legend.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Legend\": %w", err)
+	}
 	if x.Range != nil {
 		if err := x.Range.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Range\": %w", err)
 		}
 	}
-
 	if x.Full != nil {
 		if err := x.Full.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Full\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -6904,7 +7273,7 @@ func (x SemanticTokensOptionsRange) Validate() error {
 
 type SemanticTokensOptionsFull struct {
 	// The server supports deltas for full documents.
-	Delta bool `json:"delta,omitempty"`
+	Delta *bool `json:"delta,omitempty"`
 }
 
 func (x SemanticTokensOptionsFull) Validate() error {
@@ -6916,14 +7285,16 @@ type SemanticTokensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 }
 
 func (x SemanticTokensParams) Validate() error {
-	if err := x.TextDocument.Validate(); err != nil {
-		return err
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
 	}
-
+	if err := x.TextDocument.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
+	}
 	return nil
 }
 
@@ -6933,10 +7304,12 @@ type SemanticTokensPartialResult struct {
 }
 
 func (x SemanticTokensPartialResult) Validate() error {
-	if err := x.Data.Validate(); err != nil {
-		return err
+	if x.Data == nil {
+		return errors.New("missing required field \"data\"")
 	}
-
+	if err := x.Data.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Data\": %w", err)
+	}
 	return nil
 }
 
@@ -6945,20 +7318,24 @@ type SemanticTokensRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The range the semantic tokens are requested for.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 }
 
 func (x SemanticTokensRangeParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
 	return nil
 }
 
@@ -6982,7 +7359,7 @@ type SemanticTokensWorkspaceClientCapabilities struct {
 	// semantic tokens currently shown. It should be used with absolute care
 	// and is useful for situation where a server for example detects a project
 	// wide change that requires such a calculation.
-	RefreshSupport bool `json:"refreshSupport,omitempty"`
+	RefreshSupport *bool `json:"refreshSupport,omitempty"`
 }
 
 func (x SemanticTokensWorkspaceClientCapabilities) Validate() error {
@@ -7097,210 +7474,174 @@ type ServerCapabilities struct {
 }
 
 func (x ServerCapabilities) Validate() error {
-	if x.PositionEncoding != "" {
-		if err := x.PositionEncoding.Validate(); err != nil {
-			return err
-		}
+	if err := x.PositionEncoding.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"PositionEncoding\": %w", err)
 	}
-
 	if x.TextDocumentSync != nil {
 		if err := x.TextDocumentSync.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TextDocumentSync\": %w", err)
 		}
 	}
-
 	if x.NotebookDocumentSync != nil {
 		if err := x.NotebookDocumentSync.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"NotebookDocumentSync\": %w", err)
 		}
 	}
-
 	if x.CompletionProvider != nil {
 		if err := x.CompletionProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CompletionProvider\": %w", err)
 		}
 	}
-
 	if x.HoverProvider != nil {
 		if err := x.HoverProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"HoverProvider\": %w", err)
 		}
 	}
-
 	if x.SignatureHelpProvider != nil {
 		if err := x.SignatureHelpProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SignatureHelpProvider\": %w", err)
 		}
 	}
-
 	if x.DeclarationProvider != nil {
 		if err := x.DeclarationProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DeclarationProvider\": %w", err)
 		}
 	}
-
 	if x.DefinitionProvider != nil {
 		if err := x.DefinitionProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DefinitionProvider\": %w", err)
 		}
 	}
-
 	if x.TypeDefinitionProvider != nil {
 		if err := x.TypeDefinitionProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TypeDefinitionProvider\": %w", err)
 		}
 	}
-
 	if x.ImplementationProvider != nil {
 		if err := x.ImplementationProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ImplementationProvider\": %w", err)
 		}
 	}
-
 	if x.ReferencesProvider != nil {
 		if err := x.ReferencesProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ReferencesProvider\": %w", err)
 		}
 	}
-
 	if x.DocumentHighlightProvider != nil {
 		if err := x.DocumentHighlightProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentHighlightProvider\": %w", err)
 		}
 	}
-
 	if x.DocumentSymbolProvider != nil {
 		if err := x.DocumentSymbolProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentSymbolProvider\": %w", err)
 		}
 	}
-
 	if x.CodeActionProvider != nil {
 		if err := x.CodeActionProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeActionProvider\": %w", err)
 		}
 	}
-
 	if x.CodeLensProvider != nil {
 		if err := x.CodeLensProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeLensProvider\": %w", err)
 		}
 	}
-
 	if x.DocumentLinkProvider != nil {
 		if err := x.DocumentLinkProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentLinkProvider\": %w", err)
 		}
 	}
-
 	if x.ColorProvider != nil {
 		if err := x.ColorProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ColorProvider\": %w", err)
 		}
 	}
-
 	if x.WorkspaceSymbolProvider != nil {
 		if err := x.WorkspaceSymbolProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WorkspaceSymbolProvider\": %w", err)
 		}
 	}
-
 	if x.DocumentFormattingProvider != nil {
 		if err := x.DocumentFormattingProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentFormattingProvider\": %w", err)
 		}
 	}
-
 	if x.DocumentRangeFormattingProvider != nil {
 		if err := x.DocumentRangeFormattingProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentRangeFormattingProvider\": %w", err)
 		}
 	}
-
 	if x.DocumentOnTypeFormattingProvider != nil {
 		if err := x.DocumentOnTypeFormattingProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentOnTypeFormattingProvider\": %w", err)
 		}
 	}
-
 	if x.RenameProvider != nil {
 		if err := x.RenameProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"RenameProvider\": %w", err)
 		}
 	}
-
 	if x.FoldingRangeProvider != nil {
 		if err := x.FoldingRangeProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"FoldingRangeProvider\": %w", err)
 		}
 	}
-
 	if x.SelectionRangeProvider != nil {
 		if err := x.SelectionRangeProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SelectionRangeProvider\": %w", err)
 		}
 	}
-
 	if x.ExecuteCommandProvider != nil {
 		if err := x.ExecuteCommandProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ExecuteCommandProvider\": %w", err)
 		}
 	}
-
 	if x.CallHierarchyProvider != nil {
 		if err := x.CallHierarchyProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CallHierarchyProvider\": %w", err)
 		}
 	}
-
 	if x.LinkedEditingRangeProvider != nil {
 		if err := x.LinkedEditingRangeProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"LinkedEditingRangeProvider\": %w", err)
 		}
 	}
-
 	if x.SemanticTokensProvider != nil {
 		if err := x.SemanticTokensProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SemanticTokensProvider\": %w", err)
 		}
 	}
-
 	if x.MonikerProvider != nil {
 		if err := x.MonikerProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"MonikerProvider\": %w", err)
 		}
 	}
-
 	if x.TypeHierarchyProvider != nil {
 		if err := x.TypeHierarchyProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TypeHierarchyProvider\": %w", err)
 		}
 	}
-
 	if x.InlineValueProvider != nil {
 		if err := x.InlineValueProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"InlineValueProvider\": %w", err)
 		}
 	}
-
 	if x.InlayHintProvider != nil {
 		if err := x.InlayHintProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"InlayHintProvider\": %w", err)
 		}
 	}
-
 	if x.DiagnosticProvider != nil {
 		if err := x.DiagnosticProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DiagnosticProvider\": %w", err)
 		}
 	}
-
 	if x.Workspace != nil {
 		if err := x.Workspace.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Workspace\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7318,16 +7659,14 @@ type ServerCapabilitiesWorkspace struct {
 func (x ServerCapabilitiesWorkspace) Validate() error {
 	if x.WorkspaceFolders != nil {
 		if err := x.WorkspaceFolders.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WorkspaceFolders\": %w", err)
 		}
 	}
-
 	if x.FileOperations != nil {
 		if err := x.FileOperations.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"FileOperations\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7337,9 +7676,8 @@ type SetTraceParams struct {
 
 func (x SetTraceParams) Validate() error {
 	if err := x.Value.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Value\": %w", err)
 	}
-
 	return nil
 }
 
@@ -7349,10 +7687,13 @@ func (x SetTraceParams) Validate() error {
 type ShowDocumentClientCapabilities struct {
 	// The client has support for the showDocument
 	// request.
-	Support bool `json:"support"`
+	Support *bool `json:"support"`
 }
 
 func (x ShowDocumentClientCapabilities) Validate() error {
+	if x.Support == nil {
+		return errors.New("missing required field \"support\"")
+	}
 	return nil
 }
 
@@ -7361,16 +7702,16 @@ func (x ShowDocumentClientCapabilities) Validate() error {
 // @since 3.16.0
 type ShowDocumentParams struct {
 	// The uri to show.
-	URI URI `json:"uri"`
+	URI *URI `json:"uri"`
 	// Indicates to show the resource in an external program.
 	// To show, for example, `https://code.visualstudio.com/`
 	// in the default WEB browser set `external` to `true`.
-	External bool `json:"external,omitempty"`
+	External *bool `json:"external,omitempty"`
 	// An optional property to indicate whether the editor
 	// showing the document should take focus or not.
 	// Clients might ignore this property if an external
 	// program is started.
-	TakeFocus bool `json:"takeFocus,omitempty"`
+	TakeFocus *bool `json:"takeFocus,omitempty"`
 	// An optional selection range if the document is a text
 	// document. Clients might ignore the property if an
 	// external program is started or the file is not a text
@@ -7379,12 +7720,14 @@ type ShowDocumentParams struct {
 }
 
 func (x ShowDocumentParams) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	if x.Selection != nil {
 		if err := x.Selection.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Selection\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7393,10 +7736,13 @@ func (x ShowDocumentParams) Validate() error {
 // @since 3.16.0
 type ShowDocumentResult struct {
 	// A boolean indicating if the show was successful.
-	Success bool `json:"success"`
+	Success *bool `json:"success"`
 }
 
 func (x ShowDocumentResult) Validate() error {
+	if x.Success == nil {
+		return errors.New("missing required field \"success\"")
+	}
 	return nil
 }
 
@@ -7405,14 +7751,16 @@ type ShowMessageParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType `json:"type"`
 	// The actual message.
-	Message string `json:"message"`
+	Message *string `json:"message"`
 }
 
 func (x ShowMessageParams) Validate() error {
 	if err := x.Type.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Type\": %w", err)
 	}
-
+	if x.Message == nil {
+		return errors.New("missing required field \"message\"")
+	}
 	return nil
 }
 
@@ -7425,10 +7773,9 @@ type ShowMessageRequestClientCapabilities struct {
 func (x ShowMessageRequestClientCapabilities) Validate() error {
 	if x.MessageActionItem != nil {
 		if err := x.MessageActionItem.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"MessageActionItem\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7436,7 +7783,7 @@ type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
 	// Whether the client supports additional attributes which
 	// are preserved and send back to the server in the
 	// request's response.
-	AdditionalPropertiesSupport bool `json:"additionalPropertiesSupport,omitempty"`
+	AdditionalPropertiesSupport *bool `json:"additionalPropertiesSupport,omitempty"`
 }
 
 func (x ShowMessageRequestClientCapabilitiesMessageActionItem) Validate() error {
@@ -7447,22 +7794,23 @@ type ShowMessageRequestParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType `json:"type"`
 	// The actual message.
-	Message string `json:"message"`
+	Message *string `json:"message"`
 	// The message action items to present.
 	Actions Array[MessageActionItem] `json:"actions,omitempty"`
 }
 
 func (x ShowMessageRequestParams) Validate() error {
 	if err := x.Type.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Type\": %w", err)
 	}
-
+	if x.Message == nil {
+		return errors.New("missing required field \"message\"")
+	}
 	if x.Actions != nil {
 		if err := x.Actions.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Actions\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7481,7 +7829,7 @@ type SignatureHelp struct {
 	//
 	// In future version of the protocol this property might become
 	// mandatory to better express this.
-	ActiveSignature uint32 `json:"activeSignature,omitempty"`
+	ActiveSignature *uint32 `json:"activeSignature,omitempty"`
 	// The active parameter of the active signature. If omitted or the value
 	// lies outside the range of `signatures[activeSignature].parameters`
 	// defaults to 0 if the active signature has parameters. If
@@ -7489,21 +7837,23 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory to better express the active parameter if the
 	// active signature does have any.
-	ActiveParameter uint32 `json:"activeParameter,omitempty"`
+	ActiveParameter *uint32 `json:"activeParameter,omitempty"`
 }
 
 func (x SignatureHelp) Validate() error {
-	if err := x.Signatures.Validate(); err != nil {
-		return err
+	if x.Signatures == nil {
+		return errors.New("missing required field \"signatures\"")
 	}
-
+	if err := x.Signatures.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Signatures\": %w", err)
+	}
 	return nil
 }
 
 // Client Capabilities for a {@link SignatureHelpRequest}.
 type SignatureHelpClientCapabilities struct {
 	// Whether signature help supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports the following `SignatureInformation`
 	// specific properties.
 	SignatureInformation *SignatureHelpClientCapabilitiesSignatureInformation `json:"signatureInformation,omitempty"`
@@ -7513,16 +7863,15 @@ type SignatureHelpClientCapabilities struct {
 	// `SignatureHelpOptions`.
 	//
 	// @since 3.15.0
-	ContextSupport bool `json:"contextSupport,omitempty"`
+	ContextSupport *bool `json:"contextSupport,omitempty"`
 }
 
 func (x SignatureHelpClientCapabilities) Validate() error {
 	if x.SignatureInformation != nil {
 		if err := x.SignatureInformation.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SignatureInformation\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7531,7 +7880,7 @@ type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation str
 	// simple label string.
 	//
 	// @since 3.14.0
-	LabelOffsetSupport bool `json:"labelOffsetSupport,omitempty"`
+	LabelOffsetSupport *bool `json:"labelOffsetSupport,omitempty"`
 }
 
 func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) Validate() error {
@@ -7548,22 +7897,20 @@ type SignatureHelpClientCapabilitiesSignatureInformation struct {
 	// literal.
 	//
 	// @since 3.16.0
-	ActiveParameterSupport bool `json:"activeParameterSupport,omitempty"`
+	ActiveParameterSupport *bool `json:"activeParameterSupport,omitempty"`
 }
 
 func (x SignatureHelpClientCapabilitiesSignatureInformation) Validate() error {
 	if x.DocumentationFormat != nil {
 		if err := x.DocumentationFormat.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentationFormat\": %w", err)
 		}
 	}
-
 	if x.ParameterInformation != nil {
 		if err := x.ParameterInformation.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ParameterInformation\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7576,12 +7923,12 @@ type SignatureHelpContext struct {
 	// Character that caused signature help to be triggered.
 	//
 	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
-	TriggerCharacter string `json:"triggerCharacter,omitempty"`
+	TriggerCharacter *string `json:"triggerCharacter,omitempty"`
 	// `true` if signature help was already showing when it was triggered.
 	//
 	// Retriggers occurs when the signature help is already active and can be caused by actions such as
 	// typing a trigger character, a cursor move, or document content changes.
-	IsRetrigger bool `json:"isRetrigger"`
+	IsRetrigger *bool `json:"isRetrigger"`
 	// The currently active `SignatureHelp`.
 	//
 	// The `activeSignatureHelp` has its `SignatureHelp.activeSignature` field updated based on
@@ -7591,15 +7938,16 @@ type SignatureHelpContext struct {
 
 func (x SignatureHelpContext) Validate() error {
 	if err := x.TriggerKind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TriggerKind\": %w", err)
 	}
-
+	if x.IsRetrigger == nil {
+		return errors.New("missing required field \"isRetrigger\"")
+	}
 	if x.ActiveSignatureHelp != nil {
 		if err := x.ActiveSignatureHelp.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ActiveSignatureHelp\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7620,16 +7968,14 @@ type SignatureHelpOptions struct {
 func (x SignatureHelpOptions) Validate() error {
 	if x.TriggerCharacters != nil {
 		if err := x.TriggerCharacters.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TriggerCharacters\": %w", err)
 		}
 	}
-
 	if x.RetriggerCharacters != nil {
 		if err := x.RetriggerCharacters.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"RetriggerCharacters\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7647,10 +7993,9 @@ type SignatureHelpParams struct {
 func (x SignatureHelpParams) Validate() error {
 	if x.Context != nil {
 		if err := x.Context.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Context\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7670,7 +8015,7 @@ func (x SignatureHelpRegistrationOptions) Validate() error {
 type SignatureInformation struct {
 	// The label of this signature. Will be shown in
 	// the UI.
-	Label string `json:"label"`
+	Label *string `json:"label"`
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
 	Documentation *OneOf2[string, MarkupContent] `json:"documentation,omitempty"`
@@ -7681,22 +8026,23 @@ type SignatureInformation struct {
 	// If provided, this is used in place of `SignatureHelp.activeParameter`.
 	//
 	// @since 3.16.0
-	ActiveParameter uint32 `json:"activeParameter,omitempty"`
+	ActiveParameter *uint32 `json:"activeParameter,omitempty"`
 }
 
 func (x SignatureInformation) Validate() error {
+	if x.Label == nil {
+		return errors.New("missing required field \"label\"")
+	}
 	if x.Documentation != nil {
 		if err := x.Documentation.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Documentation\": %w", err)
 		}
 	}
-
 	if x.Parameters != nil {
 		if err := x.Parameters.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Parameters\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -7705,7 +8051,7 @@ func (x SignatureInformation) Validate() error {
 type StaticRegistrationOptions struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again. See also Registration#id.
-	Id string `json:"id,omitempty"`
+	ID *string `json:"id,omitempty"`
 }
 
 func (x StaticRegistrationOptions) Validate() error {
@@ -7719,7 +8065,7 @@ type SymbolInformation struct {
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
-	Deprecated bool `json:"deprecated,omitempty"`
+	Deprecated *bool `json:"deprecated,omitempty"`
 	// The location of this symbol. The location's range is used by a tool
 	// to reveal the location in the editor. If the symbol is selected in the
 	// tool the range's start information is used to position the cursor. So
@@ -7729,14 +8075,16 @@ type SymbolInformation struct {
 	// The range doesn't have to denote a node range in the sense of an abstract
 	// syntax tree. It can therefore not be used to re-construct a hierarchy of
 	// the symbols.
-	Location Location `json:"location"`
+	Location *Location `json:"location"`
 }
 
 func (x SymbolInformation) Validate() error {
-	if err := x.Location.Validate(); err != nil {
-		return err
+	if x.Location == nil {
+		return errors.New("missing required field \"location\"")
 	}
-
+	if err := x.Location.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Location\": %w", err)
+	}
 	return nil
 }
 
@@ -7749,9 +8097,8 @@ type TextDocumentChangeRegistrationOptions struct {
 
 func (x TextDocumentChangeRegistrationOptions) Validate() error {
 	if err := x.SyncKind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"SyncKind\": %w", err)
 	}
-
 	return nil
 }
 
@@ -7851,184 +8198,154 @@ type TextDocumentClientCapabilities struct {
 func (x TextDocumentClientCapabilities) Validate() error {
 	if x.Synchronization != nil {
 		if err := x.Synchronization.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Synchronization\": %w", err)
 		}
 	}
-
 	if x.Completion != nil {
 		if err := x.Completion.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Completion\": %w", err)
 		}
 	}
-
 	if x.Hover != nil {
 		if err := x.Hover.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Hover\": %w", err)
 		}
 	}
-
 	if x.SignatureHelp != nil {
 		if err := x.SignatureHelp.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SignatureHelp\": %w", err)
 		}
 	}
-
 	if x.Declaration != nil {
 		if err := x.Declaration.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Declaration\": %w", err)
 		}
 	}
-
 	if x.Definition != nil {
 		if err := x.Definition.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Definition\": %w", err)
 		}
 	}
-
 	if x.TypeDefinition != nil {
 		if err := x.TypeDefinition.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TypeDefinition\": %w", err)
 		}
 	}
-
 	if x.Implementation != nil {
 		if err := x.Implementation.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Implementation\": %w", err)
 		}
 	}
-
 	if x.References != nil {
 		if err := x.References.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"References\": %w", err)
 		}
 	}
-
 	if x.DocumentHighlight != nil {
 		if err := x.DocumentHighlight.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentHighlight\": %w", err)
 		}
 	}
-
 	if x.DocumentSymbol != nil {
 		if err := x.DocumentSymbol.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentSymbol\": %w", err)
 		}
 	}
-
 	if x.CodeAction != nil {
 		if err := x.CodeAction.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeAction\": %w", err)
 		}
 	}
-
 	if x.CodeLens != nil {
 		if err := x.CodeLens.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeLens\": %w", err)
 		}
 	}
-
 	if x.DocumentLink != nil {
 		if err := x.DocumentLink.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentLink\": %w", err)
 		}
 	}
-
 	if x.ColorProvider != nil {
 		if err := x.ColorProvider.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ColorProvider\": %w", err)
 		}
 	}
-
 	if x.Formatting != nil {
 		if err := x.Formatting.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Formatting\": %w", err)
 		}
 	}
-
 	if x.RangeFormatting != nil {
 		if err := x.RangeFormatting.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"RangeFormatting\": %w", err)
 		}
 	}
-
 	if x.OnTypeFormatting != nil {
 		if err := x.OnTypeFormatting.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"OnTypeFormatting\": %w", err)
 		}
 	}
-
 	if x.Rename != nil {
 		if err := x.Rename.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Rename\": %w", err)
 		}
 	}
-
 	if x.FoldingRange != nil {
 		if err := x.FoldingRange.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"FoldingRange\": %w", err)
 		}
 	}
-
 	if x.SelectionRange != nil {
 		if err := x.SelectionRange.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SelectionRange\": %w", err)
 		}
 	}
-
 	if x.PublishDiagnostics != nil {
 		if err := x.PublishDiagnostics.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"PublishDiagnostics\": %w", err)
 		}
 	}
-
 	if x.CallHierarchy != nil {
 		if err := x.CallHierarchy.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CallHierarchy\": %w", err)
 		}
 	}
-
 	if x.SemanticTokens != nil {
 		if err := x.SemanticTokens.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SemanticTokens\": %w", err)
 		}
 	}
-
 	if x.LinkedEditingRange != nil {
 		if err := x.LinkedEditingRange.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"LinkedEditingRange\": %w", err)
 		}
 	}
-
 	if x.Moniker != nil {
 		if err := x.Moniker.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Moniker\": %w", err)
 		}
 	}
-
 	if x.TypeHierarchy != nil {
 		if err := x.TypeHierarchy.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TypeHierarchy\": %w", err)
 		}
 	}
-
 	if x.InlineValue != nil {
 		if err := x.InlineValue.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"InlineValue\": %w", err)
 		}
 	}
-
 	if x.InlayHint != nil {
 		if err := x.InlayHint.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"InlayHint\": %w", err)
 		}
 	}
-
 	if x.Diagnostic != nil {
 		if err := x.Diagnostic.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Diagnostic\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -8038,7 +8355,7 @@ func (x TextDocumentClientCapabilities) Validate() error {
 // kind of ordering. However the edits must be non overlapping.
 type TextDocumentEdit struct {
 	// The text document to change.
-	TextDocument OptionalVersionedTextDocumentIdentifier `json:"textDocument"`
+	TextDocument *OptionalVersionedTextDocumentIdentifier `json:"textDocument"`
 	// The edits to be applied.
 	//
 	// @since 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
@@ -8047,24 +8364,31 @@ type TextDocumentEdit struct {
 }
 
 func (x TextDocumentEdit) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Edits == nil {
+		return errors.New("missing required field \"edits\"")
+	}
 	if err := x.Edits.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Edits\": %w", err)
 	}
-
 	return nil
 }
 
 // A literal to identify a text document in the client.
 type TextDocumentIdentifier struct {
 	// The text document's uri.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 }
 
 func (x TextDocumentIdentifier) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	return nil
 }
 
@@ -8072,17 +8396,29 @@ func (x TextDocumentIdentifier) Validate() error {
 // server.
 type TextDocumentItem struct {
 	// The text document's uri.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// The text document's language identifier.
-	LanguageId string `json:"languageId"`
+	LanguageID *string `json:"languageId"`
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
-	Version int32 `json:"version"`
+	Version *int32 `json:"version"`
 	// The content of the opened text document.
-	Text string `json:"text"`
+	Text *string `json:"text"`
 }
 
 func (x TextDocumentItem) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
+	if x.LanguageID == nil {
+		return errors.New("missing required field \"languageId\"")
+	}
+	if x.Version == nil {
+		return errors.New("missing required field \"version\"")
+	}
+	if x.Text == nil {
+		return errors.New("missing required field \"text\"")
+	}
 	return nil
 }
 
@@ -8090,20 +8426,24 @@ func (x TextDocumentItem) Validate() error {
 // document.
 type TextDocumentPositionParams struct {
 	// The text document.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The position inside the text document.
-	Position Position `json:"position"`
+	Position *Position `json:"position"`
 }
 
 func (x TextDocumentPositionParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
+	if x.Position == nil {
+		return errors.New("missing required field \"position\"")
+	}
 	if err := x.Position.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Position\": %w", err)
 	}
-
 	return nil
 }
 
@@ -8115,10 +8455,12 @@ type TextDocumentRegistrationOptions struct {
 }
 
 func (x TextDocumentRegistrationOptions) Validate() error {
-	if err := x.DocumentSelector.Validate(); err != nil {
-		return err
+	if x.DocumentSelector == nil {
+		return errors.New("missing required field \"documentSelector\"")
 	}
-
+	if err := x.DocumentSelector.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"DocumentSelector\": %w", err)
+	}
 	return nil
 }
 
@@ -8134,15 +8476,15 @@ func (x TextDocumentSaveRegistrationOptions) Validate() error {
 
 type TextDocumentSyncClientCapabilities struct {
 	// Whether text document synchronization supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports sending will save notifications.
-	WillSave bool `json:"willSave,omitempty"`
+	WillSave *bool `json:"willSave,omitempty"`
 	// The client supports sending a will save request and
 	// waits for a response providing text edits which will
 	// be applied to the document before it is saved.
-	WillSaveWaitUntil bool `json:"willSaveWaitUntil,omitempty"`
+	WillSaveWaitUntil *bool `json:"willSaveWaitUntil,omitempty"`
 	// The client supports did save notifications.
-	DidSave bool `json:"didSave,omitempty"`
+	DidSave *bool `json:"didSave,omitempty"`
 }
 
 func (x TextDocumentSyncClientCapabilities) Validate() error {
@@ -8152,34 +8494,30 @@ func (x TextDocumentSyncClientCapabilities) Validate() error {
 type TextDocumentSyncOptions struct {
 	// Open and close notifications are sent to the server. If omitted open close notification should not
 	// be sent.
-	OpenClose bool `json:"openClose,omitempty"`
+	OpenClose *bool `json:"openClose,omitempty"`
 	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
 	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
 	Change TextDocumentSyncKind `json:"change,omitempty"`
 	// If present will save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	WillSave bool `json:"willSave,omitempty"`
+	WillSave *bool `json:"willSave,omitempty"`
 	// If present will save wait until requests are sent to the server. If omitted the request should not be
 	// sent.
-	WillSaveWaitUntil bool `json:"willSaveWaitUntil,omitempty"`
+	WillSaveWaitUntil *bool `json:"willSaveWaitUntil,omitempty"`
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
 	Save *OneOf2[bool, SaveOptions] `json:"save,omitempty"`
 }
 
 func (x TextDocumentSyncOptions) Validate() error {
-	if x.Change != 0 {
-		if err := x.Change.Validate(); err != nil {
-			return err
-		}
+	if err := x.Change.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Change\": %w", err)
 	}
-
 	if x.Save != nil {
 		if err := x.Save.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Save\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -8187,17 +8525,22 @@ func (x TextDocumentSyncOptions) Validate() error {
 type TextEdit struct {
 	// The range of the text document to be manipulated. To insert
 	// text into a document create a range where start === end.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The string to be inserted. For delete operations use an
 	// empty string.
-	NewText string `json:"newText"`
+	NewText *string `json:"newText"`
 }
 
 func (x TextEdit) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
+	if x.NewText == nil {
+		return errors.New("missing required field \"newText\"")
+	}
 	return nil
 }
 
@@ -8206,11 +8549,11 @@ type TypeDefinitionClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `TypeDefinitionRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since 3.14.0
-	LinkSupport bool `json:"linkSupport,omitempty"`
+	LinkSupport *bool `json:"linkSupport,omitempty"`
 }
 
 func (x TypeDefinitionClientCapabilities) Validate() error {
@@ -8250,7 +8593,7 @@ type TypeHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 }
 
 func (x TypeHierarchyClientCapabilities) Validate() error {
@@ -8260,22 +8603,22 @@ func (x TypeHierarchyClientCapabilities) Validate() error {
 // @since 3.17.0
 type TypeHierarchyItem struct {
 	// The name of this item.
-	Name string `json:"name"`
+	Name *string `json:"name"`
 	// The kind of this item.
 	Kind SymbolKind `json:"kind"`
 	// Tags for this item.
 	Tags Array[SymbolTag] `json:"tags,omitempty"`
 	// More detail for this item, e.g. the signature of a function.
-	Detail string `json:"detail,omitempty"`
+	Detail *string `json:"detail,omitempty"`
 	// The resource identifier of this item.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// The range enclosing this symbol not including leading/trailing whitespace
 	// but everything else, e.g. comments and code.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The range that should be selected and revealed when this symbol is being
 	// picked, e.g. the name of a function. Must be contained by the
 	// {@link TypeHierarchyItem.range `range`}.
-	SelectionRange Range `json:"selectionRange"`
+	SelectionRange *Range `json:"selectionRange"`
 	// A data entry field that is preserved between a type hierarchy prepare and
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
@@ -8284,24 +8627,32 @@ type TypeHierarchyItem struct {
 }
 
 func (x TypeHierarchyItem) Validate() error {
-	if err := x.Kind.Validate(); err != nil {
-		return err
+	if x.Name == nil {
+		return errors.New("missing required field \"name\"")
 	}
-
+	if err := x.Kind.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
+	}
 	if x.Tags != nil {
 		if err := x.Tags.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Tags\": %w", err)
 		}
 	}
-
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
+	}
 	if err := x.Range.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Range\": %w", err)
 	}
-
+	if x.SelectionRange == nil {
+		return errors.New("missing required field \"selectionRange\"")
+	}
 	if err := x.SelectionRange.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"SelectionRange\": %w", err)
 	}
-
 	return nil
 }
 
@@ -8347,14 +8698,16 @@ func (x TypeHierarchyRegistrationOptions) Validate() error {
 type TypeHierarchySubtypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item TypeHierarchyItem `json:"item"`
+	Item *TypeHierarchyItem `json:"item"`
 }
 
 func (x TypeHierarchySubtypesParams) Validate() error {
-	if err := x.Item.Validate(); err != nil {
-		return err
+	if x.Item == nil {
+		return errors.New("missing required field \"item\"")
 	}
-
+	if err := x.Item.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Item\": %w", err)
+	}
 	return nil
 }
 
@@ -8364,14 +8717,16 @@ func (x TypeHierarchySubtypesParams) Validate() error {
 type TypeHierarchySupertypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
-	Item TypeHierarchyItem `json:"item"`
+	Item *TypeHierarchyItem `json:"item"`
 }
 
 func (x TypeHierarchySupertypesParams) Validate() error {
-	if err := x.Item.Validate(); err != nil {
-		return err
+	if x.Item == nil {
+		return errors.New("missing required field \"item\"")
 	}
-
+	if err := x.Item.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Item\": %w", err)
+	}
 	return nil
 }
 
@@ -8387,14 +8742,16 @@ type UnchangedDocumentDiagnosticReport struct {
 	Kind unchangedLiteral `json:"kind"`
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
-	ResultId string `json:"resultId"`
+	ResultID *string `json:"resultId"`
 }
 
 func (x UnchangedDocumentDiagnosticReport) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
+	if x.ResultID == nil {
+		return errors.New("missing required field \"resultId\"")
+	}
 	return nil
 }
 
@@ -8412,12 +8769,18 @@ func (x unchangedLiteral) Validate() error {
 type Unregistration struct {
 	// The id used to unregister the request or notification. Usually an id
 	// provided during the register request.
-	Id string `json:"id"`
+	ID *string `json:"id"`
 	// The method to unregister for.
-	Method string `json:"method"`
+	Method *string `json:"method"`
 }
 
 func (x Unregistration) Validate() error {
+	if x.ID == nil {
+		return errors.New("missing required field \"id\"")
+	}
+	if x.Method == nil {
+		return errors.New("missing required field \"method\"")
+	}
 	return nil
 }
 
@@ -8426,10 +8789,12 @@ type UnregistrationParams struct {
 }
 
 func (x UnregistrationParams) Validate() error {
-	if err := x.Unregisterations.Validate(); err != nil {
-		return err
+	if x.Unregisterations == nil {
+		return errors.New("missing required field \"unregisterations\"")
 	}
-
+	if err := x.Unregisterations.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Unregisterations\": %w", err)
+	}
 	return nil
 }
 
@@ -8438,12 +8803,18 @@ func (x UnregistrationParams) Validate() error {
 // @since 3.17.0
 type VersionedNotebookDocumentIdentifier struct {
 	// The version number of this notebook document.
-	Version int32 `json:"version"`
+	Version *int32 `json:"version"`
 	// The notebook document's uri.
-	URI URI `json:"uri"`
+	URI *URI `json:"uri"`
 }
 
 func (x VersionedNotebookDocumentIdentifier) Validate() error {
+	if x.Version == nil {
+		return errors.New("missing required field \"version\"")
+	}
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	return nil
 }
 
@@ -8451,30 +8822,34 @@ func (x VersionedNotebookDocumentIdentifier) Validate() error {
 type VersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
 	// The version number of this document.
-	Version int32 `json:"version"`
+	Version *int32 `json:"version"`
 }
 
 func (x VersionedTextDocumentIdentifier) Validate() error {
+	if x.Version == nil {
+		return errors.New("missing required field \"version\"")
+	}
 	return nil
 }
 
 // The parameters sent in a will save text document notification.
 type WillSaveTextDocumentParams struct {
 	// The document that will be saved.
-	TextDocument TextDocumentIdentifier `json:"textDocument"`
+	TextDocument *TextDocumentIdentifier `json:"textDocument"`
 	// The 'TextDocumentSaveReason'.
 	Reason TextDocumentSaveReason `json:"reason"`
 }
 
 func (x WillSaveTextDocumentParams) Validate() error {
+	if x.TextDocument == nil {
+		return errors.New("missing required field \"textDocument\"")
+	}
 	if err := x.TextDocument.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"TextDocument\": %w", err)
 	}
-
 	if err := x.Reason.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Reason\": %w", err)
 	}
-
 	return nil
 }
 
@@ -8488,7 +8863,7 @@ type WindowClientCapabilities struct {
 	// capabilities.
 	//
 	// @since 3.15.0
-	WorkDoneProgress bool `json:"workDoneProgress,omitempty"`
+	WorkDoneProgress *bool `json:"workDoneProgress,omitempty"`
 	// Capabilities specific to the showMessage request.
 	//
 	// @since 3.16.0
@@ -8502,16 +8877,14 @@ type WindowClientCapabilities struct {
 func (x WindowClientCapabilities) Validate() error {
 	if x.ShowMessage != nil {
 		if err := x.ShowMessage.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ShowMessage\": %w", err)
 		}
 	}
-
 	if x.ShowDocument != nil {
 		if err := x.ShowDocument.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ShowDocument\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -8521,31 +8894,33 @@ type WorkDoneProgressBegin struct {
 	// the kind of operation being performed.
 	//
 	// Examples: "Indexing" or "Linking dependencies".
-	Title string `json:"title"`
+	Title *string `json:"title"`
 	// Controls if a cancel button should show to allow the user to cancel the
 	// long running operation. Clients that don't support cancellation are allowed
 	// to ignore the setting.
-	Cancellable bool `json:"cancellable,omitempty"`
+	Cancellable *bool `json:"cancellable,omitempty"`
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message string `json:"message,omitempty"`
+	Message *string `json:"message,omitempty"`
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100].
-	Percentage uint32 `json:"percentage,omitempty"`
+	Percentage *uint32 `json:"percentage,omitempty"`
 }
 
 func (x WorkDoneProgressBegin) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
+	if x.Title == nil {
+		return errors.New("missing required field \"title\"")
+	}
 	return nil
 }
 
@@ -8561,27 +8936,31 @@ func (x beginLiteral) Validate() error {
 
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
-	Token ProgressToken `json:"token"`
+	Token *ProgressToken `json:"token"`
 }
 
 func (x WorkDoneProgressCancelParams) Validate() error {
-	if err := x.Token.Validate(); err != nil {
-		return err
+	if x.Token == nil {
+		return errors.New("missing required field \"token\"")
 	}
-
+	if err := x.Token.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Token\": %w", err)
+	}
 	return nil
 }
 
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
-	Token ProgressToken `json:"token"`
+	Token *ProgressToken `json:"token"`
 }
 
 func (x WorkDoneProgressCreateParams) Validate() error {
-	if err := x.Token.Validate(); err != nil {
-		return err
+	if x.Token == nil {
+		return errors.New("missing required field \"token\"")
 	}
-
+	if err := x.Token.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Token\": %w", err)
+	}
 	return nil
 }
 
@@ -8589,14 +8968,13 @@ type WorkDoneProgressEnd struct {
 	Kind endLiteral `json:"kind"`
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
-	Message string `json:"message,omitempty"`
+	Message *string `json:"message,omitempty"`
 }
 
 func (x WorkDoneProgressEnd) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
 	return nil
 }
 
@@ -8611,7 +8989,7 @@ func (x endLiteral) Validate() error {
 }
 
 type WorkDoneProgressOptions struct {
-	WorkDoneProgress bool `json:"workDoneProgress,omitempty"`
+	WorkDoneProgress *bool `json:"workDoneProgress,omitempty"`
 }
 
 func (x WorkDoneProgressOptions) Validate() error {
@@ -8626,10 +9004,9 @@ type WorkDoneProgressParams struct {
 func (x WorkDoneProgressParams) Validate() error {
 	if x.WorkDoneToken != nil {
 		if err := x.WorkDoneToken.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WorkDoneToken\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -8639,27 +9016,26 @@ type WorkDoneProgressReport struct {
 	//
 	// Clients that don't support cancellation or don't support controlling the button's
 	// enablement state are allowed to ignore the property.
-	Cancellable bool `json:"cancellable,omitempty"`
+	Cancellable *bool `json:"cancellable,omitempty"`
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message string `json:"message,omitempty"`
+	Message *string `json:"message,omitempty"`
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100]
-	Percentage uint32 `json:"percentage,omitempty"`
+	Percentage *uint32 `json:"percentage,omitempty"`
 }
 
 func (x WorkDoneProgressReport) Validate() error {
 	if err := x.Kind.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Kind\": %w", err)
 	}
-
 	return nil
 }
 
@@ -8678,7 +9054,7 @@ type WorkspaceClientCapabilities struct {
 	// The client supports applying batch edits
 	// to the workspace by supporting the request
 	// 'workspace/applyEdit'
-	ApplyEdit bool `json:"applyEdit,omitempty"`
+	ApplyEdit *bool `json:"applyEdit,omitempty"`
 	// Capabilities specific to `WorkspaceEdit`s.
 	WorkspaceEdit *WorkspaceEditClientCapabilities `json:"workspaceEdit,omitempty"`
 	// Capabilities specific to the `workspace/didChangeConfiguration` notification.
@@ -8692,11 +9068,11 @@ type WorkspaceClientCapabilities struct {
 	// The client has support for workspace folders.
 	//
 	// @since 3.6.0
-	WorkspaceFolders bool `json:"workspaceFolders,omitempty"`
+	WorkspaceFolders *bool `json:"workspaceFolders,omitempty"`
 	// The client supports `workspace/configuration` requests.
 	//
 	// @since 3.6.0
-	Configuration bool `json:"configuration,omitempty"`
+	Configuration *bool `json:"configuration,omitempty"`
 	// Capabilities specific to the semantic token requests scoped to the
 	// workspace.
 	//
@@ -8731,70 +9107,59 @@ type WorkspaceClientCapabilities struct {
 func (x WorkspaceClientCapabilities) Validate() error {
 	if x.WorkspaceEdit != nil {
 		if err := x.WorkspaceEdit.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WorkspaceEdit\": %w", err)
 		}
 	}
-
 	if x.DidChangeConfiguration != nil {
 		if err := x.DidChangeConfiguration.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DidChangeConfiguration\": %w", err)
 		}
 	}
-
 	if x.DidChangeWatchedFiles != nil {
 		if err := x.DidChangeWatchedFiles.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DidChangeWatchedFiles\": %w", err)
 		}
 	}
-
 	if x.Symbol != nil {
 		if err := x.Symbol.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Symbol\": %w", err)
 		}
 	}
-
 	if x.ExecuteCommand != nil {
 		if err := x.ExecuteCommand.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ExecuteCommand\": %w", err)
 		}
 	}
-
 	if x.SemanticTokens != nil {
 		if err := x.SemanticTokens.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SemanticTokens\": %w", err)
 		}
 	}
-
 	if x.CodeLens != nil {
 		if err := x.CodeLens.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"CodeLens\": %w", err)
 		}
 	}
-
 	if x.FileOperations != nil {
 		if err := x.FileOperations.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"FileOperations\": %w", err)
 		}
 	}
-
 	if x.InlineValue != nil {
 		if err := x.InlineValue.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"InlineValue\": %w", err)
 		}
 	}
-
 	if x.InlayHint != nil {
 		if err := x.InlayHint.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"InlayHint\": %w", err)
 		}
 	}
-
 	if x.Diagnostics != nil {
 		if err := x.Diagnostics.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Diagnostics\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -8805,17 +9170,19 @@ type WorkspaceDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 	// The additional identifier provided during registration.
-	Identifier string `json:"identifier,omitempty"`
+	Identifier *string `json:"identifier,omitempty"`
 	// The currently known diagnostic reports with their
 	// previous result ids.
-	PreviousResultIds Array[PreviousResultId] `json:"previousResultIds"`
+	PreviousResultIds Array[PreviousResultID] `json:"previousResultIds"`
 }
 
 func (x WorkspaceDiagnosticParams) Validate() error {
-	if err := x.PreviousResultIds.Validate(); err != nil {
-		return err
+	if x.PreviousResultIds == nil {
+		return errors.New("missing required field \"previousResultIds\"")
 	}
-
+	if err := x.PreviousResultIds.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"PreviousResultIds\": %w", err)
+	}
 	return nil
 }
 
@@ -8827,10 +9194,12 @@ type WorkspaceDiagnosticReport struct {
 }
 
 func (x WorkspaceDiagnosticReport) Validate() error {
-	if err := x.Items.Validate(); err != nil {
-		return err
+	if x.Items == nil {
+		return errors.New("missing required field \"items\"")
 	}
-
+	if err := x.Items.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Items\": %w", err)
+	}
 	return nil
 }
 
@@ -8842,10 +9211,12 @@ type WorkspaceDiagnosticReportPartialResult struct {
 }
 
 func (x WorkspaceDiagnosticReportPartialResult) Validate() error {
-	if err := x.Items.Validate(); err != nil {
-		return err
+	if x.Items == nil {
+		return errors.New("missing required field \"items\"")
 	}
-
+	if err := x.Items.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Items\": %w", err)
+	}
 	return nil
 }
 
@@ -8887,28 +9258,25 @@ type WorkspaceEdit struct {
 func (x WorkspaceEdit) Validate() error {
 	if x.Changes != nil {
 		if err := x.Changes.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"Changes\": %w", err)
 		}
 	}
-
 	if x.DocumentChanges != nil {
 		if err := x.DocumentChanges.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"DocumentChanges\": %w", err)
 		}
 	}
-
 	if x.ChangeAnnotations != nil {
 		if err := x.ChangeAnnotations.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ChangeAnnotations\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 type WorkspaceEditClientCapabilities struct {
 	// The client supports versioned document changes in `WorkspaceEdit`s
-	DocumentChanges bool `json:"documentChanges,omitempty"`
+	DocumentChanges *bool `json:"documentChanges,omitempty"`
 	// The resource operations the client supports. Clients should at least
 	// support 'create', 'rename' and 'delete' files and folders.
 	//
@@ -8926,7 +9294,7 @@ type WorkspaceEditClientCapabilities struct {
 	// character.
 	//
 	// @since 3.16.0
-	NormalizesLineEndings bool `json:"normalizesLineEndings,omitempty"`
+	NormalizesLineEndings *bool `json:"normalizesLineEndings,omitempty"`
 	// Whether the client in general supports change annotations on text edits,
 	// create file, rename file and delete file changes.
 	//
@@ -8937,22 +9305,17 @@ type WorkspaceEditClientCapabilities struct {
 func (x WorkspaceEditClientCapabilities) Validate() error {
 	if x.ResourceOperations != nil {
 		if err := x.ResourceOperations.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ResourceOperations\": %w", err)
 		}
 	}
-
-	if x.FailureHandling != "" {
-		if err := x.FailureHandling.Validate(); err != nil {
-			return err
-		}
+	if err := x.FailureHandling.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"FailureHandling\": %w", err)
 	}
-
 	if x.ChangeAnnotationSupport != nil {
 		if err := x.ChangeAnnotationSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ChangeAnnotationSupport\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -8960,7 +9323,7 @@ type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
 	// Whether the client groups edits with equal labels into tree nodes,
 	// for instance all edits labelled with "Changes in Strings" would
 	// be a tree node.
-	GroupsOnLabel bool `json:"groupsOnLabel,omitempty"`
+	GroupsOnLabel *bool `json:"groupsOnLabel,omitempty"`
 }
 
 func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) Validate() error {
@@ -8970,13 +9333,19 @@ func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) Validate() error
 // A workspace folder inside a client.
 type WorkspaceFolder struct {
 	// The associated URI for this workspace folder.
-	URI URI `json:"uri"`
+	URI *URI `json:"uri"`
 	// The name of the workspace folder. Used to refer to this
 	// workspace folder in the user interface.
-	Name string `json:"name"`
+	Name *string `json:"name"`
 }
 
 func (x WorkspaceFolder) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
+	if x.Name == nil {
+		return errors.New("missing required field \"name\"")
+	}
 	return nil
 }
 
@@ -8989,14 +9358,18 @@ type WorkspaceFoldersChangeEvent struct {
 }
 
 func (x WorkspaceFoldersChangeEvent) Validate() error {
+	if x.Added == nil {
+		return errors.New("missing required field \"added\"")
+	}
 	if err := x.Added.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Added\": %w", err)
 	}
-
+	if x.Removed == nil {
+		return errors.New("missing required field \"removed\"")
+	}
 	if err := x.Removed.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Removed\": %w", err)
 	}
-
 	return nil
 }
 
@@ -9014,16 +9387,15 @@ type WorkspaceFoldersInitializeParams struct {
 func (x WorkspaceFoldersInitializeParams) Validate() error {
 	if x.WorkspaceFolders != nil {
 		if err := x.WorkspaceFolders.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"WorkspaceFolders\": %w", err)
 		}
 	}
-
 	return nil
 }
 
 type WorkspaceFoldersServerCapabilities struct {
 	// The server has support for workspace folders
-	Supported bool `json:"supported,omitempty"`
+	Supported *bool `json:"supported,omitempty"`
 	// Whether the server wants to receive workspace folder
 	// change notifications.
 	//
@@ -9037,10 +9409,9 @@ type WorkspaceFoldersServerCapabilities struct {
 func (x WorkspaceFoldersServerCapabilities) Validate() error {
 	if x.ChangeNotifications != nil {
 		if err := x.ChangeNotifications.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ChangeNotifications\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -9050,13 +9421,19 @@ func (x WorkspaceFoldersServerCapabilities) Validate() error {
 type WorkspaceFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
 	// The URI for which diagnostic information is reported.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version int32 `json:"version"`
+	Version *int32 `json:"version"`
 }
 
 func (x WorkspaceFullDocumentDiagnosticReport) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
+	if x.Version == nil {
+		return errors.New("missing required field \"version\"")
+	}
 	return nil
 }
 
@@ -9072,32 +9449,37 @@ type WorkspaceSymbol struct {
 	// capability `workspace.symbol.resolveSupport`.
 	//
 	// See SymbolInformation#location for more details.
-	Location OneOf2[Location, WorkspaceSymbolLocation] `json:"location"`
+	Location *OneOf2[Location, WorkspaceSymbolLocation] `json:"location"`
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
 	Data any `json:"data,omitempty"`
 }
 
 func (x WorkspaceSymbol) Validate() error {
-	if err := x.Location.Validate(); err != nil {
-		return err
+	if x.Location == nil {
+		return errors.New("missing required field \"location\"")
 	}
-
+	if err := x.Location.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Location\": %w", err)
+	}
 	return nil
 }
 
 type WorkspaceSymbolLocation struct {
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 }
 
 func (x WorkspaceSymbolLocation) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
 	return nil
 }
 
 // Client capabilities for a {@link WorkspaceSymbolRequest}.
 type WorkspaceSymbolClientCapabilities struct {
 	// Symbol request supports dynamic registration.
-	DynamicRegistration bool `json:"dynamicRegistration,omitempty"`
+	DynamicRegistration *bool `json:"dynamicRegistration,omitempty"`
 	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
 	SymbolKind *WorkspaceSymbolClientCapabilitiesSymbolKind `json:"symbolKind,omitempty"`
 	// The client supports tags on `SymbolInformation`.
@@ -9116,22 +9498,19 @@ type WorkspaceSymbolClientCapabilities struct {
 func (x WorkspaceSymbolClientCapabilities) Validate() error {
 	if x.SymbolKind != nil {
 		if err := x.SymbolKind.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"SymbolKind\": %w", err)
 		}
 	}
-
 	if x.TagSupport != nil {
 		if err := x.TagSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"TagSupport\": %w", err)
 		}
 	}
-
 	if x.ResolveSupport != nil {
 		if err := x.ResolveSupport.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ResolveSupport\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -9150,10 +9529,9 @@ type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 func (x WorkspaceSymbolClientCapabilitiesSymbolKind) Validate() error {
 	if x.ValueSet != nil {
 		if err := x.ValueSet.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ValueSet\": %w", err)
 		}
 	}
-
 	return nil
 }
 
@@ -9163,10 +9541,12 @@ type WorkspaceSymbolClientCapabilitiesTagSupport struct {
 }
 
 func (x WorkspaceSymbolClientCapabilitiesTagSupport) Validate() error {
-	if err := x.ValueSet.Validate(); err != nil {
-		return err
+	if x.ValueSet == nil {
+		return errors.New("missing required field \"valueSet\"")
 	}
-
+	if err := x.ValueSet.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"ValueSet\": %w", err)
+	}
 	return nil
 }
 
@@ -9177,10 +9557,12 @@ type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
 }
 
 func (x WorkspaceSymbolClientCapabilitiesResolveSupport) Validate() error {
-	if err := x.Properties.Validate(); err != nil {
-		return err
+	if x.Properties == nil {
+		return errors.New("missing required field \"properties\"")
 	}
-
+	if err := x.Properties.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Properties\": %w", err)
+	}
 	return nil
 }
 
@@ -9191,7 +9573,7 @@ type WorkspaceSymbolOptions struct {
 	// information for a workspace symbol.
 	//
 	// @since 3.17.0
-	ResolveProvider bool `json:"resolveProvider,omitempty"`
+	ResolveProvider *bool `json:"resolveProvider,omitempty"`
 }
 
 func (x WorkspaceSymbolOptions) Validate() error {
@@ -9204,10 +9586,13 @@ type WorkspaceSymbolParams struct {
 	PartialResultParams
 	// A query string to filter symbols by. Clients may send an empty
 	// string here to request all symbols.
-	Query string `json:"query"`
+	Query *string `json:"query"`
 }
 
 func (x WorkspaceSymbolParams) Validate() error {
+	if x.Query == nil {
+		return errors.New("missing required field \"query\"")
+	}
 	return nil
 }
 
@@ -9226,13 +9611,19 @@ func (x WorkspaceSymbolRegistrationOptions) Validate() error {
 type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
 	// The URI for which diagnostic information is reported.
-	URI DocumentURI `json:"uri"`
+	URI *DocumentURI `json:"uri"`
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
-	Version int32 `json:"version"`
+	Version *int32 `json:"version"`
 }
 
 func (x WorkspaceUnchangedDocumentDiagnosticReport) Validate() error {
+	if x.URI == nil {
+		return errors.New("missing required field \"uri\"")
+	}
+	if x.Version == nil {
+		return errors.New("missing required field \"version\"")
+	}
 	return nil
 }
 
@@ -9244,7 +9635,7 @@ type _InitializeParams struct {
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
-	ProcessId int32 `json:"processId"`
+	ProcessID *int32 `json:"processId"`
 	// Information about the client
 	//
 	// @since 3.15.0
@@ -9257,20 +9648,20 @@ type _InitializeParams struct {
 	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
 	//
 	// @since 3.16.0
-	Locale string `json:"locale,omitempty"`
+	Locale *string `json:"locale,omitempty"`
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
 	//
 	// @deprecated in favour of rootUri.
-	RootPath string `json:"rootPath,omitempty"`
+	RootPath *string `json:"rootPath,omitempty"`
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
 	//
 	// @deprecated in favour of workspaceFolders.
-	RootURI DocumentURI `json:"rootUri"`
+	RootURI *DocumentURI `json:"rootUri"`
 	// The capabilities provided by the client (editor or tool)
-	Capabilities ClientCapabilities `json:"capabilities"`
+	Capabilities *ClientCapabilities `json:"capabilities"`
 	// User provided initialization options.
 	InitializationOptions any `json:"initializationOptions,omitempty"`
 	// The initial trace setting. If omitted trace is disabled ('off').
@@ -9278,33 +9669,40 @@ type _InitializeParams struct {
 }
 
 func (x _InitializeParams) Validate() error {
+	if x.ProcessID == nil {
+		return errors.New("missing required field \"processId\"")
+	}
 	if x.ClientInfo != nil {
 		if err := x.ClientInfo.Validate(); err != nil {
-			return err
+			return fmt.Errorf("invalid field \"ClientInfo\": %w", err)
 		}
 	}
-
+	if x.RootURI == nil {
+		return errors.New("missing required field \"rootUri\"")
+	}
+	if x.Capabilities == nil {
+		return errors.New("missing required field \"capabilities\"")
+	}
 	if err := x.Capabilities.Validate(); err != nil {
-		return err
+		return fmt.Errorf("invalid field \"Capabilities\": %w", err)
 	}
-
-	if x.Trace != "" {
-		if err := x.Trace.Validate(); err != nil {
-			return err
-		}
+	if err := x.Trace.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Trace\": %w", err)
 	}
-
 	return nil
 }
 
 type _InitializeParamsClientInfo struct {
 	// The name of the client as defined by the client.
-	Name string `json:"name"`
+	Name *string `json:"name"`
 	// The client's version as defined by the client.
-	Version string `json:"version,omitempty"`
+	Version *string `json:"version,omitempty"`
 }
 
 func (x _InitializeParamsClientInfo) Validate() error {
+	if x.Name == nil {
+		return errors.New("missing required field \"name\"")
+	}
 	return nil
 }
 
@@ -10623,11 +11021,17 @@ type InlineValue = OneOf3[InlineValueText, InlineValueVariableLookup, InlineValu
 // @deprecated use MarkupContent instead.
 type MarkedString = OneOf2[string, MarkedString1]
 type MarkedString1 struct {
-	Language string `json:"language"`
-	Value    string `json:"value"`
+	Language *string `json:"language"`
+	Value    *string `json:"value"`
 }
 
 func (x MarkedString1) Validate() error {
+	if x.Language == nil {
+		return errors.New("missing required field \"language\"")
+	}
+	if x.Value == nil {
+		return errors.New("missing required field \"value\"")
+	}
 	return nil
 }
 
@@ -10639,40 +11043,49 @@ func (x MarkedString1) Validate() error {
 type NotebookDocumentFilter = OneOf3[NotebookDocumentFilter1, NotebookDocumentFilter2, NotebookDocumentFilter3]
 type NotebookDocumentFilter1 struct {
 	// The type of the enclosing notebook.
-	NotebookType string `json:"notebookType"`
+	NotebookType *string `json:"notebookType"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitempty"`
 	// A glob pattern.
-	Pattern string `json:"pattern,omitempty"`
+	Pattern *string `json:"pattern,omitempty"`
 }
 
 func (x NotebookDocumentFilter1) Validate() error {
+	if x.NotebookType == nil {
+		return errors.New("missing required field \"notebookType\"")
+	}
 	return nil
 }
 
 type NotebookDocumentFilter2 struct {
 	// The type of the enclosing notebook.
-	NotebookType string `json:"notebookType,omitempty"`
+	NotebookType *string `json:"notebookType,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme string `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// A glob pattern.
-	Pattern string `json:"pattern,omitempty"`
+	Pattern *string `json:"pattern,omitempty"`
 }
 
 func (x NotebookDocumentFilter2) Validate() error {
+	if x.Scheme == nil {
+		return errors.New("missing required field \"scheme\"")
+	}
 	return nil
 }
 
 type NotebookDocumentFilter3 struct {
 	// The type of the enclosing notebook.
-	NotebookType string `json:"notebookType,omitempty"`
+	NotebookType *string `json:"notebookType,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitempty"`
 	// A glob pattern.
-	Pattern string `json:"pattern"`
+	Pattern *string `json:"pattern"`
 }
 
 func (x NotebookDocumentFilter3) Validate() error {
+	if x.Pattern == nil {
+		return errors.New("missing required field \"pattern\"")
+	}
 	return nil
 }
 
@@ -10689,23 +11102,31 @@ type Pattern = string
 
 type PrepareRenameResult = OneOf3[Range, PrepareRenameResult1, PrepareRenameResult2]
 type PrepareRenameResult1 struct {
-	Range       Range  `json:"range"`
-	Placeholder string `json:"placeholder"`
+	Range       *Range  `json:"range"`
+	Placeholder *string `json:"placeholder"`
 }
 
 func (x PrepareRenameResult1) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
+	if x.Placeholder == nil {
+		return errors.New("missing required field \"placeholder\"")
+	}
 	return nil
 }
 
 type PrepareRenameResult2 struct {
-	DefaultBehavior bool `json:"defaultBehavior"`
+	DefaultBehavior *bool `json:"defaultBehavior"`
 }
 
 func (x PrepareRenameResult2) Validate() error {
+	if x.DefaultBehavior == nil {
+		return errors.New("missing required field \"defaultBehavior\"")
+	}
 	return nil
 }
 
@@ -10716,29 +11137,37 @@ type ProgressToken = OneOf2[int32, string]
 type TextDocumentContentChangeEvent = OneOf2[TextDocumentContentChangeEvent1, TextDocumentContentChangeEvent2]
 type TextDocumentContentChangeEvent1 struct {
 	// The range of the document that changed.
-	Range Range `json:"range"`
+	Range *Range `json:"range"`
 	// The optional length of the range that got replaced.
 	//
 	// @deprecated use range instead.
-	RangeLength uint32 `json:"rangeLength,omitempty"`
+	RangeLength *uint32 `json:"rangeLength,omitempty"`
 	// The new text for the provided range.
-	Text string `json:"text"`
+	Text *string `json:"text"`
 }
 
 func (x TextDocumentContentChangeEvent1) Validate() error {
-	if err := x.Range.Validate(); err != nil {
-		return err
+	if x.Range == nil {
+		return errors.New("missing required field \"range\"")
 	}
-
+	if err := x.Range.Validate(); err != nil {
+		return fmt.Errorf("invalid field \"Range\": %w", err)
+	}
+	if x.Text == nil {
+		return errors.New("missing required field \"text\"")
+	}
 	return nil
 }
 
 type TextDocumentContentChangeEvent2 struct {
 	// The new text of the whole document.
-	Text string `json:"text"`
+	Text *string `json:"text"`
 }
 
 func (x TextDocumentContentChangeEvent2) Validate() error {
+	if x.Text == nil {
+		return errors.New("missing required field \"text\"")
+	}
 	return nil
 }
 
@@ -10761,40 +11190,49 @@ func (x TextDocumentContentChangeEvent2) Validate() error {
 type TextDocumentFilter = OneOf3[TextDocumentFilter1, TextDocumentFilter2, TextDocumentFilter3]
 type TextDocumentFilter1 struct {
 	// A language id, like `typescript`.
-	Language string `json:"language"`
+	Language *string `json:"language"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitempty"`
 	// A glob pattern, like `*.{ts,js}`.
-	Pattern string `json:"pattern,omitempty"`
+	Pattern *string `json:"pattern,omitempty"`
 }
 
 func (x TextDocumentFilter1) Validate() error {
+	if x.Language == nil {
+		return errors.New("missing required field \"language\"")
+	}
 	return nil
 }
 
 type TextDocumentFilter2 struct {
 	// A language id, like `typescript`.
-	Language string `json:"language,omitempty"`
+	Language *string `json:"language,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme string `json:"scheme"`
+	Scheme *string `json:"scheme"`
 	// A glob pattern, like `*.{ts,js}`.
-	Pattern string `json:"pattern,omitempty"`
+	Pattern *string `json:"pattern,omitempty"`
 }
 
 func (x TextDocumentFilter2) Validate() error {
+	if x.Scheme == nil {
+		return errors.New("missing required field \"scheme\"")
+	}
 	return nil
 }
 
 type TextDocumentFilter3 struct {
 	// A language id, like `typescript`.
-	Language string `json:"language,omitempty"`
+	Language *string `json:"language,omitempty"`
 	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme string `json:"scheme,omitempty"`
+	Scheme *string `json:"scheme,omitempty"`
 	// A glob pattern, like `*.{ts,js}`.
-	Pattern string `json:"pattern"`
+	Pattern *string `json:"pattern"`
 }
 
 func (x TextDocumentFilter3) Validate() error {
+	if x.Pattern == nil {
+		return errors.New("missing required field \"pattern\"")
+	}
 	return nil
 }
 
@@ -10830,14 +11268,14 @@ func (x *OneOf2[T0, T1]) UnmarshalJSON(data []byte) error {
 
 	if err := strictUnmarshal(data, &x.First); err != nil {
 		x.First = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"First\": %w", err))
 	} else {
 		return nil
 	}
 
 	if err := strictUnmarshal(data, &x.Second); err != nil {
 		x.Second = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"Second\": %w", err))
 	} else {
 		return nil
 	}
@@ -10848,9 +11286,15 @@ func (x *OneOf2[T0, T1]) UnmarshalJSON(data []byte) error {
 func (x OneOf2[T0, T1]) Validate() error {
 	switch {
 	case x.First != nil:
-		return validate(x.First)
+		if err := validate(*x.First); err != nil {
+			return fmt.Errorf("invalid field \"First\": %w", err)
+		}
+		return nil
 	case x.Second != nil:
-		return validate(x.Second)
+		if err := validate(*x.Second); err != nil {
+			return fmt.Errorf("invalid field \"Second\": %w", err)
+		}
+		return nil
 	default:
 		return errors.New("none of the union fields are set")
 	}
@@ -10882,21 +11326,21 @@ func (x *OneOf3[T0, T1, T2]) UnmarshalJSON(data []byte) error {
 
 	if err := strictUnmarshal(data, &x.First); err != nil {
 		x.First = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"First\": %w", err))
 	} else {
 		return nil
 	}
 
 	if err := strictUnmarshal(data, &x.Second); err != nil {
 		x.Second = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"Second\": %w", err))
 	} else {
 		return nil
 	}
 
 	if err := strictUnmarshal(data, &x.Third); err != nil {
 		x.Third = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"Third\": %w", err))
 	} else {
 		return nil
 	}
@@ -10907,11 +11351,20 @@ func (x *OneOf3[T0, T1, T2]) UnmarshalJSON(data []byte) error {
 func (x OneOf3[T0, T1, T2]) Validate() error {
 	switch {
 	case x.First != nil:
-		return validate(x.First)
+		if err := validate(*x.First); err != nil {
+			return fmt.Errorf("invalid field \"First\": %w", err)
+		}
+		return nil
 	case x.Second != nil:
-		return validate(x.Second)
+		if err := validate(*x.Second); err != nil {
+			return fmt.Errorf("invalid field \"Second\": %w", err)
+		}
+		return nil
 	case x.Third != nil:
-		return validate(x.Third)
+		if err := validate(*x.Third); err != nil {
+			return fmt.Errorf("invalid field \"Third\": %w", err)
+		}
+		return nil
 	default:
 		return errors.New("none of the union fields are set")
 	}
@@ -10946,28 +11399,28 @@ func (x *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
 
 	if err := strictUnmarshal(data, &x.First); err != nil {
 		x.First = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"First\": %w", err))
 	} else {
 		return nil
 	}
 
 	if err := strictUnmarshal(data, &x.Second); err != nil {
 		x.Second = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"Second\": %w", err))
 	} else {
 		return nil
 	}
 
 	if err := strictUnmarshal(data, &x.Third); err != nil {
 		x.Third = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"Third\": %w", err))
 	} else {
 		return nil
 	}
 
 	if err := strictUnmarshal(data, &x.Fourth); err != nil {
 		x.Fourth = nil
-		errs = append(errs, err)
+		errs = append(errs, fmt.Errorf("invalid field \"Fourth\": %w", err))
 	} else {
 		return nil
 	}
@@ -10978,13 +11431,25 @@ func (x *OneOf4[T0, T1, T2, T3]) UnmarshalJSON(data []byte) error {
 func (x OneOf4[T0, T1, T2, T3]) Validate() error {
 	switch {
 	case x.First != nil:
-		return validate(x.First)
+		if err := validate(*x.First); err != nil {
+			return fmt.Errorf("invalid field \"First\": %w", err)
+		}
+		return nil
 	case x.Second != nil:
-		return validate(x.Second)
+		if err := validate(*x.Second); err != nil {
+			return fmt.Errorf("invalid field \"Second\": %w", err)
+		}
+		return nil
 	case x.Third != nil:
-		return validate(x.Third)
+		if err := validate(*x.Third); err != nil {
+			return fmt.Errorf("invalid field \"Third\": %w", err)
+		}
+		return nil
 	case x.Fourth != nil:
-		return validate(x.Fourth)
+		if err := validate(*x.Fourth); err != nil {
+			return fmt.Errorf("invalid field \"Fourth\": %w", err)
+		}
+		return nil
 	default:
 		return errors.New("none of the union fields are set")
 	}
