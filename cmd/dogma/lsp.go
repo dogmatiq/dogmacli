@@ -16,9 +16,12 @@ func init() {
 			ctx imbue.Context,
 		) (*lsp.Server, error) {
 			logger := slog.New(
-				slog.HandlerOptions{
-					Level: slog.LevelDebug,
-				}.NewTextHandler(os.Stderr),
+				slog.NewTextHandler(
+					os.Stderr,
+					&slog.HandlerOptions{
+						Level: slog.LevelDebug,
+					},
+				),
 			)
 
 			return &lsp.Server{
