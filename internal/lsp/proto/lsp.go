@@ -1,7 +1,6 @@
 package proto
 
 import (
-	"bytes"
 	"encoding/json"
 	"net/url"
 )
@@ -19,7 +18,7 @@ func (u URI) MarshalJSON() ([]byte, error) {
 // UnmarshalJSON unmarshals the URI from JSON.
 func (u *URI) UnmarshalJSON(data []byte) error {
 	var s string
-	if err := unmarshal(data, &s); err != nil {
+	if err := json.Unmarshal(data, &s); err != nil {
 		return err
 	}
 
@@ -35,14 +34,33 @@ func (u *URI) UnmarshalJSON(data []byte) error {
 // DocumentURI is a string that represents a URI for a document.
 type DocumentURI = URI
 
-func unmarshal(data []byte, v any) error {
-	dec := json.NewDecoder(bytes.NewReader(data))
-	dec.DisallowUnknownFields()
-	return dec.Decode(v)
+// Array is an array of T.
+type Array[T any] []T
+
+// Validate validates each element of the array.
+func (a Array[T]) Validate() error {
+	for _, v := range a {
+		if err := validate(v); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
-func marshal(v any) ([]byte, error) {
-	return json.Marshal(v)
+// Map is a map of K to V.
+type Map[K comparable, V any] map[K]V
+
+// Validate validates each key and value of the map.
+func (m Map[K, V]) Validate() error {
+	for k, v := range m {
+		if err := validate(k); err != nil {
+			return err
+		}
+		if err := validate(v); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Ptr returns a pointer to v.

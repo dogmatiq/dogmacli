@@ -108,38 +108,55 @@ func (g *generator) refTypeExpr(t *metamodel.Type) jen.Code {
 }
 
 func (g *generator) mapTypeExpr(t *metamodel.Type) jen.Code {
-	return jen.Map(
+	return jen.Id("Map").Types(
 		g.typeExpr(t.MapKey),
-	).Add(
 		g.typeExpr(t.MapValue()),
 	)
 }
 
 func (g *generator) arrayTypeExpr(t *metamodel.Type) jen.Code {
-	return jen.Index().Add(
+	return jen.Id("Array").Types(
 		g.typeExpr(t.ArrayElement),
 	)
 }
 
-func (g *generator) zeroValue(t *metamodel.Type) (jen.Code, bool) {
+func (g *generator) hasValidateMethod(t *metamodel.Type) bool {
+	switch t.Kind {
+	case "base":
+		return false
+	case "reference":
+		if strings.HasPrefix(t.Name, "LSP") {
+			return false
+		}
+		for _, m := range g.root.TypeAliases {
+			if m.Name == t.Name {
+				return g.hasValidateMethod(m.Type)
+			}
+		}
+	case "or":
+		t, _ := normalizeUnion(t)
+		if t.Kind != "or" {
+			return g.hasValidateMethod(t)
+		}
+	}
+
+	return true
+}
+
+func (g *generator) zeroValue(t *metamodel.Type) *jen.Statement {
 	switch t.Kind {
 	case "base":
 		switch t.Name {
 		case "boolean":
-			return jen.False(), true
+			return jen.False()
 		case "string":
-			return jen.Lit(""), true
+			return jen.Lit("")
 		case "decimal", "integer", "uinteger":
-			return jen.Lit(0), true
-		default:
-			expr := g.typeExpr(t)
-			return jen.Parens(
-				jen.Add(expr).Values(),
-			), true
+			return jen.Lit(0)
 		}
 	case "reference":
 		if strings.HasPrefix(t.Name, "LSP") {
-			return jen.Nil(), true
+			return jen.Nil()
 		}
 		for _, m := range g.root.Enumerations {
 			if m.Name == t.Name {
@@ -156,16 +173,16 @@ func (g *generator) zeroValue(t *metamodel.Type) (jen.Code, bool) {
 		if t.Kind != "or" {
 			return g.zeroValue(t)
 		}
-		return nil, false
-	case "literal":
-		return nil, false
 	case "stringLiteral":
-		return nil, false
+		return jen.Lit("")
 	case "map", "array":
-		return jen.Nil(), true
+		return jen.Nil()
 	}
 
-	return nil, false
+	expr := g.typeExpr(t)
+	return jen.Parens(
+		jen.Add(expr).Values(),
+	)
 }
 
 func (g *generator) generateUniqueName(desired string) (actual, suffix string) {

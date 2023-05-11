@@ -27,8 +27,10 @@ func (g *generator) generateEnum(
 		generateDocs(gen, m.Documentation)
 	}
 
+	name := normalizeName(m.Name)
+
 	gen.Type().
-		Id(normalizeName(m.Name)).
+		Id(name).
 		Add(g.typeExpr(m.Type))
 
 	gen.Const().
@@ -41,10 +43,42 @@ func (g *generator) generateEnum(
 					value = int(v)
 				}
 
-				gen.Id(normalizeName(m.Name) + normalizeName(member.Name)).
-					Id(normalizeName(m.Name)).
+				gen.Id(name + normalizeName(member.Name)).
+					Id(name).
 					Op("=").
 					Lit(value)
 			}
 		})
+
+	gen.Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("Validate").
+		Params().
+		Params(
+			jen.Error(),
+		).
+		Block(
+			jen.Switch(jen.Id("x")).
+				BlockFunc(func(gen *jen.Group) {
+					for _, member := range m.Members {
+						gen.Case(
+							jen.Id(name + normalizeName(member.Name)),
+						).Block(
+							jen.Return(jen.Nil()),
+						)
+					}
+
+					gen.Default().
+						Block(
+							jen.Return(
+								jen.Qual("fmt", "Errorf").
+									Call(
+										jen.Lit("%#v is not a valid "+name),
+										jen.Id("x"),
+									),
+							),
+						)
+				}),
+		)
 }

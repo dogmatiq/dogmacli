@@ -19,73 +19,34 @@ func (g *generator) generateLiteralString(name string, t *metamodel.Type) {
 		jen.Commentf("%s is a type that must be represented as the JSON-string %q.", name, t.LiteralString()),
 		jen.Type().
 			Id(name).
-			Struct(),
+			String(),
 
 		jen.Func().
-			Params(jen.Id(name)).
-			Id("MarshalJSON").
+			Params(jen.Id("x").Id(name)).
+			Id("Validate").
 			Params().
 			Params(
-				jen.Index().Byte(),
 				jen.Error(),
 			).
 			Block(
-				jen.Return(
-					jen.Id("marshal").Call(
-						jen.Lit(t.LiteralString()),
-					),
-				),
-			),
-
-		jen.Func().
-			Params(jen.Op("*").Id(name)).
-			Id("UnmarshalJSON").
-			Params(
-				jen.Id("data").
-					Index().
-					Byte(),
-			).
-			Params(
-				jen.Error(),
-			).
-			Block(
-				jen.Var().Id("value").String(),
 				jen.If(
-					jen.Err().Op(":=").Id("unmarshal").Call(
-						jen.Id("data"),
-						jen.Op("&").Id("value"),
-					),
-					jen.Err().Op("!=").Nil(),
+					jen.Id("x").
+						Op("!=").
+						Lit(t.LiteralString()),
 				).Block(
 					jen.Return(
-						jen.Err(),
-					),
-				),
-
-				jen.Line().
-					If(
-						jen.Id("value").
-							Op("!=").
-							Lit(t.LiteralString()),
-					).
-					Block(
-						jen.Return(
-							jen.Qual("errors", "New").
-								Call(
-									jen.Lit(
-										fmt.Sprintf(
-											"value must be %q",
-											t.LiteralString(),
-										),
+						jen.Qual("errors", "New").
+							Call(
+								jen.Lit(
+									fmt.Sprintf(
+										"value must be %q",
+										t.LiteralString(),
 									),
 								),
-						),
+							),
 					),
-
-				jen.Line().
-					Return(
-						jen.Nil(),
-					),
+				),
+				jen.Return(jen.Nil()),
 			),
 	)
 }

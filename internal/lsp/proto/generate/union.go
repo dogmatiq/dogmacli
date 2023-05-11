@@ -116,19 +116,22 @@ func (g *generator) generateUnions(gen *jen.File) {
 			BlockFunc(func(gen *jen.Group) {
 				gen.Switch().
 					BlockFunc(func(gen *jen.Group) {
-						gen.Default().
-							Return(
-								jen.Id("marshal").
-									Call(fieldExpressions[0]),
-							)
-
-						for _, f := range fieldExpressions[1:] {
+						for _, f := range fieldExpressions {
 							gen.Case(jen.Add(f).Op("!=").Nil()).
 								Return(
-									jen.Id("marshal").
+									jen.Qual("encoding/json", "Marshal").
 										Call(f),
 								)
 						}
+
+						gen.Default().
+							Return(
+								jen.Nil(),
+								jen.Qual("errors", "New").
+									Call(
+										jen.Lit("none of the union fields are set"),
+									),
+							)
 					})
 			})
 
@@ -149,38 +152,31 @@ func (g *generator) generateUnions(gen *jen.File) {
 					Add(fullType).
 					Values()
 
-				gen.Line().
-					Var().
-					Defs(
-						jen.Id("errs").Index().Error(),
-						jen.Id("err").Error(),
-					)
+				gen.Var().
+					Id("errs").Index().Error()
 
 				for _, f := range fieldExpressions {
 					gen.Line().
-						Err().
-						Op("=").
-						Id("unmarshal").
-						Call(
-							jen.Id("data"),
-							jen.Op("&").
-								Add(f),
-						)
-					gen.If(
-						jen.Err().
-							Op("==").
-							Nil(),
-					).Block(
-						jen.Return(
-							jen.Nil(),
-						),
-					)
-
-					gen.Id("errs").
-						Op("=").
-						Append(
-							jen.Id("errs"),
-							jen.Err(),
+						If(
+							jen.Err().
+								Op(":=").
+								Id("strictUnmarshal").
+								Call(
+									jen.Id("data"),
+									jen.Op("&").Add(f),
+								),
+							jen.Err().Op("!=").Nil(),
+						).
+						Block(
+							jen.Add(f).Op("=").Nil(),
+							jen.Id("errs").Op("=").Append(
+								jen.Id("errs"),
+								jen.Err(),
+							),
+						).
+						Else().
+						Block(
+							jen.Return(jen.Nil()),
 						)
 				}
 
@@ -190,5 +186,34 @@ func (g *generator) generateUnions(gen *jen.File) {
 							Call(jen.Id("errs").Op("...")),
 					)
 			})
+
+		gen.Line().
+			Func().
+			Params(jen.Id("x").Add(fullType)).
+			Id("Validate").
+			Params().
+			Params(
+				jen.Error(),
+			).
+			Block(
+				jen.Switch().
+					BlockFunc(func(gen *jen.Group) {
+						for _, f := range fieldExpressions {
+							gen.Case(jen.Add(f).Op("!=").Nil()).
+								Return(
+									jen.Id("validate").
+										Call(f),
+								)
+						}
+
+						gen.Default().
+							Return(
+								jen.Qual("errors", "New").
+									Call(
+										jen.Lit("none of the union fields are set"),
+									),
+							)
+					}),
+			)
 	}
 }

@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 )
@@ -60,64 +58,51 @@ func (g *generator) generateStructType(
 
 	gen.Line().
 		Func().
-		Params(jen.Id("x").Op("*").Id(name)).
-		Id("UnmarshalJSON").
-		Params(
-			jen.Id("data").Index().Byte(),
-		).
+		Params(jen.Id("x").Id(name)).
+		Id("Validate").
+		Params().
 		Params(
 			jen.Error(),
 		).
 		BlockFunc(func(gen *jen.Group) {
-			gen.Type().Id("plain").Id(name)
-			gen.If(
-				jen.Err().Op(":=").Id("unmarshal").Call(
-					jen.Id("data"),
-					jen.Parens(
-						jen.Op("*").Id("plain"),
-					).Call(
-						jen.Id("x"),
-					),
-				),
-				jen.Err().Op("!=").Nil(),
-			).Block(
-				jen.Return(jen.Err()),
-			)
-
 			for _, p := range properties {
-				if p.Optional {
+				if !g.hasValidateMethod(p.Type) {
 					continue
 				}
 
-				gen.Line()
-
-				if zero, ok := g.zeroValue(p.Type); ok {
-					gen.If(
-						jen.
+				validate := jen.
+					If(
+						jen.Err().
+							Op(":=").
 							Id("x").Dot(normalizeName(p.Name)).
-							Op("==").
-							Add(zero),
-					).Block(
-						jen.Return(
-							jen.Qual("errors", "New").Call(
-								jen.Lit(
-									fmt.Sprintf(
-										"%q property is required",
-										p.Name,
-									),
-								),
-							),
-						),
+							Dot("Validate").Call(),
+						jen.Err().Op("!=").Nil(),
+					).
+					Block(
+						jen.Return(jen.Err()),
 					)
+
+				if p.Optional {
+					zero := jen.Nil()
+					if g.isOmittable(p.Type) {
+						zero = g.zeroValue(p.Type)
+					}
+
+					gen.
+						If(
+							jen.Id("x").Dot(normalizeName(p.Name)).
+								Op("!=").
+								Add(zero),
+						).
+						Block(validate)
 				} else {
-					gen.Var().Id("_").Qual("encoding/json", "Unmarshaler").
-						Op("=").
-						Op("&").Id("x").Dot(normalizeName(p.Name))
+					gen.Add(validate)
 				}
+
+				gen.Line()
 			}
 
-			gen.Line().
-				Return(jen.Nil())
+			gen.Return(jen.Nil())
 		})
 
 	return gen
