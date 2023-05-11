@@ -11,6 +11,8 @@ github.com/dogmatiq/dogma v0.12.0 h1:hUvAbdrcLGAP2IrpBKvdbUSGubgNKzqa5QfFarIQPfU
 github.com/dogmatiq/dogma v0.12.0/go.mod h1:op4IjAGC593ONvvUPhh2xNyk/3Ezv9HkCPRlzdbkX9Y=
 github.com/dogmatiq/harpy v0.8.2 h1:/Fa0FXTw+TEbYIobRjTmoq6OSsTA4u/Gr4aEqjbxtgU=
 github.com/dogmatiq/harpy v0.8.2/go.mod h1:uTmIKiFXH6LyVF7ez9y/TChuPzIKAMYM33BhrBR/juA=
+github.com/dogmatiq/harpy v0.10.1 h1:hjNKF+SPBJVtJ05b0oy6cvl+92X51tZsvHwg6FNWV9Y=
+github.com/dogmatiq/harpy v0.10.1/go.mod h1:UIpgUjtH7XmNR3u6P2S68Cec6n8KZD0ryjnOrrk7m+s=
 github.com/dogmatiq/iago v0.4.0 h1:57nZqVT34IZxtCZEW/RFif7DNUEjMXgevfr/Mmd0N8I=
 github.com/dogmatiq/iago v0.4.0/go.mod h1:fishMWBtzYcjgis6d873VTv9kFm/wHYLOzOyO9ECBDc=
 github.com/dogmatiq/imbue v0.7.0 h1:x41ihAU9twjqvop0VN3A2tbhrXclhO7hE0f90m4V9j0=
