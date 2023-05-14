@@ -1,2 +1,2 @@
-// Package metamodel parses and represents the LSP meta-model.
+// Package metamodel is a high-level representation of the LSP meta-model.
 package metamodel
