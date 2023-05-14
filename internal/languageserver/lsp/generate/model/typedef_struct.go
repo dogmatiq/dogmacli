@@ -1,6 +1,6 @@
-package metamodel
+package model
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/metamodel/internal/lowlevel"
+import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
 
 // Struct describes a named structure type.
 type Struct struct {

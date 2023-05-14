@@ -1,9 +1,9 @@
-package metamodel
+package model
 
 import (
 	"math"
 
-	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/metamodel/internal/lowlevel"
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
 )
 
 // Enum describes a named enumeration type.

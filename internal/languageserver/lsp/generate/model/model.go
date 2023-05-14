@@ -1,6 +1,6 @@
-package metamodel
+package model
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/metamodel/internal/lowlevel"
+import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
 
 // Model is the root of the model.
 type Model struct {
@@ -13,14 +13,14 @@ type Model struct {
 // Documentation is a container for documentation-related meta-data.
 type Documentation = lowlevel.Documentation
 
-// Get returns the root node of the meta-model.
-func Get() Model {
+// Root returns the root node of the meta-model.
+func Root() Model {
 	b := &builder{
 		aliases: map[string]*Alias{},
 		structs: map[string]*Struct{},
 		enums:   map[string]*Enum{},
 	}
-	return b.BuildModel(lowlevel.Get())
+	return b.BuildModel(lowlevel.Root())
 }
 
 type builder struct {

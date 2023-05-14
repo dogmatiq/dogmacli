@@ -1,6 +1,6 @@
-package metamodel
+package model
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/metamodel/internal/lowlevel"
+import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
 
 // Type is an interface for a type.
 type Type interface {
@@ -35,8 +35,8 @@ type (
 	// Reference is a reference to a named type.
 	Reference struct{ Target TypeDef }
 
-	// StructureLiteral is a literal (anonymous) struct.
-	StructureLiteral struct {
+	// StructLiteral is a literal (anonymous) struct.
+	StructLiteral struct {
 		Documentation Documentation
 		Properties    []Property
 	}
@@ -73,11 +73,11 @@ type TypeVisitor interface {
 	Reference(Reference)
 	Array(Array)
 	Map(Map)
-	Literal(StructureLiteral)
-	StringLiteral(StringLiteral)
 	And(And)
 	Or(Or)
 	Tuple(Tuple)
+	StructLiteral(StructLiteral)
+	StringLiteral(StringLiteral)
 }
 
 // VisitType dispatches to v based on the concrete type of t.
@@ -98,7 +98,7 @@ type TypeTransform[T any] interface {
 	Reference(Reference) T
 	Array(Array) T
 	Map(Map) T
-	Literal(StructureLiteral) T
+	StructLiteral(StructLiteral) T
 	StringLiteral(StringLiteral) T
 	And(And) T
 	Or(Or) T
@@ -136,7 +136,7 @@ func (b *builder) typeRef(in lowlevel.Type) Type {
 	case lowlevel.Map:
 		return Map{b.typeRef(*in.MapKey), b.typeRef(*in.MapValue)}
 	case lowlevel.Literal:
-		return StructureLiteral{
+		return StructLiteral{
 			in.StructureLiteral.Documentation,
 			b.properties(in.StructureLiteral.Properties),
 		}
@@ -176,22 +176,22 @@ func baseType(in lowlevel.Type) Type {
 	}
 }
 
-func (t Bool) accept(v TypeVisitor)             { v.Bool(t) }
-func (t Decimal) accept(v TypeVisitor)          { v.Decimal(t) }
-func (t String) accept(v TypeVisitor)           { v.String(t) }
-func (t Integer) accept(v TypeVisitor)          { v.Integer(t) }
-func (t UInteger) accept(v TypeVisitor)         { v.UInteger(t) }
-func (t DocumentURI) accept(v TypeVisitor)      { v.DocumentURI(t) }
-func (t URI) accept(v TypeVisitor)              { v.URI(t) }
-func (t Null) accept(v TypeVisitor)             { v.Null(t) }
-func (t Reference) accept(v TypeVisitor)        { v.Reference(t) }
-func (t StructureLiteral) accept(v TypeVisitor) { v.Literal(t) }
-func (t StringLiteral) accept(v TypeVisitor)    { v.StringLiteral(t) }
-func (t Array) accept(v TypeVisitor)            { v.Array(t) }
-func (t Map) accept(v TypeVisitor)              { v.Map(t) }
-func (t And) accept(v TypeVisitor)              { v.And(t) }
-func (t Or) accept(v TypeVisitor)               { v.Or(t) }
-func (t Tuple) accept(v TypeVisitor)            { v.Tuple(t) }
+func (t Bool) accept(v TypeVisitor)          { v.Bool(t) }
+func (t Decimal) accept(v TypeVisitor)       { v.Decimal(t) }
+func (t String) accept(v TypeVisitor)        { v.String(t) }
+func (t Integer) accept(v TypeVisitor)       { v.Integer(t) }
+func (t UInteger) accept(v TypeVisitor)      { v.UInteger(t) }
+func (t DocumentURI) accept(v TypeVisitor)   { v.DocumentURI(t) }
+func (t URI) accept(v TypeVisitor)           { v.URI(t) }
+func (t Null) accept(v TypeVisitor)          { v.Null(t) }
+func (t Reference) accept(v TypeVisitor)     { v.Reference(t) }
+func (t StructLiteral) accept(v TypeVisitor) { v.StructLiteral(t) }
+func (t StringLiteral) accept(v TypeVisitor) { v.StringLiteral(t) }
+func (t Array) accept(v TypeVisitor)         { v.Array(t) }
+func (t Map) accept(v TypeVisitor)           { v.Map(t) }
+func (t And) accept(v TypeVisitor)           { v.And(t) }
+func (t Or) accept(v TypeVisitor)            { v.Or(t) }
+func (t Tuple) accept(v TypeVisitor)         { v.Tuple(t) }
 
 func (v *typeX[T]) Bool(t Bool)                   { v.V = v.X.Bool(t) }
 func (v *typeX[T]) Decimal(t Decimal)             { v.V = v.X.Decimal(t) }
@@ -202,7 +202,7 @@ func (v *typeX[T]) DocumentURI(t DocumentURI)     { v.V = v.X.DocumentURI(t) }
 func (v *typeX[T]) URI(t URI)                     { v.V = v.X.URI(t) }
 func (v *typeX[T]) Null(t Null)                   { v.V = v.X.Null(t) }
 func (v *typeX[T]) Reference(t Reference)         { v.V = v.X.Reference(t) }
-func (v *typeX[T]) Literal(t StructureLiteral)    { v.V = v.X.Literal(t) }
+func (v *typeX[T]) StructLiteral(t StructLiteral) { v.V = v.X.StructLiteral(t) }
 func (v *typeX[T]) StringLiteral(t StringLiteral) { v.V = v.X.StringLiteral(t) }
 func (v *typeX[T]) Array(t Array)                 { v.V = v.X.Array(t) }
 func (v *typeX[T]) Map(t Map)                     { v.V = v.X.Map(t) }

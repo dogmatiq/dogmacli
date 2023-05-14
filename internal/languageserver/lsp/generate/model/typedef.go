@@ -1,4 +1,4 @@
-package metamodel
+package model
 
 // TypeDef is a definition of a named type.
 type TypeDef interface {
