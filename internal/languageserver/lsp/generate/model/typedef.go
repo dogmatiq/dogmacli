@@ -25,8 +25,8 @@ type TypeDefTransform[T any] interface {
 	Struct(Struct) T
 }
 
-// ApplyTypeDefTransform transforms d to a value of type T using x.
-func ApplyTypeDefTransform[T any](
+// TransformTypeDef transforms d to a value of type T using x.
+func TransformTypeDef[T any](
 	d TypeDef,
 	x TypeDefTransform[T],
 ) T {

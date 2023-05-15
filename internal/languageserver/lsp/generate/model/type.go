@@ -105,8 +105,8 @@ type TypeTransform[T any] interface {
 	Tuple(Tuple) T
 }
 
-// ApplyTypeTransform transforms t to a value of type T using x.
-func ApplyTypeTransform[T any](
+// TransformType transforms t to a value of type T using x.
+func TransformType[T any](
 	t Type,
 	x TypeTransform[T],
 ) T {

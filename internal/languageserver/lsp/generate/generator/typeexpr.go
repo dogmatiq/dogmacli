@@ -7,7 +7,7 @@ import (
 
 // typeExpr returns the Go type expression that refers to t.
 func typeExpr(t model.Type) *jen.Statement {
-	return model.ApplyTypeTransform[*jen.Statement](
+	return model.TransformType[*jen.Statement](
 		t,
 		typeExprX{},
 	)

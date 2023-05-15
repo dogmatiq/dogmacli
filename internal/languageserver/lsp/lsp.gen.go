@@ -5488,7 +5488,7 @@ type NotebookDocument struct {
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata Optional[LSPObject]
+	Metadata LSPObject
 	// The cells of a notebook.
 	Cells []NotebookCell
 }
@@ -5545,7 +5545,7 @@ type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata Optional[LSPObject]
+	Metadata LSPObject
 	// Changes to cells
 	Cells Optional[struct{}]
 }
@@ -6410,7 +6410,7 @@ type ResourceOperation struct {
 	// An optional annotation identifier describing the operation.
 	//
 	// @since 3.16.0
-	AnnotationID Optional[ChangeAnnotationIdentifier]
+	AnnotationID ChangeAnnotationIdentifier
 }
 
 // Validate returns an error if x is invalid.
@@ -6547,7 +6547,7 @@ type NotebookCell struct {
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata Optional[LSPObject]
+	Metadata LSPObject
 	// Additional execution summary information
 	// if supported by the client.
 	ExecutionSummary Optional[ExecutionSummary]

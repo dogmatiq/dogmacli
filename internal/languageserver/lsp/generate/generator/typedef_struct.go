@@ -54,27 +54,30 @@ func (g typeDefGen) structValidateMethod(d model.Struct) {
 
 // useOptionalType returns the Go type expression that refers to t.
 func useOptionalType(t model.Type) bool {
-	return model.ApplyTypeTransform[bool](
+	return model.TransformType[bool](
 		t,
-		useOptionalTypeX{},
+		useOptX{},
 	)
 }
 
-type useOptionalTypeX struct{}
+type useOptX struct{}
 
-func (useOptionalTypeX) Bool() bool                       { return false }
-func (useOptionalTypeX) Decimal() bool                    { return false }
-func (useOptionalTypeX) String() bool                     { return false }
-func (useOptionalTypeX) Integer() bool                    { return false }
-func (useOptionalTypeX) UInteger() bool                   { return false }
-func (useOptionalTypeX) DocumentURI() bool                { return false }
-func (useOptionalTypeX) URI() bool                        { return false }
-func (useOptionalTypeX) Null() bool                       { return false }
-func (useOptionalTypeX) Reference(t model.Reference) bool { return true }
-func (useOptionalTypeX) Array(t model.Array) bool         { return false }
-func (useOptionalTypeX) Map(t model.Map) bool             { return false }
-func (useOptionalTypeX) And(t model.And) bool             { return true }
-func (useOptionalTypeX) Or(t model.Or) bool               { return true }
-func (useOptionalTypeX) Tuple(t model.Tuple) bool         { return true }
-func (useOptionalTypeX) StructLit(t model.StructLit) bool { return true }
-func (useOptionalTypeX) StringLit(t model.StringLit) bool { return false }
+func (x useOptX) Bool() bool                       { return false }
+func (x useOptX) Decimal() bool                    { return false }
+func (x useOptX) String() bool                     { return false }
+func (x useOptX) Integer() bool                    { return false }
+func (x useOptX) UInteger() bool                   { return false }
+func (x useOptX) DocumentURI() bool                { return false }
+func (x useOptX) URI() bool                        { return false }
+func (x useOptX) Null() bool                       { return false }
+func (x useOptX) Array(t model.Array) bool         { return false }
+func (x useOptX) Map(t model.Map) bool             { return false }
+func (x useOptX) And(t model.And) bool             { return true }
+func (x useOptX) Or(t model.Or) bool               { return true }
+func (x useOptX) Tuple(t model.Tuple) bool         { return true }
+func (x useOptX) StructLit(t model.StructLit) bool { return true }
+func (x useOptX) StringLit(t model.StringLit) bool { return false }
+func (x useOptX) Reference(t model.Reference) bool { return model.TransformTypeDef[bool](t.Target, x) }
+func (x useOptX) Alias(d model.Alias) bool         { return model.TransformType[bool](d.Type, x) }
+func (x useOptX) Enum(d model.Enum) bool           { return true }
+func (x useOptX) Struct(d model.Struct) bool       { return true }
