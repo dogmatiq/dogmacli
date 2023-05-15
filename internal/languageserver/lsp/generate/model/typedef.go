@@ -30,9 +30,9 @@ func ApplyTypeDefTransform[T any](
 	d TypeDef,
 	x TypeDefTransform[T],
 ) T {
-	vis := &typeDefX[T]{X: x}
-	VisitTypeDef(d, vis)
-	return vis.V
+	v := &typeDefX[T]{X: x}
+	VisitTypeDef(d, v)
+	return v.V
 }
 
 type typeDefX[T any] struct {

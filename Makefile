@@ -1,4 +1,4 @@
-GO_EMBEDDED_FILES += internal/languageserver/lsp/metamodel/metamodel-3.17.0.json
+GO_EMBEDDED_FILES += internal/languageserver/lsp/metamodel/internal/lowlevel/metamodel-3.17.0.json
 GENERATED_FILES += internal/languageserver/lsp/lsp.gen.go
 
 -include .makefiles/Makefile

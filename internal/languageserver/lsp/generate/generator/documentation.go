@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/dave/jennifer/jen"
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 	"github.com/dogmatiq/dogmacli/internal/wordwrap"
 )
 
@@ -11,10 +12,14 @@ import (
 // code block.
 func documentation(
 	code interface{ Comment(string) *jen.Statement },
-	docs ...string,
+	docs model.Documentation,
 ) {
-	text := strings.Join(docs, "\n\n")
-	text = strings.TrimSpace(text)
+	text := strings.TrimSpace(docs.Text)
+
+	if docs.DeprecationMessage != "" {
+		text += "\n\n"
+		text += "Deprecated: " + docs.DeprecationMessage
+	}
 
 	if text == "" {
 		return

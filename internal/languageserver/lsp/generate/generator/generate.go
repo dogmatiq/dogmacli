@@ -2,28 +2,33 @@ package generator
 
 import (
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/metamodel"
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
 // Generate returns generated code that represents the LSP data model.
 func Generate(
-	code *jen.File,
-	root metamodel.Root,
+	m model.Model,
+	f *jen.File,
 ) {
-	v := declarationGenerator{File: code}
-
-	for _, t := range root.NamedTypes {
-		metamodel.VisitNamedType(t, v)
+	g := &generator{
+		Model: m,
+		File:  f,
 	}
+
+	g.Generate()
 }
 
-type declarationGenerator struct {
-	*jen.File
-	typeExprGenerator
+type generator struct {
+	Model model.Model
+	File  *jen.File
 }
 
-func (g declarationGenerator) VisitStructure(t metamodel.Structure) {
-}
-
-func (g declarationGenerator) VisitTypeAlias(t metamodel.TypeAlias) {
+func (g *generator) Generate() {
+	v := &typeDefGen{
+		File: g.File,
+	}
+	for _, d := range g.Model.TypeDefs {
+		model.VisitTypeDef(d, v)
+		g.File.Line()
+	}
 }

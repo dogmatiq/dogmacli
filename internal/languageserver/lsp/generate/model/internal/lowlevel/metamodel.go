@@ -114,15 +114,15 @@ type EnumMember struct {
 
 // Type describes the type of a value.
 type Type struct {
-	Kind             Kind             `json:"kind"`
-	Name             string           `json:"name"`
-	Types            []Type           `json:"items"`
-	ArrayElement     *Type            `json:"element"`
-	MapKey           *Type            `json:"key"`
-	MapValue         *Type            `json:"-"`
-	StringLiteral    string           `json:"-"`
-	StructureLiteral StructureLiteral `json:"-"`
-	RawValue         json.RawMessage  `json:"value"`
+	Kind         Kind            `json:"kind"`
+	Name         string          `json:"name"`
+	Types        []Type          `json:"items"`
+	ArrayElement *Type           `json:"element"`
+	MapKey       *Type           `json:"key"`
+	MapValue     *Type           `json:"-"`
+	StringLit    string          `json:"-"`
+	StructLit    StructLit       `json:"-"`
+	RawValue     json.RawMessage `json:"value"`
 }
 
 // UnmarshalJSON unmarshals the JSON representation of the type.
@@ -136,16 +136,16 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 	case Map:
 		return json.Unmarshal(t.RawValue, &t.MapValue)
 	case Literal:
-		return json.Unmarshal(t.RawValue, &t.StructureLiteral)
-	case StringLiteral:
-		return json.Unmarshal(t.RawValue, &t.StringLiteral)
+		return json.Unmarshal(t.RawValue, &t.StructLit)
+	case StringLit:
+		return json.Unmarshal(t.RawValue, &t.StringLit)
 	}
 
 	return nil
 }
 
-// StructureLiteral describes an anonymous structure.
-type StructureLiteral struct {
+// StructLit describes an anonymous structure.
+type StructLit struct {
 	Documentation
 
 	Properties []Property `json:"properties"`
@@ -170,8 +170,8 @@ const (
 	// Literal indicates that the Type is a literal (anonymous) structure.
 	Literal Kind = "literal"
 
-	// StringLiteral indicates that the Type is a string with a specific value.
-	StringLiteral Kind = "stringLiteral"
+	// StringLit indicates that the Type is a string with a specific value.
+	StringLit Kind = "stringLiteral"
 
 	// And indicates that the Type is an intersection of other types.
 	And Kind = "and"

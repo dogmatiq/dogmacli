@@ -2,6 +2,972 @@
 
 package lsp
 
+import "fmt"
+
+// A set of predefined token types. This set is not fixed an clients can
+// specify additional token types via the corresponding client
+// capabilities.
+type SemanticTokenTypes string
+
+const (
+	SemanticTokenTypesNamespace SemanticTokenTypes = "namespace"
+	// Represents a generic type. Acts as a fallback for types which can't be
+	// mapped to a specific type like class or enum.
+	SemanticTokenTypesType          SemanticTokenTypes = "type"
+	SemanticTokenTypesClass         SemanticTokenTypes = "class"
+	SemanticTokenTypesEnum          SemanticTokenTypes = "enum"
+	SemanticTokenTypesInterface     SemanticTokenTypes = "interface"
+	SemanticTokenTypesStruct        SemanticTokenTypes = "struct"
+	SemanticTokenTypesTypeParameter SemanticTokenTypes = "typeParameter"
+	SemanticTokenTypesParameter     SemanticTokenTypes = "parameter"
+	SemanticTokenTypesVariable      SemanticTokenTypes = "variable"
+	SemanticTokenTypesProperty      SemanticTokenTypes = "property"
+	SemanticTokenTypesEnumMember    SemanticTokenTypes = "enumMember"
+	SemanticTokenTypesEvent         SemanticTokenTypes = "event"
+	SemanticTokenTypesFunction      SemanticTokenTypes = "function"
+	SemanticTokenTypesMethod        SemanticTokenTypes = "method"
+	SemanticTokenTypesMacro         SemanticTokenTypes = "macro"
+	SemanticTokenTypesKeyword       SemanticTokenTypes = "keyword"
+	SemanticTokenTypesModifier      SemanticTokenTypes = "modifier"
+	SemanticTokenTypesComment       SemanticTokenTypes = "comment"
+	SemanticTokenTypesString        SemanticTokenTypes = "string"
+	SemanticTokenTypesNumber        SemanticTokenTypes = "number"
+	SemanticTokenTypesRegexp        SemanticTokenTypes = "regexp"
+	SemanticTokenTypesOperator      SemanticTokenTypes = "operator"
+	SemanticTokenTypesDecorator     SemanticTokenTypes = "decorator"
+)
+
+// Validate returns an error if x is invalid.
+func (x SemanticTokenTypes) Validate() error {
+	return nil
+}
+
+// String returns the string representation of x.
+func (x SemanticTokenTypes) String() string {
+	switch x {
+	case SemanticTokenTypesNamespace:
+		return "SemanticTokenTypes(namespace)"
+	case SemanticTokenTypesType:
+		return "SemanticTokenTypes(type)"
+	case SemanticTokenTypesClass:
+		return "SemanticTokenTypes(class)"
+	case SemanticTokenTypesEnum:
+		return "SemanticTokenTypes(enum)"
+	case SemanticTokenTypesInterface:
+		return "SemanticTokenTypes(interface)"
+	case SemanticTokenTypesStruct:
+		return "SemanticTokenTypes(struct)"
+	case SemanticTokenTypesTypeParameter:
+		return "SemanticTokenTypes(typeParameter)"
+	case SemanticTokenTypesParameter:
+		return "SemanticTokenTypes(parameter)"
+	case SemanticTokenTypesVariable:
+		return "SemanticTokenTypes(variable)"
+	case SemanticTokenTypesProperty:
+		return "SemanticTokenTypes(property)"
+	case SemanticTokenTypesEnumMember:
+		return "SemanticTokenTypes(enumMember)"
+	case SemanticTokenTypesEvent:
+		return "SemanticTokenTypes(event)"
+	case SemanticTokenTypesFunction:
+		return "SemanticTokenTypes(function)"
+	case SemanticTokenTypesMethod:
+		return "SemanticTokenTypes(method)"
+	case SemanticTokenTypesMacro:
+		return "SemanticTokenTypes(macro)"
+	case SemanticTokenTypesKeyword:
+		return "SemanticTokenTypes(keyword)"
+	case SemanticTokenTypesModifier:
+		return "SemanticTokenTypes(modifier)"
+	case SemanticTokenTypesComment:
+		return "SemanticTokenTypes(comment)"
+	case SemanticTokenTypesString:
+		return "SemanticTokenTypes(string)"
+	case SemanticTokenTypesNumber:
+		return "SemanticTokenTypes(number)"
+	case SemanticTokenTypesRegexp:
+		return "SemanticTokenTypes(regexp)"
+	case SemanticTokenTypesOperator:
+		return "SemanticTokenTypes(operator)"
+	case SemanticTokenTypesDecorator:
+		return "SemanticTokenTypes(decorator)"
+	default:
+		return fmt.Sprintf("SemanticTokenTypes(%v, custom)", string(x))
+	}
+}
+
+// A set of predefined token modifiers. This set is not fixed an clients
+// can specify additional token types via the corresponding client
+// capabilities.
+type SemanticTokenModifiers string
+
+const (
+	SemanticTokenModifiersDeclaration    SemanticTokenModifiers = "declaration"
+	SemanticTokenModifiersDefinition     SemanticTokenModifiers = "definition"
+	SemanticTokenModifiersReadonly       SemanticTokenModifiers = "readonly"
+	SemanticTokenModifiersStatic         SemanticTokenModifiers = "static"
+	SemanticTokenModifiersDeprecated     SemanticTokenModifiers = "deprecated"
+	SemanticTokenModifiersAbstract       SemanticTokenModifiers = "abstract"
+	SemanticTokenModifiersAsync          SemanticTokenModifiers = "async"
+	SemanticTokenModifiersModification   SemanticTokenModifiers = "modification"
+	SemanticTokenModifiersDocumentation  SemanticTokenModifiers = "documentation"
+	SemanticTokenModifiersDefaultLibrary SemanticTokenModifiers = "defaultLibrary"
+)
+
+// Validate returns an error if x is invalid.
+func (x SemanticTokenModifiers) Validate() error {
+	return nil
+}
+
+// String returns the string representation of x.
+func (x SemanticTokenModifiers) String() string {
+	switch x {
+	case SemanticTokenModifiersDeclaration:
+		return "SemanticTokenModifiers(declaration)"
+	case SemanticTokenModifiersDefinition:
+		return "SemanticTokenModifiers(definition)"
+	case SemanticTokenModifiersReadonly:
+		return "SemanticTokenModifiers(readonly)"
+	case SemanticTokenModifiersStatic:
+		return "SemanticTokenModifiers(static)"
+	case SemanticTokenModifiersDeprecated:
+		return "SemanticTokenModifiers(deprecated)"
+	case SemanticTokenModifiersAbstract:
+		return "SemanticTokenModifiers(abstract)"
+	case SemanticTokenModifiersAsync:
+		return "SemanticTokenModifiers(async)"
+	case SemanticTokenModifiersModification:
+		return "SemanticTokenModifiers(modification)"
+	case SemanticTokenModifiersDocumentation:
+		return "SemanticTokenModifiers(documentation)"
+	case SemanticTokenModifiersDefaultLibrary:
+		return "SemanticTokenModifiers(defaultLibrary)"
+	default:
+		return fmt.Sprintf("SemanticTokenModifiers(%v, custom)", string(x))
+	}
+}
+
+// The document diagnostic report kinds.
+type DocumentDiagnosticReportKind string
+
+const (
+	// A diagnostic report with a full set of problems.
+	DocumentDiagnosticReportKindFull DocumentDiagnosticReportKind = "full"
+	// A report indicating that the last returned report is still accurate.
+	DocumentDiagnosticReportKindUnchanged DocumentDiagnosticReportKind = "unchanged"
+)
+
+// Validate returns an error if x is invalid.
+func (x DocumentDiagnosticReportKind) Validate() error {
+	switch x {
+	case DocumentDiagnosticReportKindFull:
+	case DocumentDiagnosticReportKindUnchanged:
+	default:
+		return fmt.Errorf("invalid DocumentDiagnosticReportKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x DocumentDiagnosticReportKind) String() string {
+	switch x {
+	case DocumentDiagnosticReportKindFull:
+		return "DocumentDiagnosticReportKind(Full)"
+	case DocumentDiagnosticReportKindUnchanged:
+		return "DocumentDiagnosticReportKind(Unchanged)"
+	default:
+		return fmt.Sprintf("DocumentDiagnosticReportKind(%v, invalid)", string(x))
+	}
+}
+
+// Predefined error codes.
+type ErrorCodes int32
+
+const (
+	ErrorCodesParseError     ErrorCodes = -32700
+	ErrorCodesInvalidRequest ErrorCodes = -32600
+	ErrorCodesMethodNotFound ErrorCodes = -32601
+	ErrorCodesInvalidParams  ErrorCodes = -32602
+	ErrorCodesInternalError  ErrorCodes = -32603
+	// Error code indicating that a server received a notification or request
+	// before the server has received the `initialize` request.
+	ErrorCodesServerNotInitialized ErrorCodes = -32002
+	ErrorCodesUnknownErrorCode     ErrorCodes = -32001
+)
+
+// Validate returns an error if x is invalid.
+func (x ErrorCodes) Validate() error {
+	return nil
+}
+
+// String returns the string representation of x.
+func (x ErrorCodes) String() string {
+	switch x {
+	case ErrorCodesParseError:
+		return "ErrorCodes(ParseError)"
+	case ErrorCodesInvalidRequest:
+		return "ErrorCodes(InvalidRequest)"
+	case ErrorCodesMethodNotFound:
+		return "ErrorCodes(MethodNotFound)"
+	case ErrorCodesInvalidParams:
+		return "ErrorCodes(InvalidParams)"
+	case ErrorCodesInternalError:
+		return "ErrorCodes(InternalError)"
+	case ErrorCodesServerNotInitialized:
+		return "ErrorCodes(ServerNotInitialized)"
+	case ErrorCodesUnknownErrorCode:
+		return "ErrorCodes(UnknownErrorCode)"
+	default:
+		return fmt.Sprintf("ErrorCodes(%v, custom)", int32(x))
+	}
+}
+
+type LSPErrorCodes int32
+
+const (
+	// A request failed but it was syntactically correct, e.g the method name
+	// was known and the parameters were valid. The error message should
+	// contain human readable information about why the request failed.
+	LSPErrorCodesRequestFailed LSPErrorCodes = -32803
+	// The server cancelled the request. This error code should only be used
+	// for requests that explicitly support being server cancellable.
+	LSPErrorCodesServerCancelled LSPErrorCodes = -32802
+	// The server detected that the content of a document got modified outside
+	// normal conditions. A server should NOT send this error code if it
+	// detects a content change in it unprocessed messages. The result even
+	// computed on an older state might still be useful for the client.
+	//
+	// If a client decides that a result is not of any use anymore the client
+	// should cancel the request.
+	LSPErrorCodesContentModified LSPErrorCodes = -32801
+	// The client has canceled a request and a server as detected the cancel.
+	LSPErrorCodesRequestCancelled LSPErrorCodes = -32800
+)
+
+// Validate returns an error if x is invalid.
+func (x LSPErrorCodes) Validate() error {
+	return nil
+}
+
+// String returns the string representation of x.
+func (x LSPErrorCodes) String() string {
+	switch x {
+	case LSPErrorCodesRequestFailed:
+		return "LSPErrorCodes(RequestFailed)"
+	case LSPErrorCodesServerCancelled:
+		return "LSPErrorCodes(ServerCancelled)"
+	case LSPErrorCodesContentModified:
+		return "LSPErrorCodes(ContentModified)"
+	case LSPErrorCodesRequestCancelled:
+		return "LSPErrorCodes(RequestCancelled)"
+	default:
+		return fmt.Sprintf("LSPErrorCodes(%v, custom)", int32(x))
+	}
+}
+
+// A set of predefined range kinds.
+type FoldingRangeKind string
+
+const (
+	// Folding range for a comment
+	FoldingRangeKindComment FoldingRangeKind = "comment"
+	// Folding range for an import or include
+	FoldingRangeKindImports FoldingRangeKind = "imports"
+	// Folding range for a region (e.g. `#region`)
+	FoldingRangeKindRegion FoldingRangeKind = "region"
+)
+
+// Validate returns an error if x is invalid.
+func (x FoldingRangeKind) Validate() error {
+	return nil
+}
+
+// String returns the string representation of x.
+func (x FoldingRangeKind) String() string {
+	switch x {
+	case FoldingRangeKindComment:
+		return "FoldingRangeKind(Comment)"
+	case FoldingRangeKindImports:
+		return "FoldingRangeKind(Imports)"
+	case FoldingRangeKindRegion:
+		return "FoldingRangeKind(Region)"
+	default:
+		return fmt.Sprintf("FoldingRangeKind(%v, custom)", string(x))
+	}
+}
+
+// A symbol kind.
+type SymbolKind uint32
+
+const (
+	SymbolKindFile          SymbolKind = 1
+	SymbolKindModule        SymbolKind = 2
+	SymbolKindNamespace     SymbolKind = 3
+	SymbolKindPackage       SymbolKind = 4
+	SymbolKindClass         SymbolKind = 5
+	SymbolKindMethod        SymbolKind = 6
+	SymbolKindProperty      SymbolKind = 7
+	SymbolKindField         SymbolKind = 8
+	SymbolKindConstructor   SymbolKind = 9
+	SymbolKindEnum          SymbolKind = 10
+	SymbolKindInterface     SymbolKind = 11
+	SymbolKindFunction      SymbolKind = 12
+	SymbolKindVariable      SymbolKind = 13
+	SymbolKindConstant      SymbolKind = 14
+	SymbolKindString        SymbolKind = 15
+	SymbolKindNumber        SymbolKind = 16
+	SymbolKindBoolean       SymbolKind = 17
+	SymbolKindArray         SymbolKind = 18
+	SymbolKindObject        SymbolKind = 19
+	SymbolKindKey           SymbolKind = 20
+	SymbolKindNull          SymbolKind = 21
+	SymbolKindEnumMember    SymbolKind = 22
+	SymbolKindStruct        SymbolKind = 23
+	SymbolKindEvent         SymbolKind = 24
+	SymbolKindOperator      SymbolKind = 25
+	SymbolKindTypeParameter SymbolKind = 26
+)
+
+// Validate returns an error if x is invalid.
+func (x SymbolKind) Validate() error {
+	switch x {
+	case SymbolKindFile:
+	case SymbolKindModule:
+	case SymbolKindNamespace:
+	case SymbolKindPackage:
+	case SymbolKindClass:
+	case SymbolKindMethod:
+	case SymbolKindProperty:
+	case SymbolKindField:
+	case SymbolKindConstructor:
+	case SymbolKindEnum:
+	case SymbolKindInterface:
+	case SymbolKindFunction:
+	case SymbolKindVariable:
+	case SymbolKindConstant:
+	case SymbolKindString:
+	case SymbolKindNumber:
+	case SymbolKindBoolean:
+	case SymbolKindArray:
+	case SymbolKindObject:
+	case SymbolKindKey:
+	case SymbolKindNull:
+	case SymbolKindEnumMember:
+	case SymbolKindStruct:
+	case SymbolKindEvent:
+	case SymbolKindOperator:
+	case SymbolKindTypeParameter:
+	default:
+		return fmt.Errorf("invalid SymbolKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x SymbolKind) String() string {
+	switch x {
+	case SymbolKindFile:
+		return "SymbolKind(File)"
+	case SymbolKindModule:
+		return "SymbolKind(Module)"
+	case SymbolKindNamespace:
+		return "SymbolKind(Namespace)"
+	case SymbolKindPackage:
+		return "SymbolKind(Package)"
+	case SymbolKindClass:
+		return "SymbolKind(Class)"
+	case SymbolKindMethod:
+		return "SymbolKind(Method)"
+	case SymbolKindProperty:
+		return "SymbolKind(Property)"
+	case SymbolKindField:
+		return "SymbolKind(Field)"
+	case SymbolKindConstructor:
+		return "SymbolKind(Constructor)"
+	case SymbolKindEnum:
+		return "SymbolKind(Enum)"
+	case SymbolKindInterface:
+		return "SymbolKind(Interface)"
+	case SymbolKindFunction:
+		return "SymbolKind(Function)"
+	case SymbolKindVariable:
+		return "SymbolKind(Variable)"
+	case SymbolKindConstant:
+		return "SymbolKind(Constant)"
+	case SymbolKindString:
+		return "SymbolKind(String)"
+	case SymbolKindNumber:
+		return "SymbolKind(Number)"
+	case SymbolKindBoolean:
+		return "SymbolKind(Boolean)"
+	case SymbolKindArray:
+		return "SymbolKind(Array)"
+	case SymbolKindObject:
+		return "SymbolKind(Object)"
+	case SymbolKindKey:
+		return "SymbolKind(Key)"
+	case SymbolKindNull:
+		return "SymbolKind(Null)"
+	case SymbolKindEnumMember:
+		return "SymbolKind(EnumMember)"
+	case SymbolKindStruct:
+		return "SymbolKind(Struct)"
+	case SymbolKindEvent:
+		return "SymbolKind(Event)"
+	case SymbolKindOperator:
+		return "SymbolKind(Operator)"
+	case SymbolKindTypeParameter:
+		return "SymbolKind(TypeParameter)"
+	default:
+		return fmt.Sprintf("SymbolKind(%v, invalid)", uint32(x))
+	}
+}
+
+// Symbol tags are extra annotations that tweak the rendering of a symbol.
+type SymbolTag uint32
+
+const (
+	// Render a symbol as obsolete, usually using a strike-out.
+	SymbolTagDeprecated SymbolTag = 1
+)
+
+// Validate returns an error if x is invalid.
+func (x SymbolTag) Validate() error {
+	switch x {
+	case SymbolTagDeprecated:
+	default:
+		return fmt.Errorf("invalid SymbolTag: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x SymbolTag) String() string {
+	switch x {
+	case SymbolTagDeprecated:
+		return "SymbolTag(Deprecated)"
+	default:
+		return fmt.Sprintf("SymbolTag(%v, invalid)", uint32(x))
+	}
+}
+
+// Moniker uniqueness level to define scope of the moniker.
+type UniquenessLevel string
+
+const (
+	// The moniker is only unique inside a document
+	UniquenessLevelDocument UniquenessLevel = "document"
+	// The moniker is unique inside a project for which a dump got created
+	UniquenessLevelProject UniquenessLevel = "project"
+	// The moniker is unique inside the group to which a project belongs
+	UniquenessLevelGroup UniquenessLevel = "group"
+	// The moniker is unique inside the moniker scheme.
+	UniquenessLevelScheme UniquenessLevel = "scheme"
+	// The moniker is globally unique
+	UniquenessLevelGlobal UniquenessLevel = "global"
+)
+
+// Validate returns an error if x is invalid.
+func (x UniquenessLevel) Validate() error {
+	switch x {
+	case UniquenessLevelDocument:
+	case UniquenessLevelProject:
+	case UniquenessLevelGroup:
+	case UniquenessLevelScheme:
+	case UniquenessLevelGlobal:
+	default:
+		return fmt.Errorf("invalid UniquenessLevel: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x UniquenessLevel) String() string {
+	switch x {
+	case UniquenessLevelDocument:
+		return "UniquenessLevel(document)"
+	case UniquenessLevelProject:
+		return "UniquenessLevel(project)"
+	case UniquenessLevelGroup:
+		return "UniquenessLevel(group)"
+	case UniquenessLevelScheme:
+		return "UniquenessLevel(scheme)"
+	case UniquenessLevelGlobal:
+		return "UniquenessLevel(global)"
+	default:
+		return fmt.Sprintf("UniquenessLevel(%v, invalid)", string(x))
+	}
+}
+
+// The moniker kind.
+type MonikerKind string
+
+const (
+	// The moniker represent a symbol that is imported into a project
+	MonikerKindImport MonikerKind = "import"
+	// The moniker represents a symbol that is exported from a project
+	MonikerKindExport MonikerKind = "export"
+	// The moniker represents a symbol that is local to a project (e.g. a local
+	// variable of a function, a class not visible outside the project, ...)
+	MonikerKindLocal MonikerKind = "local"
+)
+
+// Validate returns an error if x is invalid.
+func (x MonikerKind) Validate() error {
+	switch x {
+	case MonikerKindImport:
+	case MonikerKindExport:
+	case MonikerKindLocal:
+	default:
+		return fmt.Errorf("invalid MonikerKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x MonikerKind) String() string {
+	switch x {
+	case MonikerKindImport:
+		return "MonikerKind(import)"
+	case MonikerKindExport:
+		return "MonikerKind(export)"
+	case MonikerKindLocal:
+		return "MonikerKind(local)"
+	default:
+		return fmt.Sprintf("MonikerKind(%v, invalid)", string(x))
+	}
+}
+
+// Inlay hint kinds.
+type InlayHintKind uint32
+
+const (
+	// An inlay hint that for a type annotation.
+	InlayHintKindType InlayHintKind = 1
+	// An inlay hint that is for a parameter.
+	InlayHintKindParameter InlayHintKind = 2
+)
+
+// Validate returns an error if x is invalid.
+func (x InlayHintKind) Validate() error {
+	switch x {
+	case InlayHintKindType:
+	case InlayHintKindParameter:
+	default:
+		return fmt.Errorf("invalid InlayHintKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x InlayHintKind) String() string {
+	switch x {
+	case InlayHintKindType:
+		return "InlayHintKind(Type)"
+	case InlayHintKindParameter:
+		return "InlayHintKind(Parameter)"
+	default:
+		return fmt.Sprintf("InlayHintKind(%v, invalid)", uint32(x))
+	}
+}
+
+// The message type
+type MessageType uint32
+
+const (
+	// An error message.
+	MessageTypeError MessageType = 1
+	// A warning message.
+	MessageTypeWarning MessageType = 2
+	// An information message.
+	MessageTypeInfo MessageType = 3
+	// A log message.
+	MessageTypeLog MessageType = 4
+)
+
+// Validate returns an error if x is invalid.
+func (x MessageType) Validate() error {
+	switch x {
+	case MessageTypeError:
+	case MessageTypeWarning:
+	case MessageTypeInfo:
+	case MessageTypeLog:
+	default:
+		return fmt.Errorf("invalid MessageType: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x MessageType) String() string {
+	switch x {
+	case MessageTypeError:
+		return "MessageType(Error)"
+	case MessageTypeWarning:
+		return "MessageType(Warning)"
+	case MessageTypeInfo:
+		return "MessageType(Info)"
+	case MessageTypeLog:
+		return "MessageType(Log)"
+	default:
+		return fmt.Sprintf("MessageType(%v, invalid)", uint32(x))
+	}
+}
+
+// Defines how the host (editor) should sync document changes to the
+// language server.
+type TextDocumentSyncKind uint32
+
+const (
+	// Documents should not be synced at all.
+	TextDocumentSyncKindNone TextDocumentSyncKind = 0
+	// Documents are synced by always sending the full content of the document.
+	TextDocumentSyncKindFull TextDocumentSyncKind = 1
+	// Documents are synced by sending the full content on open. After that
+	// only incremental updates to the document are send.
+	TextDocumentSyncKindIncremental TextDocumentSyncKind = 2
+)
+
+// Validate returns an error if x is invalid.
+func (x TextDocumentSyncKind) Validate() error {
+	switch x {
+	case TextDocumentSyncKindNone:
+	case TextDocumentSyncKindFull:
+	case TextDocumentSyncKindIncremental:
+	default:
+		return fmt.Errorf("invalid TextDocumentSyncKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x TextDocumentSyncKind) String() string {
+	switch x {
+	case TextDocumentSyncKindNone:
+		return "TextDocumentSyncKind(None)"
+	case TextDocumentSyncKindFull:
+		return "TextDocumentSyncKind(Full)"
+	case TextDocumentSyncKindIncremental:
+		return "TextDocumentSyncKind(Incremental)"
+	default:
+		return fmt.Sprintf("TextDocumentSyncKind(%v, invalid)", uint32(x))
+	}
+}
+
+// Represents reasons why a text document is saved.
+type TextDocumentSaveReason uint32
+
+const (
+	// Manually triggered, e.g. by the user pressing save, by starting
+	// debugging, or by an API call.
+	TextDocumentSaveReasonManual TextDocumentSaveReason = 1
+	// Automatic after a delay.
+	TextDocumentSaveReasonAfterDelay TextDocumentSaveReason = 2
+	// When the editor lost focus.
+	TextDocumentSaveReasonFocusOut TextDocumentSaveReason = 3
+)
+
+// Validate returns an error if x is invalid.
+func (x TextDocumentSaveReason) Validate() error {
+	switch x {
+	case TextDocumentSaveReasonManual:
+	case TextDocumentSaveReasonAfterDelay:
+	case TextDocumentSaveReasonFocusOut:
+	default:
+		return fmt.Errorf("invalid TextDocumentSaveReason: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x TextDocumentSaveReason) String() string {
+	switch x {
+	case TextDocumentSaveReasonManual:
+		return "TextDocumentSaveReason(Manual)"
+	case TextDocumentSaveReasonAfterDelay:
+		return "TextDocumentSaveReason(AfterDelay)"
+	case TextDocumentSaveReasonFocusOut:
+		return "TextDocumentSaveReason(FocusOut)"
+	default:
+		return fmt.Sprintf("TextDocumentSaveReason(%v, invalid)", uint32(x))
+	}
+}
+
+// The kind of a completion entry.
+type CompletionItemKind uint32
+
+const (
+	CompletionItemKindText          CompletionItemKind = 1
+	CompletionItemKindMethod        CompletionItemKind = 2
+	CompletionItemKindFunction      CompletionItemKind = 3
+	CompletionItemKindConstructor   CompletionItemKind = 4
+	CompletionItemKindField         CompletionItemKind = 5
+	CompletionItemKindVariable      CompletionItemKind = 6
+	CompletionItemKindClass         CompletionItemKind = 7
+	CompletionItemKindInterface     CompletionItemKind = 8
+	CompletionItemKindModule        CompletionItemKind = 9
+	CompletionItemKindProperty      CompletionItemKind = 10
+	CompletionItemKindUnit          CompletionItemKind = 11
+	CompletionItemKindValue         CompletionItemKind = 12
+	CompletionItemKindEnum          CompletionItemKind = 13
+	CompletionItemKindKeyword       CompletionItemKind = 14
+	CompletionItemKindSnippet       CompletionItemKind = 15
+	CompletionItemKindColor         CompletionItemKind = 16
+	CompletionItemKindFile          CompletionItemKind = 17
+	CompletionItemKindReference     CompletionItemKind = 18
+	CompletionItemKindFolder        CompletionItemKind = 19
+	CompletionItemKindEnumMember    CompletionItemKind = 20
+	CompletionItemKindConstant      CompletionItemKind = 21
+	CompletionItemKindStruct        CompletionItemKind = 22
+	CompletionItemKindEvent         CompletionItemKind = 23
+	CompletionItemKindOperator      CompletionItemKind = 24
+	CompletionItemKindTypeParameter CompletionItemKind = 25
+)
+
+// Validate returns an error if x is invalid.
+func (x CompletionItemKind) Validate() error {
+	switch x {
+	case CompletionItemKindText:
+	case CompletionItemKindMethod:
+	case CompletionItemKindFunction:
+	case CompletionItemKindConstructor:
+	case CompletionItemKindField:
+	case CompletionItemKindVariable:
+	case CompletionItemKindClass:
+	case CompletionItemKindInterface:
+	case CompletionItemKindModule:
+	case CompletionItemKindProperty:
+	case CompletionItemKindUnit:
+	case CompletionItemKindValue:
+	case CompletionItemKindEnum:
+	case CompletionItemKindKeyword:
+	case CompletionItemKindSnippet:
+	case CompletionItemKindColor:
+	case CompletionItemKindFile:
+	case CompletionItemKindReference:
+	case CompletionItemKindFolder:
+	case CompletionItemKindEnumMember:
+	case CompletionItemKindConstant:
+	case CompletionItemKindStruct:
+	case CompletionItemKindEvent:
+	case CompletionItemKindOperator:
+	case CompletionItemKindTypeParameter:
+	default:
+		return fmt.Errorf("invalid CompletionItemKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x CompletionItemKind) String() string {
+	switch x {
+	case CompletionItemKindText:
+		return "CompletionItemKind(Text)"
+	case CompletionItemKindMethod:
+		return "CompletionItemKind(Method)"
+	case CompletionItemKindFunction:
+		return "CompletionItemKind(Function)"
+	case CompletionItemKindConstructor:
+		return "CompletionItemKind(Constructor)"
+	case CompletionItemKindField:
+		return "CompletionItemKind(Field)"
+	case CompletionItemKindVariable:
+		return "CompletionItemKind(Variable)"
+	case CompletionItemKindClass:
+		return "CompletionItemKind(Class)"
+	case CompletionItemKindInterface:
+		return "CompletionItemKind(Interface)"
+	case CompletionItemKindModule:
+		return "CompletionItemKind(Module)"
+	case CompletionItemKindProperty:
+		return "CompletionItemKind(Property)"
+	case CompletionItemKindUnit:
+		return "CompletionItemKind(Unit)"
+	case CompletionItemKindValue:
+		return "CompletionItemKind(Value)"
+	case CompletionItemKindEnum:
+		return "CompletionItemKind(Enum)"
+	case CompletionItemKindKeyword:
+		return "CompletionItemKind(Keyword)"
+	case CompletionItemKindSnippet:
+		return "CompletionItemKind(Snippet)"
+	case CompletionItemKindColor:
+		return "CompletionItemKind(Color)"
+	case CompletionItemKindFile:
+		return "CompletionItemKind(File)"
+	case CompletionItemKindReference:
+		return "CompletionItemKind(Reference)"
+	case CompletionItemKindFolder:
+		return "CompletionItemKind(Folder)"
+	case CompletionItemKindEnumMember:
+		return "CompletionItemKind(EnumMember)"
+	case CompletionItemKindConstant:
+		return "CompletionItemKind(Constant)"
+	case CompletionItemKindStruct:
+		return "CompletionItemKind(Struct)"
+	case CompletionItemKindEvent:
+		return "CompletionItemKind(Event)"
+	case CompletionItemKindOperator:
+		return "CompletionItemKind(Operator)"
+	case CompletionItemKindTypeParameter:
+		return "CompletionItemKind(TypeParameter)"
+	default:
+		return fmt.Sprintf("CompletionItemKind(%v, invalid)", uint32(x))
+	}
+}
+
+// Completion item tags are extra annotations that tweak the rendering of a
+// completion item.
+type CompletionItemTag uint32
+
+const (
+	// Render a completion as obsolete, usually using a strike-out.
+	CompletionItemTagDeprecated CompletionItemTag = 1
+)
+
+// Validate returns an error if x is invalid.
+func (x CompletionItemTag) Validate() error {
+	switch x {
+	case CompletionItemTagDeprecated:
+	default:
+		return fmt.Errorf("invalid CompletionItemTag: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x CompletionItemTag) String() string {
+	switch x {
+	case CompletionItemTagDeprecated:
+		return "CompletionItemTag(Deprecated)"
+	default:
+		return fmt.Sprintf("CompletionItemTag(%v, invalid)", uint32(x))
+	}
+}
+
+// Defines whether the insert text in a completion item should be
+// interpreted as plain text or a snippet.
+type InsertTextFormat uint32
+
+const (
+	// The primary text to be inserted is treated as a plain string.
+	InsertTextFormatPlainText InsertTextFormat = 1
+	// The primary text to be inserted is treated as a snippet.
+	//
+	// A snippet can define tab stops and placeholders with `$1`, `$2` and
+	// `${3:foo}`. `$0` defines the final tab stop, it defaults to the end of
+	// the snippet. Placeholders with equal identifiers are linked, that is
+	// typing in one will update others too.
+	//
+	// See also: https://microsoft.github.io/language-server-protocol/
+	// specifications/specification-current/#snippet_syntax
+	InsertTextFormatSnippet InsertTextFormat = 2
+)
+
+// Validate returns an error if x is invalid.
+func (x InsertTextFormat) Validate() error {
+	switch x {
+	case InsertTextFormatPlainText:
+	case InsertTextFormatSnippet:
+	default:
+		return fmt.Errorf("invalid InsertTextFormat: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x InsertTextFormat) String() string {
+	switch x {
+	case InsertTextFormatPlainText:
+		return "InsertTextFormat(PlainText)"
+	case InsertTextFormatSnippet:
+		return "InsertTextFormat(Snippet)"
+	default:
+		return fmt.Sprintf("InsertTextFormat(%v, invalid)", uint32(x))
+	}
+}
+
+// How whitespace and indentation is handled during completion item
+// insertion.
+type InsertTextMode uint32
+
+const (
+	// The insertion or replace strings is taken as it is. If the value is
+	// multi line the lines below the cursor will be inserted using the
+	// indentation defined in the string value. The client will not apply any
+	// kind of adjustments to the string.
+	InsertTextModeAsIs InsertTextMode = 1
+	// The editor adjusts leading whitespace of new lines so that they match
+	// the indentation up to the cursor of the line for which the item is
+	// accepted.
+	//
+	// Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a multi
+	// line completion item is indented using 2 tabs and all following lines
+	// inserted will be indented using 2 tabs as well.
+	InsertTextModeAdjustIndentation InsertTextMode = 2
+)
+
+// Validate returns an error if x is invalid.
+func (x InsertTextMode) Validate() error {
+	switch x {
+	case InsertTextModeAsIs:
+	case InsertTextModeAdjustIndentation:
+	default:
+		return fmt.Errorf("invalid InsertTextMode: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x InsertTextMode) String() string {
+	switch x {
+	case InsertTextModeAsIs:
+		return "InsertTextMode(asIs)"
+	case InsertTextModeAdjustIndentation:
+		return "InsertTextMode(adjustIndentation)"
+	default:
+		return fmt.Sprintf("InsertTextMode(%v, invalid)", uint32(x))
+	}
+}
+
+// A document highlight kind.
+type DocumentHighlightKind uint32
+
+const (
+	// A textual occurrence.
+	DocumentHighlightKindText DocumentHighlightKind = 1
+	// Read-access of a symbol, like reading a variable.
+	DocumentHighlightKindRead DocumentHighlightKind = 2
+	// Write-access of a symbol, like writing to a variable.
+	DocumentHighlightKindWrite DocumentHighlightKind = 3
+)
+
+// Validate returns an error if x is invalid.
+func (x DocumentHighlightKind) Validate() error {
+	switch x {
+	case DocumentHighlightKindText:
+	case DocumentHighlightKindRead:
+	case DocumentHighlightKindWrite:
+	default:
+		return fmt.Errorf("invalid DocumentHighlightKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x DocumentHighlightKind) String() string {
+	switch x {
+	case DocumentHighlightKindText:
+		return "DocumentHighlightKind(Text)"
+	case DocumentHighlightKindRead:
+		return "DocumentHighlightKind(Read)"
+	case DocumentHighlightKindWrite:
+		return "DocumentHighlightKind(Write)"
+	default:
+		return fmt.Sprintf("DocumentHighlightKind(%v, invalid)", uint32(x))
+	}
+}
+
 // A set of predefined code action kinds
 type CodeActionKind string
 
@@ -57,72 +1023,215 @@ const (
 	CodeActionKindSourceFixAll CodeActionKind = "source.fixAll"
 )
 
-// The reason why code actions were requested.
-type CodeActionTriggerKind uint32
+// Validate returns an error if x is invalid.
+func (x CodeActionKind) Validate() error {
+	return nil
+}
+
+// String returns the string representation of x.
+func (x CodeActionKind) String() string {
+	switch x {
+	case CodeActionKindEmpty:
+		return "CodeActionKind(Empty)"
+	case CodeActionKindQuickFix:
+		return "CodeActionKind(QuickFix)"
+	case CodeActionKindRefactor:
+		return "CodeActionKind(Refactor)"
+	case CodeActionKindRefactorExtract:
+		return "CodeActionKind(RefactorExtract)"
+	case CodeActionKindRefactorInline:
+		return "CodeActionKind(RefactorInline)"
+	case CodeActionKindRefactorRewrite:
+		return "CodeActionKind(RefactorRewrite)"
+	case CodeActionKindSource:
+		return "CodeActionKind(Source)"
+	case CodeActionKindSourceOrganizeImports:
+		return "CodeActionKind(SourceOrganizeImports)"
+	case CodeActionKindSourceFixAll:
+		return "CodeActionKind(SourceFixAll)"
+	default:
+		return fmt.Sprintf("CodeActionKind(%v, custom)", string(x))
+	}
+}
+
+type TraceValues string
 
 const (
-	// Code actions were explicitly requested by the user or by an extension.
-	CodeActionTriggerKindInvoked CodeActionTriggerKind = 1
-	// Code actions were requested automatically.
+	// Turn tracing off.
+	TraceValuesOff TraceValues = "off"
+	// Trace messages only.
+	TraceValuesMessages TraceValues = "messages"
+	// Verbose message tracing.
+	TraceValuesVerbose TraceValues = "verbose"
+)
+
+// Validate returns an error if x is invalid.
+func (x TraceValues) Validate() error {
+	switch x {
+	case TraceValuesOff:
+	case TraceValuesMessages:
+	case TraceValuesVerbose:
+	default:
+		return fmt.Errorf("invalid TraceValues: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x TraceValues) String() string {
+	switch x {
+	case TraceValuesOff:
+		return "TraceValues(Off)"
+	case TraceValuesMessages:
+		return "TraceValues(Messages)"
+	case TraceValuesVerbose:
+		return "TraceValues(Verbose)"
+	default:
+		return fmt.Sprintf("TraceValues(%v, invalid)", string(x))
+	}
+}
+
+// Describes the content type that a client supports in various result
+// literals like `Hover`, `ParameterInfo` or `CompletionItem`.
+//
+// Please note that `MarkupKinds` must not start with a `$`. This kinds are
+// reserved for internal usage.
+type MarkupKind string
+
+const (
+	// Plain text is supported as a content format
+	MarkupKindPlainText MarkupKind = "plaintext"
+	// Markdown is supported as a content format
+	MarkupKindMarkdown MarkupKind = "markdown"
+)
+
+// Validate returns an error if x is invalid.
+func (x MarkupKind) Validate() error {
+	switch x {
+	case MarkupKindPlainText:
+	case MarkupKindMarkdown:
+	default:
+		return fmt.Errorf("invalid MarkupKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x MarkupKind) String() string {
+	switch x {
+	case MarkupKindPlainText:
+		return "MarkupKind(PlainText)"
+	case MarkupKindMarkdown:
+		return "MarkupKind(Markdown)"
+	default:
+		return fmt.Sprintf("MarkupKind(%v, invalid)", string(x))
+	}
+}
+
+// A set of predefined position encoding kinds.
+type PositionEncodingKind string
+
+const (
+	// Character offsets count UTF-8 code units (e.g. bytes).
+	PositionEncodingKindUTF8 PositionEncodingKind = "utf-8"
+	// Character offsets count UTF-16 code units.
 	//
-	// This typically happens when current selection in a file changes, but can
-	// also be triggered when file content changes.
-	CodeActionTriggerKindAutomatic CodeActionTriggerKind = 2
+	// This is the default and must always be supported by servers
+	PositionEncodingKindUTF16 PositionEncodingKind = "utf-16"
+	// Character offsets count UTF-32 code units.
+	//
+	// Implementation note: these are the same as Unicode codepoints, so this
+	// `PositionEncodingKind` may also be used for an encoding-agnostic
+	// representation of character offsets.
+	PositionEncodingKindUTF32 PositionEncodingKind = "utf-32"
 )
 
-// The kind of a completion entry.
-type CompletionItemKind uint32
+// Validate returns an error if x is invalid.
+func (x PositionEncodingKind) Validate() error {
+	return nil
+}
+
+// String returns the string representation of x.
+func (x PositionEncodingKind) String() string {
+	switch x {
+	case PositionEncodingKindUTF8:
+		return "PositionEncodingKind(UTF8)"
+	case PositionEncodingKindUTF16:
+		return "PositionEncodingKind(UTF16)"
+	case PositionEncodingKindUTF32:
+		return "PositionEncodingKind(UTF32)"
+	default:
+		return fmt.Sprintf("PositionEncodingKind(%v, custom)", string(x))
+	}
+}
+
+// The file event type
+type FileChangeType uint32
 
 const (
-	CompletionItemKindText          CompletionItemKind = 1
-	CompletionItemKindMethod        CompletionItemKind = 2
-	CompletionItemKindFunction      CompletionItemKind = 3
-	CompletionItemKindConstructor   CompletionItemKind = 4
-	CompletionItemKindField         CompletionItemKind = 5
-	CompletionItemKindVariable      CompletionItemKind = 6
-	CompletionItemKindClass         CompletionItemKind = 7
-	CompletionItemKindInterface     CompletionItemKind = 8
-	CompletionItemKindModule        CompletionItemKind = 9
-	CompletionItemKindProperty      CompletionItemKind = 10
-	CompletionItemKindUnit          CompletionItemKind = 11
-	CompletionItemKindValue         CompletionItemKind = 12
-	CompletionItemKindEnum          CompletionItemKind = 13
-	CompletionItemKindKeyword       CompletionItemKind = 14
-	CompletionItemKindSnippet       CompletionItemKind = 15
-	CompletionItemKindColor         CompletionItemKind = 16
-	CompletionItemKindFile          CompletionItemKind = 17
-	CompletionItemKindReference     CompletionItemKind = 18
-	CompletionItemKindFolder        CompletionItemKind = 19
-	CompletionItemKindEnumMember    CompletionItemKind = 20
-	CompletionItemKindConstant      CompletionItemKind = 21
-	CompletionItemKindStruct        CompletionItemKind = 22
-	CompletionItemKindEvent         CompletionItemKind = 23
-	CompletionItemKindOperator      CompletionItemKind = 24
-	CompletionItemKindTypeParameter CompletionItemKind = 25
+	// The file got created.
+	FileChangeTypeCreated FileChangeType = 1
+	// The file got changed.
+	FileChangeTypeChanged FileChangeType = 2
+	// The file got deleted.
+	FileChangeTypeDeleted FileChangeType = 3
 )
 
-// Completion item tags are extra annotations that tweak the rendering of a
-// completion item.
-type CompletionItemTag uint32
+// Validate returns an error if x is invalid.
+func (x FileChangeType) Validate() error {
+	switch x {
+	case FileChangeTypeCreated:
+	case FileChangeTypeChanged:
+	case FileChangeTypeDeleted:
+	default:
+		return fmt.Errorf("invalid FileChangeType: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x FileChangeType) String() string {
+	switch x {
+	case FileChangeTypeCreated:
+		return "FileChangeType(Created)"
+	case FileChangeTypeChanged:
+		return "FileChangeType(Changed)"
+	case FileChangeTypeDeleted:
+		return "FileChangeType(Deleted)"
+	default:
+		return fmt.Sprintf("FileChangeType(%v, invalid)", uint32(x))
+	}
+}
+
+type WatchKind uint32
 
 const (
-	// Render a completion as obsolete, usually using a strike-out.
-	CompletionItemTagDeprecated CompletionItemTag = 1
+	// Interested in create events.
+	WatchKindCreate WatchKind = 1
+	// Interested in change events
+	WatchKindChange WatchKind = 2
+	// Interested in delete events
+	WatchKindDelete WatchKind = 4
 )
 
-// How a completion was triggered
-type CompletionTriggerKind uint32
+// Validate returns an error if x is invalid.
+func (x WatchKind) Validate() error {
+	return nil
+}
 
-const (
-	// Completion was triggered by typing an identifier (24x7 code complete),
-	// manual invocation (e.g Ctrl+Space) or via API.
-	CompletionTriggerKindInvoked CompletionTriggerKind = 1
-	// Completion was triggered by a trigger character specified by the
-	// `triggerCharacters` properties of the `CompletionRegistrationOptions`.
-	CompletionTriggerKindTriggerCharacter CompletionTriggerKind = 2
-	// Completion was re-triggered as current completion list is incomplete
-	CompletionTriggerKindTriggerForIncompleteCompletions CompletionTriggerKind = 3
-)
+// String returns the string representation of x.
+func (x WatchKind) String() string {
+	switch x {
+	case WatchKindCreate:
+		return "WatchKind(Create)"
+	case WatchKindChange:
+		return "WatchKind(Change)"
+	case WatchKindDelete:
+		return "WatchKind(Delete)"
+	default:
+		return fmt.Sprintf("WatchKind(%v, custom)", uint32(x))
+	}
+}
 
 // The diagnostic's severity.
 type DiagnosticSeverity uint32
@@ -137,6 +1246,35 @@ const (
 	// Reports a hint.
 	DiagnosticSeverityHint DiagnosticSeverity = 4
 )
+
+// Validate returns an error if x is invalid.
+func (x DiagnosticSeverity) Validate() error {
+	switch x {
+	case DiagnosticSeverityError:
+	case DiagnosticSeverityWarning:
+	case DiagnosticSeverityInformation:
+	case DiagnosticSeverityHint:
+	default:
+		return fmt.Errorf("invalid DiagnosticSeverity: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x DiagnosticSeverity) String() string {
+	switch x {
+	case DiagnosticSeverityError:
+		return "DiagnosticSeverity(Error)"
+	case DiagnosticSeverityWarning:
+		return "DiagnosticSeverity(Warning)"
+	case DiagnosticSeverityInformation:
+		return "DiagnosticSeverity(Information)"
+	case DiagnosticSeverityHint:
+		return "DiagnosticSeverity(Hint)"
+	default:
+		return fmt.Sprintf("DiagnosticSeverity(%v, invalid)", uint32(x))
+	}
+}
 
 // The diagnostic tags.
 type DiagnosticTag uint32
@@ -154,42 +1292,247 @@ const (
 	DiagnosticTagDeprecated DiagnosticTag = 2
 )
 
-// The document diagnostic report kinds.
-type DocumentDiagnosticReportKind string
+// Validate returns an error if x is invalid.
+func (x DiagnosticTag) Validate() error {
+	switch x {
+	case DiagnosticTagUnnecessary:
+	case DiagnosticTagDeprecated:
+	default:
+		return fmt.Errorf("invalid DiagnosticTag: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x DiagnosticTag) String() string {
+	switch x {
+	case DiagnosticTagUnnecessary:
+		return "DiagnosticTag(Unnecessary)"
+	case DiagnosticTagDeprecated:
+		return "DiagnosticTag(Deprecated)"
+	default:
+		return fmt.Sprintf("DiagnosticTag(%v, invalid)", uint32(x))
+	}
+}
+
+// How a completion was triggered
+type CompletionTriggerKind uint32
 
 const (
-	// A diagnostic report with a full set of problems.
-	DocumentDiagnosticReportKindFull DocumentDiagnosticReportKind = "full"
-	// A report indicating that the last returned report is still accurate.
-	DocumentDiagnosticReportKindUnchanged DocumentDiagnosticReportKind = "unchanged"
+	// Completion was triggered by typing an identifier (24x7 code complete),
+	// manual invocation (e.g Ctrl+Space) or via API.
+	CompletionTriggerKindInvoked CompletionTriggerKind = 1
+	// Completion was triggered by a trigger character specified by the
+	// `triggerCharacters` properties of the `CompletionRegistrationOptions`.
+	CompletionTriggerKindTriggerCharacter CompletionTriggerKind = 2
+	// Completion was re-triggered as current completion list is incomplete
+	CompletionTriggerKindTriggerForIncompleteCompletions CompletionTriggerKind = 3
 )
 
-// A document highlight kind.
-type DocumentHighlightKind uint32
+// Validate returns an error if x is invalid.
+func (x CompletionTriggerKind) Validate() error {
+	switch x {
+	case CompletionTriggerKindInvoked:
+	case CompletionTriggerKindTriggerCharacter:
+	case CompletionTriggerKindTriggerForIncompleteCompletions:
+	default:
+		return fmt.Errorf("invalid CompletionTriggerKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x CompletionTriggerKind) String() string {
+	switch x {
+	case CompletionTriggerKindInvoked:
+		return "CompletionTriggerKind(Invoked)"
+	case CompletionTriggerKindTriggerCharacter:
+		return "CompletionTriggerKind(TriggerCharacter)"
+	case CompletionTriggerKindTriggerForIncompleteCompletions:
+		return "CompletionTriggerKind(TriggerForIncompleteCompletions)"
+	default:
+		return fmt.Sprintf("CompletionTriggerKind(%v, invalid)", uint32(x))
+	}
+}
+
+// How a signature help was triggered.
+type SignatureHelpTriggerKind uint32
 
 const (
-	// A textual occurrence.
-	DocumentHighlightKindText DocumentHighlightKind = 1
-	// Read-access of a symbol, like reading a variable.
-	DocumentHighlightKindRead DocumentHighlightKind = 2
-	// Write-access of a symbol, like writing to a variable.
-	DocumentHighlightKindWrite DocumentHighlightKind = 3
+	// Signature help was invoked manually by the user or by a command.
+	SignatureHelpTriggerKindInvoked SignatureHelpTriggerKind = 1
+	// Signature help was triggered by a trigger character.
+	SignatureHelpTriggerKindTriggerCharacter SignatureHelpTriggerKind = 2
+	// Signature help was triggered by the cursor moving or by the document
+	// content changing.
+	SignatureHelpTriggerKindContentChange SignatureHelpTriggerKind = 3
 )
 
-// Predefined error codes.
-type ErrorCodes int32
+// Validate returns an error if x is invalid.
+func (x SignatureHelpTriggerKind) Validate() error {
+	switch x {
+	case SignatureHelpTriggerKindInvoked:
+	case SignatureHelpTriggerKindTriggerCharacter:
+	case SignatureHelpTriggerKindContentChange:
+	default:
+		return fmt.Errorf("invalid SignatureHelpTriggerKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x SignatureHelpTriggerKind) String() string {
+	switch x {
+	case SignatureHelpTriggerKindInvoked:
+		return "SignatureHelpTriggerKind(Invoked)"
+	case SignatureHelpTriggerKindTriggerCharacter:
+		return "SignatureHelpTriggerKind(TriggerCharacter)"
+	case SignatureHelpTriggerKindContentChange:
+		return "SignatureHelpTriggerKind(ContentChange)"
+	default:
+		return fmt.Sprintf("SignatureHelpTriggerKind(%v, invalid)", uint32(x))
+	}
+}
+
+// The reason why code actions were requested.
+type CodeActionTriggerKind uint32
 
 const (
-	ErrorCodesParseError     ErrorCodes = -32700
-	ErrorCodesInvalidRequest ErrorCodes = -32600
-	ErrorCodesMethodNotFound ErrorCodes = -32601
-	ErrorCodesInvalidParams  ErrorCodes = -32602
-	ErrorCodesInternalError  ErrorCodes = -32603
-	// Error code indicating that a server received a notification or request
-	// before the server has received the `initialize` request.
-	ErrorCodesServerNotInitialized ErrorCodes = -32002
-	ErrorCodesUnknownErrorCode     ErrorCodes = -32001
+	// Code actions were explicitly requested by the user or by an extension.
+	CodeActionTriggerKindInvoked CodeActionTriggerKind = 1
+	// Code actions were requested automatically.
+	//
+	// This typically happens when current selection in a file changes, but can
+	// also be triggered when file content changes.
+	CodeActionTriggerKindAutomatic CodeActionTriggerKind = 2
 )
+
+// Validate returns an error if x is invalid.
+func (x CodeActionTriggerKind) Validate() error {
+	switch x {
+	case CodeActionTriggerKindInvoked:
+	case CodeActionTriggerKindAutomatic:
+	default:
+		return fmt.Errorf("invalid CodeActionTriggerKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x CodeActionTriggerKind) String() string {
+	switch x {
+	case CodeActionTriggerKindInvoked:
+		return "CodeActionTriggerKind(Invoked)"
+	case CodeActionTriggerKindAutomatic:
+		return "CodeActionTriggerKind(Automatic)"
+	default:
+		return fmt.Sprintf("CodeActionTriggerKind(%v, invalid)", uint32(x))
+	}
+}
+
+// A pattern kind describing if a glob pattern matches a file a folder or
+// both.
+type FileOperationPatternKind string
+
+const (
+	// The pattern matches a file only.
+	FileOperationPatternKindFile FileOperationPatternKind = "file"
+	// The pattern matches a folder only.
+	FileOperationPatternKindFolder FileOperationPatternKind = "folder"
+)
+
+// Validate returns an error if x is invalid.
+func (x FileOperationPatternKind) Validate() error {
+	switch x {
+	case FileOperationPatternKindFile:
+	case FileOperationPatternKindFolder:
+	default:
+		return fmt.Errorf("invalid FileOperationPatternKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x FileOperationPatternKind) String() string {
+	switch x {
+	case FileOperationPatternKindFile:
+		return "FileOperationPatternKind(file)"
+	case FileOperationPatternKindFolder:
+		return "FileOperationPatternKind(folder)"
+	default:
+		return fmt.Sprintf("FileOperationPatternKind(%v, invalid)", string(x))
+	}
+}
+
+// A notebook cell kind.
+type NotebookCellKind uint32
+
+const (
+	// A markup-cell is formatted source that is used for display.
+	NotebookCellKindMarkup NotebookCellKind = 1
+	// A code-cell is source code.
+	NotebookCellKindCode NotebookCellKind = 2
+)
+
+// Validate returns an error if x is invalid.
+func (x NotebookCellKind) Validate() error {
+	switch x {
+	case NotebookCellKindMarkup:
+	case NotebookCellKindCode:
+	default:
+		return fmt.Errorf("invalid NotebookCellKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x NotebookCellKind) String() string {
+	switch x {
+	case NotebookCellKindMarkup:
+		return "NotebookCellKind(Markup)"
+	case NotebookCellKindCode:
+		return "NotebookCellKind(Code)"
+	default:
+		return fmt.Sprintf("NotebookCellKind(%v, invalid)", uint32(x))
+	}
+}
+
+type ResourceOperationKind string
+
+const (
+	// Supports creating new files and folders.
+	ResourceOperationKindCreate ResourceOperationKind = "create"
+	// Supports renaming existing files and folders.
+	ResourceOperationKindRename ResourceOperationKind = "rename"
+	// Supports deleting existing files and folders.
+	ResourceOperationKindDelete ResourceOperationKind = "delete"
+)
+
+// Validate returns an error if x is invalid.
+func (x ResourceOperationKind) Validate() error {
+	switch x {
+	case ResourceOperationKindCreate:
+	case ResourceOperationKindRename:
+	case ResourceOperationKindDelete:
+	default:
+		return fmt.Errorf("invalid ResourceOperationKind: %v", x)
+	}
+	return nil
+}
+
+// String returns the string representation of x.
+func (x ResourceOperationKind) String() string {
+	switch x {
+	case ResourceOperationKindCreate:
+		return "ResourceOperationKind(Create)"
+	case ResourceOperationKindRename:
+		return "ResourceOperationKind(Rename)"
+	case ResourceOperationKindDelete:
+		return "ResourceOperationKind(Delete)"
+	default:
+		return fmt.Sprintf("ResourceOperationKind(%v, invalid)", string(x))
+	}
+}
 
 type FailureHandlingKind string
 
@@ -210,180 +1553,34 @@ const (
 	FailureHandlingKindUndo FailureHandlingKind = "undo"
 )
 
-// The file event type
-type FileChangeType uint32
+// Validate returns an error if x is invalid.
+func (x FailureHandlingKind) Validate() error {
+	switch x {
+	case FailureHandlingKindAbort:
+	case FailureHandlingKindTransactional:
+	case FailureHandlingKindTextOnlyTransactional:
+	case FailureHandlingKindUndo:
+	default:
+		return fmt.Errorf("invalid FailureHandlingKind: %v", x)
+	}
+	return nil
+}
 
-const (
-	// The file got created.
-	FileChangeTypeCreated FileChangeType = 1
-	// The file got changed.
-	FileChangeTypeChanged FileChangeType = 2
-	// The file got deleted.
-	FileChangeTypeDeleted FileChangeType = 3
-)
-
-// A pattern kind describing if a glob pattern matches a file a folder or
-// both.
-type FileOperationPatternKind string
-
-const (
-	// The pattern matches a file only.
-	FileOperationPatternKindFile FileOperationPatternKind = "file"
-	// The pattern matches a folder only.
-	FileOperationPatternKindFolder FileOperationPatternKind = "folder"
-)
-
-// A set of predefined range kinds.
-type FoldingRangeKind string
-
-const (
-	// Folding range for a comment
-	FoldingRangeKindComment FoldingRangeKind = "comment"
-	// Folding range for an import or include
-	FoldingRangeKindImports FoldingRangeKind = "imports"
-	// Folding range for a region (e.g. `#region`)
-	FoldingRangeKindRegion FoldingRangeKind = "region"
-)
-
-// Inlay hint kinds.
-type InlayHintKind uint32
-
-const (
-	// An inlay hint that for a type annotation.
-	InlayHintKindType InlayHintKind = 1
-	// An inlay hint that is for a parameter.
-	InlayHintKindParameter InlayHintKind = 2
-)
-
-// Defines whether the insert text in a completion item should be
-// interpreted as plain text or a snippet.
-type InsertTextFormat uint32
-
-const (
-	// The primary text to be inserted is treated as a plain string.
-	InsertTextFormatPlainText InsertTextFormat = 1
-	// The primary text to be inserted is treated as a snippet.
-	//
-	// A snippet can define tab stops and placeholders with `$1`, `$2` and
-	// `${3:foo}`. `$0` defines the final tab stop, it defaults to the end of
-	// the snippet. Placeholders with equal identifiers are linked, that is
-	// typing in one will update others too.
-	//
-	// See also: https://microsoft.github.io/language-server-protocol/
-	// specifications/specification-current/#snippet_syntax
-	InsertTextFormatSnippet InsertTextFormat = 2
-)
-
-// How whitespace and indentation is handled during completion item
-// insertion.
-type InsertTextMode uint32
-
-const (
-	// The insertion or replace strings is taken as it is. If the value is
-	// multi line the lines below the cursor will be inserted using the
-	// indentation defined in the string value. The client will not apply any
-	// kind of adjustments to the string.
-	InsertTextModeAsIs InsertTextMode = 1
-	// The editor adjusts leading whitespace of new lines so that they match
-	// the indentation up to the cursor of the line for which the item is
-	// accepted.
-	//
-	// Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a multi
-	// line completion item is indented using 2 tabs and all following lines
-	// inserted will be indented using 2 tabs as well.
-	InsertTextModeAdjustIndentation InsertTextMode = 2
-)
-
-type LSPErrorCodes int32
-
-const (
-	// A request failed but it was syntactically correct, e.g the method name
-	// was known and the parameters were valid. The error message should
-	// contain human readable information about why the request failed.
-	LSPErrorCodesRequestFailed LSPErrorCodes = -32803
-	// The server cancelled the request. This error code should only be used
-	// for requests that explicitly support being server cancellable.
-	LSPErrorCodesServerCancelled LSPErrorCodes = -32802
-	// The server detected that the content of a document got modified outside
-	// normal conditions. A server should NOT send this error code if it
-	// detects a content change in it unprocessed messages. The result even
-	// computed on an older state might still be useful for the client.
-	//
-	// If a client decides that a result is not of any use anymore the client
-	// should cancel the request.
-	LSPErrorCodesContentModified LSPErrorCodes = -32801
-	// The client has canceled a request and a server as detected the cancel.
-	LSPErrorCodesRequestCancelled LSPErrorCodes = -32800
-)
-
-// Describes the content type that a client supports in various result
-// literals like `Hover`, `ParameterInfo` or `CompletionItem`.
-//
-// Please note that `MarkupKinds` must not start with a `$`. This kinds are
-// reserved for internal usage.
-type MarkupKind string
-
-const (
-	// Plain text is supported as a content format
-	MarkupKindPlainText MarkupKind = "plaintext"
-	// Markdown is supported as a content format
-	MarkupKindMarkdown MarkupKind = "markdown"
-)
-
-// The message type
-type MessageType uint32
-
-const (
-	// An error message.
-	MessageTypeError MessageType = 1
-	// A warning message.
-	MessageTypeWarning MessageType = 2
-	// An information message.
-	MessageTypeInfo MessageType = 3
-	// A log message.
-	MessageTypeLog MessageType = 4
-)
-
-// The moniker kind.
-type MonikerKind string
-
-const (
-	// The moniker represent a symbol that is imported into a project
-	MonikerKindImport MonikerKind = "import"
-	// The moniker represents a symbol that is exported from a project
-	MonikerKindExport MonikerKind = "export"
-	// The moniker represents a symbol that is local to a project (e.g. a local
-	// variable of a function, a class not visible outside the project, ...)
-	MonikerKindLocal MonikerKind = "local"
-)
-
-// A notebook cell kind.
-type NotebookCellKind uint32
-
-const (
-	// A markup-cell is formatted source that is used for display.
-	NotebookCellKindMarkup NotebookCellKind = 1
-	// A code-cell is source code.
-	NotebookCellKindCode NotebookCellKind = 2
-)
-
-// A set of predefined position encoding kinds.
-type PositionEncodingKind string
-
-const (
-	// Character offsets count UTF-8 code units (e.g. bytes).
-	PositionEncodingKindUTF8 PositionEncodingKind = "utf-8"
-	// Character offsets count UTF-16 code units.
-	//
-	// This is the default and must always be supported by servers
-	PositionEncodingKindUTF16 PositionEncodingKind = "utf-16"
-	// Character offsets count UTF-32 code units.
-	//
-	// Implementation note: these are the same as Unicode codepoints, so this
-	// `PositionEncodingKind` may also be used for an encoding-agnostic
-	// representation of character offsets.
-	PositionEncodingKindUTF32 PositionEncodingKind = "utf-32"
-)
+// String returns the string representation of x.
+func (x FailureHandlingKind) String() string {
+	switch x {
+	case FailureHandlingKindAbort:
+		return "FailureHandlingKind(Abort)"
+	case FailureHandlingKindTransactional:
+		return "FailureHandlingKind(Transactional)"
+	case FailureHandlingKindTextOnlyTransactional:
+		return "FailureHandlingKind(TextOnlyTransactional)"
+	case FailureHandlingKindUndo:
+		return "FailureHandlingKind(Undo)"
+	default:
+		return fmt.Sprintf("FailureHandlingKind(%v, invalid)", string(x))
+	}
+}
 
 type PrepareSupportDefaultBehavior uint32
 
@@ -393,147 +1590,25 @@ const (
 	PrepareSupportDefaultBehaviorIdentifier PrepareSupportDefaultBehavior = 1
 )
 
-type ResourceOperationKind string
+// Validate returns an error if x is invalid.
+func (x PrepareSupportDefaultBehavior) Validate() error {
+	switch x {
+	case PrepareSupportDefaultBehaviorIdentifier:
+	default:
+		return fmt.Errorf("invalid PrepareSupportDefaultBehavior: %v", x)
+	}
+	return nil
+}
 
-const (
-	// Supports creating new files and folders.
-	ResourceOperationKindCreate ResourceOperationKind = "create"
-	// Supports renaming existing files and folders.
-	ResourceOperationKindRename ResourceOperationKind = "rename"
-	// Supports deleting existing files and folders.
-	ResourceOperationKindDelete ResourceOperationKind = "delete"
-)
-
-// A set of predefined token modifiers. This set is not fixed an clients
-// can specify additional token types via the corresponding client
-// capabilities.
-type SemanticTokenModifiers string
-
-const (
-	SemanticTokenModifiersDeclaration    SemanticTokenModifiers = "declaration"
-	SemanticTokenModifiersDefinition     SemanticTokenModifiers = "definition"
-	SemanticTokenModifiersReadonly       SemanticTokenModifiers = "readonly"
-	SemanticTokenModifiersStatic         SemanticTokenModifiers = "static"
-	SemanticTokenModifiersDeprecated     SemanticTokenModifiers = "deprecated"
-	SemanticTokenModifiersAbstract       SemanticTokenModifiers = "abstract"
-	SemanticTokenModifiersAsync          SemanticTokenModifiers = "async"
-	SemanticTokenModifiersModification   SemanticTokenModifiers = "modification"
-	SemanticTokenModifiersDocumentation  SemanticTokenModifiers = "documentation"
-	SemanticTokenModifiersDefaultLibrary SemanticTokenModifiers = "defaultLibrary"
-)
-
-// A set of predefined token types. This set is not fixed an clients can
-// specify additional token types via the corresponding client
-// capabilities.
-type SemanticTokenTypes string
-
-const (
-	SemanticTokenTypesNamespace SemanticTokenTypes = "namespace"
-	// Represents a generic type. Acts as a fallback for types which can't be
-	// mapped to a specific type like class or enum.
-	SemanticTokenTypesType          SemanticTokenTypes = "type"
-	SemanticTokenTypesClass         SemanticTokenTypes = "class"
-	SemanticTokenTypesEnum          SemanticTokenTypes = "enum"
-	SemanticTokenTypesInterface     SemanticTokenTypes = "interface"
-	SemanticTokenTypesStruct        SemanticTokenTypes = "struct"
-	SemanticTokenTypesTypeParameter SemanticTokenTypes = "typeParameter"
-	SemanticTokenTypesParameter     SemanticTokenTypes = "parameter"
-	SemanticTokenTypesVariable      SemanticTokenTypes = "variable"
-	SemanticTokenTypesProperty      SemanticTokenTypes = "property"
-	SemanticTokenTypesEnumMember    SemanticTokenTypes = "enumMember"
-	SemanticTokenTypesEvent         SemanticTokenTypes = "event"
-	SemanticTokenTypesFunction      SemanticTokenTypes = "function"
-	SemanticTokenTypesMethod        SemanticTokenTypes = "method"
-	SemanticTokenTypesMacro         SemanticTokenTypes = "macro"
-	SemanticTokenTypesKeyword       SemanticTokenTypes = "keyword"
-	SemanticTokenTypesModifier      SemanticTokenTypes = "modifier"
-	SemanticTokenTypesComment       SemanticTokenTypes = "comment"
-	SemanticTokenTypesString        SemanticTokenTypes = "string"
-	SemanticTokenTypesNumber        SemanticTokenTypes = "number"
-	SemanticTokenTypesRegexp        SemanticTokenTypes = "regexp"
-	SemanticTokenTypesOperator      SemanticTokenTypes = "operator"
-	SemanticTokenTypesDecorator     SemanticTokenTypes = "decorator"
-)
-
-// How a signature help was triggered.
-type SignatureHelpTriggerKind uint32
-
-const (
-	// Signature help was invoked manually by the user or by a command.
-	SignatureHelpTriggerKindInvoked SignatureHelpTriggerKind = 1
-	// Signature help was triggered by a trigger character.
-	SignatureHelpTriggerKindTriggerCharacter SignatureHelpTriggerKind = 2
-	// Signature help was triggered by the cursor moving or by the document
-	// content changing.
-	SignatureHelpTriggerKindContentChange SignatureHelpTriggerKind = 3
-)
-
-// A symbol kind.
-type SymbolKind uint32
-
-const (
-	SymbolKindFile          SymbolKind = 1
-	SymbolKindModule        SymbolKind = 2
-	SymbolKindNamespace     SymbolKind = 3
-	SymbolKindPackage       SymbolKind = 4
-	SymbolKindClass         SymbolKind = 5
-	SymbolKindMethod        SymbolKind = 6
-	SymbolKindProperty      SymbolKind = 7
-	SymbolKindField         SymbolKind = 8
-	SymbolKindConstructor   SymbolKind = 9
-	SymbolKindEnum          SymbolKind = 10
-	SymbolKindInterface     SymbolKind = 11
-	SymbolKindFunction      SymbolKind = 12
-	SymbolKindVariable      SymbolKind = 13
-	SymbolKindConstant      SymbolKind = 14
-	SymbolKindString        SymbolKind = 15
-	SymbolKindNumber        SymbolKind = 16
-	SymbolKindBoolean       SymbolKind = 17
-	SymbolKindArray         SymbolKind = 18
-	SymbolKindObject        SymbolKind = 19
-	SymbolKindKey           SymbolKind = 20
-	SymbolKindNull          SymbolKind = 21
-	SymbolKindEnumMember    SymbolKind = 22
-	SymbolKindStruct        SymbolKind = 23
-	SymbolKindEvent         SymbolKind = 24
-	SymbolKindOperator      SymbolKind = 25
-	SymbolKindTypeParameter SymbolKind = 26
-)
-
-// Symbol tags are extra annotations that tweak the rendering of a symbol.
-type SymbolTag uint32
-
-const (
-	// Render a symbol as obsolete, usually using a strike-out.
-	SymbolTagDeprecated SymbolTag = 1
-)
-
-// Represents reasons why a text document is saved.
-type TextDocumentSaveReason uint32
-
-const (
-	// Manually triggered, e.g. by the user pressing save, by starting
-	// debugging, or by an API call.
-	TextDocumentSaveReasonManual TextDocumentSaveReason = 1
-	// Automatic after a delay.
-	TextDocumentSaveReasonAfterDelay TextDocumentSaveReason = 2
-	// When the editor lost focus.
-	TextDocumentSaveReasonFocusOut TextDocumentSaveReason = 3
-)
-
-// Defines how the host (editor) should sync document changes to the
-// language server.
-type TextDocumentSyncKind uint32
-
-const (
-	// Documents should not be synced at all.
-	TextDocumentSyncKindNone TextDocumentSyncKind = 0
-	// Documents are synced by always sending the full content of the document.
-	TextDocumentSyncKindFull TextDocumentSyncKind = 1
-	// Documents are synced by sending the full content on open. After that
-	// only incremental updates to the document are send.
-	TextDocumentSyncKindIncremental TextDocumentSyncKind = 2
-)
+// String returns the string representation of x.
+func (x PrepareSupportDefaultBehavior) String() string {
+	switch x {
+	case PrepareSupportDefaultBehaviorIdentifier:
+		return "PrepareSupportDefaultBehavior(Identifier)"
+	default:
+		return fmt.Sprintf("PrepareSupportDefaultBehavior(%v, invalid)", uint32(x))
+	}
+}
 
 type TokenFormat string
 
@@ -541,40 +1616,22 @@ const (
 	TokenFormatRelative TokenFormat = "relative"
 )
 
-type TraceValues string
+// Validate returns an error if x is invalid.
+func (x TokenFormat) Validate() error {
+	switch x {
+	case TokenFormatRelative:
+	default:
+		return fmt.Errorf("invalid TokenFormat: %v", x)
+	}
+	return nil
+}
 
-const (
-	// Turn tracing off.
-	TraceValuesOff TraceValues = "off"
-	// Trace messages only.
-	TraceValuesMessages TraceValues = "messages"
-	// Verbose message tracing.
-	TraceValuesVerbose TraceValues = "verbose"
-)
-
-// Moniker uniqueness level to define scope of the moniker.
-type UniquenessLevel string
-
-const (
-	// The moniker is only unique inside a document
-	UniquenessLevelDocument UniquenessLevel = "document"
-	// The moniker is unique inside a project for which a dump got created
-	UniquenessLevelProject UniquenessLevel = "project"
-	// The moniker is unique inside the group to which a project belongs
-	UniquenessLevelGroup UniquenessLevel = "group"
-	// The moniker is unique inside the moniker scheme.
-	UniquenessLevelScheme UniquenessLevel = "scheme"
-	// The moniker is globally unique
-	UniquenessLevelGlobal UniquenessLevel = "global"
-)
-
-type WatchKind uint32
-
-const (
-	// Interested in create events.
-	WatchKindCreate WatchKind = 1
-	// Interested in change events
-	WatchKindChange WatchKind = 2
-	// Interested in delete events
-	WatchKindDelete WatchKind = 4
-)
+// String returns the string representation of x.
+func (x TokenFormat) String() string {
+	switch x {
+	case TokenFormatRelative:
+		return "TokenFormat(Relative)"
+	default:
+		return fmt.Sprintf("TokenFormat(%v, invalid)", string(x))
+	}
+}
