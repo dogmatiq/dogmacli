@@ -2,11 +2,6 @@ package generator
 
 import "strings"
 
-var initialisms = []string{
-	"ID",
-	"URI",
-}
-
 // exported returns a normalized exported identifier containing the given parts.
 func exported(parts ...string) string {
 	var id string
@@ -16,13 +11,14 @@ func exported(parts ...string) string {
 		id += p
 	}
 
-	for _, init := range initialisms {
-		if strings.HasSuffix(
-			strings.ToLower(id),
-			strings.ToLower(init),
-		) {
-			id = id[:len(id)-len(init)] + init
-		}
+	if x, ok := strings.CutSuffix(id, "Id"); ok {
+		id = x + "ID"
+	}
+	if x, ok := strings.CutSuffix(id, "Ids"); ok {
+		id = x + "IDs"
+	}
+	if x, ok := strings.CutSuffix(id, "Uri"); ok {
+		id = x + "URI"
 	}
 
 	return id

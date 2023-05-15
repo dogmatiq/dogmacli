@@ -1,6 +1,8 @@
 package generator
 
 import (
+	"strings"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
@@ -27,8 +29,17 @@ func (g *generator) Generate() {
 	v := &typeDefGen{
 		File: g.File,
 	}
-	for _, d := range g.Model.TypeDefs {
+	for i, d := range g.Model.TypeDefs {
+		if i > 0 {
+			g.File.
+				Line().
+				Comment(
+					strings.Repeat("=", 117),
+				).
+				Line()
+		}
+
 		model.VisitTypeDef(d, v)
-		g.File.Line()
+
 	}
 }

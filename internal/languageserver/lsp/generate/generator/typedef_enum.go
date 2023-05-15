@@ -111,7 +111,7 @@ func (g typeDefGen) enumStringMethod(d model.Enum) {
 									jenx.Litf(
 										"%s(%s)",
 										exported(d.TypeName),
-										m.Name,
+										exported(m.Name),
 									),
 								),
 							)

@@ -1,120 +1,80 @@
 package generator
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
+import (
+	"github.com/dave/jennifer/jen"
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
+)
 
 func (g typeDefGen) Struct(d model.Struct) {
+	documentation(g, d.Documentation)
+	g.
+		Type().
+		Id(exported(d.TypeName)).
+		StructFunc(func(g *jen.Group) {
+			for _, t := range d.EmbeddedTypes {
+				g.Add(typeExpr(t))
+			}
+
+			for _, p := range d.Properties {
+				if _, ok := p.Type.(model.StringLit); !ok {
+					documentation(g, p.Documentation)
+
+					t := typeExpr(p.Type)
+					if p.Optional && useOptionalType(p.Type) {
+						t = jen.Id("Optional").Types(t)
+					}
+
+					g.
+						Id(exported(p.Name)).
+						Add(t)
+				}
+			}
+		})
+
+	g.Line()
+	g.structValidateMethod(d)
 }
 
-// // VisitEnumeration declares a Go struct type.
-// func (g *typeDefGenerator) VisitStructure(def metamodel.Struct) {
-// 	// documentation(g, t.Documentation)
+func (g typeDefGen) structValidateMethod(d model.Struct) {
+	g.Comment("Validate returns an error if x is invalid.")
+	g.
+		Func().
+		Params(
+			jen.Id("x").Id(exported(d.TypeName)),
+		).
+		Id("Validate").
+		Params().
+		Params(
+			jen.Error(),
+		).
+		BlockFunc(func(g *jen.Group) {
+			g.Panic(jen.Lit("not implemented"))
+		})
+}
 
-// 	// g.
-// 	// 	Type().
-// 	// 	Id(normalized(t.Name)).
-// 	// 	StructFunc(func(g *jen.Group) {
-// 	// 		// 			for _, t := range t.EmbeddedTypes {
-// 	// 		// 				g.Add(getTypeInfo(t).Code)
-// 	// 		// 			}
+// useOptionalType returns the Go type expression that refers to t.
+func useOptionalType(t model.Type) bool {
+	return model.ApplyTypeTransform[bool](
+		t,
+		useOptionalTypeX{},
+	)
+}
 
-// 	// 		// 			if len(t.EmbeddedTypes) > 0 && len(t.Properties) > 0 {
-// 	// 		// 				g.Line()
-// 	// 		// 			}
+type useOptionalTypeX struct{}
 
-// 	// 		// 			for _, p := range t.Properties {
-// 	// 		// 				documentation(g, p.Documentation)
-// 	// 		// 				structureProperty(g, p)
-// 	// 		// 			}
-// 	// 	})
-
-// 	// 	g.
-// 	// 		Func().
-// 	// 		Params(
-// 	// 			jen.Id("x").Id(typeName),
-// 	// 		).
-// 	// 		Id("encode").
-// 	// 		Params(
-// 	// 			jen.Id("w").Op("*").Qual("bytes", "Buffer"),
-// 	// 		).
-// 	// 		Params(
-// 	// 			jen.Error(),
-// 	// 		).
-// 	// 		BlockFunc(func(g *jen.Group) {
-// 	// 			g.
-// 	// 				Id("w").Dot("WriteByte").
-// 	// 				Call(
-// 	// 					jen.LitRune('{'),
-// 	// 				)
-
-// 	// 			for _, p := range t.Properties {
-// 	// 				encodeStructureProperty(g, p)
-// 	// 			}
-
-// 	// 			g.
-// 	// 				Id("w").Dot("WriteByte").
-// 	// 				Call(
-// 	// 					jen.LitRune('}'),
-// 	// 				)
-
-// 	// 			g.Return(jen.Nil())
-// 	// 		})
-// 	// }
-
-// 	// // structureProperty declares a Go struct property.
-// 	// func structureProperty(
-// 	// 	g *jen.Group,
-// 	// 	p metamodel.StructureProperty,
-// 	// ) {
-// 	// 	info := getTypeInfo(p.Type)
-// 	// 	code := info.Code
-
-// 	// 	if p.Optional && info.OptionalPointer {
-// 	// 		code = jen.Op("*").Add(code)
-// 	// 	}
-
-// 	// 	g.
-// 	// 		Id(exported(p.Name)).
-// 	// 		Add(code)
-// 	// }
-
-// 	// // encodeStructureProperty generates code to encode a Go struct property.
-// 	// func encodeStructureProperty(
-// 	// 	g *jen.Group,
-// 	// 	p metamodel.StructureProperty,
-// 	// ) {
-// 	// 	info := getTypeInfo(p.Type)
-
-// 	//	if !p.Optional {
-// 	//		if info.HasEncodeMethod {
-// 	//			g.
-// 	//				Id("x").Dot(exported(p.Name)).Dot("encode").
-// 	//				Call(
-// 	//					jen.Id("w"),
-// 	//				)
-// 	//		} else {
-// 	//			g.
-// 	//				Qual("encoding/json", "NewEncoder").
-// 	//				Call(
-// 	//					jen.Id("w"),
-// 	//				).
-// 	//				Dot("Encode").
-// 	//				Call(
-// 	//					jen.Id("x").Dot(exported(p.Name)),
-// 	//				)
-// 	//		}
-// 	//	} else if info.OptionalPointer {
-// 	//
-// 	//		g.
-// 	//			If(
-// 	//				jen.Id("x").Dot(exported(p.Name)).Op("!=").Nil(),
-// 	//			).
-// 	//			Block()
-// 	//	} else {
-// 	//
-// 	//		g.
-// 	//			If(
-// 	//				jen.Id("x").Dot(exported(p.Name)).Op("!=").Add(info.Zero),
-// 	//			).
-// 	//			Block()
-// 	//	}
-// }
+func (useOptionalTypeX) Bool() bool                       { return false }
+func (useOptionalTypeX) Decimal() bool                    { return false }
+func (useOptionalTypeX) String() bool                     { return false }
+func (useOptionalTypeX) Integer() bool                    { return false }
+func (useOptionalTypeX) UInteger() bool                   { return false }
+func (useOptionalTypeX) DocumentURI() bool                { return false }
+func (useOptionalTypeX) URI() bool                        { return false }
+func (useOptionalTypeX) Null() bool                       { return false }
+func (useOptionalTypeX) Reference(t model.Reference) bool { return true }
+func (useOptionalTypeX) Array(t model.Array) bool         { return false }
+func (useOptionalTypeX) Map(t model.Map) bool             { return false }
+func (useOptionalTypeX) And(t model.And) bool             { return true }
+func (useOptionalTypeX) Or(t model.Or) bool               { return true }
+func (useOptionalTypeX) Tuple(t model.Tuple) bool         { return true }
+func (useOptionalTypeX) StructLit(t model.StructLit) bool { return true }
+func (useOptionalTypeX) StringLit(t model.StringLit) bool { return false }

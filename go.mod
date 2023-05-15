@@ -8,7 +8,6 @@ require (
 	github.com/dogmatiq/harpy v0.10.1
 	github.com/dogmatiq/imbue v0.7.0
 	github.com/google/uuid v1.3.0
-	github.com/rivo/uniseg v0.4.4
 	github.com/spf13/cobra v1.7.0
 	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
 	golang.org/x/tools v0.9.1
