@@ -1,6 +1,8 @@
 package model
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
+import (
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
+)
 
 // Model is the root of the model.
 type Model struct {
@@ -37,8 +39,8 @@ func (b *builder) BuildModel(in lowlevel.Model) Model {
 	// Pre-construct pointers to the all of the TypeDef instances so that they
 	// may be referenced before they have been fully populated.
 	for _, i := range in.Aliases {
-		o := Alias{}
-		b.aliases[i.Name] = &o
+		o := &Alias{}
+		b.aliases[i.Name] = o
 		out.TypeDefs = append(out.TypeDefs, o)
 	}
 	for _, i := range in.Enums {

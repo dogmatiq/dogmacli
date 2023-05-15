@@ -1,6 +1,8 @@
 package model
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
+import (
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
+)
 
 // Alias describes a named type alias.
 type Alias struct {
