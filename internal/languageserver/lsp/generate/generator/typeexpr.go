@@ -6,48 +6,45 @@ import (
 )
 
 // typeExpr returns the Go type expression that refers to t.
-func typeExpr(t model.Type) *jen.Statement {
-	return model.TransformType[*jen.Statement](
+func (g *Generator) typeExpr(t model.Type) *jen.Statement {
+	return model.TypeTo[*jen.Statement](
 		t,
-		typeExprX{},
+		&typeExpr{g},
 	)
 }
 
-type typeExprX struct{}
+type typeExpr struct{ *Generator }
 
-func (typeExprX) Bool() *jen.Statement        { return jen.Bool() }
-func (typeExprX) Decimal() *jen.Statement     { return jen.Float64() }
-func (typeExprX) String() *jen.Statement      { return jen.String() }
-func (typeExprX) Integer() *jen.Statement     { return jen.Int32() }
-func (typeExprX) UInteger() *jen.Statement    { return jen.Uint32() }
-func (typeExprX) DocumentURI() *jen.Statement { return jen.Id("DocumentURI") }
-func (typeExprX) URI() *jen.Statement         { return jen.Id("URI") }
-func (typeExprX) Null() *jen.Statement        { return jen.Id("Null") }
+func (g *typeExpr) Bool() *jen.Statement        { return jen.Bool() }
+func (g *typeExpr) Decimal() *jen.Statement     { return jen.Float64() }
+func (g *typeExpr) String() *jen.Statement      { return jen.String() }
+func (g *typeExpr) Integer() *jen.Statement     { return jen.Int32() }
+func (g *typeExpr) UInteger() *jen.Statement    { return jen.Uint32() }
+func (g *typeExpr) DocumentURI() *jen.Statement { return jen.Id("DocumentURI") }
+func (g *typeExpr) URI() *jen.Statement         { return jen.Id("URI") }
+func (g *typeExpr) Null() *jen.Statement        { return jen.Id("Null") }
 
-func (typeExprX) Reference(t model.Reference) *jen.Statement {
-	return jen.Id(exported(t.Target.Name()))
+func (g *typeExpr) Reference(t model.Reference) *jen.Statement {
+	return jen.Id(identifier(t.Target.Name()))
 }
 
-func (typeExprX) Array(t model.Array) *jen.Statement {
+func (g *typeExpr) Array(t model.Array) *jen.Statement {
 	return jen.
 		Index().
-		Add(typeExpr(t.Element))
+		Add(g.typeExpr(t.Element))
 }
 
-func (typeExprX) Map(t model.Map) *jen.Statement {
+func (g *typeExpr) Map(t model.Map) *jen.Statement {
 	return jen.
-		Map(typeExpr(t.Key)).
-		Add(typeExpr(t.Value))
+		Map(g.typeExpr(t.Key)).
+		Add(g.typeExpr(t.Value))
 }
 
-func (typeExprX) And(t model.And) *jen.Statement { return jen.Struct() } // TODO
+func (g *typeExpr) And(t model.And) *jen.Statement             { return jen.Id(g.enqueueLiteral(t)) }
+func (g *typeExpr) Or(t model.Or) *jen.Statement               { return jen.Id(g.enqueueLiteral(t)) }
+func (g *typeExpr) Tuple(t model.Tuple) *jen.Statement         { return jen.Id(g.enqueueLiteral(t)) }
+func (g *typeExpr) StructLit(t model.StructLit) *jen.Statement { return jen.Id(g.enqueueLiteral(t)) }
 
-func (typeExprX) Or(t model.Or) *jen.Statement { return jen.Struct() } // TODO
-
-func (typeExprX) Tuple(t model.Tuple) *jen.Statement { return jen.Struct() } // TODO
-
-func (typeExprX) StructLit(t model.StructLit) *jen.Statement { return jen.Struct() } // TODO
-
-func (typeExprX) StringLit(t model.StringLit) *jen.Statement {
-	return jen.Id(unexported(t.Value) + "Lit")
+func (g *typeExpr) StringLit(t model.StringLit) *jen.Statement {
+	panic("string literals do not have a type representation")
 }

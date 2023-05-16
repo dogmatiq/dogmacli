@@ -1,6 +1,8 @@
 package model
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
+import (
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
+)
 
 // Type is an interface for a type.
 type Type interface {
@@ -105,8 +107,8 @@ type TypeTransform[T any] interface {
 	Tuple(Tuple) T
 }
 
-// TransformType transforms t to a value of type T using x.
-func TransformType[T any](
+// TypeTo transforms t to a value of type T using x.
+func TypeTo[T any](
 	t Type,
 	x TypeTransform[T],
 ) T {

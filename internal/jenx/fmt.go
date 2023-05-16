@@ -23,10 +23,10 @@ func Errorf(
 ) *jen.Statement {
 	return jen.
 		Qual("fmt", "Errorf").
-		CallFunc(func(g *jen.Group) {
-			g.Lit(format)
+		CallFunc(func(grp *jen.Group) {
+			grp.Lit(format)
 			for _, arg := range args {
-				g.Add(arg)
+				grp.Add(arg)
 			}
 		})
 }
@@ -38,10 +38,10 @@ func Sprintf(
 ) *jen.Statement {
 	return jen.
 		Qual("fmt", "Sprintf").
-		CallFunc(func(g *jen.Group) {
-			g.Lit(format)
+		CallFunc(func(grp *jen.Group) {
+			grp.Lit(format)
 			for _, arg := range args {
-				g.Add(arg)
+				grp.Add(arg)
 			}
 		})
 }

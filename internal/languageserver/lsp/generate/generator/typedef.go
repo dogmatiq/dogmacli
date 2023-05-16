@@ -1,12 +1,12 @@
 package generator
 
-import "github.com/dave/jennifer/jen"
+import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 
-// // typeName returns the Go type name to use for the given definition.
-// func typeName(d model.TypeDef) string {
-// 	return normalized(d.Name())
-// }
+func (g *Generator) typeDef(d model.TypeDef) {
+	g.pushScope(d.Name())
+	defer g.popScope()
 
-type typeDefGen struct {
-	*jen.File
+	model.VisitTypeDef(d, &typeDef{g})
 }
+
+type typeDef struct{ *Generator }

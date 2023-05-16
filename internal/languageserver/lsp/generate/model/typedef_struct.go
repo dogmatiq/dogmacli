@@ -45,7 +45,6 @@ func (b *builder) structure(in lowlevel.Struct, out *Struct) {
 			},
 		)
 	}
-
 }
 
 func (b *builder) properties(

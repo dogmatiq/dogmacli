@@ -87,8 +87,8 @@ type MethodTransform[T any] interface {
 	Notification(Notification) T
 }
 
-// TransformMethod transforms m to a value of type T using x.
-func TransformMethod[T any](
+// MethodTo transforms m to a value of type T using x.
+func MethodTo[T any](
 	m Method,
 	x MethodTransform[T],
 ) T {

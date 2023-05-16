@@ -31,8 +31,8 @@ func unexported(parts ...string) string {
 	return strings.ToLower(id[:1]) + id[1:]
 }
 
-// normalized returns a normalized identifier containing the given parts.
-func normalized(parts ...string) string {
+// identifier returns a identifier identifier containing the given parts.
+func identifier(parts ...string) string {
 	if parts[0][0] == '_' {
 		parts[0] = parts[0][1:]
 		return unexported(parts...)

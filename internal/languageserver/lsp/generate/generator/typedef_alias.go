@@ -4,11 +4,18 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g typeDefGen) Alias(d model.Alias) {
-	documentation(g, d.Documentation)
-	g.
-		Type().
-		Id(exported(d.TypeName)).
-		Op("=").
-		Add(typeExpr(d.Type))
+func (g *typeDef) Alias(d model.Alias) {
+	i := g.typeInfo(d.Type)
+
+	documentation(g.File, d.Documentation)
+
+	if i.IsLiteral {
+		g.typeLit(d.TypeName, d.Type)
+	} else {
+		g.File.
+			Type().
+			Id(identifier(d.TypeName)).
+			Op("=").
+			Add(g.typeExpr(d.Type))
+	}
 }

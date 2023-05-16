@@ -8,62 +8,62 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g typeDefGen) Enum(d model.Enum) {
-	documentation(g, d.Documentation)
-	g.
+func (g *typeDef) Enum(d model.Enum) {
+	documentation(g.File, d.Documentation)
+	g.File.
 		Type().
-		Id(exported(d.TypeName)).
-		Add(typeExpr(d.Type))
+		Id(identifier(d.TypeName)).
+		Add(g.typeExpr(d.Type))
 
-	g.Line()
+	g.File.Line()
 	g.enumConstants(d)
 
-	g.Line()
-	g.enumValidateMethod(d)
+	// g.File.Line()
+	// g.enumValidateMethod(d)
 
-	g.Line()
-	g.enumStringMethod(d)
+	// g.File.Line()
+	// g.enumStringMethod(d)
 }
 
-func (g typeDefGen) enumConstants(d model.Enum) {
-	g.
+func (g *Generator) enumConstants(d model.Enum) {
+	g.File.
 		Const().
-		DefsFunc(func(g *jen.Group) {
+		DefsFunc(func(grp *jen.Group) {
 			for _, m := range d.Members {
-				documentation(g, m.Documentation)
-				g.
-					Id(exported(d.TypeName, m.Name)).
-					Id(exported(d.TypeName)).
+				documentation(grp, m.Documentation)
+				grp.
+					Id(identifier(d.TypeName, m.Name)).
+					Id(identifier(d.TypeName)).
 					Op("=").
 					Lit(m.Value)
 			}
 		})
 }
 
-func (g typeDefGen) enumValidateMethod(d model.Enum) {
-	g.Comment("Validate returns an error if x is invalid.")
-	g.
+func (g *Generator) enumValidateMethod(d model.Enum) {
+	g.File.
+		Comment("Validate returns an error if x is invalid.").
 		Func().
 		Params(
-			jen.Id("x").Id(exported(d.TypeName)),
+			jen.Id("x").Id(identifier(d.TypeName)),
 		).
 		Id("Validate").
 		Params().
 		Params(
 			jen.Error(),
 		).
-		BlockFunc(func(g *jen.Group) {
+		BlockFunc(func(grp *jen.Group) {
 			if !d.SupportsCustomValues {
-				g.
+				grp.
 					Switch(jen.Id("x")).
-					BlockFunc(func(g *jen.Group) {
+					BlockFunc(func(grp *jen.Group) {
 						for _, m := range d.Members {
-							g.Case(
-								jen.Id(exported(d.TypeName, m.Name)),
+							grp.Case(
+								jen.Id(identifier(d.TypeName, m.Name)),
 							)
 						}
 
-						g.
+						grp.
 							Default().
 							Block(
 								jen.Return(
@@ -71,7 +71,7 @@ func (g typeDefGen) enumValidateMethod(d model.Enum) {
 										Errorf(
 											fmt.Sprintf(
 												"invalid %s: %%v",
-												exported(d.TypeName),
+												identifier(d.TypeName),
 											),
 											jen.Id("x"),
 										),
@@ -81,37 +81,37 @@ func (g typeDefGen) enumValidateMethod(d model.Enum) {
 					})
 			}
 
-			g.Return(jen.Nil())
+			grp.Return(jen.Nil())
 		})
 }
 
-func (g typeDefGen) enumStringMethod(d model.Enum) {
-	g.Comment("String returns the string representation of x.")
-	g.
+func (g *Generator) enumStringMethod(d model.Enum) {
+	g.File.
+		Comment("String returns the string representation of x.").
 		Func().
 		Params(
-			jen.Id("x").Id(exported(d.TypeName)),
+			jen.Id("x").Id(identifier(d.TypeName)),
 		).
 		Id("String").
 		Params().
 		Params(
 			jen.String(),
 		).
-		BlockFunc(func(g *jen.Group) {
-			g.
+		BlockFunc(func(grp *jen.Group) {
+			grp.
 				Switch(jen.Id("x")).
-				BlockFunc(func(g *jen.Group) {
+				BlockFunc(func(grp *jen.Group) {
 					for _, m := range d.Members {
-						g.
+						grp.
 							Case(
-								jen.Id(exported(d.TypeName, m.Name)),
+								jen.Id(identifier(d.TypeName, m.Name)),
 							).
 							Block(
 								jen.Return(
 									jenx.Litf(
 										"%s(%s)",
-										exported(d.TypeName),
-										exported(m.Name),
+										identifier(d.TypeName),
+										identifier(m.Name),
 									),
 								),
 							)
@@ -122,17 +122,17 @@ func (g typeDefGen) enumStringMethod(d model.Enum) {
 						tag = "custom"
 					}
 
-					g.
+					grp.
 						Default().
 						Block(
 							jen.Return(
 								jenx.Sprintf(
 									fmt.Sprintf(
 										"%s(%%v, %s)",
-										exported(d.TypeName),
+										identifier(d.TypeName),
 										tag,
 									),
-									typeExpr(d.Type).Call(
+									g.typeExpr(d.Type).Call(
 										jen.Id("x"),
 									),
 								),
