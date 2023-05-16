@@ -2,6 +2,11 @@
 
 package lsp
 
+import (
+	"encoding/json"
+	"fmt"
+)
+
 /////////////////////////
 /// AnnotatedTextEdit ///
 /////////////////////////
@@ -535,6 +540,21 @@ const (
 	CodeActionTriggerKindAutomatic CodeActionTriggerKind = 2
 )
 
+func (x *CodeActionTriggerKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("CodeActionTriggerKind: %w", err)
+	}
+
+	switch *x {
+	case CodeActionTriggerKindInvoked:
+	case CodeActionTriggerKindAutomatic:
+	default:
+		return fmt.Errorf("CodeActionTriggerKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 ///////////////////////
 /// CodeDescription ///
 ///////////////////////
@@ -1000,6 +1020,44 @@ const (
 	CompletionItemKindTypeParameter CompletionItemKind = 25
 )
 
+func (x *CompletionItemKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("CompletionItemKind: %w", err)
+	}
+
+	switch *x {
+	case CompletionItemKindText:
+	case CompletionItemKindMethod:
+	case CompletionItemKindFunction:
+	case CompletionItemKindConstructor:
+	case CompletionItemKindField:
+	case CompletionItemKindVariable:
+	case CompletionItemKindClass:
+	case CompletionItemKindInterface:
+	case CompletionItemKindModule:
+	case CompletionItemKindProperty:
+	case CompletionItemKindUnit:
+	case CompletionItemKindValue:
+	case CompletionItemKindEnum:
+	case CompletionItemKindKeyword:
+	case CompletionItemKindSnippet:
+	case CompletionItemKindColor:
+	case CompletionItemKindFile:
+	case CompletionItemKindReference:
+	case CompletionItemKindFolder:
+	case CompletionItemKindEnumMember:
+	case CompletionItemKindConstant:
+	case CompletionItemKindStruct:
+	case CompletionItemKindEvent:
+	case CompletionItemKindOperator:
+	case CompletionItemKindTypeParameter:
+	default:
+		return fmt.Errorf("CompletionItemKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 //////////////////////////////////
 /// CompletionItemLabelDetails ///
 //////////////////////////////////
@@ -1030,6 +1088,20 @@ const (
 	// Render a completion as obsolete, usually using a strike-out.
 	CompletionItemTagDeprecated CompletionItemTag = 1
 )
+
+func (x *CompletionItemTag) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("CompletionItemTag: %w", err)
+	}
+
+	switch *x {
+	case CompletionItemTagDeprecated:
+	default:
+		return fmt.Errorf("CompletionItemTag: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 //////////////////////
 /// CompletionList ///
@@ -1171,6 +1243,22 @@ const (
 	// Completion was re-triggered as current completion list is incomplete
 	CompletionTriggerKindTriggerForIncompleteCompletions CompletionTriggerKind = 3
 )
+
+func (x *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("CompletionTriggerKind: %w", err)
+	}
+
+	switch *x {
+	case CompletionTriggerKindInvoked:
+	case CompletionTriggerKindTriggerCharacter:
+	case CompletionTriggerKindTriggerForIncompleteCompletions:
+	default:
+		return fmt.Errorf("CompletionTriggerKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 /////////////////////////
 /// ConfigurationItem ///
@@ -1530,6 +1618,23 @@ const (
 	DiagnosticSeverityHint DiagnosticSeverity = 4
 )
 
+func (x *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("DiagnosticSeverity: %w", err)
+	}
+
+	switch *x {
+	case DiagnosticSeverityError:
+	case DiagnosticSeverityWarning:
+	case DiagnosticSeverityInformation:
+	case DiagnosticSeverityHint:
+	default:
+		return fmt.Errorf("DiagnosticSeverity: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 /////////////////////
 /// DiagnosticTag ///
 /////////////////////
@@ -1550,6 +1655,21 @@ const (
 	// Clients are allowed to rendered diagnostics with this tag strike through.
 	DiagnosticTagDeprecated DiagnosticTag = 2
 )
+
+func (x *DiagnosticTag) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("DiagnosticTag: %w", err)
+	}
+
+	switch *x {
+	case DiagnosticTagUnnecessary:
+	case DiagnosticTagDeprecated:
+	default:
+		return fmt.Errorf("DiagnosticTag: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 /////////////////////////////////////////////
 /// DiagnosticWorkspaceClientCapabilities ///
@@ -1862,6 +1982,21 @@ const (
 	DocumentDiagnosticReportKindUnchanged DocumentDiagnosticReportKind = "unchanged"
 )
 
+func (x *DocumentDiagnosticReportKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("DocumentDiagnosticReportKind: %w", err)
+	}
+
+	switch *x {
+	case DocumentDiagnosticReportKindFull:
+	case DocumentDiagnosticReportKindUnchanged:
+	default:
+		return fmt.Errorf("DocumentDiagnosticReportKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 /////////////////////////////////////////////
 /// DocumentDiagnosticReportPartialResult ///
 /////////////////////////////////////////////
@@ -1966,6 +2101,22 @@ const (
 	// Write-access of a symbol, like writing to a variable.
 	DocumentHighlightKindWrite DocumentHighlightKind = 3
 )
+
+func (x *DocumentHighlightKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("DocumentHighlightKind: %w", err)
+	}
+
+	switch *x {
+	case DocumentHighlightKindText:
+	case DocumentHighlightKindRead:
+	case DocumentHighlightKindWrite:
+	default:
+		return fmt.Errorf("DocumentHighlightKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 ////////////////////////////////
 /// DocumentHighlightOptions ///
@@ -2390,6 +2541,23 @@ const (
 	FailureHandlingKindUndo FailureHandlingKind = "undo"
 )
 
+func (x *FailureHandlingKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("FailureHandlingKind: %w", err)
+	}
+
+	switch *x {
+	case FailureHandlingKindAbort:
+	case FailureHandlingKindTransactional:
+	case FailureHandlingKindTextOnlyTransactional:
+	case FailureHandlingKindUndo:
+	default:
+		return fmt.Errorf("FailureHandlingKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 //////////////////////
 /// FileChangeType ///
 //////////////////////
@@ -2405,6 +2573,22 @@ const (
 	// The file got deleted.
 	FileChangeTypeDeleted FileChangeType = 3
 )
+
+func (x *FileChangeType) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("FileChangeType: %w", err)
+	}
+
+	switch *x {
+	case FileChangeTypeCreated:
+	case FileChangeTypeChanged:
+	case FileChangeTypeDeleted:
+	default:
+		return fmt.Errorf("FileChangeType: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 //////////////////
 /// FileCreate ///
@@ -2547,6 +2731,21 @@ const (
 	// The pattern matches a folder only.
 	FileOperationPatternKindFolder FileOperationPatternKind = "folder"
 )
+
+func (x *FileOperationPatternKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("FileOperationPatternKind: %w", err)
+	}
+
+	switch *x {
+	case FileOperationPatternKindFile:
+	case FileOperationPatternKindFolder:
+	default:
+		return fmt.Errorf("FileOperationPatternKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 ///////////////////////////////////
 /// FileOperationPatternOptions ///
@@ -3055,6 +3254,21 @@ const (
 	InlayHintKindParameter InlayHintKind = 2
 )
 
+func (x *InlayHintKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("InlayHintKind: %w", err)
+	}
+
+	switch *x {
+	case InlayHintKindType:
+	case InlayHintKindParameter:
+	default:
+		return fmt.Errorf("InlayHintKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 //////////////////////////
 /// InlayHintLabelPart ///
 //////////////////////////
@@ -3337,6 +3551,21 @@ const (
 	InsertTextFormatSnippet InsertTextFormat = 2
 )
 
+func (x *InsertTextFormat) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("InsertTextFormat: %w", err)
+	}
+
+	switch *x {
+	case InsertTextFormatPlainText:
+	case InsertTextFormatSnippet:
+	default:
+		return fmt.Errorf("InsertTextFormat: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 //////////////////////
 /// InsertTextMode ///
 //////////////////////
@@ -3363,6 +3592,21 @@ const (
 	// following lines inserted will be indented using 2 tabs as well.
 	InsertTextModeAdjustIndentation InsertTextMode = 2
 )
+
+func (x *InsertTextMode) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("InsertTextMode: %w", err)
+	}
+
+	switch *x {
+	case InsertTextModeAsIs:
+	case InsertTextModeAdjustIndentation:
+	default:
+		return fmt.Errorf("InsertTextMode: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 //////////////
 /// LSPAny ///
@@ -3631,6 +3875,21 @@ const (
 	MarkupKindMarkdown MarkupKind = "markdown"
 )
 
+func (x *MarkupKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("MarkupKind: %w", err)
+	}
+
+	switch *x {
+	case MarkupKindPlainText:
+	case MarkupKindMarkdown:
+	default:
+		return fmt.Errorf("MarkupKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 /////////////////////////
 /// MessageActionItem ///
 /////////////////////////
@@ -3657,6 +3916,23 @@ const (
 	// A log message.
 	MessageTypeLog MessageType = 4
 )
+
+func (x *MessageType) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("MessageType: %w", err)
+	}
+
+	switch *x {
+	case MessageTypeError:
+	case MessageTypeWarning:
+	case MessageTypeInfo:
+	case MessageTypeLog:
+	default:
+		return fmt.Errorf("MessageType: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 ///////////////
 /// Moniker ///
@@ -3709,6 +3985,22 @@ const (
 	// variable of a function, a class not visible outside the project, ...)
 	MonikerKindLocal MonikerKind = "local"
 )
+
+func (x *MonikerKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("MonikerKind: %w", err)
+	}
+
+	switch *x {
+	case MonikerKindImport:
+	case MonikerKindExport:
+	case MonikerKindLocal:
+	default:
+		return fmt.Errorf("MonikerKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 //////////////////////
 /// MonikerOptions ///
@@ -3795,6 +4087,21 @@ const (
 	// A code-cell is source code.
 	NotebookCellKindCode NotebookCellKind = 2
 )
+
+func (x *NotebookCellKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("NotebookCellKind: %w", err)
+	}
+
+	switch *x {
+	case NotebookCellKindMarkup:
+	case NotebookCellKindCode:
+	default:
+		return fmt.Errorf("NotebookCellKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 //////////////////////////////////////
 /// NotebookCellTextDocumentFilter ///
@@ -4142,6 +4449,20 @@ const (
 	// according the to language's syntax rule.
 	PrepareSupportDefaultBehaviorIdentifier PrepareSupportDefaultBehavior = 1
 )
+
+func (x *PrepareSupportDefaultBehavior) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("PrepareSupportDefaultBehavior: %w", err)
+	}
+
+	switch *x {
+	case PrepareSupportDefaultBehaviorIdentifier:
+	default:
+		return fmt.Errorf("PrepareSupportDefaultBehavior: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 ////////////////////////
 /// PreviousResultID ///
@@ -4538,6 +4859,22 @@ const (
 	// Supports deleting existing files and folders.
 	ResourceOperationKindDelete ResourceOperationKind = "delete"
 )
+
+func (x *ResourceOperationKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("ResourceOperationKind: %w", err)
+	}
+
+	switch *x {
+	case ResourceOperationKindCreate:
+	case ResourceOperationKindRename:
+	case ResourceOperationKindDelete:
+	default:
+		return fmt.Errorf("ResourceOperationKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 ///////////////////
 /// SaveOptions ///
@@ -5322,6 +5659,22 @@ const (
 	SignatureHelpTriggerKindContentChange SignatureHelpTriggerKind = 3
 )
 
+func (x *SignatureHelpTriggerKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("SignatureHelpTriggerKind: %w", err)
+	}
+
+	switch *x {
+	case SignatureHelpTriggerKindInvoked:
+	case SignatureHelpTriggerKindTriggerCharacter:
+	case SignatureHelpTriggerKindContentChange:
+	default:
+		return fmt.Errorf("SignatureHelpTriggerKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 ////////////////////////////
 /// SignatureInformation ///
 ////////////////////////////
@@ -5422,6 +5775,45 @@ const (
 	SymbolKindTypeParameter SymbolKind = 26
 )
 
+func (x *SymbolKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("SymbolKind: %w", err)
+	}
+
+	switch *x {
+	case SymbolKindFile:
+	case SymbolKindModule:
+	case SymbolKindNamespace:
+	case SymbolKindPackage:
+	case SymbolKindClass:
+	case SymbolKindMethod:
+	case SymbolKindProperty:
+	case SymbolKindField:
+	case SymbolKindConstructor:
+	case SymbolKindEnum:
+	case SymbolKindInterface:
+	case SymbolKindFunction:
+	case SymbolKindVariable:
+	case SymbolKindConstant:
+	case SymbolKindString:
+	case SymbolKindNumber:
+	case SymbolKindBoolean:
+	case SymbolKindArray:
+	case SymbolKindObject:
+	case SymbolKindKey:
+	case SymbolKindNull:
+	case SymbolKindEnumMember:
+	case SymbolKindStruct:
+	case SymbolKindEvent:
+	case SymbolKindOperator:
+	case SymbolKindTypeParameter:
+	default:
+		return fmt.Errorf("SymbolKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 /////////////////
 /// SymbolTag ///
 /////////////////
@@ -5435,6 +5827,20 @@ const (
 	// Render a symbol as obsolete, usually using a strike-out.
 	SymbolTagDeprecated SymbolTag = 1
 )
+
+func (x *SymbolTag) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("SymbolTag: %w", err)
+	}
+
+	switch *x {
+	case SymbolTagDeprecated:
+	default:
+		return fmt.Errorf("SymbolTag: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 /////////////////////////////////////////////
 /// TextDocumentChangeRegistrationOptions ///
@@ -5665,6 +6071,22 @@ const (
 	TextDocumentSaveReasonFocusOut TextDocumentSaveReason = 3
 )
 
+func (x *TextDocumentSaveReason) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("TextDocumentSaveReason: %w", err)
+	}
+
+	switch *x {
+	case TextDocumentSaveReasonManual:
+	case TextDocumentSaveReasonAfterDelay:
+	case TextDocumentSaveReasonFocusOut:
+	default:
+		return fmt.Errorf("TextDocumentSaveReason: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 ///////////////////////////////////////////
 /// TextDocumentSaveRegistrationOptions ///
 ///////////////////////////////////////////
@@ -5711,6 +6133,22 @@ const (
 	// send.
 	TextDocumentSyncKindIncremental TextDocumentSyncKind = 2
 )
+
+func (x *TextDocumentSyncKind) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+		return fmt.Errorf("TextDocumentSyncKind: %w", err)
+	}
+
+	switch *x {
+	case TextDocumentSyncKindNone:
+	case TextDocumentSyncKindFull:
+	case TextDocumentSyncKindIncremental:
+	default:
+		return fmt.Errorf("TextDocumentSyncKind: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 ///////////////////////////////
 /// TextDocumentSyncOptions ///
@@ -5760,6 +6198,20 @@ const (
 	TokenFormatRelative TokenFormat = "relative"
 )
 
+func (x *TokenFormat) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("TokenFormat: %w", err)
+	}
+
+	switch *x {
+	case TokenFormatRelative:
+	default:
+		return fmt.Errorf("TokenFormat: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
+
 ///////////////////
 /// TraceValues ///
 ///////////////////
@@ -5774,6 +6226,22 @@ const (
 	// Verbose message tracing.
 	TraceValuesVerbose TraceValues = "verbose"
 )
+
+func (x *TraceValues) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("TraceValues: %w", err)
+	}
+
+	switch *x {
+	case TraceValuesOff:
+	case TraceValuesMessages:
+	case TraceValuesVerbose:
+	default:
+		return fmt.Errorf("TraceValues: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 ////////////////////////////////////////
 /// TypeDefinitionClientCapabilities ///
@@ -5958,6 +6426,24 @@ const (
 	// The moniker is globally unique
 	UniquenessLevelGlobal UniquenessLevel = "global"
 )
+
+func (x *UniquenessLevel) UnmarshalJSON(data []byte) error {
+	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+		return fmt.Errorf("UniquenessLevel: %w", err)
+	}
+
+	switch *x {
+	case UniquenessLevelDocument:
+	case UniquenessLevelProject:
+	case UniquenessLevelGroup:
+	case UniquenessLevelScheme:
+	case UniquenessLevelGlobal:
+	default:
+		return fmt.Errorf("UniquenessLevel: %v is not a member of the enum", x)
+	}
+
+	return nil
+}
 
 //////////////////////
 /// Unregistration ///

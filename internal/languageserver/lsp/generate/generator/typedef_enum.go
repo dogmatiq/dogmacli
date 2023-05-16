@@ -18,11 +18,10 @@ func (g *typeDef) Enum(d model.Enum) {
 	g.File.Line()
 	g.enumConstants(d)
 
-	// g.File.Line()
-	// g.enumValidateMethod(d)
-
-	// g.File.Line()
-	// g.enumStringMethod(d)
+	if !d.SupportsCustomValues {
+		g.File.Line()
+		g.enumUnmarshalMethod(d)
+	}
 }
 
 func (g *Generator) enumConstants(d model.Enum) {
@@ -40,105 +39,79 @@ func (g *Generator) enumConstants(d model.Enum) {
 		})
 }
 
-func (g *Generator) enumValidateMethod(d model.Enum) {
+func (g *Generator) enumUnmarshalMethod(d model.Enum) {
 	g.File.
-		Comment("Validate returns an error if x is invalid.").
 		Func().
 		Params(
-			jen.Id("x").Id(identifier(d.TypeName)),
+			jen.Id("x").Op("*").Id(identifier(d.TypeName)),
 		).
-		Id("Validate").
-		Params().
+		Id("UnmarshalJSON").
+		Params(
+			jen.Id("data").Index().Byte(),
+		).
 		Params(
 			jen.Error(),
 		).
 		BlockFunc(func(grp *jen.Group) {
-			if !d.SupportsCustomValues {
-				grp.
-					Switch(jen.Id("x")).
-					BlockFunc(func(grp *jen.Group) {
-						for _, m := range d.Members {
-							grp.Case(
-								jen.Id(identifier(d.TypeName, m.Name)),
-							)
-						}
-
-						grp.
-							Default().
-							Block(
-								jen.Return(
-									jenx.
-										Errorf(
-											fmt.Sprintf(
-												"invalid %s: %%v",
-												identifier(d.TypeName),
-											),
-											jen.Id("x"),
-										),
-								),
-							)
-
-					})
-			}
-
-			grp.Return(jen.Nil())
-		})
-}
-
-func (g *Generator) enumStringMethod(d model.Enum) {
-	g.File.
-		Comment("String returns the string representation of x.").
-		Func().
-		Params(
-			jen.Id("x").Id(identifier(d.TypeName)),
-		).
-		Id("String").
-		Params().
-		Params(
-			jen.String(),
-		).
-		BlockFunc(func(grp *jen.Group) {
 			grp.
-				Switch(jen.Id("x")).
+				If(
+					jen.
+						Err().
+						Op(":=").
+						Qual("encoding/json", "Unmarshal").
+						Call(
+							jen.Id("data"),
+							jen.
+								Parens(
+									jen.
+										Op("*").
+										Add(g.typeExpr(d.Type)),
+								).
+								Call(jen.Id("x")),
+						),
+					jen.Err().Op("!=").Nil(),
+				).
+				Block(
+					jen.Return(
+						jenx.
+							Errorf(
+								fmt.Sprintf(
+									"%s: %%w",
+									identifier(d.TypeName),
+								),
+								jen.Err(),
+							),
+					),
+				)
+
+			grp.
+				Line().
+				Switch(jen.Op("*").Id("x")).
 				BlockFunc(func(grp *jen.Group) {
 					for _, m := range d.Members {
-						grp.
-							Case(
-								jen.Id(identifier(d.TypeName, m.Name)),
-							).
-							Block(
-								jen.Return(
-									jenx.Litf(
-										"%s(%s)",
-										identifier(d.TypeName),
-										identifier(m.Name),
-									),
-								),
-							)
-					}
-
-					tag := "invalid"
-					if d.SupportsCustomValues {
-						tag = "custom"
+						grp.Case(
+							jen.Id(identifier(d.TypeName, m.Name)),
+						)
 					}
 
 					grp.
 						Default().
 						Block(
 							jen.Return(
-								jenx.Sprintf(
-									fmt.Sprintf(
-										"%s(%%v, %s)",
-										identifier(d.TypeName),
-										tag,
-									),
-									g.typeExpr(d.Type).Call(
+								jenx.
+									Errorf(
+										fmt.Sprintf(
+											"%s: %%v is not a member of the enum",
+											identifier(d.TypeName),
+										),
 										jen.Id("x"),
 									),
-								),
 							),
 						)
-
 				})
+
+			grp.
+				Line().
+				Return(jen.Nil())
 		})
 }
