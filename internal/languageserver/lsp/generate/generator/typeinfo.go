@@ -3,8 +3,9 @@ package generator
 import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 
 type typeInfo struct {
-	IsLiteral   bool
-	UseOptional bool
+	IsLiteral        bool
+	UseOptional      bool
+	HasMarshalMethod bool
 }
 
 func (g *Generator) typeInfo(t model.Type) typeInfo {

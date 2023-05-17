@@ -3,6 +3,7 @@
 package lsp
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 )
@@ -16,8 +17,36 @@ import (
 // @since 3.16.0.
 type AnnotatedTextEdit struct {
 	TextEdit
+
 	// The actual identifier of the change annotation
 	AnnotationID ChangeAnnotationIdentifier
+}
+
+func (x AnnotatedTextEdit) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x AnnotatedTextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextEdit.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "annotationId", x.AnnotationID); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -30,8 +59,36 @@ type ApplyWorkspaceEditParams struct {
 	// presented in the user interface for example on an undo
 	// stack to undo the workspace edit.
 	Label string
+
 	// The edits to apply.
 	Edit WorkspaceEdit
+}
+
+func (x ApplyWorkspaceEditParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ApplyWorkspaceEditParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "edit", x.Edit); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -44,14 +101,46 @@ type ApplyWorkspaceEditParams struct {
 type ApplyWorkspaceEditResult struct {
 	// Indicates whether the edit was applied or not.
 	Applied bool
+
 	// An optional textual description for why the edit was not applied.
 	// This may be used by the server for diagnostic logging or to provide
 	// a suitable error for a request that triggered the edit.
 	FailureReason string
+
 	// Depending on the client's failure handling strategy `failedChange` might
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
 	FailedChange uint32
+}
+
+func (x ApplyWorkspaceEditResult) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ApplyWorkspaceEditResult) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "applied", x.Applied); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "failureReason", x.FailureReason); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "failedChange", x.FailedChange); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -62,17 +151,53 @@ type ApplyWorkspaceEditResult struct {
 type BaseSymbolInformation struct {
 	// The name of this symbol.
 	Name string
+
 	// The kind of this symbol.
 	Kind SymbolKind
+
 	// Tags for this symbol.
 	//
 	// @since 3.16.0
 	Tags []SymbolTag
+
 	// The name of the symbol containing this symbol. This information is for
 	// user interface purposes (e.g. to render a qualifier in the user interface
 	// if necessary). It can't be used to re-infer a hierarchy for the document
 	// symbols.
 	ContainerName string
+}
+
+func (x BaseSymbolInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x BaseSymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "containerName", x.ContainerName); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -87,6 +212,30 @@ type CallHierarchyClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x CallHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////
 /// CallHierarchyIncomingCall ///
 /////////////////////////////////
@@ -97,9 +246,37 @@ type CallHierarchyClientCapabilities struct {
 type CallHierarchyIncomingCall struct {
 	// The item that makes the call.
 	From CallHierarchyItem
+
 	// The ranges at which the calls appear. This is relative to the caller
 	// denoted by {@link CallHierarchyIncomingCall.from `this.from`}.
 	FromRanges []Range
+}
+
+func (x CallHierarchyIncomingCall) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyIncomingCall) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "from", x.From); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "fromRanges", x.FromRanges); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -112,7 +289,38 @@ type CallHierarchyIncomingCall struct {
 type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item CallHierarchyItem
+}
+
+func (x CallHierarchyIncomingCallsParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyIncomingCallsParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "item", x.Item); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -126,22 +334,74 @@ type CallHierarchyIncomingCallsParams struct {
 type CallHierarchyItem struct {
 	// The name of this item.
 	Name string
+
 	// The kind of this item.
 	Kind SymbolKind
+
 	// Tags for this item.
 	Tags []SymbolTag
+
 	// More detail for this item, e.g. the signature of a function.
 	Detail string
+
 	// The resource identifier of this item.
 	URI DocumentURI
+
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else, e.g. comments and code.
 	Range Range
+
 	// The range that should be selected and revealed when this symbol is being picked, e.g. the name of a function.
 	// Must be contained by the {@link CallHierarchyItem.range `range`}.
 	SelectionRange Range
+
 	// A data entry field that is preserved between a call hierarchy prepare and
 	// incoming calls or outgoing calls requests.
 	Data Optional[LSPAny]
+}
+
+func (x CallHierarchyItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -155,6 +415,30 @@ type CallHierarchyOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x CallHierarchyOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////
 /// CallHierarchyOutgoingCall ///
 /////////////////////////////////
@@ -165,10 +449,38 @@ type CallHierarchyOptions struct {
 type CallHierarchyOutgoingCall struct {
 	// The item that is called.
 	To CallHierarchyItem
+
 	// The range at which this item is called. This is the range relative to the caller, e.g the item
 	// passed to {@link CallHierarchyItemProvider.provideCallHierarchyOutgoingCalls `provideCallHierarchyOutgoingCalls`}
 	// and not {@link CallHierarchyOutgoingCall.to `this.to`}.
 	FromRanges []Range
+}
+
+func (x CallHierarchyOutgoingCall) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyOutgoingCall) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "to", x.To); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "fromRanges", x.FromRanges); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -181,7 +493,38 @@ type CallHierarchyOutgoingCall struct {
 type CallHierarchyOutgoingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item CallHierarchyItem
+}
+
+func (x CallHierarchyOutgoingCallsParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyOutgoingCallsParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "item", x.Item); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////
@@ -194,6 +537,33 @@ type CallHierarchyOutgoingCallsParams struct {
 type CallHierarchyPrepareParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+}
+
+func (x CallHierarchyPrepareParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -209,6 +579,36 @@ type CallHierarchyRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x CallHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CallHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.CallHierarchyOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////
 /// CancelParams ///
 ////////////////////
@@ -216,6 +616,30 @@ type CallHierarchyRegistrationOptions struct {
 type CancelParams struct {
 	// The request id to cancel.
 	ID CancelParamsID
+}
+
+func (x CancelParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "id", x.ID); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CancelParamsID struct{}
@@ -231,12 +655,44 @@ type ChangeAnnotation struct {
 	// A human-readable string describing the actual change. The string
 	// is rendered prominent in the user interface.
 	Label string
+
 	// A flag which indicates that user confirmation is needed
 	// before applying the change.
 	NeedsConfirmation bool
+
 	// A human-readable string which is rendered less prominent in
 	// the user interface.
 	Description string
+}
+
+func (x ChangeAnnotation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ChangeAnnotation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "needsConfirmation", x.NeedsConfirmation); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "description", x.Description); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////
@@ -254,20 +710,64 @@ type ChangeAnnotationIdentifier = string
 type ClientCapabilities struct {
 	// Workspace specific client capabilities.
 	Workspace Optional[WorkspaceClientCapabilities]
+
 	// Text document specific client capabilities.
 	TextDocument Optional[TextDocumentClientCapabilities]
+
 	// Capabilities specific to the notebook document support.
 	//
 	// @since 3.17.0
 	NotebookDocument Optional[NotebookDocumentClientCapabilities]
+
 	// Window specific client capabilities.
 	Window Optional[WindowClientCapabilities]
+
 	// General client capabilities.
 	//
 	// @since 3.16.0
 	General Optional[GeneralClientCapabilities]
+
 	// Experimental client capabilities.
 	Experimental Optional[LSPAny]
+}
+
+func (x ClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "workspace", x.Workspace); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "window", x.Window); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "general", x.General); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "experimental", x.Experimental); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////
@@ -281,12 +781,15 @@ type ClientCapabilities struct {
 type CodeAction struct {
 	// A short, human-readable, title for this code action.
 	Title string
+
 	// The kind of the code action.
 	//
 	// Used to filter code actions.
 	Kind Optional[CodeActionKind]
+
 	// The diagnostics that this code action resolves.
 	Diagnostics []Diagnostic
+
 	// Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
 	// by keybindings.
 	//
@@ -295,6 +798,7 @@ type CodeAction struct {
 	//
 	// @since 3.15.0
 	IsPreferred bool
+
 	// Marks that the code action cannot currently be applied.
 	//
 	// Clients should follow the following guidelines regarding disabled code actions:
@@ -311,17 +815,65 @@ type CodeAction struct {
 	//
 	// @since 3.16.0
 	Disabled Optional[CodeActionDisabled]
+
 	// The workspace edit this code action performs.
 	Edit Optional[WorkspaceEdit]
+
 	// A command this code action executes. If a code action
 	// provides an edit and a command, first the edit is
 	// executed and then the command.
 	Command Optional[Command]
+
 	// A data entry field that is preserved on a code action between
 	// a `textDocument/codeAction` and a `codeAction/resolve` request.
 	//
 	// @since 3.16.0
 	Data Optional[LSPAny]
+}
+
+func (x CodeAction) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeAction) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "title", x.Title); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "isPreferred", x.IsPreferred); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "disabled", x.Disabled); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "edit", x.Edit); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CodeActionDisabled struct {
@@ -339,31 +891,37 @@ type CodeActionDisabled struct {
 type CodeActionClientCapabilities struct {
 	// Whether code action supports dynamic registration.
 	DynamicRegistration bool
+
 	// The client support code action literals of type `CodeAction` as a valid
 	// response of the `textDocument/codeAction` request. If the property is not
 	// set the request can only return `Command` literals.
 	//
 	// @since 3.8.0
 	CodeActionLiteralSupport Optional[CodeActionClientCapabilitiesCodeActionLiteralSupport]
+
 	// Whether code action supports the `isPreferred` property.
 	//
 	// @since 3.15.0
 	IsPreferredSupport bool
+
 	// Whether code action supports the `disabled` property.
 	//
 	// @since 3.16.0
 	DisabledSupport bool
+
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/codeAction` and a
 	// `codeAction/resolve` request.
 	//
 	// @since 3.16.0
 	DataSupport bool
+
 	// Whether the client supports resolving additional code action
 	// properties via a separate `codeAction/resolve` request.
 	//
 	// @since 3.16.0
 	ResolveSupport Optional[CodeActionClientCapabilitiesResolveSupport]
+
 	// Whether the client honors the change annotations in
 	// text edits and resource operations returned via the
 	// `CodeAction#edit` property by for example presenting
@@ -372,6 +930,48 @@ type CodeActionClientCapabilities struct {
 	//
 	// @since 3.16.0
 	HonorsChangeAnnotations bool
+}
+
+func (x CodeActionClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "codeActionLiteralSupport", x.CodeActionLiteralSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "isPreferredSupport", x.IsPreferredSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "disabledSupport", x.DisabledSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "dataSupport", x.DataSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "honorsChangeAnnotations", x.HonorsChangeAnnotations); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
@@ -406,15 +1006,47 @@ type CodeActionContext struct {
 	// that these accurately reflect the error state of the resource. The primary parameter
 	// to compute code actions is the provided range.
 	Diagnostics []Diagnostic
+
 	// Requested kind of actions to return.
 	//
 	// Actions not of this kind are filtered out by the client before being shown. So servers
 	// can omit computing them.
 	Only []CodeActionKind
+
 	// The reason why code actions were requested.
 	//
 	// @since 3.17.0
 	TriggerKind Optional[CodeActionTriggerKind]
+}
+
+func (x CodeActionContext) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionContext) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "only", x.Only); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "triggerKind", x.TriggerKind); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////
@@ -483,16 +1115,48 @@ const (
 // Provider options for a {@link CodeActionRequest}.
 type CodeActionOptions struct {
 	WorkDoneProgressOptions
+
 	// CodeActionKinds that this server may return.
 	//
 	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
 	// may list out every specific kind they provide.
 	CodeActionKinds []CodeActionKind
+
 	// The server provides support to resolve additional
 	// information for a code action.
 	//
 	// @since 3.16.0
 	ResolveProvider bool
+}
+
+func (x CodeActionOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "codeActionKinds", x.CodeActionKinds); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -503,12 +1167,51 @@ type CodeActionOptions struct {
 type CodeActionParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The document in which the command was invoked.
 	TextDocument TextDocumentIdentifier
+
 	// The range for which the command was invoked.
 	Range Range
+
 	// Context carrying additional information.
 	Context CodeActionContext
+}
+
+func (x CodeActionParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "context", x.Context); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////
@@ -519,6 +1222,33 @@ type CodeActionParams struct {
 type CodeActionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeActionOptions
+}
+
+func (x CodeActionRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.CodeActionOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -567,6 +1297,30 @@ type CodeDescription struct {
 	Href URI
 }
 
+func (x CodeDescription) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeDescription) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "href", x.Href); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////
 /// CodeLens ///
 ////////////////
@@ -579,12 +1333,44 @@ type CodeDescription struct {
 type CodeLens struct {
 	// The range in which this code lens is valid. Should only span a single line.
 	Range Range
+
 	// The command this code lens represents.
 	Command Optional[Command]
+
 	// A data entry field that is preserved on a code lens item between
 	// a {@link CodeLensRequest} and a [CodeLensResolveRequest]
 	// (#CodeLensResolveRequest)
 	Data Optional[LSPAny]
+}
+
+func (x CodeLens) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeLens) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////
@@ -597,6 +1383,30 @@ type CodeLensClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x CodeLensClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeLensClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////
 /// CodeLensOptions ///
 ///////////////////////
@@ -604,8 +1414,36 @@ type CodeLensClientCapabilities struct {
 // Code Lens provider options of a {@link CodeLensRequest}.
 type CodeLensOptions struct {
 	WorkDoneProgressOptions
+
 	// Code lens has a resolve provider as well.
 	ResolveProvider bool
+}
+
+func (x CodeLensOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeLensOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////
@@ -616,8 +1454,39 @@ type CodeLensOptions struct {
 type CodeLensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The document to request code lens for.
 	TextDocument TextDocumentIdentifier
+}
+
+func (x CodeLensParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeLensParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -628,6 +1497,33 @@ type CodeLensParams struct {
 type CodeLensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeLensOptions
+}
+
+func (x CodeLensRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeLensRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.CodeLensOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////////
@@ -646,6 +1542,30 @@ type CodeLensWorkspaceClientCapabilities struct {
 	RefreshSupport bool
 }
 
+func (x CodeLensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeLensWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////
 /// Color ///
 /////////////
@@ -654,12 +1574,48 @@ type CodeLensWorkspaceClientCapabilities struct {
 type Color struct {
 	// The red component of this color in the range [0-1].
 	Red float64
+
 	// The green component of this color in the range [0-1].
 	Green float64
+
 	// The blue component of this color in the range [0-1].
 	Blue float64
+
 	// The alpha component of this color in the range [0-1].
 	Alpha float64
+}
+
+func (x Color) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Color) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "red", x.Red); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "green", x.Green); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "blue", x.Blue); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "alpha", x.Alpha); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -670,8 +1626,36 @@ type Color struct {
 type ColorInformation struct {
 	// The range in the document where this color appears.
 	Range Range
+
 	// The actual color value for this color range.
 	Color Color
+}
+
+func (x ColorInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ColorInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "color", x.Color); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -683,13 +1667,45 @@ type ColorPresentation struct {
 	// picker header. By default this is also the text that is inserted when selecting
 	// this color presentation.
 	Label string
+
 	// An {@link TextEdit edit} which is applied to a document when selecting
 	// this presentation for the color.  When `falsy` the {@link ColorPresentation.label label}
 	// is used.
 	TextEdit Optional[TextEdit]
+
 	// An optional array of additional {@link TextEdit text edits} that are applied when
 	// selecting this color presentation. Edits must not overlap with the main {@link ColorPresentation.textEdit edit} nor with themselves.
 	AdditionalTextEdits []TextEdit
+}
+
+func (x ColorPresentation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ColorPresentation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "textEdit", x.TextEdit); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "additionalTextEdits", x.AdditionalTextEdits); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////
@@ -700,12 +1716,51 @@ type ColorPresentation struct {
 type ColorPresentationParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The color to request presentations for.
 	Color Color
+
 	// The range where the color would be inserted. Serves as a context.
 	Range Range
+}
+
+func (x ColorPresentationParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ColorPresentationParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "color", x.Color); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////
@@ -719,11 +1774,43 @@ type ColorPresentationParams struct {
 type Command struct {
 	// Title of the command, like `save`.
 	Title string
+
 	// The identifier of the actual command handler.
 	Command string
+
 	// Arguments that the command handler should be
 	// invoked with.
 	Arguments []LSPAny
+}
+
+func (x Command) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Command) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "title", x.Title); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "command", x.Command); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "arguments", x.Arguments); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////
@@ -734,24 +1821,68 @@ type Command struct {
 type CompletionClientCapabilities struct {
 	// Whether completion supports dynamic registration.
 	DynamicRegistration bool
+
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
-	CompletionItem     Optional[CompletionClientCapabilitiesCompletionItem]
+	CompletionItem Optional[CompletionClientCapabilitiesCompletionItem]
+
 	CompletionItemKind Optional[CompletionClientCapabilitiesCompletionItemKind]
+
 	// Defines how the client handles whitespace and indentation
 	// when accepting a completion item that uses multi line
 	// text in either `insertText` or `textEdit`.
 	//
 	// @since 3.17.0
 	InsertTextMode Optional[InsertTextMode]
+
 	// The client supports to send additional context information for a
 	// `textDocument/completion` request.
 	ContextSupport bool
+
 	// The client supports the following `CompletionList` specific
 	// capabilities.
 	//
 	// @since 3.17.0
 	CompletionList Optional[CompletionClientCapabilitiesCompletionList]
+}
+
+func (x CompletionClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "completionItem", x.CompletionItem); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "completionItemKind", x.CompletionItemKind); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "insertTextMode", x.InsertTextMode); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "contextSupport", x.ContextSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "completionList", x.CompletionList); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CompletionClientCapabilitiesCompletionItem struct {
@@ -848,9 +1979,37 @@ type CompletionClientCapabilitiesCompletionList struct {
 type CompletionContext struct {
 	// How the completion was triggered.
 	TriggerKind CompletionTriggerKind
+
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
 	TriggerCharacter string
+}
+
+func (x CompletionContext) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionContext) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "triggerKind", x.TriggerKind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "triggerCharacter", x.TriggerCharacter); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////
@@ -868,41 +2027,51 @@ type CompletionItem struct {
 	// If label details are provided the label itself should
 	// be an unqualified name of the completion item.
 	Label string
+
 	// Additional details for the label
 	//
 	// @since 3.17.0
 	LabelDetails Optional[CompletionItemLabelDetails]
+
 	// The kind of this completion item. Based of the kind
 	// an icon is chosen by the editor.
 	Kind Optional[CompletionItemKind]
+
 	// Tags for this completion item.
 	//
 	// @since 3.15.0
 	Tags []CompletionItemTag
+
 	// A human-readable string with additional information
 	// about this item, like type or symbol information.
 	Detail string
+
 	// A human-readable string that represents a doc-comment.
 	Documentation Optional[CompletionItemDocumentation]
+
 	// Indicates if this item is deprecated.
 	// @deprecated Use `tags` instead.
 	//
 	// Deprecated: Use `tags` instead.
 	Deprecated bool
+
 	// Select this item when showing.
 	//
 	// *Note* that only one completion item can be selected and that the
 	// tool / client decides which item that is. The rule is that the *first*
 	// item of those that match best is selected.
 	Preselect bool
+
 	// A string that should be used when comparing this item
 	// with other items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
 	SortText string
+
 	// A string that should be used when filtering a set of
 	// completion items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
 	FilterText string
+
 	// A string that should be inserted into a document when selecting
 	// this completion. When `falsy` the {@link CompletionItem.label label}
 	// is used.
@@ -915,6 +2084,7 @@ type CompletionItem struct {
 	// recommended to use `textEdit` instead since it avoids additional client
 	// side interpretation.
 	InsertText string
+
 	// The format of the insert text. The format applies to both the
 	// `insertText` property and the `newText` property of a provided
 	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
@@ -922,12 +2092,14 @@ type CompletionItem struct {
 	// Please note that the insertTextFormat doesn't apply to
 	// `additionalTextEdits`.
 	InsertTextFormat Optional[InsertTextFormat]
+
 	// How whitespace and indentation is handled during completion
 	// item insertion. If not provided the clients default value depends on
 	// the `textDocument.completion.insertTextMode` client capability.
 	//
 	// @since 3.16.0
 	InsertTextMode Optional[InsertTextMode]
+
 	// An {@link TextEdit edit} which is applied to a document when selecting
 	// this completion. When an edit is provided the value of
 	// {@link CompletionItem.insertText insertText} is ignored.
@@ -949,6 +2121,7 @@ type CompletionItem struct {
 	//
 	// @since 3.16.0 additional type `InsertReplaceEdit`
 	TextEdit Optional[CompletionItemTextEdit]
+
 	// The edit text used if the completion item is part of a CompletionList and
 	// CompletionList defines an item default for the text edit range.
 	//
@@ -960,6 +2133,7 @@ type CompletionItem struct {
 	//
 	// @since 3.17.0
 	TextEditText string
+
 	// An optional array of additional {@link TextEdit text edits} that are applied when
 	// selecting this completion. Edits must not overlap (including the same insert position)
 	// with the main {@link CompletionItem.textEdit edit} nor with themselves.
@@ -968,17 +2142,98 @@ type CompletionItem struct {
 	// (for example adding an import statement at the top of the file if the completion item will
 	// insert an unqualified type).
 	AdditionalTextEdits []TextEdit
+
 	// An optional set of characters that when pressed while this completion is active will accept it first and
 	// then type that character. *Note* that all commit characters should have `length=1` and that superfluous
 	// characters will be ignored.
 	CommitCharacters []string
+
 	// An optional {@link Command command} that is executed *after* inserting this completion. *Note* that
 	// additional modifications to the current document should be described with the
 	// {@link CompletionItem.additionalTextEdits additionalTextEdits}-property.
 	Command Optional[Command]
+
 	// A data entry field that is preserved on a completion item between a
 	// {@link CompletionRequest} and a {@link CompletionResolveRequest}.
 	Data Optional[LSPAny]
+}
+
+func (x CompletionItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "labelDetails", x.LabelDetails); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentation", x.Documentation); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "deprecated", x.Deprecated); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "preselect", x.Preselect); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "sortText", x.SortText); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "filterText", x.FilterText); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "insertText", x.InsertText); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "insertTextFormat", x.InsertTextFormat); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "insertTextMode", x.InsertTextMode); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "textEdit", x.TextEdit); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textEditText", x.TextEditText); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "additionalTextEdits", x.AdditionalTextEdits); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "commitCharacters", x.CommitCharacters); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CompletionItemDocumentation struct{}
@@ -1069,9 +2324,37 @@ type CompletionItemLabelDetails struct {
 	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
 	// without any spacing. Should be used for function signatures and type annotations.
 	Detail string
+
 	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
 	// for fully qualified names and file paths.
 	Description string
+}
+
+func (x CompletionItemLabelDetails) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionItemLabelDetails) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "description", x.Description); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -1115,6 +2398,7 @@ type CompletionList struct {
 	// Recomputed lists have all their items replaced (not appended) in the
 	// incomplete completion sessions.
 	IsIncomplete bool
+
 	// In many cases the items of an actual completion result share the same
 	// value for properties like `commitCharacters` or the range of a text
 	// edit. A completion list can therefore define item defaults which will
@@ -1129,8 +2413,39 @@ type CompletionList struct {
 	//
 	// @since 3.17.0
 	ItemDefaults Optional[CompletionListItemDefaults]
+
 	// The completion items.
 	Items []CompletionItem
+}
+
+func (x CompletionList) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionList) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "isIncomplete", x.IsIncomplete); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "itemDefaults", x.ItemDefaults); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CompletionListItemDefaults struct {
@@ -1165,6 +2480,7 @@ type CompletionListItemDefaultsEditRange struct{}
 // Completion options.
 type CompletionOptions struct {
 	WorkDoneProgressOptions
+
 	// Most tools trigger completion request automatically without explicitly requesting
 	// it using a keyboard shortcut (e.g. Ctrl+Space). Typically they do so when the user
 	// starts to type an identifier. For example if the user types `c` in a JavaScript file
@@ -1174,6 +2490,7 @@ type CompletionOptions struct {
 	// If code complete should automatically be trigger on characters not being valid inside
 	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
 	TriggerCharacters []string
+
 	// The list of all possible characters that commit a completion. This field can be used
 	// if clients don't support individual commit characters per completion item. See
 	// `ClientCapabilities.textDocument.completion.completionItem.commitCharactersSupport`
@@ -1183,14 +2500,52 @@ type CompletionOptions struct {
 	//
 	// @since 3.2.0
 	AllCommitCharacters []string
+
 	// The server provides support to resolve additional
 	// information for a completion item.
 	ResolveProvider bool
+
 	// The server supports the following `CompletionItem` specific
 	// capabilities.
 	//
 	// @since 3.17.0
 	CompletionItem Optional[CompletionOptionsCompletionItem]
+}
+
+func (x CompletionOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "triggerCharacters", x.TriggerCharacters); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "allCommitCharacters", x.AllCommitCharacters); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "completionItem", x.CompletionItem); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CompletionOptionsCompletionItem struct {
@@ -1211,9 +2566,43 @@ type CompletionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The completion context. This is only available it the client specifies
 	// to send this using the client capability `textDocument.completion.contextSupport === true`
 	Context Optional[CompletionContext]
+}
+
+func (x CompletionParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "context", x.Context); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////
@@ -1224,6 +2613,33 @@ type CompletionParams struct {
 type CompletionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CompletionOptions
+}
+
+func (x CompletionRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.CompletionOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -1267,8 +2683,36 @@ func (x *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
 type ConfigurationItem struct {
 	// The scope to get the configuration section for.
 	ScopeURI string
+
 	// The configuration section asked for.
 	Section string
+}
+
+func (x ConfigurationItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ConfigurationItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "scopeUri", x.ScopeURI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "section", x.Section); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -1280,6 +2724,30 @@ type ConfigurationParams struct {
 	Items []ConfigurationItem
 }
 
+func (x ConfigurationParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ConfigurationParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////
 /// CreateFile ///
 //////////////////
@@ -1287,10 +2755,45 @@ type ConfigurationParams struct {
 // Create file operation.
 type CreateFile struct {
 	ResourceOperation
+
 	// The resource to create.
 	URI DocumentURI
+
 	// Additional options
 	Options Optional[CreateFileOptions]
+}
+
+func (x CreateFile) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CreateFile) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.ResourceOperation.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "kind", "create"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -1301,8 +2804,36 @@ type CreateFile struct {
 type CreateFileOptions struct {
 	// Overwrite existing file. Overwrite wins over `ignoreIfExists`
 	Overwrite bool
+
 	// Ignore if exists.
 	IgnoreIfExists bool
+}
+
+func (x CreateFileOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CreateFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "overwrite", x.Overwrite); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "ignoreIfExists", x.IgnoreIfExists); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -1316,6 +2847,30 @@ type CreateFileOptions struct {
 type CreateFilesParams struct {
 	// An array of all files/folders created in this operation.
 	Files []FileCreate
+}
+
+func (x CreateFilesParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CreateFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "files", x.Files); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////
@@ -1335,8 +2890,36 @@ type DeclarationClientCapabilities struct {
 	// the client supports the new `DeclarationRegistrationOptions` return value
 	// for the corresponding server capability as well.
 	DynamicRegistration bool
+
 	// The client supports additional metadata in the form of declaration links.
 	LinkSupport bool
+}
+
+func (x DeclarationClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DeclarationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////
@@ -1360,6 +2943,30 @@ type DeclarationOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x DeclarationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DeclarationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// DeclarationParams ///
 /////////////////////////
@@ -1370,6 +2977,36 @@ type DeclarationParams struct {
 	PartialResultParams
 }
 
+func (x DeclarationParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DeclarationParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////
 /// DeclarationRegistrationOptions ///
 //////////////////////////////////////
@@ -1378,6 +3015,36 @@ type DeclarationRegistrationOptions struct {
 	DeclarationOptions
 	TextDocumentRegistrationOptions
 	StaticRegistrationOptions
+}
+
+func (x DeclarationRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DeclarationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.DeclarationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////
@@ -1400,10 +3067,38 @@ type Definition struct{}
 type DefinitionClientCapabilities struct {
 	// Whether definition supports dynamic registration.
 	DynamicRegistration bool
+
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
 	LinkSupport bool
+}
+
+func (x DefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////
@@ -1425,6 +3120,30 @@ type DefinitionOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x DefinitionOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////
 /// DefinitionParams ///
 ////////////////////////
@@ -1434,6 +3153,36 @@ type DefinitionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
+}
+
+func (x DefinitionParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////
@@ -1446,6 +3195,33 @@ type DefinitionRegistrationOptions struct {
 	DefinitionOptions
 }
 
+func (x DefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DefinitionOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////
 /// DeleteFile ///
 //////////////////
@@ -1453,10 +3229,45 @@ type DefinitionRegistrationOptions struct {
 // Delete file operation
 type DeleteFile struct {
 	ResourceOperation
+
 	// The file to delete.
 	URI DocumentURI
+
 	// Delete options.
 	Options Optional[DeleteFileOptions]
+}
+
+func (x DeleteFile) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DeleteFile) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.ResourceOperation.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "kind", "delete"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -1467,8 +3278,36 @@ type DeleteFile struct {
 type DeleteFileOptions struct {
 	// Delete the content recursively if a folder is denoted.
 	Recursive bool
+
 	// Ignore the operation if the file doesn't exist.
 	IgnoreIfNotExists bool
+}
+
+func (x DeleteFileOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DeleteFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "recursive", x.Recursive); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "ignoreIfNotExists", x.IgnoreIfNotExists); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -1484,6 +3323,30 @@ type DeleteFilesParams struct {
 	Files []FileDelete
 }
 
+func (x DeleteFilesParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DeleteFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "files", x.Files); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////
 /// Diagnostic ///
 //////////////////
@@ -1493,34 +3356,90 @@ type DeleteFilesParams struct {
 type Diagnostic struct {
 	// The range at which the message applies
 	Range Range
+
 	// The diagnostic's severity. Can be omitted. If omitted it is up to the
 	// client to interpret diagnostics as error, warning, info or hint.
 	Severity Optional[DiagnosticSeverity]
+
 	// The diagnostic's code, which usually appear in the user interface.
 	Code Optional[DiagnosticCode]
+
 	// An optional property to describe the error code.
 	// Requires the code field (above) to be present/not null.
 	//
 	// @since 3.16.0
 	CodeDescription Optional[CodeDescription]
+
 	// A human-readable string describing the source of this
 	// diagnostic, e.g. 'typescript' or 'super lint'. It usually
 	// appears in the user interface.
 	Source string
+
 	// The diagnostic's message. It usually appears in the user interface
 	Message string
+
 	// Additional metadata about the diagnostic.
 	//
 	// @since 3.15.0
 	Tags []DiagnosticTag
+
 	// An array of related diagnostic information, e.g. when symbol-names within
 	// a scope collide all definitions can be marked via this property.
 	RelatedInformation []DiagnosticRelatedInformation
+
 	// A data entry field that is preserved between a `textDocument/publishDiagnostics`
 	// notification and `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
 	Data Optional[LSPAny]
+}
+
+func (x Diagnostic) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Diagnostic) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "severity", x.Severity); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "code", x.Code); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "codeDescription", x.CodeDescription); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "source", x.Source); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "relatedInformation", x.RelatedInformation); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 type DiagnosticCode struct{}
@@ -1537,8 +3456,36 @@ type DiagnosticClientCapabilities struct {
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
 	DynamicRegistration bool
+
 	// Whether the clients supports related documents for document diagnostic pulls.
 	RelatedDocumentSupport bool
+}
+
+func (x DiagnosticClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DiagnosticClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "relatedDocumentSupport", x.RelatedDocumentSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -1550,16 +3497,52 @@ type DiagnosticClientCapabilities struct {
 // @since 3.17.0
 type DiagnosticOptions struct {
 	WorkDoneProgressOptions
+
 	// An optional identifier under which the diagnostics are
 	// managed by the client.
 	Identifier string
+
 	// Whether the language has inter file dependencies meaning that
 	// editing code in one file can result in a different diagnostic
 	// set in another file. Inter file dependencies are common for
 	// most programming languages and typically uncommon for linters.
 	InterFileDependencies bool
+
 	// The server provides support for workspace diagnostics as well.
 	WorkspaceDiagnostics bool
+}
+
+func (x DiagnosticOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DiagnosticOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "interFileDependencies", x.InterFileDependencies); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "workspaceDiagnostics", x.WorkspaceDiagnostics); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////
@@ -1575,6 +3558,36 @@ type DiagnosticRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x DiagnosticRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DiagnosticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DiagnosticOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////////
 /// DiagnosticRelatedInformation ///
 ////////////////////////////////////
@@ -1585,8 +3598,36 @@ type DiagnosticRegistrationOptions struct {
 type DiagnosticRelatedInformation struct {
 	// The location of this related diagnostic information.
 	Location Location
+
 	// The message of this related diagnostic information.
 	Message string
+}
+
+func (x DiagnosticRelatedInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DiagnosticRelatedInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "location", x.Location); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -1598,6 +3639,30 @@ type DiagnosticRelatedInformation struct {
 // @since 3.17.0
 type DiagnosticServerCancellationData struct {
 	RetriggerRequest bool
+}
+
+func (x DiagnosticServerCancellationData) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DiagnosticServerCancellationData) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "retriggerRequest", x.RetriggerRequest); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////
@@ -1689,6 +3754,30 @@ type DiagnosticWorkspaceClientCapabilities struct {
 	RefreshSupport bool
 }
 
+func (x DiagnosticWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DiagnosticWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////////////////////
 /// DidChangeConfigurationClientCapabilities ///
 ////////////////////////////////////////////////
@@ -1696,6 +3785,30 @@ type DiagnosticWorkspaceClientCapabilities struct {
 type DidChangeConfigurationClientCapabilities struct {
 	// Did change configuration notification supports dynamic registration.
 	DynamicRegistration bool
+}
+
+func (x DidChangeConfigurationClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeConfigurationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////
@@ -1708,12 +3821,60 @@ type DidChangeConfigurationParams struct {
 	Settings LSPAny
 }
 
+func (x DidChangeConfigurationParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeConfigurationParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "settings", x.Settings); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////////////////////
 /// DidChangeConfigurationRegistrationOptions ///
 /////////////////////////////////////////////////
 
 type DidChangeConfigurationRegistrationOptions struct {
 	Section Optional[DidChangeConfigurationRegistrationOptionsSection]
+}
+
+func (x DidChangeConfigurationRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeConfigurationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "section", x.Section); err != nil {
+		return err
+	}
+	return nil
 }
 
 type DidChangeConfigurationRegistrationOptionsSection struct{}
@@ -1731,6 +3892,7 @@ type DidChangeNotebookDocumentParams struct {
 	// only the text document content of a cell changes the notebook version
 	// doesn't necessarily have to change.
 	NotebookDocument VersionedNotebookDocumentIdentifier
+
 	// The actual changes to the notebook document.
 	//
 	// The changes describe single state changes to the notebook document.
@@ -1747,6 +3909,33 @@ type DidChangeNotebookDocumentParams struct {
 	Change NotebookDocumentChangeEvent
 }
 
+func (x DidChangeNotebookDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "change", x.Change); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////////////
 /// DidChangeTextDocumentParams ///
 ///////////////////////////////////
@@ -1757,6 +3946,7 @@ type DidChangeTextDocumentParams struct {
 	// to the version after all provided content changes have
 	// been applied.
 	TextDocument VersionedTextDocumentIdentifier
+
 	// The actual content changes. The content changes describe single state changes
 	// to the document. So if there are two content changes c1 (at array index 0) and
 	// c2 (at array index 1) for a document in state S then c1 moves the document from
@@ -1771,6 +3961,33 @@ type DidChangeTextDocumentParams struct {
 	ContentChanges []TextDocumentContentChangeEvent
 }
 
+func (x DidChangeTextDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "contentChanges", x.ContentChanges); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////////////////////////
 /// DidChangeWatchedFilesClientCapabilities ///
 ///////////////////////////////////////////////
@@ -1780,11 +3997,39 @@ type DidChangeWatchedFilesClientCapabilities struct {
 	// that the current protocol doesn't support static configuration for file changes
 	// from the server side.
 	DynamicRegistration bool
+
 	// Whether the client has support for {@link  RelativePattern relative pattern}
 	// or not.
 	//
 	// @since 3.17.0
 	RelativePatternSupport bool
+}
+
+func (x DidChangeWatchedFilesClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeWatchedFilesClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "relativePatternSupport", x.RelativePatternSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -1797,6 +4042,30 @@ type DidChangeWatchedFilesParams struct {
 	Changes []FileEvent
 }
 
+func (x DidChangeWatchedFilesParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeWatchedFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "changes", x.Changes); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////////////////////
 /// DidChangeWatchedFilesRegistrationOptions ///
 ////////////////////////////////////////////////
@@ -1805,6 +4074,30 @@ type DidChangeWatchedFilesParams struct {
 type DidChangeWatchedFilesRegistrationOptions struct {
 	// The watchers to register.
 	Watchers []FileSystemWatcher
+}
+
+func (x DidChangeWatchedFilesRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeWatchedFilesRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "watchers", x.Watchers); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -1817,6 +4110,30 @@ type DidChangeWorkspaceFoldersParams struct {
 	Event WorkspaceFoldersChangeEvent
 }
 
+func (x DidChangeWorkspaceFoldersParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidChangeWorkspaceFoldersParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "event", x.Event); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////
 /// DidCloseNotebookDocumentParams ///
 //////////////////////////////////////
@@ -1827,9 +4144,37 @@ type DidChangeWorkspaceFoldersParams struct {
 type DidCloseNotebookDocumentParams struct {
 	// The notebook document that got closed.
 	NotebookDocument NotebookDocumentIdentifier
+
 	// The text documents that represent the content
 	// of a notebook cell that got closed.
 	CellTextDocuments []TextDocumentIdentifier
+}
+
+func (x DidCloseNotebookDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidCloseNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cellTextDocuments", x.CellTextDocuments); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////
@@ -1842,6 +4187,30 @@ type DidCloseTextDocumentParams struct {
 	TextDocument TextDocumentIdentifier
 }
 
+func (x DidCloseTextDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidCloseTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////////
 /// DidOpenNotebookDocumentParams ///
 /////////////////////////////////////
@@ -1852,9 +4221,37 @@ type DidCloseTextDocumentParams struct {
 type DidOpenNotebookDocumentParams struct {
 	// The notebook document that got opened.
 	NotebookDocument NotebookDocument
+
 	// The text documents that represent the content
 	// of a notebook cell.
 	CellTextDocuments []TextDocumentItem
+}
+
+func (x DidOpenNotebookDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidOpenNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cellTextDocuments", x.CellTextDocuments); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -1865,6 +4262,30 @@ type DidOpenNotebookDocumentParams struct {
 type DidOpenTextDocumentParams struct {
 	// The document that was opened.
 	TextDocument TextDocumentItem
+}
+
+func (x DidOpenTextDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidOpenTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////
@@ -1879,6 +4300,30 @@ type DidSaveNotebookDocumentParams struct {
 	NotebookDocument NotebookDocumentIdentifier
 }
 
+func (x DidSaveNotebookDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidSaveNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////
 /// DidSaveTextDocumentParams ///
 /////////////////////////////////
@@ -1887,9 +4332,37 @@ type DidSaveNotebookDocumentParams struct {
 type DidSaveTextDocumentParams struct {
 	// The document that was saved.
 	TextDocument TextDocumentIdentifier
+
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
 	Text string
+}
+
+func (x DidSaveTextDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DidSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -1903,12 +4376,60 @@ type DocumentColorClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x DocumentColorClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentColorClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////
 /// DocumentColorOptions ///
 ////////////////////////////
 
 type DocumentColorOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x DocumentColorOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentColorOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -1919,8 +4440,39 @@ type DocumentColorOptions struct {
 type DocumentColorParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+}
+
+func (x DocumentColorParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentColorParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -1933,6 +4485,36 @@ type DocumentColorRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x DocumentColorRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentColorRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DocumentColorOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////
 /// DocumentDiagnosticParams ///
 ////////////////////////////////
@@ -1943,12 +4525,51 @@ type DocumentColorRegistrationOptions struct {
 type DocumentDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The additional identifier  provided during registration.
 	Identifier string
+
 	// The result id of a previous response if provided.
 	PreviousResultID string
+}
+
+func (x DocumentDiagnosticParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "previousResultId", x.PreviousResultID); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -2008,6 +4629,30 @@ type DocumentDiagnosticReportPartialResult struct {
 	RelatedDocuments map[DocumentURI]DocumentDiagnosticReportPartialResultRelatedDocuments
 }
 
+func (x DocumentDiagnosticReportPartialResult) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "relatedDocuments", x.RelatedDocuments); err != nil {
+		return err
+	}
+	return nil
+}
+
 type DocumentDiagnosticReportPartialResultRelatedDocuments struct{}
 
 //////////////////////
@@ -2030,6 +4675,30 @@ type DocumentFormattingClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x DocumentFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////
 /// DocumentFormattingOptions ///
 /////////////////////////////////
@@ -2039,6 +4708,30 @@ type DocumentFormattingOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x DocumentFormattingOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////
 /// DocumentFormattingParams ///
 ////////////////////////////////
@@ -2046,10 +4739,42 @@ type DocumentFormattingOptions struct {
 // The parameters of a {@link DocumentFormattingRequest}.
 type DocumentFormattingParams struct {
 	WorkDoneProgressParams
+
 	// The document to format.
 	TextDocument TextDocumentIdentifier
+
 	// The format options.
 	Options FormattingOptions
+}
+
+func (x DocumentFormattingParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentFormattingParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////////
@@ -2062,6 +4787,33 @@ type DocumentFormattingRegistrationOptions struct {
 	DocumentFormattingOptions
 }
 
+func (x DocumentFormattingRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DocumentFormattingOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// DocumentHighlight ///
 /////////////////////////
@@ -2072,8 +4824,36 @@ type DocumentFormattingRegistrationOptions struct {
 type DocumentHighlight struct {
 	// The range this highlight applies to.
 	Range Range
+
 	// The highlight kind, default is {@link DocumentHighlightKind.Text text}.
 	Kind Optional[DocumentHighlightKind]
+}
+
+func (x DocumentHighlight) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentHighlight) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////////
@@ -2084,6 +4864,30 @@ type DocumentHighlight struct {
 type DocumentHighlightClientCapabilities struct {
 	// Whether document highlight supports dynamic registration.
 	DynamicRegistration bool
+}
+
+func (x DocumentHighlightClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentHighlightClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -2127,6 +4931,30 @@ type DocumentHighlightOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x DocumentHighlightOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentHighlightOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////////
 /// DocumentHighlightParams ///
 ///////////////////////////////
@@ -2136,6 +4964,36 @@ type DocumentHighlightParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
+}
+
+func (x DocumentHighlightParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentHighlightParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////////
@@ -2148,6 +5006,33 @@ type DocumentHighlightRegistrationOptions struct {
 	DocumentHighlightOptions
 }
 
+func (x DocumentHighlightRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentHighlightRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DocumentHighlightOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////
 /// DocumentLink ///
 ////////////////////
@@ -2157,8 +5042,10 @@ type DocumentHighlightRegistrationOptions struct {
 type DocumentLink struct {
 	// The range this link applies to.
 	Range Range
+
 	// The uri this link points to. If missing a resolve request is sent later.
 	Target URI
+
 	// The tooltip text when you hover over this link.
 	//
 	// If a tooltip is provided, is will be displayed in a string that includes instructions on how to
@@ -2167,9 +5054,43 @@ type DocumentLink struct {
 	//
 	// @since 3.15.0
 	Tooltip string
+
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
 	Data Optional[LSPAny]
+}
+
+func (x DocumentLink) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentLink) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "target", x.Target); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tooltip", x.Tooltip); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////
@@ -2180,10 +5101,38 @@ type DocumentLink struct {
 type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
 	DynamicRegistration bool
+
 	// Whether the client supports the `tooltip` property on `DocumentLink`.
 	//
 	// @since 3.15.0
 	TooltipSupport bool
+}
+
+func (x DocumentLinkClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentLinkClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tooltipSupport", x.TooltipSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -2193,8 +5142,36 @@ type DocumentLinkClientCapabilities struct {
 // Provider options for a {@link DocumentLinkRequest}.
 type DocumentLinkOptions struct {
 	WorkDoneProgressOptions
+
 	// Document links have a resolve provider as well.
 	ResolveProvider bool
+}
+
+func (x DocumentLinkOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentLinkOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////
@@ -2205,8 +5182,39 @@ type DocumentLinkOptions struct {
 type DocumentLinkParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The document to provide document links for.
 	TextDocument TextDocumentIdentifier
+}
+
+func (x DocumentLinkParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentLinkParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -2219,6 +5227,33 @@ type DocumentLinkRegistrationOptions struct {
 	DocumentLinkOptions
 }
 
+func (x DocumentLinkRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentLinkRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DocumentLinkOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////////////////
 /// DocumentOnTypeFormattingClientCapabilities ///
 //////////////////////////////////////////////////
@@ -2229,6 +5264,30 @@ type DocumentOnTypeFormattingClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x DocumentOnTypeFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentOnTypeFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////////////////
 /// DocumentOnTypeFormattingOptions ///
 ///////////////////////////////////////
@@ -2237,8 +5296,36 @@ type DocumentOnTypeFormattingClientCapabilities struct {
 type DocumentOnTypeFormattingOptions struct {
 	// A character on which formatting should be triggered, like `{`.
 	FirstTriggerCharacter string
+
 	// More trigger characters.
 	MoreTriggerCharacter []string
+}
+
+func (x DocumentOnTypeFormattingOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentOnTypeFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "firstTriggerCharacter", x.FirstTriggerCharacter); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "moreTriggerCharacter", x.MoreTriggerCharacter); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////
@@ -2249,17 +5336,53 @@ type DocumentOnTypeFormattingOptions struct {
 type DocumentOnTypeFormattingParams struct {
 	// The document to format.
 	TextDocument TextDocumentIdentifier
+
 	// The position around which the on type formatting should happen.
 	// This is not necessarily the exact position where the character denoted
 	// by the property `ch` got typed.
 	Position Position
+
 	// The character that has been typed that triggered the formatting
 	// on type request. That is not necessarily the last character that
 	// got inserted into the document since the client could auto insert
 	// characters as well (e.g. like automatic brace completion).
 	Ch string
+
 	// The formatting options.
 	Options FormattingOptions
+}
+
+func (x DocumentOnTypeFormattingParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentOnTypeFormattingParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "position", x.Position); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "ch", x.Ch); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////////////////
@@ -2272,6 +5395,33 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 	DocumentOnTypeFormattingOptions
 }
 
+func (x DocumentOnTypeFormattingRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentOnTypeFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DocumentOnTypeFormattingOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////////////////////
 /// DocumentRangeFormattingClientCapabilities ///
 /////////////////////////////////////////////////
@@ -2280,6 +5430,30 @@ type DocumentOnTypeFormattingRegistrationOptions struct {
 type DocumentRangeFormattingClientCapabilities struct {
 	// Whether range formatting supports dynamic registration.
 	DynamicRegistration bool
+}
+
+func (x DocumentRangeFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentRangeFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////
@@ -2291,6 +5465,30 @@ type DocumentRangeFormattingOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x DocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentRangeFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////////
 /// DocumentRangeFormattingParams ///
 /////////////////////////////////////
@@ -2298,12 +5496,48 @@ type DocumentRangeFormattingOptions struct {
 // The parameters of a {@link DocumentRangeFormattingRequest}.
 type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
+
 	// The document to format.
 	TextDocument TextDocumentIdentifier
+
 	// The range to format
 	Range Range
+
 	// The format options
 	Options FormattingOptions
+}
+
+func (x DocumentRangeFormattingParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentRangeFormattingParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////////////////
@@ -2314,6 +5548,33 @@ type DocumentRangeFormattingParams struct {
 type DocumentRangeFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentRangeFormattingOptions
+}
+
+func (x DocumentRangeFormattingRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentRangeFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DocumentRangeFormattingOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -2339,29 +5600,81 @@ type DocumentSymbol struct {
 	// The name of this symbol. Will be displayed in the user interface and therefore must not be
 	// an empty string or a string only consisting of white spaces.
 	Name string
+
 	// More detail for this symbol, e.g the signature of a function.
 	Detail string
+
 	// The kind of this symbol.
 	Kind SymbolKind
+
 	// Tags for this document symbol.
 	//
 	// @since 3.16.0
 	Tags []SymbolTag
+
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
 	//
 	// Deprecated: Use tags instead
 	Deprecated bool
+
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to determine if the clients cursor is
 	// inside the symbol to reveal in the symbol in the UI.
 	Range Range
+
 	// The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
 	// Must be contained by the `range`.
 	SelectionRange Range
+
 	// Children of this symbol, e.g. properties of a class.
 	Children []DocumentSymbol
+}
+
+func (x DocumentSymbol) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "deprecated", x.Deprecated); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "children", x.Children); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -2372,22 +5685,62 @@ type DocumentSymbol struct {
 type DocumentSymbolClientCapabilities struct {
 	// Whether document symbol supports dynamic registration.
 	DynamicRegistration bool
+
 	// Specific capabilities for the `SymbolKind` in the
 	// `textDocument/documentSymbol` request.
 	SymbolKind Optional[DocumentSymbolClientCapabilitiesSymbolKind]
+
 	// The client supports hierarchical document symbols.
 	HierarchicalDocumentSymbolSupport bool
+
 	// The client supports tags on `SymbolInformation`. Tags are supported on
 	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// @since 3.16.0
 	TagSupport Optional[DocumentSymbolClientCapabilitiesTagSupport]
+
 	// The client supports an additional label presented in the UI when
 	// registering a document symbol provider.
 	//
 	// @since 3.16.0
 	LabelSupport bool
+}
+
+func (x DocumentSymbolClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "symbolKind", x.SymbolKind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "hierarchicalDocumentSymbolSupport", x.HierarchicalDocumentSymbolSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "labelSupport", x.LabelSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 type DocumentSymbolClientCapabilitiesSymbolKind struct {
@@ -2414,11 +5767,39 @@ type DocumentSymbolClientCapabilitiesTagSupport struct {
 // Provider options for a {@link DocumentSymbolRequest}.
 type DocumentSymbolOptions struct {
 	WorkDoneProgressOptions
+
 	// A human-readable string that is shown when multiple outlines trees
 	// are shown for the same document.
 	//
 	// @since 3.16.0
 	Label string
+}
+
+func (x DocumentSymbolOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -2429,8 +5810,39 @@ type DocumentSymbolOptions struct {
 type DocumentSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+}
+
+func (x DocumentSymbolParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////
@@ -2441,6 +5853,33 @@ type DocumentSymbolParams struct {
 type DocumentSymbolRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentSymbolOptions
+}
+
+func (x DocumentSymbolRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.DocumentSymbolOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////
@@ -2472,6 +5911,30 @@ type ExecuteCommandClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x ExecuteCommandClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ExecuteCommandClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////
 /// ExecuteCommandOptions ///
 /////////////////////////////
@@ -2479,8 +5942,36 @@ type ExecuteCommandClientCapabilities struct {
 // The server capabilities of a {@link ExecuteCommandRequest}.
 type ExecuteCommandOptions struct {
 	WorkDoneProgressOptions
+
 	// The commands to be executed on the server
 	Commands []string
+}
+
+func (x ExecuteCommandOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ExecuteCommandOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "commands", x.Commands); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -2490,10 +5981,42 @@ type ExecuteCommandOptions struct {
 // The parameters of a {@link ExecuteCommandRequest}.
 type ExecuteCommandParams struct {
 	WorkDoneProgressParams
+
 	// The identifier of the actual command handler.
 	Command string
+
 	// Arguments that the command should be invoked with.
 	Arguments []LSPAny
+}
+
+func (x ExecuteCommandParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ExecuteCommandParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "command", x.Command); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "arguments", x.Arguments); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////
@@ -2505,6 +6028,30 @@ type ExecuteCommandRegistrationOptions struct {
 	ExecuteCommandOptions
 }
 
+func (x ExecuteCommandRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ExecuteCommandRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.ExecuteCommandOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////
 /// ExecutionSummary ///
 ////////////////////////
@@ -2514,9 +6061,37 @@ type ExecutionSummary struct {
 	// indicating the execution order of a cell
 	// inside a notebook.
 	ExecutionOrder uint32
+
 	// Whether the execution was successful or
 	// not if known by the client.
 	Success bool
+}
+
+func (x ExecutionSummary) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ExecutionSummary) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "executionOrder", x.ExecutionOrder); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "success", x.Success); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -2602,6 +6177,30 @@ type FileCreate struct {
 	URI string
 }
 
+func (x FileCreate) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileCreate) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////
 /// FileDelete ///
 //////////////////
@@ -2614,6 +6213,30 @@ type FileDelete struct {
 	URI string
 }
 
+func (x FileDelete) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileDelete) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////
 /// FileEvent ///
 /////////////////
@@ -2622,8 +6245,36 @@ type FileDelete struct {
 type FileEvent struct {
 	// The file's uri.
 	URI DocumentURI
+
 	// The change type.
 	Type FileChangeType
+}
+
+func (x FileEvent) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileEvent) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "type", x.Type); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -2639,18 +6290,66 @@ type FileEvent struct {
 type FileOperationClientCapabilities struct {
 	// Whether the client supports dynamic registration for file requests/notifications.
 	DynamicRegistration bool
+
 	// The client has support for sending didCreateFiles notifications.
 	DidCreate bool
+
 	// The client has support for sending willCreateFiles requests.
 	WillCreate bool
+
 	// The client has support for sending didRenameFiles notifications.
 	DidRename bool
+
 	// The client has support for sending willRenameFiles requests.
 	WillRename bool
+
 	// The client has support for sending didDeleteFiles notifications.
 	DidDelete bool
+
 	// The client has support for sending willDeleteFiles requests.
 	WillDelete bool
+}
+
+func (x FileOperationClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileOperationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "didCreate", x.DidCreate); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "willCreate", x.WillCreate); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "didRename", x.DidRename); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "willRename", x.WillRename); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "didDelete", x.DidDelete); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "willDelete", x.WillDelete); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -2664,8 +6363,36 @@ type FileOperationClientCapabilities struct {
 type FileOperationFilter struct {
 	// A Uri scheme like `file` or `untitled`.
 	Scheme string
+
 	// The actual file operation pattern.
 	Pattern FileOperationPattern
+}
+
+func (x FileOperationFilter) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileOperationFilter) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -2678,16 +6405,60 @@ type FileOperationFilter struct {
 type FileOperationOptions struct {
 	// The server is interested in receiving didCreateFiles notifications.
 	DidCreate Optional[FileOperationRegistrationOptions]
+
 	// The server is interested in receiving willCreateFiles requests.
 	WillCreate Optional[FileOperationRegistrationOptions]
+
 	// The server is interested in receiving didRenameFiles notifications.
 	DidRename Optional[FileOperationRegistrationOptions]
+
 	// The server is interested in receiving willRenameFiles requests.
 	WillRename Optional[FileOperationRegistrationOptions]
+
 	// The server is interested in receiving didDeleteFiles file notifications.
 	DidDelete Optional[FileOperationRegistrationOptions]
+
 	// The server is interested in receiving willDeleteFiles file requests.
 	WillDelete Optional[FileOperationRegistrationOptions]
+}
+
+func (x FileOperationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileOperationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "didCreate", x.DidCreate); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "willCreate", x.WillCreate); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "didRename", x.DidRename); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "willRename", x.WillRename); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "didDelete", x.DidDelete); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "willDelete", x.WillDelete); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -2707,12 +6478,44 @@ type FileOperationPattern struct {
 	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
 	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
 	Glob string
+
 	// Whether to match files or folders with this pattern.
 	//
 	// Matches both if undefined.
 	Matches Optional[FileOperationPatternKind]
+
 	// Additional options used during matching.
 	Options Optional[FileOperationPatternOptions]
+}
+
+func (x FileOperationPattern) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileOperationPattern) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "glob", x.Glob); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "matches", x.Matches); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -2759,6 +6562,30 @@ type FileOperationPatternOptions struct {
 	IgnoreCase bool
 }
 
+func (x FileOperationPatternOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileOperationPatternOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "ignoreCase", x.IgnoreCase); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////////////
 /// FileOperationRegistrationOptions ///
 ////////////////////////////////////////
@@ -2771,6 +6598,30 @@ type FileOperationRegistrationOptions struct {
 	Filters []FileOperationFilter
 }
 
+func (x FileOperationRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileOperationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "filters", x.Filters); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////
 /// FileRename ///
 //////////////////
@@ -2781,8 +6632,36 @@ type FileOperationRegistrationOptions struct {
 type FileRename struct {
 	// A file:// URI for the original location of the file/folder being renamed.
 	OldURI string
+
 	// A file:// URI for the new location of the file/folder being renamed.
 	NewURI string
+}
+
+func (x FileRename) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileRename) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "oldUri", x.OldURI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "newUri", x.NewURI); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -2794,10 +6673,38 @@ type FileSystemWatcher struct {
 	//
 	// @since 3.17.0 support for relative patterns.
 	GlobPattern GlobPattern
+
 	// The kind of events of interest. If omitted it defaults
 	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
 	// which is 7.
 	Kind Optional[WatchKind]
+}
+
+func (x FileSystemWatcher) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FileSystemWatcher) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "globPattern", x.GlobPattern); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////
@@ -2810,23 +6717,67 @@ type FoldingRange struct {
 	// The zero-based start line of the range to fold. The folded area starts after the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
 	StartLine uint32
+
 	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
 	StartCharacter uint32
+
 	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
 	EndLine uint32
+
 	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
 	EndCharacter uint32
+
 	// Describes the kind of the folding range such as `comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
 	// See {@link FoldingRangeKind} for an enumeration of standardized kinds.
 	Kind Optional[FoldingRangeKind]
+
 	// The text that the client should show when the specified range is
 	// collapsed. If not defined or not supported by the client, a default
 	// will be chosen by the client.
 	//
 	// @since 3.17.0
 	CollapsedText string
+}
+
+func (x FoldingRange) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "startLine", x.StartLine); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "startCharacter", x.StartCharacter); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "endLine", x.EndLine); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "endCharacter", x.EndCharacter); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "collapsedText", x.CollapsedText); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////
@@ -2839,22 +6790,62 @@ type FoldingRangeClientCapabilities struct {
 	// `FoldingRangeRegistrationOptions` return value for the corresponding
 	// server capability as well.
 	DynamicRegistration bool
+
 	// The maximum number of folding ranges that the client prefers to receive
 	// per document. The value serves as a hint, servers are free to follow the
 	// limit.
 	RangeLimit uint32
+
 	// If set, the client signals that it only supports folding complete lines.
 	// If set, client will ignore specified `startCharacter` and `endCharacter`
 	// properties in a FoldingRange.
 	LineFoldingOnly bool
+
 	// Specific options for the folding range kind.
 	//
 	// @since 3.17.0
 	FoldingRangeKind Optional[FoldingRangeClientCapabilitiesFoldingRangeKind]
+
 	// Specific options for the folding range.
 	//
 	// @since 3.17.0
 	FoldingRange Optional[FoldingRangeClientCapabilitiesFoldingRange]
+}
+
+func (x FoldingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FoldingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "rangeLimit", x.RangeLimit); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "lineFoldingOnly", x.LineFoldingOnly); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "foldingRangeKind", x.FoldingRangeKind); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "foldingRange", x.FoldingRange); err != nil {
+		return err
+	}
+	return nil
 }
 
 type FoldingRangeClientCapabilitiesFoldingRange struct {
@@ -2897,6 +6888,30 @@ type FoldingRangeOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x FoldingRangeOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FoldingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////
 /// FoldingRangeParams ///
 //////////////////////////
@@ -2905,8 +6920,39 @@ type FoldingRangeOptions struct {
 type FoldingRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+}
+
+func (x FoldingRangeParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FoldingRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -2919,6 +6965,36 @@ type FoldingRangeRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x FoldingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FoldingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.FoldingRangeOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// FormattingOptions ///
 /////////////////////////
@@ -2927,20 +7003,60 @@ type FoldingRangeRegistrationOptions struct {
 type FormattingOptions struct {
 	// Size of a tab in spaces.
 	TabSize uint32
+
 	// Prefer spaces over tabs.
 	InsertSpaces bool
+
 	// Trim trailing whitespace on a line.
 	//
 	// @since 3.15.0
 	TrimTrailingWhitespace bool
+
 	// Insert a newline character at the end of the file if one does not exist.
 	//
 	// @since 3.15.0
 	InsertFinalNewline bool
+
 	// Trim all newlines after the final newline at the end of the file.
 	//
 	// @since 3.15.0
 	TrimFinalNewlines bool
+}
+
+func (x FormattingOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "tabSize", x.TabSize); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "insertSpaces", x.InsertSpaces); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "trimTrailingWhitespace", x.TrimTrailingWhitespace); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "insertFinalNewline", x.InsertFinalNewline); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "trimFinalNewlines", x.TrimFinalNewlines); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////
@@ -2951,12 +7067,44 @@ type FormattingOptions struct {
 //
 // @since 3.17.0
 type FullDocumentDiagnosticReport struct {
+
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
 	// same document.
 	ResultID string
+
 	// The actual items.
 	Items []Diagnostic
+}
+
+func (x FullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", "full"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -2974,14 +7122,17 @@ type GeneralClientCapabilities struct {
 	//
 	// @since 3.17.0
 	StaleRequestSupport Optional[GeneralClientCapabilitiesStaleRequestSupport]
+
 	// Client capabilities specific to regular expressions.
 	//
 	// @since 3.16.0
 	RegularExpressions Optional[RegularExpressionsClientCapabilities]
+
 	// Client capabilities specific to the client's markdown parser.
 	//
 	// @since 3.16.0
 	Markdown Optional[MarkdownClientCapabilities]
+
 	// The position encodings supported by the client. Client and server
 	// have to agree on the same position encoding to ensure that offsets
 	// (e.g. character position in a line) are interpreted the same on both
@@ -3001,6 +7152,39 @@ type GeneralClientCapabilities struct {
 	//
 	// @since 3.17.0
 	PositionEncodings []PositionEncodingKind
+}
+
+func (x GeneralClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x GeneralClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "staleRequestSupport", x.StaleRequestSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "regularExpressions", x.RegularExpressions); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "markdown", x.Markdown); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "positionEncodings", x.PositionEncodings); err != nil {
+		return err
+	}
+	return nil
 }
 
 type GeneralClientCapabilitiesStaleRequestSupport struct {
@@ -3029,9 +7213,37 @@ type GlobPattern struct{}
 type Hover struct {
 	// The hover's content
 	Contents HoverContents
+
 	// An optional range inside the text document that is used to
 	// visualize the hover, e.g. by changing the background color.
 	Range Optional[Range]
+}
+
+func (x Hover) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Hover) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "contents", x.Contents); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
 }
 
 type HoverContents struct{}
@@ -3043,9 +7255,37 @@ type HoverContents struct{}
 type HoverClientCapabilities struct {
 	// Whether hover supports dynamic registration.
 	DynamicRegistration bool
+
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
 	ContentFormat []MarkupKind
+}
+
+func (x HoverClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x HoverClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "contentFormat", x.ContentFormat); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////
@@ -3055,6 +7295,30 @@ type HoverClientCapabilities struct {
 // Hover options.
 type HoverOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x HoverOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x HoverOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////
@@ -3067,6 +7331,33 @@ type HoverParams struct {
 	WorkDoneProgressParams
 }
 
+func (x HoverParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x HoverParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////
 /// HoverRegistrationOptions ///
 ////////////////////////////////
@@ -3075,6 +7366,33 @@ type HoverParams struct {
 type HoverRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	HoverOptions
+}
+
+func (x HoverRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x HoverRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.HoverOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -3087,10 +7405,38 @@ type ImplementationClientCapabilities struct {
 	// the client supports the new `ImplementationRegistrationOptions` return value
 	// for the corresponding server capability as well.
 	DynamicRegistration bool
+
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
 	LinkSupport bool
+}
+
+func (x ImplementationClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ImplementationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -3099,6 +7445,30 @@ type ImplementationClientCapabilities struct {
 
 type ImplementationOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x ImplementationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ImplementationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -3111,6 +7481,36 @@ type ImplementationParams struct {
 	PartialResultParams
 }
 
+func (x ImplementationParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ImplementationParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////////////
 /// ImplementationRegistrationOptions ///
 /////////////////////////////////////////
@@ -3119,6 +7519,36 @@ type ImplementationRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	ImplementationOptions
 	StaticRegistrationOptions
+}
+
+func (x ImplementationRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ImplementationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.ImplementationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////
@@ -3135,6 +7565,30 @@ type InitializeError struct {
 	Retry bool
 }
 
+func (x InitializeError) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InitializeError) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "retry", x.Retry); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////
 /// InitializeParams ///
 ////////////////////////
@@ -3142,6 +7596,33 @@ type InitializeError struct {
 type InitializeParams struct {
 	initializeParams
 	WorkspaceFoldersInitializeParams
+}
+
+func (x InitializeParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InitializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.initializeParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkspaceFoldersInitializeParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -3152,10 +7633,38 @@ type InitializeParams struct {
 type InitializeResult struct {
 	// The capabilities the language server provides.
 	Capabilities ServerCapabilities
+
 	// Information about the server.
 	//
 	// @since 3.15.0
 	ServerInfo Optional[InitializeResultServerInfo]
+}
+
+func (x InitializeResult) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InitializeResult) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "capabilities", x.Capabilities); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "serverInfo", x.ServerInfo); err != nil {
+		return err
+	}
+	return nil
 }
 
 type InitializeResultServerInfo struct {
@@ -3171,6 +7680,27 @@ type InitializeResultServerInfo struct {
 
 type InitializedParams struct{}
 
+func (x InitializedParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InitializedParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	return nil
+}
+
 /////////////////
 /// InlayHint ///
 /////////////////
@@ -3181,37 +7711,89 @@ type InitializedParams struct{}
 type InlayHint struct {
 	// The position of this hint.
 	Position Position
+
 	// The label of this hint. A human readable string or an array of
 	// InlayHintLabelPart label parts.
 	//
 	// *Note* that neither the string nor the label part can be empty.
 	Label InlayHintLabel
+
 	// The kind of this hint. Can be omitted in which case the client
 	// should fall back to a reasonable default.
 	Kind Optional[InlayHintKind]
+
 	// Optional text edits that are performed when accepting this inlay hint.
 	//
 	// *Note* that edits are expected to change the document so that the inlay
 	// hint (or its nearest variant) is now part of the document and the inlay
 	// hint itself is now obsolete.
 	TextEdits []TextEdit
+
 	// The tooltip text when you hover over this item.
 	Tooltip Optional[InlayHintTooltip]
+
 	// Render padding before the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
 	PaddingLeft bool
+
 	// Render padding after the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
 	PaddingRight bool
+
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
 	Data Optional[LSPAny]
+}
+
+func (x InlayHint) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHint) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "position", x.Position); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textEdits", x.TextEdits); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "tooltip", x.Tooltip); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "paddingLeft", x.PaddingLeft); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "paddingRight", x.PaddingRight); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 type InlayHintLabel struct{}
@@ -3228,9 +7810,37 @@ type InlayHintTooltip struct{}
 type InlayHintClientCapabilities struct {
 	// Whether inlay hints support dynamic registration.
 	DynamicRegistration bool
+
 	// Indicates which properties a client can resolve lazily on an inlay
 	// hint.
 	ResolveSupport Optional[InlayHintClientCapabilitiesResolveSupport]
+}
+
+func (x InlayHintClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHintClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 type InlayHintClientCapabilitiesResolveSupport struct {
@@ -3280,10 +7890,12 @@ func (x *InlayHintKind) UnmarshalJSON(data []byte) error {
 type InlayHintLabelPart struct {
 	// The value of this label part.
 	Value string
+
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
 	// this property late using the resolve request.
 	Tooltip Optional[InlayHintLabelPartTooltip]
+
 	// An optional source code location that represents this
 	// label part.
 	//
@@ -3296,11 +7908,45 @@ type InlayHintLabelPart struct {
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
 	Location Optional[Location]
+
 	// An optional command for this label part.
 	//
 	// Depending on the client capability `inlayHint.resolveSupport` clients
 	// might resolve this property late using the resolve request.
 	Command Optional[Command]
+}
+
+func (x InlayHintLabelPart) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHintLabelPart) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "tooltip", x.Tooltip); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "location", x.Location); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
+		return err
+	}
+	return nil
 }
 
 type InlayHintLabelPartTooltip struct{}
@@ -3314,9 +7960,37 @@ type InlayHintLabelPartTooltip struct{}
 // @since 3.17.0
 type InlayHintOptions struct {
 	WorkDoneProgressOptions
+
 	// The server provides support to resolve additional
 	// information for an inlay hint item.
 	ResolveProvider bool
+}
+
+func (x InlayHintOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHintOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////
@@ -3328,10 +8002,42 @@ type InlayHintOptions struct {
 // @since 3.17.0
 type InlayHintParams struct {
 	WorkDoneProgressParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The document range for which inlay hints should be computed.
 	Range Range
+}
+
+func (x InlayHintParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHintParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////
@@ -3345,6 +8051,36 @@ type InlayHintRegistrationOptions struct {
 	InlayHintOptions
 	TextDocumentRegistrationOptions
 	StaticRegistrationOptions
+}
+
+func (x InlayHintRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHintRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.InlayHintOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////////
@@ -3363,6 +8099,30 @@ type InlayHintWorkspaceClientCapabilities struct {
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
 	RefreshSupport bool
+}
+
+func (x InlayHintWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHintWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////
@@ -3390,6 +8150,30 @@ type InlineValueClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x InlineValueClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////
 /// InlineValueContext ///
 //////////////////////////
@@ -3398,9 +8182,37 @@ type InlineValueClientCapabilities struct {
 type InlineValueContext struct {
 	// The stack frame (as a DAP Id) where the execution has stopped.
 	FrameID int32
+
 	// The document range where execution has stopped.
 	// Typically the end position of the range denotes the line where the inline values are shown.
 	StoppedLocation Range
+}
+
+func (x InlineValueContext) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueContext) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "frameId", x.FrameID); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "stoppedLocation", x.StoppedLocation); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -3416,8 +8228,36 @@ type InlineValueEvaluatableExpression struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the evaluatable expression from the underlying document.
 	Range Range
+
 	// If specified the expression overrides the extracted expression.
 	Expression string
+}
+
+func (x InlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueEvaluatableExpression) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "expression", x.Expression); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////
@@ -3431,6 +8271,30 @@ type InlineValueOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x InlineValueOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// InlineValueParams ///
 /////////////////////////
@@ -3440,13 +8304,49 @@ type InlineValueOptions struct {
 // @since 3.17.0
 type InlineValueParams struct {
 	WorkDoneProgressParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The document range for which inline values should be computed.
 	Range Range
+
 	// Additional information about the context in which inline values were
 	// requested.
 	Context InlineValueContext
+}
+
+func (x InlineValueParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "context", x.Context); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////
@@ -3462,6 +8362,36 @@ type InlineValueRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x InlineValueRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.InlineValueOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////
 /// InlineValueText ///
 ///////////////////////
@@ -3472,8 +8402,36 @@ type InlineValueRegistrationOptions struct {
 type InlineValueText struct {
 	// The document range for which the inline value applies.
 	Range Range
+
 	// The text of the inline value.
 	Text string
+}
+
+func (x InlineValueText) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueText) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -3489,10 +8447,42 @@ type InlineValueVariableLookup struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the variable name from the underlying document.
 	Range Range
+
 	// If specified the name of the variable to look up.
 	VariableName string
+
 	// How to perform the lookup.
 	CaseSensitiveLookup bool
+}
+
+func (x InlineValueVariableLookup) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueVariableLookup) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "variableName", x.VariableName); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "caseSensitiveLookup", x.CaseSensitiveLookup); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////////////
@@ -3513,6 +8503,30 @@ type InlineValueWorkspaceClientCapabilities struct {
 	RefreshSupport bool
 }
 
+func (x InlineValueWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlineValueWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// InsertReplaceEdit ///
 /////////////////////////
@@ -3523,10 +8537,42 @@ type InlineValueWorkspaceClientCapabilities struct {
 type InsertReplaceEdit struct {
 	// The string to be inserted.
 	NewText string
+
 	// The range if the insert is requested
 	Insert Range
+
 	// The range if the replace is requested.
 	Replace Range
+}
+
+func (x InsertReplaceEdit) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InsertReplaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "newText", x.NewText); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "insert", x.Insert); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "replace", x.Replace); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -3684,12 +8730,60 @@ type LinkedEditingRangeClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x LinkedEditingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LinkedEditingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////
 /// LinkedEditingRangeOptions ///
 /////////////////////////////////
 
 type LinkedEditingRangeOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x LinkedEditingRangeOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LinkedEditingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -3701,6 +8795,33 @@ type LinkedEditingRangeParams struct {
 	WorkDoneProgressParams
 }
 
+func (x LinkedEditingRangeParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LinkedEditingRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////////////////
 /// LinkedEditingRangeRegistrationOptions ///
 /////////////////////////////////////////////
@@ -3709,6 +8830,36 @@ type LinkedEditingRangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	LinkedEditingRangeOptions
 	StaticRegistrationOptions
+}
+
+func (x LinkedEditingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LinkedEditingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.LinkedEditingRangeOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -3722,10 +8873,38 @@ type LinkedEditingRanges struct {
 	// A list of ranges that can be edited together. The ranges must have
 	// identical length and contain identical text content. The ranges cannot overlap.
 	Ranges []Range
+
 	// An optional word pattern (regular expression) that describes valid contents for
 	// the given ranges. If no pattern is provided, the client configuration's word
 	// pattern will be used.
 	WordPattern string
+}
+
+func (x LinkedEditingRanges) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LinkedEditingRanges) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "ranges", x.Ranges); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "wordPattern", x.WordPattern); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////
@@ -3735,8 +8914,36 @@ type LinkedEditingRanges struct {
 // Represents a location inside a resource, such as a line
 // inside a text file.
 type Location struct {
-	URI   DocumentURI
+	URI DocumentURI
+
 	Range Range
+}
+
+func (x Location) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Location) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////
@@ -3751,15 +8958,51 @@ type LocationLink struct {
 	// Used as the underlined span for mouse interaction. Defaults to the word range at
 	// the definition position.
 	OriginSelectionRange Optional[Range]
+
 	// The target resource identifier of this link.
 	TargetURI DocumentURI
+
 	// The full target range of this link. If the target for example is a symbol then target range is the
 	// range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to highlight the range in the editor.
 	TargetRange Range
+
 	// The range that should be selected and revealed when this link is being followed, e.g the name of a function.
 	// Must be contained by the `targetRange`. See also `DocumentSymbol#range`
 	TargetSelectionRange Range
+}
+
+func (x LocationLink) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LocationLink) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "originSelectionRange", x.OriginSelectionRange); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "targetUri", x.TargetURI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "targetRange", x.TargetRange); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "targetSelectionRange", x.TargetSelectionRange); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -3770,8 +9013,36 @@ type LocationLink struct {
 type LogMessageParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType
+
 	// The actual message.
 	Message string
+}
+
+func (x LogMessageParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LogMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "type", x.Type); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////
@@ -3780,7 +9051,35 @@ type LogMessageParams struct {
 
 type LogTraceParams struct {
 	Message string
+
 	Verbose string
+}
+
+func (x LogTraceParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x LogTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "verbose", x.Verbose); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////
@@ -3793,13 +9092,45 @@ type LogTraceParams struct {
 type MarkdownClientCapabilities struct {
 	// The name of the parser.
 	Parser string
+
 	// The version of the parser.
 	Version string
+
 	// A list of HTML tags that the client allows / supports in
 	// Markdown.
 	//
 	// @since 3.17.0
 	AllowedTags []string
+}
+
+func (x MarkdownClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MarkdownClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "parser", x.Parser); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "allowedTags", x.AllowedTags); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////
@@ -3853,8 +9184,36 @@ type MarkedString struct{}
 type MarkupContent struct {
 	// The type of the Markup
 	Kind MarkupKind
+
 	// The content itself
 	Value string
+}
+
+func (x MarkupContent) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MarkupContent) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////
@@ -3897,6 +9256,30 @@ func (x *MarkupKind) UnmarshalJSON(data []byte) error {
 type MessageActionItem struct {
 	// A short title like 'Retry', 'Open Log' etc.
 	Title string
+}
+
+func (x MessageActionItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MessageActionItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "title", x.Title); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////
@@ -3944,13 +9327,49 @@ func (x *MessageType) UnmarshalJSON(data []byte) error {
 type Moniker struct {
 	// The scheme of the moniker. For example tsc or .Net
 	Scheme string
+
 	// The identifier of the moniker. The value is opaque in LSIF however
 	// schema owners are allowed to define the structure if they want.
 	Identifier string
+
 	// The scope in which the moniker is unique
 	Unique UniquenessLevel
+
 	// The moniker kind if known.
 	Kind Optional[MonikerKind]
+}
+
+func (x Moniker) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Moniker) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "unique", x.Unique); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -3965,6 +9384,30 @@ type MonikerClientCapabilities struct {
 	// the client supports the new `MonikerRegistrationOptions` return value
 	// for the corresponding server capability as well.
 	DynamicRegistration bool
+}
+
+func (x MonikerClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MonikerClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////
@@ -4010,6 +9453,30 @@ type MonikerOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x MonikerOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MonikerOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////
 /// MonikerParams ///
 /////////////////////
@@ -4020,6 +9487,36 @@ type MonikerParams struct {
 	PartialResultParams
 }
 
+func (x MonikerParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MonikerParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////
 /// MonikerRegistrationOptions ///
 //////////////////////////////////
@@ -4027,6 +9524,33 @@ type MonikerParams struct {
 type MonikerRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	MonikerOptions
+}
+
+func (x MonikerRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MonikerRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.MonikerOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////
@@ -4043,16 +9567,52 @@ type MonikerRegistrationOptions struct {
 type NotebookCell struct {
 	// The cell's kind
 	Kind NotebookCellKind
+
 	// The URI of the cell's text document
 	// content.
 	Document DocumentURI
+
 	// Additional metadata stored with the cell.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata LSPObject
+
 	// Additional execution summary information
 	// if supported by the client.
 	ExecutionSummary Optional[ExecutionSummary]
+}
+
+func (x NotebookCell) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookCell) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "document", x.Document); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "metadata", x.Metadata); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "executionSummary", x.ExecutionSummary); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////
@@ -4066,10 +9626,42 @@ type NotebookCell struct {
 type NotebookCellArrayChange struct {
 	// The start oftest of the cell that changed.
 	Start uint32
+
 	// The deleted cells
 	DeleteCount uint32
+
 	// The new cells, if any
 	Cells []NotebookCell
+}
+
+func (x NotebookCellArrayChange) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookCellArrayChange) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "start", x.Start); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "deleteCount", x.DeleteCount); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -4117,11 +9709,39 @@ type NotebookCellTextDocumentFilter struct {
 	// value is provided it matches against the
 	// notebook type. '*' matches every notebook.
 	Notebook NotebookCellTextDocumentFilterNotebook
+
 	// A language id like `python`.
 	//
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
 	Language string
+}
+
+func (x NotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookCellTextDocumentFilter) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebook", x.Notebook); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	return nil
 }
 
 type NotebookCellTextDocumentFilterNotebook struct{}
@@ -4136,18 +9756,58 @@ type NotebookCellTextDocumentFilterNotebook struct{}
 type NotebookDocument struct {
 	// The notebook document's uri.
 	URI URI
+
 	// The type of the notebook.
 	NotebookType string
+
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
 	Version int32
+
 	// Additional metadata stored with the notebook
 	// document.
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata LSPObject
+
 	// The cells of a notebook.
 	Cells []NotebookCell
+}
+
+func (x NotebookDocument) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocument) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "metadata", x.Metadata); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -4162,8 +9822,36 @@ type NotebookDocumentChangeEvent struct {
 	//
 	// Note: should always be an object literal (e.g. LSPObject)
 	Metadata LSPObject
+
 	// Changes to cells
 	Cells Optional[NotebookDocumentChangeEventCells]
+}
+
+func (x NotebookDocumentChangeEvent) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentChangeEvent) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "metadata", x.Metadata); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
 }
 
 type NotebookDocumentChangeEventCells struct {
@@ -4205,6 +9893,30 @@ type NotebookDocumentClientCapabilities struct {
 	Synchronization NotebookDocumentSyncClientCapabilities
 }
 
+func (x NotebookDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "synchronization", x.Synchronization); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////
 /// NotebookDocumentFilter ///
 //////////////////////////////
@@ -4228,6 +9940,30 @@ type NotebookDocumentIdentifier struct {
 	URI URI
 }
 
+func (x NotebookDocumentIdentifier) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////////////
 /// NotebookDocumentSyncClientCapabilities ///
 //////////////////////////////////////////////
@@ -4241,8 +9977,36 @@ type NotebookDocumentSyncClientCapabilities struct {
 	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
 	DynamicRegistration bool
+
 	// The client supports sending execution summary data per cell.
 	ExecutionSummarySupport bool
+}
+
+func (x NotebookDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "executionSummarySupport", x.ExecutionSummarySupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -4265,9 +10029,37 @@ type NotebookDocumentSyncClientCapabilities struct {
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
 	NotebookSelector []NotebookDocumentSyncOptionsNotebookSelector
+
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
 	Save bool
+}
+
+func (x NotebookDocumentSyncOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookSelector", x.NotebookSelector); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "save", x.Save); err != nil {
+		return err
+	}
+	return nil
 }
 
 type NotebookDocumentSyncOptionsNotebookSelector struct{}
@@ -4284,6 +10076,33 @@ type NotebookDocumentSyncRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x NotebookDocumentSyncRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentSyncRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.NotebookDocumentSyncOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////////////////////////
 /// OptionalVersionedTextDocumentIdentifier ///
 ///////////////////////////////////////////////
@@ -4291,12 +10110,40 @@ type NotebookDocumentSyncRegistrationOptions struct {
 // A text document identifier to optionally denote a specific version of a text document.
 type OptionalVersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
+
 	// The version number of this document. If a versioned text document identifier
 	// is sent from the server to the client and the file is not open in the editor
 	// (the server has not received an open notification before) the server can send
 	// `null` to indicate that the version is unknown and the content on disk is the
 	// truth (as specified with document content ownership).
 	Version OptionalVersionedTextDocumentIdentifierVersion
+}
+
+func (x OptionalVersionedTextDocumentIdentifier) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x OptionalVersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentIdentifier.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
 }
 
 type OptionalVersionedTextDocumentIdentifierVersion struct{}
@@ -4317,9 +10164,37 @@ type ParameterInformation struct {
 	// *Note*: a label of type string should be a substring of its containing signature label.
 	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
 	Label ParameterInformationLabel
+
 	// The human-readable doc-comment of this parameter. Will be shown
 	// in the UI but can be omitted.
 	Documentation Optional[ParameterInformationDocumentation]
+}
+
+func (x ParameterInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentation", x.Documentation); err != nil {
+		return err
+	}
+	return nil
 }
 
 type ParameterInformationDocumentation struct{}
@@ -4334,6 +10209,30 @@ type PartialResultParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
 	PartialResultToken Optional[ProgressToken]
+}
+
+func (x PartialResultParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PartialResultParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "partialResultToken", x.PartialResultToken); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////
@@ -4388,6 +10287,7 @@ type Position struct {
 	// If a line number is greater than the number of lines in a document, it defaults back to the number of lines in the document.
 	// If a line number is negative, it defaults to 0.
 	Line uint32
+
 	// Character offset on a line in a document (zero-based).
 	//
 	// The meaning of this offset is determined by the negotiated
@@ -4396,6 +10296,33 @@ type Position struct {
 	// If the character value is greater than the line length it defaults back to the
 	// line length.
 	Character uint32
+}
+
+func (x Position) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Position) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "line", x.Line); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "character", x.Character); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -4430,6 +10357,33 @@ const (
 type PrepareRenameParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+}
+
+func (x PrepareRenameParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PrepareRenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -4475,8 +10429,36 @@ type PreviousResultID struct {
 	// The URI for which the client knowns a
 	// result id.
 	URI DocumentURI
+
 	// The value of the previous result id.
 	Value string
+}
+
+func (x PreviousResultID) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PreviousResultID) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////
@@ -4486,8 +10468,36 @@ type PreviousResultID struct {
 type ProgressParams struct {
 	// The progress token provided by the client or server.
 	Token ProgressToken
+
 	// The progress data.
 	Value LSPAny
+}
+
+func (x ProgressParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "token", x.Token); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////
@@ -4504,26 +10514,66 @@ type ProgressToken struct{}
 type PublishDiagnosticsClientCapabilities struct {
 	// Whether the clients accepts diagnostics with related information.
 	RelatedInformation bool
+
 	// Client supports the tag property to provide meta data about a diagnostic.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// @since 3.15.0
 	TagSupport Optional[PublishDiagnosticsClientCapabilitiesTagSupport]
+
 	// Whether the client interprets the version property of the
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
 	// @since 3.15.0
 	VersionSupport bool
+
 	// Client supports a codeDescription property
 	//
 	// @since 3.16.0
 	CodeDescriptionSupport bool
+
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/publishDiagnostics` and
 	// `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
 	DataSupport bool
+}
+
+func (x PublishDiagnosticsClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PublishDiagnosticsClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "relatedInformation", x.RelatedInformation); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "versionSupport", x.VersionSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "codeDescriptionSupport", x.CodeDescriptionSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "dataSupport", x.DataSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 type PublishDiagnosticsClientCapabilitiesTagSupport struct {
@@ -4539,12 +10589,44 @@ type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 type PublishDiagnosticsParams struct {
 	// The URI for which diagnostic information is reported.
 	URI DocumentURI
+
 	// Optional the version number of the document the diagnostics are published for.
 	//
 	// @since 3.15.0
 	Version int32
+
 	// An array of diagnostic information items.
 	Diagnostics []Diagnostic
+}
+
+func (x PublishDiagnosticsParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PublishDiagnosticsParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////
@@ -4567,8 +10649,36 @@ type PublishDiagnosticsParams struct {
 type Range struct {
 	// The range's start position.
 	Start Position
+
 	// The range's end position.
 	End Position
+}
+
+func (x Range) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Range) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "start", x.Start); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "end", x.End); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -4579,6 +10689,30 @@ type Range struct {
 type ReferenceClientCapabilities struct {
 	// Whether references supports dynamic registration.
 	DynamicRegistration bool
+}
+
+func (x ReferenceClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ReferenceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -4592,6 +10726,30 @@ type ReferenceContext struct {
 	IncludeDeclaration bool
 }
 
+func (x ReferenceContext) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ReferenceContext) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "includeDeclaration", x.IncludeDeclaration); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////
 /// ReferenceOptions ///
 ////////////////////////
@@ -4599,6 +10757,30 @@ type ReferenceContext struct {
 // Reference options.
 type ReferenceOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x ReferenceOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ReferenceOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////
@@ -4610,7 +10792,41 @@ type ReferenceParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Context ReferenceContext
+}
+
+func (x ReferenceParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ReferenceParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "context", x.Context); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////
@@ -4623,6 +10839,33 @@ type ReferenceRegistrationOptions struct {
 	ReferenceOptions
 }
 
+func (x ReferenceRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ReferenceRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.ReferenceOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////
 /// Registration ///
 ////////////////////
@@ -4632,10 +10875,42 @@ type Registration struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again.
 	ID string
+
 	// The method / capability to register for.
 	Method string
+
 	// Options necessary for the registration.
 	RegisterOptions Optional[LSPAny]
+}
+
+func (x Registration) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Registration) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "id", x.ID); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "method", x.Method); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "registerOptions", x.RegisterOptions); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////
@@ -4644,6 +10919,30 @@ type Registration struct {
 
 type RegistrationParams struct {
 	Registrations []Registration
+}
+
+func (x RegistrationParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RegistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "registrations", x.Registrations); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////////
@@ -4656,8 +10955,36 @@ type RegistrationParams struct {
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
 	Engine string
+
 	// The engine's version.
 	Version string
+}
+
+func (x RegularExpressionsClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RegularExpressionsClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "engine", x.Engine); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////////
@@ -4669,6 +10996,7 @@ type RegularExpressionsClientCapabilities struct {
 // @since 3.17.0
 type RelatedFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
+
 	// Diagnostics of related documents. This information is useful
 	// in programming languages where code in a file A can generate
 	// diagnostics in a file B which A depends on. An example of
@@ -4677,6 +11005,33 @@ type RelatedFullDocumentDiagnosticReport struct {
 	//
 	// @since 3.17.0
 	RelatedDocuments map[DocumentURI]RelatedFullDocumentDiagnosticReportRelatedDocuments
+}
+
+func (x RelatedFullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RelatedFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.FullDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "relatedDocuments", x.RelatedDocuments); err != nil {
+		return err
+	}
+	return nil
 }
 
 type RelatedFullDocumentDiagnosticReportRelatedDocuments struct{}
@@ -4690,6 +11045,7 @@ type RelatedFullDocumentDiagnosticReportRelatedDocuments struct{}
 // @since 3.17.0
 type RelatedUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
+
 	// Diagnostics of related documents. This information is useful
 	// in programming languages where code in a file A can generate
 	// diagnostics in a file B which A depends on. An example of
@@ -4698,6 +11054,33 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	//
 	// @since 3.17.0
 	RelatedDocuments map[DocumentURI]RelatedUnchangedDocumentDiagnosticReportRelatedDocuments
+}
+
+func (x RelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RelatedUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.UnchangedDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "relatedDocuments", x.RelatedDocuments); err != nil {
+		return err
+	}
+	return nil
 }
 
 type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments struct{}
@@ -4715,8 +11098,36 @@ type RelativePattern struct {
 	// A workspace folder or a base URI to which this pattern will be matched
 	// against relatively.
 	BaseURI RelativePatternBaseURI
+
 	// The actual glob pattern;
 	Pattern Pattern
+}
+
+func (x RelativePattern) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RelativePattern) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "baseUri", x.BaseURI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
 }
 
 type RelativePatternBaseURI struct{}
@@ -4728,11 +11139,13 @@ type RelativePatternBaseURI struct{}
 type RenameClientCapabilities struct {
 	// Whether rename supports dynamic registration.
 	DynamicRegistration bool
+
 	// Client supports testing for validity of rename operations
 	// before execution.
 	//
 	// @since 3.12.0
 	PrepareSupport bool
+
 	// Client supports the default behavior result.
 	//
 	// The value indicates the default behavior used by the
@@ -4740,6 +11153,7 @@ type RenameClientCapabilities struct {
 	//
 	// @since 3.16.0
 	PrepareSupportDefaultBehavior Optional[PrepareSupportDefaultBehavior]
+
 	// Whether the client honors the change annotations in
 	// text edits and resource operations returned via the
 	// rename request's workspace edit by for example presenting
@@ -4750,6 +11164,39 @@ type RenameClientCapabilities struct {
 	HonorsChangeAnnotations bool
 }
 
+func (x RenameClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RenameClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "prepareSupport", x.PrepareSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "prepareSupportDefaultBehavior", x.PrepareSupportDefaultBehavior); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "honorsChangeAnnotations", x.HonorsChangeAnnotations); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////
 /// RenameFile ///
 //////////////////
@@ -4757,12 +11204,51 @@ type RenameClientCapabilities struct {
 // Rename file operation
 type RenameFile struct {
 	ResourceOperation
+
 	// The old (existing) location.
 	OldURI DocumentURI
+
 	// The new location.
 	NewURI DocumentURI
+
 	// Rename options.
 	Options Optional[RenameFileOptions]
+}
+
+func (x RenameFile) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RenameFile) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.ResourceOperation.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "kind", "rename"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "oldUri", x.OldURI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "newUri", x.NewURI); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -4773,8 +11259,36 @@ type RenameFile struct {
 type RenameFileOptions struct {
 	// Overwrite target if existing. Overwrite wins over `ignoreIfExists`
 	Overwrite bool
+
 	// Ignores if target exists.
 	IgnoreIfExists bool
+}
+
+func (x RenameFileOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RenameFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "overwrite", x.Overwrite); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "ignoreIfExists", x.IgnoreIfExists); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -4791,6 +11305,30 @@ type RenameFilesParams struct {
 	Files []FileRename
 }
 
+func (x RenameFilesParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RenameFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "files", x.Files); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////
 /// RenameOptions ///
 /////////////////////
@@ -4798,10 +11336,38 @@ type RenameFilesParams struct {
 // Provider options for a {@link RenameRequest}.
 type RenameOptions struct {
 	WorkDoneProgressOptions
+
 	// Renames should be checked and tested before being executed.
 	//
 	// @since version 3.12.0
 	PrepareProvider bool
+}
+
+func (x RenameOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RenameOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "prepareProvider", x.PrepareProvider); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////
@@ -4811,14 +11377,50 @@ type RenameOptions struct {
 // The parameters of a {@link RenameRequest}.
 type RenameParams struct {
 	WorkDoneProgressParams
+
 	// The document to rename.
 	TextDocument TextDocumentIdentifier
+
 	// The position at which this request was sent.
 	Position Position
+
 	// The new name of the symbol. If the given name is not valid the
 	// request must return a {@link ResponseError} with an
 	// appropriate message set.
 	NewName string
+}
+
+func (x RenameParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "position", x.Position); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "newName", x.NewName); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -4831,6 +11433,33 @@ type RenameRegistrationOptions struct {
 	RenameOptions
 }
 
+func (x RenameRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x RenameRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.RenameOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// ResourceOperation ///
 /////////////////////////
@@ -4839,10 +11468,38 @@ type RenameRegistrationOptions struct {
 type ResourceOperation struct {
 	// The resource operation kind.
 	Kind string
+
 	// An optional annotation identifier describing the operation.
 	//
 	// @since 3.16.0
 	AnnotationID ChangeAnnotationIdentifier
+}
+
+func (x ResourceOperation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ResourceOperation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "annotationId", x.AnnotationID); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -4886,6 +11543,30 @@ type SaveOptions struct {
 	IncludeText bool
 }
 
+func (x SaveOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SaveOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "includeText", x.IncludeText); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////
 /// SelectionRange ///
 //////////////////////
@@ -4895,8 +11576,36 @@ type SaveOptions struct {
 type SelectionRange struct {
 	// The {@link Range range} of this selection range.
 	Range Range
+
 	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
 	Parent Optional[SelectionRange]
+}
+
+func (x SelectionRange) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SelectionRange) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "parent", x.Parent); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -4910,12 +11619,60 @@ type SelectionRangeClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x SelectionRangeClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SelectionRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////
 /// SelectionRangeOptions ///
 /////////////////////////////
 
 type SelectionRangeOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x SelectionRangeOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SelectionRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -4926,10 +11683,45 @@ type SelectionRangeOptions struct {
 type SelectionRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The positions inside the text document.
 	Positions []Position
+}
+
+func (x SelectionRangeParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SelectionRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "positions", x.Positions); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////
@@ -4940,6 +11732,36 @@ type SelectionRangeRegistrationOptions struct {
 	SelectionRangeOptions
 	TextDocumentRegistrationOptions
 	StaticRegistrationOptions
+}
+
+func (x SelectionRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SelectionRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.SelectionRangeOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////
@@ -5017,8 +11839,36 @@ type SemanticTokens struct {
 	// A server can then instead of computing all semantic tokens again simply
 	// send a delta.
 	ResultID string
+
 	// The actual tokens.
 	Data []uint32
+}
+
+func (x SemanticTokens) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokens) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -5031,6 +11881,7 @@ type SemanticTokensClientCapabilities struct {
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
 	DynamicRegistration bool
+
 	// Which requests the client supports and might send to the server
 	// depending on the server's capability. Please note that clients might not
 	// show semantic tokens or degrade some of the user experience if a range
@@ -5040,16 +11891,22 @@ type SemanticTokensClientCapabilities struct {
 	// range provider the client might not render a minimap correctly or might
 	// even decide to not show any semantic tokens at all.
 	Requests SemanticTokensClientCapabilitiesRequests
+
 	// The token types that the client supports.
 	TokenTypes []string
+
 	// The token modifiers that the client supports.
 	TokenModifiers []string
+
 	// The token formats the clients supports.
 	Formats []TokenFormat
+
 	// Whether the client supports tokens that can overlap each other.
 	OverlappingTokenSupport bool
+
 	// Whether the client supports tokens that can span multiple lines.
 	MultilineTokenSupport bool
+
 	// Whether the client allows the server to actively cancel a
 	// semantic token request, e.g. supports returning
 	// LSPErrorCodes.ServerCancelled. If a server does the client
@@ -5057,6 +11914,7 @@ type SemanticTokensClientCapabilities struct {
 	//
 	// @since 3.17.0
 	ServerCancelSupport bool
+
 	// Whether the client uses semantic tokens to augment existing
 	// syntax tokens. If set to `true` client side created syntax
 	// tokens and semantic tokens are both used for colorization. If
@@ -5068,6 +11926,54 @@ type SemanticTokensClientCapabilities struct {
 	//
 	// @since 3.17.0
 	AugmentsSyntaxTokens bool
+}
+
+func (x SemanticTokensClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "requests", x.Requests); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tokenTypes", x.TokenTypes); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tokenModifiers", x.TokenModifiers); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "formats", x.Formats); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "overlappingTokenSupport", x.OverlappingTokenSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "multilineTokenSupport", x.MultilineTokenSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "serverCancelSupport", x.ServerCancelSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "augmentsSyntaxTokens", x.AugmentsSyntaxTokens); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SemanticTokensClientCapabilitiesRequests struct {
@@ -5090,8 +11996,36 @@ type SemanticTokensClientCapabilitiesRequestsRange struct{}
 // @since 3.16.0
 type SemanticTokensDelta struct {
 	ResultID string
+
 	// The semantic token edits to transform a previous result into a new result.
 	Edits []SemanticTokensEdit
+}
+
+func (x SemanticTokensDelta) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensDelta) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -5102,11 +12036,46 @@ type SemanticTokensDelta struct {
 type SemanticTokensDeltaParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The result id of a previous response. The result Id can either point to a full response
 	// or a delta response depending on what was received last.
 	PreviousResultID string
+}
+
+func (x SemanticTokensDeltaParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensDeltaParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "previousResultId", x.PreviousResultID); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -5118,6 +12087,30 @@ type SemanticTokensDeltaPartialResult struct {
 	Edits []SemanticTokensEdit
 }
 
+func (x SemanticTokensDeltaPartialResult) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensDeltaPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////
 /// SemanticTokensEdit ///
 //////////////////////////
@@ -5126,10 +12119,42 @@ type SemanticTokensDeltaPartialResult struct {
 type SemanticTokensEdit struct {
 	// The start offset of the edit.
 	Start uint32
+
 	// The count of elements to remove.
 	DeleteCount uint32
+
 	// The elements to insert.
 	Data []uint32
+}
+
+func (x SemanticTokensEdit) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensEdit) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "start", x.Start); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "deleteCount", x.DeleteCount); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -5140,8 +12165,36 @@ type SemanticTokensEdit struct {
 type SemanticTokensLegend struct {
 	// The token types a server uses.
 	TokenTypes []string
+
 	// The token modifiers a server uses.
 	TokenModifiers []string
+}
+
+func (x SemanticTokensLegend) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensLegend) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "tokenTypes", x.TokenTypes); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tokenModifiers", x.TokenModifiers); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -5151,13 +12204,49 @@ type SemanticTokensLegend struct {
 // @since 3.16.0
 type SemanticTokensOptions struct {
 	WorkDoneProgressOptions
+
 	// The legend used by the server
 	Legend SemanticTokensLegend
+
 	// Server supports providing semantic tokens for a specific range
 	// of a document.
 	Range Optional[SemanticTokensOptionsRange]
+
 	// Server supports providing semantic tokens for a full document.
 	Full Optional[SemanticTokensOptionsFull]
+}
+
+func (x SemanticTokensOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "legend", x.Legend); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "full", x.Full); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SemanticTokensOptionsFull struct{}
@@ -5172,8 +12261,39 @@ type SemanticTokensOptionsRange struct{}
 type SemanticTokensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+}
+
+func (x SemanticTokensParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -5185,6 +12305,30 @@ type SemanticTokensPartialResult struct {
 	Data []uint32
 }
 
+func (x SemanticTokensPartialResult) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////
 /// SemanticTokensRangeParams ///
 /////////////////////////////////
@@ -5193,10 +12337,45 @@ type SemanticTokensPartialResult struct {
 type SemanticTokensRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The range the semantic tokens are requested for.
 	Range Range
+}
+
+func (x SemanticTokensRangeParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////
@@ -5208,6 +12387,36 @@ type SemanticTokensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SemanticTokensOptions
 	StaticRegistrationOptions
+}
+
+func (x SemanticTokensRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.SemanticTokensOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////////////
@@ -5224,6 +12433,30 @@ type SemanticTokensWorkspaceClientCapabilities struct {
 	// and is useful for situation where a server for example detects a project
 	// wide change that requires such a calculation.
 	RefreshSupport bool
+}
+
+func (x SemanticTokensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////
@@ -5243,98 +12476,258 @@ type ServerCapabilities struct {
 	//
 	// @since 3.17.0
 	PositionEncoding Optional[PositionEncodingKind]
+
 	// Defines how text documents are synced. Is either a detailed structure
 	// defining each notification or for backwards compatibility the
 	// TextDocumentSyncKind number.
 	TextDocumentSync Optional[ServerCapabilitiesTextDocumentSync]
+
 	// Defines how notebook documents are synced.
 	//
 	// @since 3.17.0
 	NotebookDocumentSync Optional[ServerCapabilitiesNotebookDocumentSync]
+
 	// The server provides completion support.
 	CompletionProvider Optional[CompletionOptions]
+
 	// The server provides hover support.
 	HoverProvider Optional[ServerCapabilitiesHoverProvider]
+
 	// The server provides signature help support.
 	SignatureHelpProvider Optional[SignatureHelpOptions]
+
 	// The server provides Goto Declaration support.
 	DeclarationProvider Optional[ServerCapabilitiesDeclarationProvider]
+
 	// The server provides goto definition support.
 	DefinitionProvider Optional[ServerCapabilitiesDefinitionProvider]
+
 	// The server provides Goto Type Definition support.
 	TypeDefinitionProvider Optional[ServerCapabilitiesTypeDefinitionProvider]
+
 	// The server provides Goto Implementation support.
 	ImplementationProvider Optional[ServerCapabilitiesImplementationProvider]
+
 	// The server provides find references support.
 	ReferencesProvider Optional[ServerCapabilitiesReferencesProvider]
+
 	// The server provides document highlight support.
 	DocumentHighlightProvider Optional[ServerCapabilitiesDocumentHighlightProvider]
+
 	// The server provides document symbol support.
 	DocumentSymbolProvider Optional[ServerCapabilitiesDocumentSymbolProvider]
+
 	// The server provides code actions. CodeActionOptions may only be
 	// specified if the client states that it supports
 	// `codeActionLiteralSupport` in its initial `initialize` request.
 	CodeActionProvider Optional[ServerCapabilitiesCodeActionProvider]
+
 	// The server provides code lens.
 	CodeLensProvider Optional[CodeLensOptions]
+
 	// The server provides document link support.
 	DocumentLinkProvider Optional[DocumentLinkOptions]
+
 	// The server provides color provider support.
 	ColorProvider Optional[ServerCapabilitiesColorProvider]
+
 	// The server provides workspace symbol support.
 	WorkspaceSymbolProvider Optional[ServerCapabilitiesWorkspaceSymbolProvider]
+
 	// The server provides document formatting.
 	DocumentFormattingProvider Optional[ServerCapabilitiesDocumentFormattingProvider]
+
 	// The server provides document range formatting.
 	DocumentRangeFormattingProvider Optional[ServerCapabilitiesDocumentRangeFormattingProvider]
+
 	// The server provides document formatting on typing.
 	DocumentOnTypeFormattingProvider Optional[DocumentOnTypeFormattingOptions]
+
 	// The server provides rename support. RenameOptions may only be
 	// specified if the client states that it supports
 	// `prepareSupport` in its initial `initialize` request.
 	RenameProvider Optional[ServerCapabilitiesRenameProvider]
+
 	// The server provides folding provider support.
 	FoldingRangeProvider Optional[ServerCapabilitiesFoldingRangeProvider]
+
 	// The server provides selection range support.
 	SelectionRangeProvider Optional[ServerCapabilitiesSelectionRangeProvider]
+
 	// The server provides execute command support.
 	ExecuteCommandProvider Optional[ExecuteCommandOptions]
+
 	// The server provides call hierarchy support.
 	//
 	// @since 3.16.0
 	CallHierarchyProvider Optional[ServerCapabilitiesCallHierarchyProvider]
+
 	// The server provides linked editing range support.
 	//
 	// @since 3.16.0
 	LinkedEditingRangeProvider Optional[ServerCapabilitiesLinkedEditingRangeProvider]
+
 	// The server provides semantic tokens support.
 	//
 	// @since 3.16.0
 	SemanticTokensProvider Optional[ServerCapabilitiesSemanticTokensProvider]
+
 	// The server provides moniker support.
 	//
 	// @since 3.16.0
 	MonikerProvider Optional[ServerCapabilitiesMonikerProvider]
+
 	// The server provides type hierarchy support.
 	//
 	// @since 3.17.0
 	TypeHierarchyProvider Optional[ServerCapabilitiesTypeHierarchyProvider]
+
 	// The server provides inline values.
 	//
 	// @since 3.17.0
 	InlineValueProvider Optional[ServerCapabilitiesInlineValueProvider]
+
 	// The server provides inlay hints.
 	//
 	// @since 3.17.0
 	InlayHintProvider Optional[ServerCapabilitiesInlayHintProvider]
+
 	// The server has support for pull model diagnostics.
 	//
 	// @since 3.17.0
 	DiagnosticProvider Optional[ServerCapabilitiesDiagnosticProvider]
+
 	// Workspace specific server capabilities.
 	Workspace Optional[ServerCapabilitiesWorkspace]
+
 	// Experimental server capabilities.
 	Experimental Optional[LSPAny]
+}
+
+func (x ServerCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "positionEncoding", x.PositionEncoding); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "textDocumentSync", x.TextDocumentSync); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "notebookDocumentSync", x.NotebookDocumentSync); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "completionProvider", x.CompletionProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "hoverProvider", x.HoverProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "signatureHelpProvider", x.SignatureHelpProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "declarationProvider", x.DeclarationProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "definitionProvider", x.DefinitionProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "typeDefinitionProvider", x.TypeDefinitionProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "implementationProvider", x.ImplementationProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "referencesProvider", x.ReferencesProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentHighlightProvider", x.DocumentHighlightProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentSymbolProvider", x.DocumentSymbolProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "codeActionProvider", x.CodeActionProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "codeLensProvider", x.CodeLensProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentLinkProvider", x.DocumentLinkProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "colorProvider", x.ColorProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "workspaceSymbolProvider", x.WorkspaceSymbolProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentFormattingProvider", x.DocumentFormattingProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentRangeFormattingProvider", x.DocumentRangeFormattingProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentOnTypeFormattingProvider", x.DocumentOnTypeFormattingProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "renameProvider", x.RenameProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "foldingRangeProvider", x.FoldingRangeProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "selectionRangeProvider", x.SelectionRangeProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "executeCommandProvider", x.ExecuteCommandProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "callHierarchyProvider", x.CallHierarchyProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "linkedEditingRangeProvider", x.LinkedEditingRangeProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "semanticTokensProvider", x.SemanticTokensProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "monikerProvider", x.MonikerProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "typeHierarchyProvider", x.TypeHierarchyProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "inlineValueProvider", x.InlineValueProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "inlayHintProvider", x.InlayHintProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "diagnosticProvider", x.DiagnosticProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "workspace", x.Workspace); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "experimental", x.Experimental); err != nil {
+		return err
+	}
+	return nil
 }
 
 type ServerCapabilitiesCallHierarchyProvider struct{}
@@ -5408,6 +12801,30 @@ type SetTraceParams struct {
 	Value TraceValues
 }
 
+func (x SetTraceParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SetTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////
 /// ShowDocumentClientCapabilities ///
 //////////////////////////////////////
@@ -5421,6 +12838,30 @@ type ShowDocumentClientCapabilities struct {
 	Support bool
 }
 
+func (x ShowDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ShowDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "support", x.Support); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////
 /// ShowDocumentParams ///
 //////////////////////////
@@ -5431,20 +12872,56 @@ type ShowDocumentClientCapabilities struct {
 type ShowDocumentParams struct {
 	// The uri to show.
 	URI URI
+
 	// Indicates to show the resource in an external program.
 	// To show, for example, `https://code.visualstudio.com/`
 	// in the default WEB browser set `external` to `true`.
 	External bool
+
 	// An optional property to indicate whether the editor
 	// showing the document should take focus or not.
 	// Clients might ignore this property if an external
 	// program is started.
 	TakeFocus bool
+
 	// An optional selection range if the document is a text
 	// document. Clients might ignore the property if an
 	// external program is started or the file is not a text
 	// file.
 	Selection Optional[Range]
+}
+
+func (x ShowDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ShowDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "external", x.External); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "takeFocus", x.TakeFocus); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "selection", x.Selection); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////
@@ -5459,6 +12936,30 @@ type ShowDocumentResult struct {
 	Success bool
 }
 
+func (x ShowDocumentResult) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ShowDocumentResult) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "success", x.Success); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// ShowMessageParams ///
 /////////////////////////
@@ -5467,8 +12968,36 @@ type ShowDocumentResult struct {
 type ShowMessageParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType
+
 	// The actual message.
 	Message string
+}
+
+func (x ShowMessageParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ShowMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "type", x.Type); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////////
@@ -5479,6 +13008,30 @@ type ShowMessageParams struct {
 type ShowMessageRequestClientCapabilities struct {
 	// Capabilities specific to the `MessageActionItem` type.
 	MessageActionItem Optional[ShowMessageRequestClientCapabilitiesMessageActionItem]
+}
+
+func (x ShowMessageRequestClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ShowMessageRequestClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "messageActionItem", x.MessageActionItem); err != nil {
+		return err
+	}
+	return nil
 }
 
 type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
@@ -5495,10 +13048,42 @@ type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
 type ShowMessageRequestParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType
+
 	// The actual message.
 	Message string
+
 	// The message action items to present.
 	Actions []MessageActionItem
+}
+
+func (x ShowMessageRequestParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ShowMessageRequestParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "type", x.Type); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "actions", x.Actions); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////
@@ -5511,6 +13096,7 @@ type ShowMessageRequestParams struct {
 type SignatureHelp struct {
 	// One or more signatures.
 	Signatures []SignatureInformation
+
 	// The active signature. If omitted or the value lies outside the
 	// range of `signatures` the value defaults to zero or is ignored if
 	// the `SignatureHelp` has no signatures.
@@ -5521,6 +13107,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory to better express this.
 	ActiveSignature uint32
+
 	// The active parameter of the active signature. If omitted or the value
 	// lies outside the range of `signatures[activeSignature].parameters`
 	// defaults to 0 if the active signature has parameters. If
@@ -5531,6 +13118,36 @@ type SignatureHelp struct {
 	ActiveParameter uint32
 }
 
+func (x SignatureHelp) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelp) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "signatures", x.Signatures); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "activeSignature", x.ActiveSignature); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////////////////
 /// SignatureHelpClientCapabilities ///
 ///////////////////////////////////////
@@ -5539,9 +13156,11 @@ type SignatureHelp struct {
 type SignatureHelpClientCapabilities struct {
 	// Whether signature help supports dynamic registration.
 	DynamicRegistration bool
+
 	// The client supports the following `SignatureInformation`
 	// specific properties.
 	SignatureInformation Optional[SignatureHelpClientCapabilitiesSignatureInformation]
+
 	// The client supports to send additional context information for a
 	// `textDocument/signatureHelp` request. A client that opts into
 	// contextSupport will also support the `retriggerCharacters` on
@@ -5549,6 +13168,36 @@ type SignatureHelpClientCapabilities struct {
 	//
 	// @since 3.15.0
 	ContextSupport bool
+}
+
+func (x SignatureHelpClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelpClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "signatureInformation", x.SignatureInformation); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "contextSupport", x.ContextSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SignatureHelpClientCapabilitiesSignatureInformation struct {
@@ -5582,20 +13231,56 @@ type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation str
 type SignatureHelpContext struct {
 	// Action that caused signature help to be triggered.
 	TriggerKind SignatureHelpTriggerKind
+
 	// Character that caused signature help to be triggered.
 	//
 	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
 	TriggerCharacter string
+
 	// `true` if signature help was already showing when it was triggered.
 	//
 	// Retriggers occurs when the signature help is already active and can be caused by actions such as
 	// typing a trigger character, a cursor move, or document content changes.
 	IsRetrigger bool
+
 	// The currently active `SignatureHelp`.
 	//
 	// The `activeSignatureHelp` has its `SignatureHelp.activeSignature` field updated based on
 	// the user navigating through available signatures.
 	ActiveSignatureHelp Optional[SignatureHelp]
+}
+
+func (x SignatureHelpContext) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelpContext) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "triggerKind", x.TriggerKind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "triggerCharacter", x.TriggerCharacter); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "isRetrigger", x.IsRetrigger); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "activeSignatureHelp", x.ActiveSignatureHelp); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -5605,8 +13290,10 @@ type SignatureHelpContext struct {
 // Server Capabilities for a {@link SignatureHelpRequest}.
 type SignatureHelpOptions struct {
 	WorkDoneProgressOptions
+
 	// List of characters that trigger signature help automatically.
 	TriggerCharacters []string
+
 	// List of characters that re-trigger signature help.
 	//
 	// These trigger characters are only active when signature help is already showing. All trigger characters
@@ -5614,6 +13301,36 @@ type SignatureHelpOptions struct {
 	//
 	// @since 3.15.0
 	RetriggerCharacters []string
+}
+
+func (x SignatureHelpOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelpOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "triggerCharacters", x.TriggerCharacters); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "retriggerCharacters", x.RetriggerCharacters); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////
@@ -5624,11 +13341,42 @@ type SignatureHelpOptions struct {
 type SignatureHelpParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+
 	// The signature help context. This is only available if the client specifies
 	// to send this using the client capability `textDocument.signatureHelp.contextSupport === true`
 	//
 	// @since 3.15.0
 	Context Optional[SignatureHelpContext]
+}
+
+func (x SignatureHelpParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelpParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "context", x.Context); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -5639,6 +13387,33 @@ type SignatureHelpParams struct {
 type SignatureHelpRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SignatureHelpOptions
+}
+
+func (x SignatureHelpRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelpRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.SignatureHelpOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -5686,17 +13461,53 @@ type SignatureInformation struct {
 	// The label of this signature. Will be shown in
 	// the UI.
 	Label string
+
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
 	Documentation Optional[SignatureInformationDocumentation]
+
 	// The parameters of this signature.
 	Parameters []ParameterInformation
+
 	// The index of the active parameter.
 	//
 	// If provided, this is used in place of `SignatureHelp.activeParameter`.
 	//
 	// @since 3.16.0
 	ActiveParameter uint32
+}
+
+func (x SignatureInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentation", x.Documentation); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "parameters", x.Parameters); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SignatureInformationDocumentation struct{}
@@ -5713,6 +13524,30 @@ type StaticRegistrationOptions struct {
 	ID string
 }
 
+func (x StaticRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x StaticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "id", x.ID); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// SymbolInformation ///
 /////////////////////////
@@ -5721,12 +13556,14 @@ type StaticRegistrationOptions struct {
 // interfaces etc.
 type SymbolInformation struct {
 	BaseSymbolInformation
+
 	// Indicates if this symbol is deprecated.
 	//
 	// @deprecated Use tags instead
 	//
 	// Deprecated: Use tags instead
 	Deprecated bool
+
 	// The location of this symbol. The location's range is used by a tool
 	// to reveal the location in the editor. If the symbol is selected in the
 	// tool the range's start information is used to position the cursor. So
@@ -5737,6 +13574,36 @@ type SymbolInformation struct {
 	// syntax tree. It can therefore not be used to re-construct a hierarchy of
 	// the symbols.
 	Location Location
+}
+
+func (x SymbolInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.BaseSymbolInformation.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "deprecated", x.Deprecated); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "location", x.Location); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////
@@ -5849,8 +13716,36 @@ func (x *SymbolTag) UnmarshalJSON(data []byte) error {
 // Describe options to be used when registered for text document change events.
 type TextDocumentChangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
+
 	// How documents are synced to the server.
 	SyncKind TextDocumentSyncKind
+}
+
+func (x TextDocumentChangeRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentChangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "syncKind", x.SyncKind); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////
@@ -5861,93 +13756,233 @@ type TextDocumentChangeRegistrationOptions struct {
 type TextDocumentClientCapabilities struct {
 	// Defines which synchronization capabilities the client supports.
 	Synchronization Optional[TextDocumentSyncClientCapabilities]
+
 	// Capabilities specific to the `textDocument/completion` request.
 	Completion Optional[CompletionClientCapabilities]
+
 	// Capabilities specific to the `textDocument/hover` request.
 	Hover Optional[HoverClientCapabilities]
+
 	// Capabilities specific to the `textDocument/signatureHelp` request.
 	SignatureHelp Optional[SignatureHelpClientCapabilities]
+
 	// Capabilities specific to the `textDocument/declaration` request.
 	//
 	// @since 3.14.0
 	Declaration Optional[DeclarationClientCapabilities]
+
 	// Capabilities specific to the `textDocument/definition` request.
 	Definition Optional[DefinitionClientCapabilities]
+
 	// Capabilities specific to the `textDocument/typeDefinition` request.
 	//
 	// @since 3.6.0
 	TypeDefinition Optional[TypeDefinitionClientCapabilities]
+
 	// Capabilities specific to the `textDocument/implementation` request.
 	//
 	// @since 3.6.0
 	Implementation Optional[ImplementationClientCapabilities]
+
 	// Capabilities specific to the `textDocument/references` request.
 	References Optional[ReferenceClientCapabilities]
+
 	// Capabilities specific to the `textDocument/documentHighlight` request.
 	DocumentHighlight Optional[DocumentHighlightClientCapabilities]
+
 	// Capabilities specific to the `textDocument/documentSymbol` request.
 	DocumentSymbol Optional[DocumentSymbolClientCapabilities]
+
 	// Capabilities specific to the `textDocument/codeAction` request.
 	CodeAction Optional[CodeActionClientCapabilities]
+
 	// Capabilities specific to the `textDocument/codeLens` request.
 	CodeLens Optional[CodeLensClientCapabilities]
+
 	// Capabilities specific to the `textDocument/documentLink` request.
 	DocumentLink Optional[DocumentLinkClientCapabilities]
+
 	// Capabilities specific to the `textDocument/documentColor` and the
 	// `textDocument/colorPresentation` request.
 	//
 	// @since 3.6.0
 	ColorProvider Optional[DocumentColorClientCapabilities]
+
 	// Capabilities specific to the `textDocument/formatting` request.
 	Formatting Optional[DocumentFormattingClientCapabilities]
+
 	// Capabilities specific to the `textDocument/rangeFormatting` request.
 	RangeFormatting Optional[DocumentRangeFormattingClientCapabilities]
+
 	// Capabilities specific to the `textDocument/onTypeFormatting` request.
 	OnTypeFormatting Optional[DocumentOnTypeFormattingClientCapabilities]
+
 	// Capabilities specific to the `textDocument/rename` request.
 	Rename Optional[RenameClientCapabilities]
+
 	// Capabilities specific to the `textDocument/foldingRange` request.
 	//
 	// @since 3.10.0
 	FoldingRange Optional[FoldingRangeClientCapabilities]
+
 	// Capabilities specific to the `textDocument/selectionRange` request.
 	//
 	// @since 3.15.0
 	SelectionRange Optional[SelectionRangeClientCapabilities]
+
 	// Capabilities specific to the `textDocument/publishDiagnostics` notification.
 	PublishDiagnostics Optional[PublishDiagnosticsClientCapabilities]
+
 	// Capabilities specific to the various call hierarchy requests.
 	//
 	// @since 3.16.0
 	CallHierarchy Optional[CallHierarchyClientCapabilities]
+
 	// Capabilities specific to the various semantic token request.
 	//
 	// @since 3.16.0
 	SemanticTokens Optional[SemanticTokensClientCapabilities]
+
 	// Capabilities specific to the `textDocument/linkedEditingRange` request.
 	//
 	// @since 3.16.0
 	LinkedEditingRange Optional[LinkedEditingRangeClientCapabilities]
+
 	// Client capabilities specific to the `textDocument/moniker` request.
 	//
 	// @since 3.16.0
 	Moniker Optional[MonikerClientCapabilities]
+
 	// Capabilities specific to the various type hierarchy requests.
 	//
 	// @since 3.17.0
 	TypeHierarchy Optional[TypeHierarchyClientCapabilities]
+
 	// Capabilities specific to the `textDocument/inlineValue` request.
 	//
 	// @since 3.17.0
 	InlineValue Optional[InlineValueClientCapabilities]
+
 	// Capabilities specific to the `textDocument/inlayHint` request.
 	//
 	// @since 3.17.0
 	InlayHint Optional[InlayHintClientCapabilities]
+
 	// Capabilities specific to the diagnostic pull model.
 	//
 	// @since 3.17.0
 	Diagnostic Optional[DiagnosticClientCapabilities]
+}
+
+func (x TextDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "synchronization", x.Synchronization); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "completion", x.Completion); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "hover", x.Hover); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "signatureHelp", x.SignatureHelp); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "declaration", x.Declaration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "definition", x.Definition); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "typeDefinition", x.TypeDefinition); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "implementation", x.Implementation); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "references", x.References); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentHighlight", x.DocumentHighlight); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentSymbol", x.DocumentSymbol); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "codeAction", x.CodeAction); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "codeLens", x.CodeLens); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "documentLink", x.DocumentLink); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "colorProvider", x.ColorProvider); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "formatting", x.Formatting); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "rangeFormatting", x.RangeFormatting); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "onTypeFormatting", x.OnTypeFormatting); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "rename", x.Rename); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "foldingRange", x.FoldingRange); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "publishDiagnostics", x.PublishDiagnostics); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "callHierarchy", x.CallHierarchy); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "semanticTokens", x.SemanticTokens); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "linkedEditingRange", x.LinkedEditingRange); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "moniker", x.Moniker); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "typeHierarchy", x.TypeHierarchy); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "inlineValue", x.InlineValue); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "inlayHint", x.InlayHint); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "diagnostic", x.Diagnostic); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////
@@ -5969,11 +14004,39 @@ type TextDocumentContentChangeEvent struct{}
 type TextDocumentEdit struct {
 	// The text document to change.
 	TextDocument OptionalVersionedTextDocumentIdentifier
+
 	// The edits to be applied.
 	//
 	// @since 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
 	// client capability.
 	Edits []TextDocumentEditEdits
+}
+
+func (x TextDocumentEdit) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentEdit) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
+		return err
+	}
+	return nil
 }
 
 type TextDocumentEditEdits struct{}
@@ -6010,6 +14073,30 @@ type TextDocumentIdentifier struct {
 	URI DocumentURI
 }
 
+func (x TextDocumentIdentifier) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////
 /// TextDocumentItem ///
 ////////////////////////
@@ -6019,13 +14106,49 @@ type TextDocumentIdentifier struct {
 type TextDocumentItem struct {
 	// The text document's uri.
 	URI DocumentURI
+
 	// The text document's language identifier.
 	LanguageID string
+
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
 	Version int32
+
 	// The content of the opened text document.
 	Text string
+}
+
+func (x TextDocumentItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "languageId", x.LanguageID); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////
@@ -6037,8 +14160,36 @@ type TextDocumentItem struct {
 type TextDocumentPositionParams struct {
 	// The text document.
 	TextDocument TextDocumentIdentifier
+
 	// The position inside the text document.
 	Position Position
+}
+
+func (x TextDocumentPositionParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentPositionParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "position", x.Position); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -6050,6 +14201,30 @@ type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
 	DocumentSelector TextDocumentRegistrationOptionsDocumentSelector
+}
+
+func (x TextDocumentRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "documentSelector", x.DocumentSelector); err != nil {
+		return err
+	}
+	return nil
 }
 
 type TextDocumentRegistrationOptionsDocumentSelector struct{}
@@ -6097,6 +14272,33 @@ type TextDocumentSaveRegistrationOptions struct {
 	SaveOptions
 }
 
+func (x TextDocumentSaveRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentSaveRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.SaveOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////////
 /// TextDocumentSyncClientCapabilities ///
 //////////////////////////////////////////
@@ -6104,14 +14306,50 @@ type TextDocumentSaveRegistrationOptions struct {
 type TextDocumentSyncClientCapabilities struct {
 	// Whether text document synchronization supports dynamic registration.
 	DynamicRegistration bool
+
 	// The client supports sending will save notifications.
 	WillSave bool
+
 	// The client supports sending a will save request and
 	// waits for a response providing text edits which will
 	// be applied to the document before it is saved.
 	WillSaveWaitUntil bool
+
 	// The client supports did save notifications.
 	DidSave bool
+}
+
+func (x TextDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "willSave", x.WillSave); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "willSaveWaitUntil", x.WillSaveWaitUntil); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "didSave", x.DidSave); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -6158,18 +14396,58 @@ type TextDocumentSyncOptions struct {
 	// Open and close notifications are sent to the server. If omitted open close notification should not
 	// be sent.
 	OpenClose bool
+
 	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
 	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
 	Change Optional[TextDocumentSyncKind]
+
 	// If present will save notifications are sent to the server. If omitted the notification should not be
 	// sent.
 	WillSave bool
+
 	// If present will save wait until requests are sent to the server. If omitted the request should not be
 	// sent.
 	WillSaveWaitUntil bool
+
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
 	Save Optional[TextDocumentSyncOptionsSave]
+}
+
+func (x TextDocumentSyncOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "openClose", x.OpenClose); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "change", x.Change); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "willSave", x.WillSave); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "willSaveWaitUntil", x.WillSaveWaitUntil); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "save", x.Save); err != nil {
+		return err
+	}
+	return nil
 }
 
 type TextDocumentSyncOptionsSave struct{}
@@ -6183,9 +14461,37 @@ type TextEdit struct {
 	// The range of the text document to be manipulated. To insert
 	// text into a document create a range where start === end.
 	Range Range
+
 	// The string to be inserted. For delete operations use an
 	// empty string.
 	NewText string
+}
+
+func (x TextEdit) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "newText", x.NewText); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////
@@ -6253,10 +14559,38 @@ type TypeDefinitionClientCapabilities struct {
 	// the client supports the new `TypeDefinitionRegistrationOptions` return value
 	// for the corresponding server capability as well.
 	DynamicRegistration bool
+
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since 3.14.0
 	LinkSupport bool
+}
+
+func (x TypeDefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeDefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -6265,6 +14599,30 @@ type TypeDefinitionClientCapabilities struct {
 
 type TypeDefinitionOptions struct {
 	WorkDoneProgressOptions
+}
+
+func (x TypeDefinitionOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeDefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -6277,6 +14635,36 @@ type TypeDefinitionParams struct {
 	PartialResultParams
 }
 
+func (x TypeDefinitionParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeDefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////////////////////
 /// TypeDefinitionRegistrationOptions ///
 /////////////////////////////////////////
@@ -6285,6 +14673,36 @@ type TypeDefinitionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	TypeDefinitionOptions
 	StaticRegistrationOptions
+}
+
+func (x TypeDefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeDefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.TypeDefinitionOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -6299,6 +14717,30 @@ type TypeHierarchyClientCapabilities struct {
 	DynamicRegistration bool
 }
 
+func (x TypeHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
 /////////////////////////
 /// TypeHierarchyItem ///
 /////////////////////////
@@ -6307,26 +14749,78 @@ type TypeHierarchyClientCapabilities struct {
 type TypeHierarchyItem struct {
 	// The name of this item.
 	Name string
+
 	// The kind of this item.
 	Kind SymbolKind
+
 	// Tags for this item.
 	Tags []SymbolTag
+
 	// More detail for this item, e.g. the signature of a function.
 	Detail string
+
 	// The resource identifier of this item.
 	URI DocumentURI
+
 	// The range enclosing this symbol not including leading/trailing whitespace
 	// but everything else, e.g. comments and code.
 	Range Range
+
 	// The range that should be selected and revealed when this symbol is being
 	// picked, e.g. the name of a function. Must be contained by the
 	// {@link TypeHierarchyItem.range `range`}.
 	SelectionRange Range
+
 	// A data entry field that is preserved between a type hierarchy prepare and
 	// supertypes or subtypes requests. It could also be used to identify the
 	// type hierarchy in the server, helping improve the performance on
 	// resolving supertypes and subtypes.
 	Data Optional[LSPAny]
+}
+
+func (x TypeHierarchyItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -6340,6 +14834,30 @@ type TypeHierarchyOptions struct {
 	WorkDoneProgressOptions
 }
 
+func (x TypeHierarchyOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////
 /// TypeHierarchyPrepareParams ///
 //////////////////////////////////
@@ -6350,6 +14868,33 @@ type TypeHierarchyOptions struct {
 type TypeHierarchyPrepareParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
+}
+
+func (x TypeHierarchyPrepareParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -6365,6 +14910,36 @@ type TypeHierarchyRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
+func (x TypeHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.TypeHierarchyOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////////////
 /// TypeHierarchySubtypesParams ///
 ///////////////////////////////////
@@ -6375,7 +14950,38 @@ type TypeHierarchyRegistrationOptions struct {
 type TypeHierarchySubtypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item TypeHierarchyItem
+}
+
+func (x TypeHierarchySubtypesParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeHierarchySubtypesParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "item", x.Item); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////
@@ -6388,7 +14994,38 @@ type TypeHierarchySubtypesParams struct {
 type TypeHierarchySupertypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	Item TypeHierarchyItem
+}
+
+func (x TypeHierarchySupertypesParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TypeHierarchySupertypesParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "item", x.Item); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////
@@ -6400,9 +15037,37 @@ type TypeHierarchySupertypesParams struct {
 //
 // @since 3.17.0
 type UnchangedDocumentDiagnosticReport struct {
+
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
 	ResultID string
+}
+
+func (x UnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x UnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", "unchanged"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////
@@ -6454,8 +15119,36 @@ type Unregistration struct {
 	// The id used to unregister the request or notification. Usually an id
 	// provided during the register request.
 	ID string
+
 	// The method to unregister for.
 	Method string
+}
+
+func (x Unregistration) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x Unregistration) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "id", x.ID); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "method", x.Method); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -6464,6 +15157,30 @@ type Unregistration struct {
 
 type UnregistrationParams struct {
 	Unregisterations []Unregistration
+}
+
+func (x UnregistrationParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x UnregistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "unregisterations", x.Unregisterations); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////////
@@ -6476,8 +15193,36 @@ type UnregistrationParams struct {
 type VersionedNotebookDocumentIdentifier struct {
 	// The version number of this notebook document.
 	Version int32
+
 	// The notebook document's uri.
 	URI URI
+}
+
+func (x VersionedNotebookDocumentIdentifier) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x VersionedNotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////////
@@ -6487,8 +15232,36 @@ type VersionedNotebookDocumentIdentifier struct {
 // A text document identifier to denote a specific version of a text document.
 type VersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
+
 	// The version number of this document.
 	Version int32
+}
+
+func (x VersionedTextDocumentIdentifier) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x VersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.TextDocumentIdentifier.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////
@@ -6514,8 +15287,36 @@ const (
 type WillSaveTextDocumentParams struct {
 	// The document that will be saved.
 	TextDocument TextDocumentIdentifier
+
 	// The 'TextDocumentSaveReason'.
 	Reason TextDocumentSaveReason
+}
+
+func (x WillSaveTextDocumentParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WillSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "reason", x.Reason); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -6533,14 +15334,46 @@ type WindowClientCapabilities struct {
 	//
 	// @since 3.15.0
 	WorkDoneProgress bool
+
 	// Capabilities specific to the showMessage request.
 	//
 	// @since 3.16.0
 	ShowMessage Optional[ShowMessageRequestClientCapabilities]
+
 	// Capabilities specific to the showDocument request.
 	//
 	// @since 3.16.0
 	ShowDocument Optional[ShowDocumentClientCapabilities]
+}
+
+func (x WindowClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WindowClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "workDoneProgress", x.WorkDoneProgress); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "showMessage", x.ShowMessage); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "showDocument", x.ShowDocument); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -6548,21 +15381,25 @@ type WindowClientCapabilities struct {
 /////////////////////////////
 
 type WorkDoneProgressBegin struct {
+
 	// Mandatory title of the progress operation. Used to briefly inform about
 	// the kind of operation being performed.
 	//
 	// Examples: "Indexing" or "Linking dependencies".
 	Title string
+
 	// Controls if a cancel button should show to allow the user to cancel the
 	// long running operation. Clients that don't support cancellation are allowed
 	// to ignore the setting.
 	Cancellable bool
+
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
 	Message string
+
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
@@ -6570,6 +15407,42 @@ type WorkDoneProgressBegin struct {
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100].
 	Percentage uint32
+}
+
+func (x WorkDoneProgressBegin) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkDoneProgressBegin) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", "begin"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "title", x.Title); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cancellable", x.Cancellable); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "percentage", x.Percentage); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////
@@ -6581,6 +15454,30 @@ type WorkDoneProgressCancelParams struct {
 	Token ProgressToken
 }
 
+func (x WorkDoneProgressCancelParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkDoneProgressCancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "token", x.Token); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////////
 /// WorkDoneProgressCreateParams ///
 ////////////////////////////////////
@@ -6590,14 +15487,66 @@ type WorkDoneProgressCreateParams struct {
 	Token ProgressToken
 }
 
+func (x WorkDoneProgressCreateParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkDoneProgressCreateParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "token", x.Token); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////////
 /// WorkDoneProgressEnd ///
 ///////////////////////////
 
 type WorkDoneProgressEnd struct {
+
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
 	Message string
+}
+
+func (x WorkDoneProgressEnd) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkDoneProgressEnd) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", "end"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////
@@ -6606,6 +15555,30 @@ type WorkDoneProgressEnd struct {
 
 type WorkDoneProgressOptions struct {
 	WorkDoneProgress bool
+}
+
+func (x WorkDoneProgressOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkDoneProgressOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "workDoneProgress", x.WorkDoneProgress); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////
@@ -6617,22 +15590,49 @@ type WorkDoneProgressParams struct {
 	WorkDoneToken Optional[ProgressToken]
 }
 
+func (x WorkDoneProgressParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkDoneProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "workDoneToken", x.WorkDoneToken); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////
 /// WorkDoneProgressReport ///
 //////////////////////////////
 
 type WorkDoneProgressReport struct {
+
 	// Controls enablement state of a cancel button.
 	//
 	// Clients that don't support cancellation or don't support controlling the button's
 	// enablement state are allowed to ignore the property.
 	Cancellable bool
+
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
 	Message string
+
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
 	// to ignore the `percentage` value in subsequent in report notifications.
@@ -6640,6 +15640,39 @@ type WorkDoneProgressReport struct {
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100]
 	Percentage uint32
+}
+
+func (x WorkDoneProgressReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkDoneProgressReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "kind", "report"); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cancellable", x.Cancellable); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "percentage", x.Percentage); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -6652,53 +15685,129 @@ type WorkspaceClientCapabilities struct {
 	// to the workspace by supporting the request
 	// 'workspace/applyEdit'
 	ApplyEdit bool
+
 	// Capabilities specific to `WorkspaceEdit`s.
 	WorkspaceEdit Optional[WorkspaceEditClientCapabilities]
+
 	// Capabilities specific to the `workspace/didChangeConfiguration` notification.
 	DidChangeConfiguration Optional[DidChangeConfigurationClientCapabilities]
+
 	// Capabilities specific to the `workspace/didChangeWatchedFiles` notification.
 	DidChangeWatchedFiles Optional[DidChangeWatchedFilesClientCapabilities]
+
 	// Capabilities specific to the `workspace/symbol` request.
 	Symbol Optional[WorkspaceSymbolClientCapabilities]
+
 	// Capabilities specific to the `workspace/executeCommand` request.
 	ExecuteCommand Optional[ExecuteCommandClientCapabilities]
+
 	// The client has support for workspace folders.
 	//
 	// @since 3.6.0
 	WorkspaceFolders bool
+
 	// The client supports `workspace/configuration` requests.
 	//
 	// @since 3.6.0
 	Configuration bool
+
 	// Capabilities specific to the semantic token requests scoped to the
 	// workspace.
 	//
 	// @since 3.16.0.
 	SemanticTokens Optional[SemanticTokensWorkspaceClientCapabilities]
+
 	// Capabilities specific to the code lens requests scoped to the
 	// workspace.
 	//
 	// @since 3.16.0.
 	CodeLens Optional[CodeLensWorkspaceClientCapabilities]
+
 	// The client has support for file notifications/requests for user operations on files.
 	//
 	// Since 3.16.0
 	FileOperations Optional[FileOperationClientCapabilities]
+
 	// Capabilities specific to the inline values requests scoped to the
 	// workspace.
 	//
 	// @since 3.17.0.
 	InlineValue Optional[InlineValueWorkspaceClientCapabilities]
+
 	// Capabilities specific to the inlay hint requests scoped to the
 	// workspace.
 	//
 	// @since 3.17.0.
 	InlayHint Optional[InlayHintWorkspaceClientCapabilities]
+
 	// Capabilities specific to the diagnostic requests scoped to the
 	// workspace.
 	//
 	// @since 3.17.0.
 	Diagnostics Optional[DiagnosticWorkspaceClientCapabilities]
+}
+
+func (x WorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "applyEdit", x.ApplyEdit); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "workspaceEdit", x.WorkspaceEdit); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "didChangeConfiguration", x.DidChangeConfiguration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "didChangeWatchedFiles", x.DidChangeWatchedFiles); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "symbol", x.Symbol); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "executeCommand", x.ExecuteCommand); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "workspaceFolders", x.WorkspaceFolders); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "configuration", x.Configuration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "semanticTokens", x.SemanticTokens); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "codeLens", x.CodeLens); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "fileOperations", x.FileOperations); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "inlineValue", x.InlineValue); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "inlayHint", x.InlayHint); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -6711,11 +15820,46 @@ type WorkspaceClientCapabilities struct {
 type WorkspaceDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// The additional identifier provided during registration.
 	Identifier string
+
 	// The currently known diagnostic reports with their
 	// previous result ids.
 	PreviousResultIDs []PreviousResultID
+}
+
+func (x WorkspaceDiagnosticParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "previousResultIds", x.PreviousResultIDs); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////
@@ -6729,6 +15873,30 @@ type WorkspaceDiagnosticReport struct {
 	Items []WorkspaceDocumentDiagnosticReport
 }
 
+func (x WorkspaceDiagnosticReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////////////
 /// WorkspaceDiagnosticReportPartialResult ///
 //////////////////////////////////////////////
@@ -6738,6 +15906,30 @@ type WorkspaceDiagnosticReport struct {
 // @since 3.17.0
 type WorkspaceDiagnosticReportPartialResult struct {
 	Items []WorkspaceDocumentDiagnosticReport
+}
+
+func (x WorkspaceDiagnosticReportPartialResult) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////
@@ -6768,6 +15960,7 @@ type WorkspaceDocumentDiagnosticReport struct{}
 type WorkspaceEdit struct {
 	// Holds changes to existing resources.
 	Changes map[DocumentURI][]TextEdit
+
 	// Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
 	// are either an array of `TextDocumentEdit`s to express changes to n different text documents
 	// where each text document edit addresses a specific version of a text document. Or it can contain
@@ -6779,6 +15972,7 @@ type WorkspaceEdit struct {
 	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
 	// only plain `TextEdit`s using the `changes` property are supported.
 	DocumentChanges []WorkspaceEditDocumentChanges
+
 	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
 	// delete file / folder operations.
 	//
@@ -6786,6 +15980,36 @@ type WorkspaceEdit struct {
 	//
 	// @since 3.16.0
 	ChangeAnnotations map[ChangeAnnotationIdentifier]ChangeAnnotation
+}
+
+func (x WorkspaceEdit) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "changes", x.Changes); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "documentChanges", x.DocumentChanges); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "changeAnnotations", x.ChangeAnnotations); err != nil {
+		return err
+	}
+	return nil
 }
 
 type WorkspaceEditDocumentChanges struct{}
@@ -6797,16 +16021,19 @@ type WorkspaceEditDocumentChanges struct{}
 type WorkspaceEditClientCapabilities struct {
 	// The client supports versioned document changes in `WorkspaceEdit`s
 	DocumentChanges bool
+
 	// The resource operations the client supports. Clients should at least
 	// support 'create', 'rename' and 'delete' files and folders.
 	//
 	// @since 3.13.0
 	ResourceOperations []ResourceOperationKind
+
 	// The failure handling strategy of a client if applying the workspace edit
 	// fails.
 	//
 	// @since 3.13.0
 	FailureHandling Optional[FailureHandlingKind]
+
 	// Whether the client normalizes line endings to the client specific
 	// setting.
 	// If set to `true` the client will normalize line ending characters
@@ -6815,11 +16042,48 @@ type WorkspaceEditClientCapabilities struct {
 	//
 	// @since 3.16.0
 	NormalizesLineEndings bool
+
 	// Whether the client in general supports change annotations on text edits,
 	// create file, rename file and delete file changes.
 	//
 	// @since 3.16.0
 	ChangeAnnotationSupport Optional[WorkspaceEditClientCapabilitiesChangeAnnotationSupport]
+}
+
+func (x WorkspaceEditClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceEditClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "documentChanges", x.DocumentChanges); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resourceOperations", x.ResourceOperations); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "failureHandling", x.FailureHandling); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "normalizesLineEndings", x.NormalizesLineEndings); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "changeAnnotationSupport", x.ChangeAnnotationSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
@@ -6837,9 +16101,37 @@ type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
 type WorkspaceFolder struct {
 	// The associated URI for this workspace folder.
 	URI URI
+
 	// The name of the workspace folder. Used to refer to this
 	// workspace folder in the user interface.
 	Name string
+}
+
+func (x WorkspaceFolder) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceFolder) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////////////////////
@@ -6850,8 +16142,36 @@ type WorkspaceFolder struct {
 type WorkspaceFoldersChangeEvent struct {
 	// The array of added workspace folders
 	Added []WorkspaceFolder
+
 	// The array of the removed workspace folders
 	Removed []WorkspaceFolder
+}
+
+func (x WorkspaceFoldersChangeEvent) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceFoldersChangeEvent) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "added", x.Added); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "removed", x.Removed); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////////////
@@ -6869,6 +16189,30 @@ type WorkspaceFoldersInitializeParams struct {
 	WorkspaceFolders Optional[WorkspaceFoldersInitializeParamsWorkspaceFolders]
 }
 
+func (x WorkspaceFoldersInitializeParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceFoldersInitializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "workspaceFolders", x.WorkspaceFolders); err != nil {
+		return err
+	}
+	return nil
+}
+
 type WorkspaceFoldersInitializeParamsWorkspaceFolders struct{}
 
 //////////////////////////////////////////
@@ -6878,6 +16222,7 @@ type WorkspaceFoldersInitializeParamsWorkspaceFolders struct{}
 type WorkspaceFoldersServerCapabilities struct {
 	// The server has support for workspace folders
 	Supported bool
+
 	// Whether the server wants to receive workspace folder
 	// change notifications.
 	//
@@ -6886,6 +16231,33 @@ type WorkspaceFoldersServerCapabilities struct {
 	// side. The ID can be used to unregister for these events
 	// using the `client/unregisterCapability` request.
 	ChangeNotifications Optional[WorkspaceFoldersServerCapabilitiesChangeNotifications]
+}
+
+func (x WorkspaceFoldersServerCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceFoldersServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "supported", x.Supported); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "changeNotifications", x.ChangeNotifications); err != nil {
+		return err
+	}
+	return nil
 }
 
 type WorkspaceFoldersServerCapabilitiesChangeNotifications struct{}
@@ -6899,11 +16271,43 @@ type WorkspaceFoldersServerCapabilitiesChangeNotifications struct{}
 // @since 3.17.0
 type WorkspaceFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
+
 	// The URI for which diagnostic information is reported.
 	URI DocumentURI
+
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
 	Version WorkspaceFullDocumentDiagnosticReportVersion
+}
+
+func (x WorkspaceFullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.FullDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
 }
 
 type WorkspaceFullDocumentDiagnosticReportVersion struct{}
@@ -6919,15 +16323,47 @@ type WorkspaceFullDocumentDiagnosticReportVersion struct{}
 // @since 3.17.0
 type WorkspaceSymbol struct {
 	BaseSymbolInformation
+
 	// The location of the symbol. Whether a server is allowed to
 	// return a location without a range depends on the client
 	// capability `workspace.symbol.resolveSupport`.
 	//
 	// See SymbolInformation#location for more details.
 	Location WorkspaceSymbolLocation
+
 	// A data entry field that is preserved on a workspace symbol between a
 	// workspace symbol request and a workspace symbol resolve request.
 	Data Optional[LSPAny]
+}
+
+func (x WorkspaceSymbol) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.BaseSymbolInformation.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "location", x.Location); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 type WorkspaceSymbolLocation struct{}
@@ -6940,19 +16376,55 @@ type WorkspaceSymbolLocation struct{}
 type WorkspaceSymbolClientCapabilities struct {
 	// Symbol request supports dynamic registration.
 	DynamicRegistration bool
+
 	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
 	SymbolKind Optional[WorkspaceSymbolClientCapabilitiesSymbolKind]
+
 	// The client supports tags on `SymbolInformation`.
 	// Clients supporting tags have to handle unknown tags gracefully.
 	//
 	// @since 3.16.0
 	TagSupport Optional[WorkspaceSymbolClientCapabilitiesTagSupport]
+
 	// The client support partial workspace symbols. The client will send the
 	// request `workspaceSymbol/resolve` to the server to resolve additional
 	// properties.
 	//
 	// @since 3.17.0
 	ResolveSupport Optional[WorkspaceSymbolClientCapabilitiesResolveSupport]
+}
+
+func (x WorkspaceSymbolClientCapabilities) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "symbolKind", x.SymbolKind); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
@@ -6985,11 +16457,39 @@ type WorkspaceSymbolClientCapabilitiesTagSupport struct {
 // Server capabilities for a {@link WorkspaceSymbolRequest}.
 type WorkspaceSymbolOptions struct {
 	WorkDoneProgressOptions
+
 	// The server provides support to resolve additional
 	// information for a workspace symbol.
 	//
 	// @since 3.17.0
 	ResolveProvider bool
+}
+
+func (x WorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -7000,9 +16500,40 @@ type WorkspaceSymbolOptions struct {
 type WorkspaceSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
+
 	// A query string to filter symbols by. Clients may send an empty
 	// string here to request all symbols.
 	Query string
+}
+
+func (x WorkspaceSymbolParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "query", x.Query); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////////
@@ -7014,6 +16545,30 @@ type WorkspaceSymbolRegistrationOptions struct {
 	WorkspaceSymbolOptions
 }
 
+func (x WorkspaceSymbolRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkspaceSymbolOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
 //////////////////////////////////////////////////
 /// WorkspaceUnchangedDocumentDiagnosticReport ///
 //////////////////////////////////////////////////
@@ -7023,11 +16578,43 @@ type WorkspaceSymbolRegistrationOptions struct {
 // @since 3.17.0
 type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
+
 	// The URI for which diagnostic information is reported.
 	URI DocumentURI
+
 	// The version number for which the diagnostics are reported.
 	// If the document is not marked as open `null` can be provided.
 	Version WorkspaceUnchangedDocumentDiagnosticReportVersion
+}
+
+func (x WorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.UnchangedDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
 }
 
 type WorkspaceUnchangedDocumentDiagnosticReportVersion struct{}
@@ -7039,16 +16626,19 @@ type WorkspaceUnchangedDocumentDiagnosticReportVersion struct{}
 // The initialize parameters
 type initializeParams struct {
 	WorkDoneProgressParams
+
 	// The process Id of the parent process that started
 	// the server.
 	//
 	// Is `null` if the process has not been started by another process.
 	// If the parent process is not alive then the server should exit.
 	ProcessID initializeParamsProcessID
+
 	// Information about the client
 	//
 	// @since 3.15.0
 	ClientInfo Optional[InitializeParamsClientInfo]
+
 	// The locale the client is currently showing the user interface
 	// in. This must not necessarily be the locale of the operating
 	// system.
@@ -7058,6 +16648,7 @@ type initializeParams struct {
 	//
 	// @since 3.16.0
 	Locale string
+
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
 	//
@@ -7065,6 +16656,7 @@ type initializeParams struct {
 	//
 	// Deprecated: in favour of rootUri.
 	RootPath Optional[InitializeParamsRootPath]
+
 	// The rootUri of the workspace. Is null if no
 	// folder is open. If both `rootPath` and `rootUri` are set
 	// `rootUri` wins.
@@ -7073,12 +16665,63 @@ type initializeParams struct {
 	//
 	// Deprecated: in favour of workspaceFolders.
 	RootURI InitializeParamsRootURI
+
 	// The capabilities provided by the client (editor or tool)
 	Capabilities ClientCapabilities
+
 	// User provided initialization options.
 	InitializationOptions Optional[LSPAny]
+
 	// The initial trace setting. If omitted trace is disabled ('off').
 	Trace Optional[TraceValues]
+}
+
+func (x initializeParams) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x initializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "processId", x.ProcessID); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "clientInfo", x.ClientInfo); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "locale", x.Locale); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "rootPath", x.RootPath); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "rootUri", x.RootURI); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "capabilities", x.Capabilities); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "initializationOptions", x.InitializationOptions); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "trace", x.Trace); err != nil {
+		return err
+	}
+	return nil
 }
 
 type InitializeParamsClientInfo struct {

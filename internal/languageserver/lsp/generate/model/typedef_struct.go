@@ -6,7 +6,7 @@ import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/
 type Struct struct {
 	TypeName      string
 	Documentation Documentation
-	EmbeddedTypes []Reference
+	Embedded      []*Struct
 	Properties    []Property
 }
 
@@ -29,20 +29,16 @@ func (b *builder) structure(in lowlevel.Struct, out *Struct) {
 	out.Properties = b.properties(in.Properties)
 
 	for _, t := range in.Extends {
-		out.EmbeddedTypes = append(
-			out.EmbeddedTypes,
-			Reference{
-				Target: b.typeDef(t.Name),
-			},
+		out.Embedded = append(
+			out.Embedded,
+			b.typeDef(t.Name).(*Struct),
 		)
 	}
 
 	for _, t := range in.Mixins {
-		out.EmbeddedTypes = append(
-			out.EmbeddedTypes,
-			Reference{
-				Target: b.typeDef(t.Name),
-			},
+		out.Embedded = append(
+			out.Embedded,
+			b.typeDef(t.Name).(*Struct),
 		)
 	}
 }
