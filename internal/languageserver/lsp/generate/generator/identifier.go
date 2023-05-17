@@ -7,8 +7,11 @@ func exported(parts ...string) string {
 	var id string
 
 	for _, p := range parts {
-		p = strings.Title(p)
-		id += p
+		for _, x := range strings.Split(p, "/") {
+			if x != "$" {
+				id += strings.Title(x)
+			}
+		}
 	}
 
 	if x, ok := strings.CutSuffix(id, "Id"); ok {

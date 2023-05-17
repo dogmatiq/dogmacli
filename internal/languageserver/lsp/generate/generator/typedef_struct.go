@@ -16,7 +16,7 @@ func (g *typeDef) Struct(d model.Struct) {
 
 func (g *Generator) emitStruct(
 	name string,
-	embedded []*model.Struct,
+	embedded []model.Type,
 	properties []model.Property,
 ) {
 	g.emitStructType(name, embedded, properties)
@@ -25,15 +25,15 @@ func (g *Generator) emitStruct(
 
 func (g *Generator) emitStructType(
 	name string,
-	embedded []*model.Struct,
+	embedded []model.Type,
 	properties []model.Property,
 ) {
 	g.File.
 		Type().
 		Id(name).
 		StructFunc(func(grp *jen.Group) {
-			for _, e := range embedded {
-				grp.Id(identifier(e.TypeName))
+			for _, t := range embedded {
+				grp.Add(g.typeExpr(t))
 			}
 
 			if len(embedded) > 0 && len(properties) > 0 {
@@ -41,7 +41,7 @@ func (g *Generator) emitStructType(
 			}
 
 			for _, p := range properties {
-				g.enterProperty(p.Name)
+				g.pushNestedScope(p.Name)
 
 				info := g.typeInfo(p.Type)
 
@@ -60,14 +60,14 @@ func (g *Generator) emitStructType(
 					grp.Line()
 				}
 
-				g.leaveProperty()
+				g.popNestedScope()
 			}
 		})
 }
 
 func (g *Generator) emitStructMarshalMethods(
 	name string,
-	embedded []*model.Struct,
+	embedded []model.Type,
 	properties []model.Property,
 ) {
 	g.File.
@@ -148,13 +148,13 @@ func (g *Generator) emitStructMarshalMethods(
 			jen.Error(),
 		).
 		BlockFunc(func(grp *jen.Group) {
-			for _, e := range embedded {
+			for _, t := range embedded {
 				grp.
 					If(
 						jen.
 							Err().
 							Op(":=").
-							Id("x").Dot(identifier(e.TypeName)).
+							Id("x").Op(".").Add(g.typeExpr(t)).
 							Dot("marshalProperties").
 							Call(
 								jen.Id("w"),

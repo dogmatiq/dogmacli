@@ -4,6 +4,7 @@ package lsp
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 )
@@ -644,7 +645,7 @@ func (x CancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
 
 type CancelParamsID struct {
 	A Optional[int32]
-	B string
+	B Optional[string]
 }
 
 ////////////////////////
@@ -2516,7 +2517,7 @@ func (x CompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 }
 
 type CompletionItemDocumentation struct {
-	A string
+	A Optional[string]
 	B Optional[MarkupContent]
 }
 
@@ -3232,7 +3233,7 @@ func (x CreateFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // The declaration of a symbol representation as one or many {@link Location locations}.
 type Declaration struct {
 	A Optional[Location]
-	B []Location
+	B Optional[[]Location]
 }
 
 /////////////////////////////////////
@@ -3414,7 +3415,7 @@ func (x DeclarationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *in
 // by the client.
 type Definition struct {
 	A Optional[Location]
-	B []Location
+	B Optional[[]Location]
 }
 
 ////////////////////////////////////
@@ -3802,7 +3803,7 @@ func (x Diagnostic) marshalProperties(w *bytes.Buffer, n *int) error {
 
 type DiagnosticCode struct {
 	A Optional[int32]
-	B string
+	B Optional[string]
 }
 
 ////////////////////////////////////
@@ -4239,8 +4240,8 @@ func (x DidChangeConfigurationRegistrationOptions) marshalProperties(w *bytes.Bu
 }
 
 type DidChangeConfigurationRegistrationOptionsSection struct {
-	A string
-	B []string
+	A Optional[string]
+	B Optional[[]string]
 }
 
 ///////////////////////////////////////
@@ -7700,7 +7701,7 @@ func (x GeneralClientCapabilitiesStaleRequestSupport) marshalProperties(w *bytes
 //
 // @since 3.17.0
 type GlobPattern struct {
-	A Pattern
+	A Optional[Pattern]
 	B Optional[RelativePattern]
 }
 
@@ -7748,7 +7749,7 @@ func (x Hover) marshalProperties(w *bytes.Buffer, n *int) error {
 type HoverContents struct {
 	A Optional[MarkupContent]
 	B Optional[MarkedString]
-	C []MarkedString
+	C Optional[[]MarkedString]
 }
 
 ///////////////////////////////
@@ -8328,12 +8329,12 @@ func (x InlayHint) marshalProperties(w *bytes.Buffer, n *int) error {
 }
 
 type InlayHintLabel struct {
-	A string
-	B []InlayHintLabelPart
+	A Optional[string]
+	B Optional[[]InlayHintLabelPart]
 }
 
 type InlayHintTooltip struct {
-	A string
+	A Optional[string]
 	B Optional[MarkupContent]
 }
 
@@ -8511,7 +8512,7 @@ func (x InlayHintLabelPart) marshalProperties(w *bytes.Buffer, n *int) error {
 }
 
 type InlayHintLabelPartTooltip struct {
-	A string
+	A Optional[string]
 	B Optional[MarkupContent]
 }
 
@@ -9233,14 +9234,13 @@ func (x *InsertTextMode) UnmarshalJSON(data []byte) error {
 // optional as well.
 // @since 3.17.0
 type LSPAny struct {
-	A LSPObject
-	B LSPArray
-	C string
+	A Optional[LSPObject]
+	B Optional[LSPArray]
+	C Optional[string]
 	D Optional[int32]
 	E Optional[uint32]
 	F Optional[float64]
-	G bool
-	H Optional[Null]
+	G Optional[bool]
 }
 
 ////////////////
@@ -9729,7 +9729,7 @@ func (x MarkdownClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) e
 //
 // Deprecated: use MarkupContent instead.
 type MarkedString struct {
-	A string
+	A Optional[string]
 	B Optional[MarkedString]
 }
 
@@ -10325,7 +10325,7 @@ func (x NotebookCellTextDocumentFilter) marshalProperties(w *bytes.Buffer, n *in
 }
 
 type NotebookCellTextDocumentFilterNotebook struct {
-	A string
+	A Optional[string]
 	B Optional[NotebookDocumentFilter]
 }
 
@@ -10830,7 +10830,6 @@ func (x OptionalVersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buff
 
 type OptionalVersionedTextDocumentIdentifierVersion struct {
 	A Optional[int32]
-	B Optional[Null]
 }
 
 ////////////////////////////
@@ -10883,12 +10882,12 @@ func (x ParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 }
 
 type ParameterInformationDocumentation struct {
-	A string
+	A Optional[string]
 	B Optional[MarkupContent]
 }
 
 type ParameterInformationLabel struct {
-	A string
+	A Optional[string]
 	B Optional[ParameterInformationLabel]
 }
 
@@ -11201,7 +11200,7 @@ func (x ProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
 
 type ProgressToken struct {
 	A Optional[int32]
-	B string
+	B Optional[string]
 }
 
 ////////////////////////////////////////////
@@ -11860,7 +11859,7 @@ func (x RelativePattern) marshalProperties(w *bytes.Buffer, n *int) error {
 
 type RelativePatternBaseURI struct {
 	A Optional[WorkspaceFolder]
-	B URI
+	B Optional[URI]
 }
 
 ////////////////////////////////
@@ -12745,12 +12744,12 @@ func (x SemanticTokensClientCapabilitiesRequests) marshalProperties(w *bytes.Buf
 }
 
 type SemanticTokensClientCapabilitiesRequestsFull struct {
-	A bool
+	A Optional[bool]
 	B Optional[SemanticTokensClientCapabilitiesRequestsFull]
 }
 
 type SemanticTokensClientCapabilitiesRequestsRange struct {
-	A bool
+	A Optional[bool]
 	B Optional[SemanticTokensClientCapabilitiesRequestsRange]
 }
 
@@ -13015,12 +13014,12 @@ func (x SemanticTokensOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 }
 
 type SemanticTokensOptionsFull struct {
-	A bool
+	A Optional[bool]
 	B Optional[SemanticTokensOptionsFull]
 }
 
 type SemanticTokensOptionsRange struct {
-	A bool
+	A Optional[bool]
 	B Optional[SemanticTokensOptionsRange]
 }
 
@@ -13502,30 +13501,30 @@ func (x ServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 }
 
 type ServerCapabilitiesCallHierarchyProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[CallHierarchyOptions]
 	C Optional[CallHierarchyRegistrationOptions]
 }
 
 type ServerCapabilitiesCodeActionProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[CodeActionOptions]
 }
 
 type ServerCapabilitiesColorProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[DocumentColorOptions]
 	C Optional[DocumentColorRegistrationOptions]
 }
 
 type ServerCapabilitiesDeclarationProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[DeclarationOptions]
 	C Optional[DeclarationRegistrationOptions]
 }
 
 type ServerCapabilitiesDefinitionProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[DefinitionOptions]
 }
 
@@ -13535,62 +13534,62 @@ type ServerCapabilitiesDiagnosticProvider struct {
 }
 
 type ServerCapabilitiesDocumentFormattingProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[DocumentFormattingOptions]
 }
 
 type ServerCapabilitiesDocumentHighlightProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[DocumentHighlightOptions]
 }
 
 type ServerCapabilitiesDocumentRangeFormattingProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[DocumentRangeFormattingOptions]
 }
 
 type ServerCapabilitiesDocumentSymbolProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[DocumentSymbolOptions]
 }
 
 type ServerCapabilitiesFoldingRangeProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[FoldingRangeOptions]
 	C Optional[FoldingRangeRegistrationOptions]
 }
 
 type ServerCapabilitiesHoverProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[HoverOptions]
 }
 
 type ServerCapabilitiesImplementationProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[ImplementationOptions]
 	C Optional[ImplementationRegistrationOptions]
 }
 
 type ServerCapabilitiesInlayHintProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[InlayHintOptions]
 	C Optional[InlayHintRegistrationOptions]
 }
 
 type ServerCapabilitiesInlineValueProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[InlineValueOptions]
 	C Optional[InlineValueRegistrationOptions]
 }
 
 type ServerCapabilitiesLinkedEditingRangeProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[LinkedEditingRangeOptions]
 	C Optional[LinkedEditingRangeRegistrationOptions]
 }
 
 type ServerCapabilitiesMonikerProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[MonikerOptions]
 	C Optional[MonikerRegistrationOptions]
 }
@@ -13601,17 +13600,17 @@ type ServerCapabilitiesNotebookDocumentSync struct {
 }
 
 type ServerCapabilitiesReferencesProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[ReferenceOptions]
 }
 
 type ServerCapabilitiesRenameProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[RenameOptions]
 }
 
 type ServerCapabilitiesSelectionRangeProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[SelectionRangeOptions]
 	C Optional[SelectionRangeRegistrationOptions]
 }
@@ -13627,13 +13626,13 @@ type ServerCapabilitiesTextDocumentSync struct {
 }
 
 type ServerCapabilitiesTypeDefinitionProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[TypeDefinitionOptions]
 	C Optional[TypeDefinitionRegistrationOptions]
 }
 
 type ServerCapabilitiesTypeHierarchyProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[TypeHierarchyOptions]
 	C Optional[TypeHierarchyRegistrationOptions]
 }
@@ -13678,7 +13677,7 @@ func (x ServerCapabilitiesWorkspace) marshalProperties(w *bytes.Buffer, n *int) 
 }
 
 type ServerCapabilitiesWorkspaceSymbolProvider struct {
-	A bool
+	A Optional[bool]
 	B Optional[WorkspaceSymbolOptions]
 }
 
@@ -14480,7 +14479,7 @@ func (x SignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 }
 
 type SignatureInformationDocumentation struct {
-	A string
+	A Optional[string]
 	B Optional[MarkupContent]
 }
 
@@ -15210,8 +15209,7 @@ func (x TextDocumentRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 }
 
 type TextDocumentRegistrationOptionsDocumentSelector struct {
-	A DocumentSelector
-	B Optional[Null]
+	A Optional[DocumentSelector]
 }
 
 //////////////////////////////
@@ -15436,7 +15434,7 @@ func (x TextDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) erro
 }
 
 type TextDocumentSyncOptionsSave struct {
-	A bool
+	A Optional[bool]
 	B Optional[SaveOptions]
 }
 
@@ -17230,8 +17228,7 @@ func (x WorkspaceFoldersInitializeParams) marshalProperties(w *bytes.Buffer, n *
 }
 
 type WorkspaceFoldersInitializeParamsWorkspaceFolders struct {
-	A []WorkspaceFolder
-	B Optional[Null]
+	A Optional[[]WorkspaceFolder]
 }
 
 //////////////////////////////////////////
@@ -17280,8 +17277,8 @@ func (x WorkspaceFoldersServerCapabilities) marshalProperties(w *bytes.Buffer, n
 }
 
 type WorkspaceFoldersServerCapabilitiesChangeNotifications struct {
-	A string
-	B bool
+	A Optional[string]
+	B Optional[bool]
 }
 
 /////////////////////////////////////////////
@@ -17334,7 +17331,6 @@ func (x WorkspaceFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer
 
 type WorkspaceFullDocumentDiagnosticReportVersion struct {
 	A Optional[int32]
-	B Optional[Null]
 }
 
 ///////////////////////
@@ -17719,7 +17715,6 @@ func (x WorkspaceUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.B
 
 type WorkspaceUnchangedDocumentDiagnosticReportVersion struct {
 	A Optional[int32]
-	B Optional[Null]
 }
 
 ////////////////////////
@@ -17863,16 +17858,897 @@ func (x InitializeParamsClientInfo) marshalProperties(w *bytes.Buffer, n *int) e
 }
 
 type InitializeParamsRootPath struct {
-	A string
-	B Optional[Null]
+	A Optional[string]
 }
 
 type InitializeParamsRootURI struct {
-	A DocumentURI
-	B Optional[Null]
+	A Optional[DocumentURI]
 }
 
 type initializeParamsProcessID struct {
 	A Optional[int32]
-	B Optional[Null]
+}
+
+/////////////////////
+/// CancelRequest ///
+/////////////////////
+
+////////////////
+/// LogTrace ///
+////////////////
+
+////////////////
+/// Progress ///
+////////////////
+
+////////////////
+/// SetTrace ///
+////////////////
+
+type SetTraceHandler interface {
+	HandleSetTrace(context.Context, SetTraceParams) error
+}
+
+//////////////////////////////////
+/// CallHierarchyIncomingCalls ///
+//////////////////////////////////
+
+type CallHierarchyIncomingCallsHandler interface {
+	HandleCallHierarchyIncomingCalls(context.Context, CallHierarchyIncomingCallsParams) (CallHierarchyIncomingCallsResult, error)
+}
+
+type CallHierarchyIncomingCallsResult struct {
+	A Optional[[]CallHierarchyIncomingCall]
+}
+
+//////////////////////////////////
+/// CallHierarchyOutgoingCalls ///
+//////////////////////////////////
+
+type CallHierarchyOutgoingCallsHandler interface {
+	HandleCallHierarchyOutgoingCalls(context.Context, CallHierarchyOutgoingCallsParams) (CallHierarchyOutgoingCallsResult, error)
+}
+
+type CallHierarchyOutgoingCallsResult struct {
+	A Optional[[]CallHierarchyOutgoingCall]
+}
+
+////////////////////////////////
+/// ClientRegisterCapability ///
+////////////////////////////////
+
+//////////////////////////////////
+/// ClientUnregisterCapability ///
+//////////////////////////////////
+
+/////////////////////////
+/// CodeActionResolve ///
+/////////////////////////
+
+type CodeActionResolveHandler interface {
+	HandleCodeActionResolve(context.Context, CodeAction) (CodeAction, error)
+}
+
+///////////////////////
+/// CodeLensResolve ///
+///////////////////////
+
+type CodeLensResolveHandler interface {
+	HandleCodeLensResolve(context.Context, CodeLens) (CodeLens, error)
+}
+
+/////////////////////////////
+/// CompletionItemResolve ///
+/////////////////////////////
+
+type CompletionItemResolveHandler interface {
+	HandleCompletionItemResolve(context.Context, CompletionItem) (CompletionItem, error)
+}
+
+///////////////////////////
+/// DocumentLinkResolve ///
+///////////////////////////
+
+type DocumentLinkResolveHandler interface {
+	HandleDocumentLinkResolve(context.Context, DocumentLink) (DocumentLink, error)
+}
+
+////////////
+/// Exit ///
+////////////
+
+type ExitHandler interface {
+	HandleExit(context.Context) error
+}
+
+//////////////////
+/// Initialize ///
+//////////////////
+
+type InitializeHandler interface {
+	HandleInitialize(context.Context, InitializeParams) (InitializeResult, error)
+}
+
+///////////////////
+/// Initialized ///
+///////////////////
+
+type InitializedHandler interface {
+	HandleInitialized(context.Context, InitializedParams) error
+}
+
+////////////////////////
+/// InlayHintResolve ///
+////////////////////////
+
+type InlayHintResolveHandler interface {
+	HandleInlayHintResolve(context.Context, InlayHint) (InlayHint, error)
+}
+
+/////////////////////////////////
+/// NotebookDocumentDidChange ///
+/////////////////////////////////
+
+type NotebookDocumentDidChangeHandler interface {
+	HandleNotebookDocumentDidChange(context.Context, DidChangeNotebookDocumentParams) error
+}
+
+////////////////////////////////
+/// NotebookDocumentDidClose ///
+////////////////////////////////
+
+type NotebookDocumentDidCloseHandler interface {
+	HandleNotebookDocumentDidClose(context.Context, DidCloseNotebookDocumentParams) error
+}
+
+///////////////////////////////
+/// NotebookDocumentDidOpen ///
+///////////////////////////////
+
+type NotebookDocumentDidOpenHandler interface {
+	HandleNotebookDocumentDidOpen(context.Context, DidOpenNotebookDocumentParams) error
+}
+
+///////////////////////////////
+/// NotebookDocumentDidSave ///
+///////////////////////////////
+
+type NotebookDocumentDidSaveHandler interface {
+	HandleNotebookDocumentDidSave(context.Context, DidSaveNotebookDocumentParams) error
+}
+
+////////////////
+/// Shutdown ///
+////////////////
+
+type ShutdownHandler interface {
+	HandleShutdown(context.Context) (Null, error)
+}
+
+//////////////////////
+/// TelemetryEvent ///
+//////////////////////
+
+//////////////////////////////
+/// TextDocumentCodeAction ///
+//////////////////////////////
+
+type TextDocumentCodeActionHandler interface {
+	HandleTextDocumentCodeAction(context.Context, CodeActionParams) (TextDocumentCodeActionResult, error)
+}
+
+type TextDocumentCodeActionPartialResult struct {
+	A Optional[Command]
+	B Optional[CodeAction]
+}
+
+type TextDocumentCodeActionResult struct {
+	A Optional[[]TextDocumentCodeActionResult]
+}
+
+////////////////////////////
+/// TextDocumentCodeLens ///
+////////////////////////////
+
+type TextDocumentCodeLensHandler interface {
+	HandleTextDocumentCodeLens(context.Context, CodeLensParams) (TextDocumentCodeLensResult, error)
+}
+
+type TextDocumentCodeLensResult struct {
+	A Optional[[]CodeLens]
+}
+
+/////////////////////////////////////
+/// TextDocumentColorPresentation ///
+/////////////////////////////////////
+
+type TextDocumentColorPresentationHandler interface {
+	HandleTextDocumentColorPresentation(context.Context, ColorPresentationParams) ([]ColorPresentation, error)
+}
+
+type TextDocumentColorPresentationRegistrationOptions struct {
+	WorkDoneProgressOptions
+	TextDocumentRegistrationOptions
+}
+
+func (x TextDocumentColorPresentationRegistrationOptions) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentColorPresentationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+//////////////////////////////
+/// TextDocumentCompletion ///
+//////////////////////////////
+
+type TextDocumentCompletionHandler interface {
+	HandleTextDocumentCompletion(context.Context, CompletionParams) (TextDocumentCompletionResult, error)
+}
+
+type TextDocumentCompletionResult struct {
+	A Optional[[]CompletionItem]
+	B Optional[CompletionList]
+}
+
+///////////////////////////////
+/// TextDocumentDeclaration ///
+///////////////////////////////
+
+type TextDocumentDeclarationHandler interface {
+	HandleTextDocumentDeclaration(context.Context, DeclarationParams) (TextDocumentDeclarationResult, error)
+}
+
+type TextDocumentDeclarationPartialResult struct {
+	A Optional[[]Location]
+	B Optional[[]DeclarationLink]
+}
+
+type TextDocumentDeclarationResult struct {
+	A Optional[Declaration]
+	B Optional[[]DeclarationLink]
+}
+
+//////////////////////////////
+/// TextDocumentDefinition ///
+//////////////////////////////
+
+type TextDocumentDefinitionHandler interface {
+	HandleTextDocumentDefinition(context.Context, DefinitionParams) (TextDocumentDefinitionResult, error)
+}
+
+type TextDocumentDefinitionPartialResult struct {
+	A Optional[[]Location]
+	B Optional[[]DefinitionLink]
+}
+
+type TextDocumentDefinitionResult struct {
+	A Optional[Definition]
+	B Optional[[]DefinitionLink]
+}
+
+//////////////////////////////
+/// TextDocumentDiagnostic ///
+//////////////////////////////
+
+type TextDocumentDiagnosticHandler interface {
+	HandleTextDocumentDiagnostic(context.Context, DocumentDiagnosticParams) (DocumentDiagnosticReport, error)
+}
+
+/////////////////////////////
+/// TextDocumentDidChange ///
+/////////////////////////////
+
+type TextDocumentDidChangeHandler interface {
+	HandleTextDocumentDidChange(context.Context, DidChangeTextDocumentParams) error
+}
+
+////////////////////////////
+/// TextDocumentDidClose ///
+////////////////////////////
+
+type TextDocumentDidCloseHandler interface {
+	HandleTextDocumentDidClose(context.Context, DidCloseTextDocumentParams) error
+}
+
+///////////////////////////
+/// TextDocumentDidOpen ///
+///////////////////////////
+
+type TextDocumentDidOpenHandler interface {
+	HandleTextDocumentDidOpen(context.Context, DidOpenTextDocumentParams) error
+}
+
+///////////////////////////
+/// TextDocumentDidSave ///
+///////////////////////////
+
+type TextDocumentDidSaveHandler interface {
+	HandleTextDocumentDidSave(context.Context, DidSaveTextDocumentParams) error
+}
+
+/////////////////////////////////
+/// TextDocumentDocumentColor ///
+/////////////////////////////////
+
+type TextDocumentDocumentColorHandler interface {
+	HandleTextDocumentDocumentColor(context.Context, DocumentColorParams) ([]ColorInformation, error)
+}
+
+/////////////////////////////////////
+/// TextDocumentDocumentHighlight ///
+/////////////////////////////////////
+
+type TextDocumentDocumentHighlightHandler interface {
+	HandleTextDocumentDocumentHighlight(context.Context, DocumentHighlightParams) (TextDocumentDocumentHighlightResult, error)
+}
+
+type TextDocumentDocumentHighlightResult struct {
+	A Optional[[]DocumentHighlight]
+}
+
+////////////////////////////////
+/// TextDocumentDocumentLink ///
+////////////////////////////////
+
+type TextDocumentDocumentLinkHandler interface {
+	HandleTextDocumentDocumentLink(context.Context, DocumentLinkParams) (TextDocumentDocumentLinkResult, error)
+}
+
+type TextDocumentDocumentLinkResult struct {
+	A Optional[[]DocumentLink]
+}
+
+//////////////////////////////////
+/// TextDocumentDocumentSymbol ///
+//////////////////////////////////
+
+type TextDocumentDocumentSymbolHandler interface {
+	HandleTextDocumentDocumentSymbol(context.Context, DocumentSymbolParams) (TextDocumentDocumentSymbolResult, error)
+}
+
+type TextDocumentDocumentSymbolPartialResult struct {
+	A Optional[[]SymbolInformation]
+	B Optional[[]DocumentSymbol]
+}
+
+type TextDocumentDocumentSymbolResult struct {
+	A Optional[[]SymbolInformation]
+	B Optional[[]DocumentSymbol]
+}
+
+////////////////////////////////
+/// TextDocumentFoldingRange ///
+////////////////////////////////
+
+type TextDocumentFoldingRangeHandler interface {
+	HandleTextDocumentFoldingRange(context.Context, FoldingRangeParams) (TextDocumentFoldingRangeResult, error)
+}
+
+type TextDocumentFoldingRangeResult struct {
+	A Optional[[]FoldingRange]
+}
+
+//////////////////////////////
+/// TextDocumentFormatting ///
+//////////////////////////////
+
+type TextDocumentFormattingHandler interface {
+	HandleTextDocumentFormatting(context.Context, DocumentFormattingParams) (TextDocumentFormattingResult, error)
+}
+
+type TextDocumentFormattingResult struct {
+	A Optional[[]TextEdit]
+}
+
+/////////////////////////
+/// TextDocumentHover ///
+/////////////////////////
+
+type TextDocumentHoverHandler interface {
+	HandleTextDocumentHover(context.Context, HoverParams) (TextDocumentHoverResult, error)
+}
+
+type TextDocumentHoverResult struct {
+	A Optional[Hover]
+}
+
+//////////////////////////////////
+/// TextDocumentImplementation ///
+//////////////////////////////////
+
+type TextDocumentImplementationHandler interface {
+	HandleTextDocumentImplementation(context.Context, ImplementationParams) (TextDocumentImplementationResult, error)
+}
+
+type TextDocumentImplementationPartialResult struct {
+	A Optional[[]Location]
+	B Optional[[]DefinitionLink]
+}
+
+type TextDocumentImplementationResult struct {
+	A Optional[Definition]
+	B Optional[[]DefinitionLink]
+}
+
+/////////////////////////////
+/// TextDocumentInlayHint ///
+/////////////////////////////
+
+type TextDocumentInlayHintHandler interface {
+	HandleTextDocumentInlayHint(context.Context, InlayHintParams) (TextDocumentInlayHintResult, error)
+}
+
+type TextDocumentInlayHintResult struct {
+	A Optional[[]InlayHint]
+}
+
+///////////////////////////////
+/// TextDocumentInlineValue ///
+///////////////////////////////
+
+type TextDocumentInlineValueHandler interface {
+	HandleTextDocumentInlineValue(context.Context, InlineValueParams) (TextDocumentInlineValueResult, error)
+}
+
+type TextDocumentInlineValueResult struct {
+	A Optional[[]InlineValue]
+}
+
+//////////////////////////////////////
+/// TextDocumentLinkedEditingRange ///
+//////////////////////////////////////
+
+type TextDocumentLinkedEditingRangeHandler interface {
+	HandleTextDocumentLinkedEditingRange(context.Context, LinkedEditingRangeParams) (TextDocumentLinkedEditingRangeResult, error)
+}
+
+type TextDocumentLinkedEditingRangeResult struct {
+	A Optional[LinkedEditingRanges]
+}
+
+///////////////////////////
+/// TextDocumentMoniker ///
+///////////////////////////
+
+type TextDocumentMonikerHandler interface {
+	HandleTextDocumentMoniker(context.Context, MonikerParams) (TextDocumentMonikerResult, error)
+}
+
+type TextDocumentMonikerResult struct {
+	A Optional[[]Moniker]
+}
+
+////////////////////////////////////
+/// TextDocumentOnTypeFormatting ///
+////////////////////////////////////
+
+type TextDocumentOnTypeFormattingHandler interface {
+	HandleTextDocumentOnTypeFormatting(context.Context, DocumentOnTypeFormattingParams) (TextDocumentOnTypeFormattingResult, error)
+}
+
+type TextDocumentOnTypeFormattingResult struct {
+	A Optional[[]TextEdit]
+}
+
+////////////////////////////////////////
+/// TextDocumentPrepareCallHierarchy ///
+////////////////////////////////////////
+
+type TextDocumentPrepareCallHierarchyHandler interface {
+	HandleTextDocumentPrepareCallHierarchy(context.Context, CallHierarchyPrepareParams) (TextDocumentPrepareCallHierarchyResult, error)
+}
+
+type TextDocumentPrepareCallHierarchyResult struct {
+	A Optional[[]CallHierarchyItem]
+}
+
+/////////////////////////////////
+/// TextDocumentPrepareRename ///
+/////////////////////////////////
+
+type TextDocumentPrepareRenameHandler interface {
+	HandleTextDocumentPrepareRename(context.Context, PrepareRenameParams) (TextDocumentPrepareRenameResult, error)
+}
+
+type TextDocumentPrepareRenameResult struct {
+	A Optional[PrepareRenameResult]
+}
+
+////////////////////////////////////////
+/// TextDocumentPrepareTypeHierarchy ///
+////////////////////////////////////////
+
+type TextDocumentPrepareTypeHierarchyHandler interface {
+	HandleTextDocumentPrepareTypeHierarchy(context.Context, TypeHierarchyPrepareParams) (TextDocumentPrepareTypeHierarchyResult, error)
+}
+
+type TextDocumentPrepareTypeHierarchyResult struct {
+	A Optional[[]TypeHierarchyItem]
+}
+
+//////////////////////////////////////
+/// TextDocumentPublishDiagnostics ///
+//////////////////////////////////////
+
+///////////////////////////////////
+/// TextDocumentRangeFormatting ///
+///////////////////////////////////
+
+type TextDocumentRangeFormattingHandler interface {
+	HandleTextDocumentRangeFormatting(context.Context, DocumentRangeFormattingParams) (TextDocumentRangeFormattingResult, error)
+}
+
+type TextDocumentRangeFormattingResult struct {
+	A Optional[[]TextEdit]
+}
+
+//////////////////////////////
+/// TextDocumentReferences ///
+//////////////////////////////
+
+type TextDocumentReferencesHandler interface {
+	HandleTextDocumentReferences(context.Context, ReferenceParams) (TextDocumentReferencesResult, error)
+}
+
+type TextDocumentReferencesResult struct {
+	A Optional[[]Location]
+}
+
+//////////////////////////
+/// TextDocumentRename ///
+//////////////////////////
+
+type TextDocumentRenameHandler interface {
+	HandleTextDocumentRename(context.Context, RenameParams) (TextDocumentRenameResult, error)
+}
+
+type TextDocumentRenameResult struct {
+	A Optional[WorkspaceEdit]
+}
+
+//////////////////////////////////
+/// TextDocumentSelectionRange ///
+//////////////////////////////////
+
+type TextDocumentSelectionRangeHandler interface {
+	HandleTextDocumentSelectionRange(context.Context, SelectionRangeParams) (TextDocumentSelectionRangeResult, error)
+}
+
+type TextDocumentSelectionRangeResult struct {
+	A Optional[[]SelectionRange]
+}
+
+//////////////////////////////////////
+/// TextDocumentSemanticTokensFull ///
+//////////////////////////////////////
+
+type TextDocumentSemanticTokensFullHandler interface {
+	HandleTextDocumentSemanticTokensFull(context.Context, SemanticTokensParams) (TextDocumentSemanticTokensFullResult, error)
+}
+
+type TextDocumentSemanticTokensFullResult struct {
+	A Optional[SemanticTokens]
+}
+
+///////////////////////////////////////////
+/// TextDocumentSemanticTokensFullDelta ///
+///////////////////////////////////////////
+
+type TextDocumentSemanticTokensFullDeltaHandler interface {
+	HandleTextDocumentSemanticTokensFullDelta(context.Context, SemanticTokensDeltaParams) (TextDocumentSemanticTokensFullDeltaResult, error)
+}
+
+type TextDocumentSemanticTokensFullDeltaPartialResult struct {
+	A Optional[SemanticTokensPartialResult]
+	B Optional[SemanticTokensDeltaPartialResult]
+}
+
+type TextDocumentSemanticTokensFullDeltaResult struct {
+	A Optional[SemanticTokens]
+	B Optional[SemanticTokensDelta]
+}
+
+///////////////////////////////////////
+/// TextDocumentSemanticTokensRange ///
+///////////////////////////////////////
+
+type TextDocumentSemanticTokensRangeHandler interface {
+	HandleTextDocumentSemanticTokensRange(context.Context, SemanticTokensRangeParams) (TextDocumentSemanticTokensRangeResult, error)
+}
+
+type TextDocumentSemanticTokensRangeResult struct {
+	A Optional[SemanticTokens]
+}
+
+/////////////////////////////////
+/// TextDocumentSignatureHelp ///
+/////////////////////////////////
+
+type TextDocumentSignatureHelpHandler interface {
+	HandleTextDocumentSignatureHelp(context.Context, SignatureHelpParams) (TextDocumentSignatureHelpResult, error)
+}
+
+type TextDocumentSignatureHelpResult struct {
+	A Optional[SignatureHelp]
+}
+
+//////////////////////////////////
+/// TextDocumentTypeDefinition ///
+//////////////////////////////////
+
+type TextDocumentTypeDefinitionHandler interface {
+	HandleTextDocumentTypeDefinition(context.Context, TypeDefinitionParams) (TextDocumentTypeDefinitionResult, error)
+}
+
+type TextDocumentTypeDefinitionPartialResult struct {
+	A Optional[[]Location]
+	B Optional[[]DefinitionLink]
+}
+
+type TextDocumentTypeDefinitionResult struct {
+	A Optional[Definition]
+	B Optional[[]DefinitionLink]
+}
+
+////////////////////////////
+/// TextDocumentWillSave ///
+////////////////////////////
+
+type TextDocumentWillSaveHandler interface {
+	HandleTextDocumentWillSave(context.Context, WillSaveTextDocumentParams) error
+}
+
+/////////////////////////////////////
+/// TextDocumentWillSaveWaitUntil ///
+/////////////////////////////////////
+
+type TextDocumentWillSaveWaitUntilHandler interface {
+	HandleTextDocumentWillSaveWaitUntil(context.Context, WillSaveTextDocumentParams) (TextDocumentWillSaveWaitUntilResult, error)
+}
+
+type TextDocumentWillSaveWaitUntilResult struct {
+	A Optional[[]TextEdit]
+}
+
+/////////////////////////////
+/// TypeHierarchySubtypes ///
+/////////////////////////////
+
+type TypeHierarchySubtypesHandler interface {
+	HandleTypeHierarchySubtypes(context.Context, TypeHierarchySubtypesParams) (TypeHierarchySubtypesResult, error)
+}
+
+type TypeHierarchySubtypesResult struct {
+	A Optional[[]TypeHierarchyItem]
+}
+
+///////////////////////////////
+/// TypeHierarchySupertypes ///
+///////////////////////////////
+
+type TypeHierarchySupertypesHandler interface {
+	HandleTypeHierarchySupertypes(context.Context, TypeHierarchySupertypesParams) (TypeHierarchySupertypesResult, error)
+}
+
+type TypeHierarchySupertypesResult struct {
+	A Optional[[]TypeHierarchyItem]
+}
+
+////////////////////////
+/// WindowLogMessage ///
+////////////////////////
+
+//////////////////////////
+/// WindowShowDocument ///
+//////////////////////////
+
+/////////////////////////
+/// WindowShowMessage ///
+/////////////////////////
+
+////////////////////////////////
+/// WindowShowMessageRequest ///
+////////////////////////////////
+
+type WindowShowMessageRequestResult struct {
+	A Optional[MessageActionItem]
+}
+
+////////////////////////////////////
+/// WindowWorkDoneProgressCancel ///
+////////////////////////////////////
+
+type WindowWorkDoneProgressCancelHandler interface {
+	HandleWindowWorkDoneProgressCancel(context.Context, WorkDoneProgressCancelParams) error
+}
+
+////////////////////////////////////
+/// WindowWorkDoneProgressCreate ///
+////////////////////////////////////
+
+//////////////////////////
+/// WorkspaceApplyEdit ///
+//////////////////////////
+
+////////////////////////////////
+/// WorkspaceCodeLensRefresh ///
+////////////////////////////////
+
+//////////////////////////////
+/// WorkspaceConfiguration ///
+//////////////////////////////
+
+///////////////////////////
+/// WorkspaceDiagnostic ///
+///////////////////////////
+
+type WorkspaceDiagnosticHandler interface {
+	HandleWorkspaceDiagnostic(context.Context, WorkspaceDiagnosticParams) (WorkspaceDiagnosticReport, error)
+}
+
+//////////////////////////////////
+/// WorkspaceDiagnosticRefresh ///
+//////////////////////////////////
+
+///////////////////////////////////////
+/// WorkspaceDidChangeConfiguration ///
+///////////////////////////////////////
+
+type WorkspaceDidChangeConfigurationHandler interface {
+	HandleWorkspaceDidChangeConfiguration(context.Context, DidChangeConfigurationParams) error
+}
+
+//////////////////////////////////////
+/// WorkspaceDidChangeWatchedFiles ///
+//////////////////////////////////////
+
+type WorkspaceDidChangeWatchedFilesHandler interface {
+	HandleWorkspaceDidChangeWatchedFiles(context.Context, DidChangeWatchedFilesParams) error
+}
+
+//////////////////////////////////////////
+/// WorkspaceDidChangeWorkspaceFolders ///
+//////////////////////////////////////////
+
+type WorkspaceDidChangeWorkspaceFoldersHandler interface {
+	HandleWorkspaceDidChangeWorkspaceFolders(context.Context, DidChangeWorkspaceFoldersParams) error
+}
+
+///////////////////////////////
+/// WorkspaceDidCreateFiles ///
+///////////////////////////////
+
+type WorkspaceDidCreateFilesHandler interface {
+	HandleWorkspaceDidCreateFiles(context.Context, CreateFilesParams) error
+}
+
+///////////////////////////////
+/// WorkspaceDidDeleteFiles ///
+///////////////////////////////
+
+type WorkspaceDidDeleteFilesHandler interface {
+	HandleWorkspaceDidDeleteFiles(context.Context, DeleteFilesParams) error
+}
+
+///////////////////////////////
+/// WorkspaceDidRenameFiles ///
+///////////////////////////////
+
+type WorkspaceDidRenameFilesHandler interface {
+	HandleWorkspaceDidRenameFiles(context.Context, RenameFilesParams) error
+}
+
+///////////////////////////////
+/// WorkspaceExecuteCommand ///
+///////////////////////////////
+
+type WorkspaceExecuteCommandHandler interface {
+	HandleWorkspaceExecuteCommand(context.Context, ExecuteCommandParams) (WorkspaceExecuteCommandResult, error)
+}
+
+type WorkspaceExecuteCommandResult struct {
+	A Optional[LSPAny]
+}
+
+/////////////////////////////////
+/// WorkspaceInlayHintRefresh ///
+/////////////////////////////////
+
+///////////////////////////////////
+/// WorkspaceInlineValueRefresh ///
+///////////////////////////////////
+
+//////////////////////////////////////
+/// WorkspaceSemanticTokensRefresh ///
+//////////////////////////////////////
+
+///////////////////////
+/// WorkspaceSymbol ///
+///////////////////////
+
+type WorkspaceSymbolHandler interface {
+	HandleWorkspaceSymbol(context.Context, WorkspaceSymbolParams) (WorkspaceSymbolResult, error)
+}
+
+type WorkspaceSymbolPartialResult struct {
+	A Optional[[]SymbolInformation]
+	B Optional[[]WorkspaceSymbol]
+}
+
+type WorkspaceSymbolResult struct {
+	A Optional[[]SymbolInformation]
+	B Optional[[]WorkspaceSymbol]
+}
+
+////////////////////////////////
+/// WorkspaceWillCreateFiles ///
+////////////////////////////////
+
+type WorkspaceWillCreateFilesHandler interface {
+	HandleWorkspaceWillCreateFiles(context.Context, CreateFilesParams) (WorkspaceWillCreateFilesResult, error)
+}
+
+type WorkspaceWillCreateFilesResult struct {
+	A Optional[WorkspaceEdit]
+}
+
+////////////////////////////////
+/// WorkspaceWillDeleteFiles ///
+////////////////////////////////
+
+type WorkspaceWillDeleteFilesHandler interface {
+	HandleWorkspaceWillDeleteFiles(context.Context, DeleteFilesParams) (WorkspaceWillDeleteFilesResult, error)
+}
+
+type WorkspaceWillDeleteFilesResult struct {
+	A Optional[WorkspaceEdit]
+}
+
+////////////////////////////////
+/// WorkspaceWillRenameFiles ///
+////////////////////////////////
+
+type WorkspaceWillRenameFilesHandler interface {
+	HandleWorkspaceWillRenameFiles(context.Context, RenameFilesParams) (WorkspaceWillRenameFilesResult, error)
+}
+
+type WorkspaceWillRenameFilesResult struct {
+	A Optional[WorkspaceEdit]
+}
+
+/////////////////////////////////
+/// WorkspaceWorkspaceFolders ///
+/////////////////////////////////
+
+type WorkspaceWorkspaceFoldersResult struct {
+	A Optional[[]WorkspaceFolder]
+}
+
+//////////////////////////////
+/// WorkspaceSymbolResolve ///
+//////////////////////////////
+
+type WorkspaceSymbolResolveHandler interface {
+	HandleWorkspaceSymbolResolve(context.Context, WorkspaceSymbol) (WorkspaceSymbol, error)
 }

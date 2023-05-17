@@ -14,9 +14,9 @@ func (g *Generator) emitReifiedType(n string, t model.Type) {
 
 	g.reified[n] = struct{}{}
 
-	g.enterType(n)
+	g.pushScope(n)
 	model.VisitType(t, &reifyType{g, n})
-	g.leaveType()
+	g.popScope()
 }
 
 func (g *Generator) emitReifiedTypes() {
@@ -33,20 +33,20 @@ func (g *Generator) emitReifiedTypes() {
 	}
 }
 
-func (g *Generator) enterType(n string) {
+func (g *Generator) pushScope(n string) {
 	g.scopes = append(g.scopes, []string{n})
 }
 
-func (g *Generator) leaveType() {
+func (g *Generator) popScope() {
 	g.scopes = g.scopes[:len(g.scopes)-1]
 }
 
-func (g *Generator) enterProperty(n string) {
+func (g *Generator) pushNestedScope(n string) {
 	names := &g.scopes[len(g.scopes)-1]
 	*names = append(*names, n)
 }
 
-func (g *Generator) leaveProperty() {
+func (g *Generator) popNestedScope() {
 	names := &g.scopes[len(g.scopes)-1]
 	*names = (*names)[:len(*names)-1]
 }

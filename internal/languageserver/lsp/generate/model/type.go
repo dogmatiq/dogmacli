@@ -126,6 +126,10 @@ type typeX[T any] struct {
 }
 
 func (b *builder) typeRef(in lowlevel.Type) Type {
+	if in.Kind == "" {
+		return nil
+	}
+
 	var types []Type
 	for _, t := range in.Types {
 		types = append(types, b.typeRef(t))

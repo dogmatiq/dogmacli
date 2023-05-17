@@ -10,18 +10,20 @@ func (g *reifyType) Or(t model.Or) {
 		Type().
 		Id(g.Name).
 		StructFunc(func(grp *jen.Group) {
-			for i, m := range t.Types {
-				info := g.typeInfo(m)
-				expr := g.typeExpr(m)
-				name := string(rune('A' + i))
+			name := rune('A')
 
-				if !info.IsNativelyOptional {
-					expr = jen.Id("Optional").Types(expr)
+			for _, m := range t.Types {
+				info := g.typeInfo(m)
+
+				if info.HasGoType {
+					grp.
+						Id(string(name)).
+						Id("Optional").Types(
+						g.typeExpr(m),
+					)
 				}
 
-				grp.
-					Id(name).
-					Add(expr)
+				name++
 			}
 		})
 }

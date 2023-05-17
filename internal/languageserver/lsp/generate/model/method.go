@@ -13,6 +13,7 @@ type (
 	MethodCommon struct {
 		MethodName          string
 		Documentation       Documentation
+		Direction           MethodDirection
 		Params              Type
 		RegistrationMethod  string
 		RegistrationOptions Type
@@ -31,6 +32,19 @@ type (
 	Notification struct {
 		MethodCommon
 	}
+
+	// MethodDirection indicates the direction that a JSON-RPC request is sent.
+	MethodDirection int
+)
+
+const (
+	// HandledByLanguageServer indicates that a JSON-RPC method request is sent
+	// from the IDE to the language server.
+	HandledByLanguageServer MethodDirection = iota
+
+	// HandledByIDE indicates that a JSON-RPC method request is sent from the
+	// language server to the IDE.
+	HandledByIDE
 )
 
 // Name returns the method name.
@@ -48,6 +62,7 @@ func (b *builder) call(in lowlevel.Request) Call {
 		MethodCommon: MethodCommon{
 			MethodName:          in.Method,
 			Documentation:       in.Documentation,
+			Direction:           methodDirection(in.Direction),
 			Params:              b.typeRef(in.Params),
 			RegistrationMethod:  in.RegistrationMethod,
 			RegistrationOptions: b.typeRef(in.RegistrationOptions),
@@ -63,11 +78,19 @@ func (b *builder) notification(in lowlevel.Notification) Notification {
 		MethodCommon: MethodCommon{
 			MethodName:          in.Method,
 			Documentation:       in.Documentation,
+			Direction:           methodDirection(in.Direction),
 			Params:              b.typeRef(in.Params),
 			RegistrationMethod:  in.RegistrationMethod,
 			RegistrationOptions: b.typeRef(in.RegistrationOptions),
 		},
 	}
+}
+
+func methodDirection(dir string) MethodDirection {
+	if dir == "clientToServer" {
+		return HandledByLanguageServer
+	}
+	return HandledByIDE
 }
 
 // MethodVisitor provides logic specific to each Method implementation.

@@ -6,10 +6,9 @@ import (
 
 // Model is the root of the model.
 type Model struct {
-	Version       string
-	TypeDefs      []TypeDef
-	ClientMethods []Method
-	ServerMethods []Method
+	Version  string
+	TypeDefs []TypeDef
+	Methods  []Method
 }
 
 // Documentation is a container for documentation-related meta-data.
@@ -63,6 +62,14 @@ func (b *builder) BuildModel(in lowlevel.Model) Model {
 	}
 	for _, d := range in.Structs {
 		b.structure(d, b.structs[d.Name])
+	}
+
+	// Populate the methods.
+	for _, m := range in.Requests {
+		out.Methods = append(out.Methods, b.call(m))
+	}
+	for _, m := range in.Notifications {
+		out.Methods = append(out.Methods, b.notification(m))
 	}
 
 	return out

@@ -33,6 +33,20 @@ func (g *Generator) Generate() {
 		g.emitTypeDef(d)
 		g.emitReifiedTypes()
 	}
+
+	methods := slices.Clone(g.Model.Methods)
+	slices.SortFunc(
+		methods,
+		func(a, b model.Method) bool {
+			return a.Name() < b.Name()
+		},
+	)
+
+	for _, m := range methods {
+		g.emitBanner(identifier(m.Name()))
+		g.emitMethod(m)
+		g.emitReifiedTypes()
+	}
 }
 
 func (g *Generator) emitBanner(s string) {

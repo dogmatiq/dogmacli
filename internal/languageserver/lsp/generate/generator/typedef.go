@@ -3,9 +3,9 @@ package generator
 import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 
 func (g *Generator) emitTypeDef(d model.TypeDef) {
-	g.enterType(d.Name())
+	g.pushScope(d.Name())
 	model.VisitTypeDef(d, &typeDef{g})
-	g.leaveType()
+	g.popScope()
 }
 
 type typeDef struct{ *Generator }
