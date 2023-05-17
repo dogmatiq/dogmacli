@@ -46,25 +46,45 @@ func (g *method) Call(m model.Call) {
 		g.popNestedScope()
 	}
 
-	if m.Direction != model.HandledByLanguageServer {
-		return
+	if m.Direction == model.HandledByLanguageServer {
+		g.File.
+			Type().
+			Id(identifier(m.MethodName, "Handler")).
+			Interface(
+				jen.
+					Id(identifier("Handle", m.MethodName)).
+					Params(
+						jen.Qual("context", "Context"),
+						params,
+					).
+					Params(
+						result,
+						jen.Error(),
+					),
+			)
+	} else {
+		g.File.
+			Func().
+			Params(
+				jen.Id("c").Op("*").Id("Client"),
+			).
+			Id(identifier(m.MethodName)).
+			ParamsFunc(func(grp *jen.Group) {
+				grp.Id("ctx").Qual("context", "Context")
+				if m.Params != nil {
+					grp.Id("p").Add(params)
+				}
+			}).
+			Params(
+				result,
+				jen.Error(),
+			).
+			Block(
+				jen.Panic(
+					jen.Lit("not implemented"),
+				),
+			)
 	}
-
-	g.File.
-		Type().
-		Id(identifier(m.MethodName, "Handler")).
-		Interface(
-			jen.
-				Id(identifier("Handle", m.MethodName)).
-				ParamsFunc(func(grp *jen.Group) {
-					grp.Qual("context", "Context")
-					grp.Add(params)
-				}).
-				ParamsFunc(func(grp *jen.Group) {
-					grp.Add(result)
-					grp.Error()
-				}),
-		)
 }
 
 func (g *method) Notification(m model.Notification) {
@@ -81,22 +101,41 @@ func (g *method) Notification(m model.Notification) {
 		g.popNestedScope()
 	}
 
-	if m.Direction != model.HandledByLanguageServer {
-		return
-	}
-
-	g.File.
-		Type().
-		Id(identifier(m.MethodName, "Handler")).
-		Interface(
-			jen.
-				Id(identifier("Handle", m.MethodName)).
-				ParamsFunc(func(grp *jen.Group) {
-					grp.Qual("context", "Context")
-					grp.Add(params)
-				}).
-				Params(
-					jen.Error(),
+	if m.Direction == model.HandledByLanguageServer {
+		g.File.
+			Type().
+			Id(identifier(m.MethodName, "Handler")).
+			Interface(
+				jen.
+					Id(identifier("Handle", m.MethodName)).
+					Params(
+						jen.Qual("context", "Context"),
+						params,
+					).
+					Params(
+						jen.Error(),
+					),
+			)
+	} else {
+		g.File.
+			Func().
+			Params(
+				jen.Id("c").Op("*").Id("Client"),
+			).
+			Id(identifier(m.MethodName)).
+			ParamsFunc(func(grp *jen.Group) {
+				grp.Id("ctx").Qual("context", "Context")
+				if m.Params != nil {
+					grp.Id("p").Add(params)
+				}
+			}).
+			Params(
+				jen.Error(),
+			).
+			Block(
+				jen.Panic(
+					jen.Lit("not implemented"),
 				),
-		)
+			)
+	}
 }

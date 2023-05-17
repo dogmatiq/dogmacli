@@ -17873,13 +17873,25 @@ type initializeParamsProcessID struct {
 /// CancelRequest ///
 /////////////////////
 
+func (c *Client) CancelRequest(ctx context.Context, p CancelParams) error {
+	panic("not implemented")
+}
+
 ////////////////
 /// LogTrace ///
 ////////////////
 
+func (c *Client) LogTrace(ctx context.Context, p LogTraceParams) error {
+	panic("not implemented")
+}
+
 ////////////////
 /// Progress ///
 ////////////////
+
+func (c *Client) Progress(ctx context.Context, p ProgressParams) error {
+	panic("not implemented")
+}
 
 ////////////////
 /// SetTrace ///
@@ -17917,9 +17929,17 @@ type CallHierarchyOutgoingCallsResult struct {
 /// ClientRegisterCapability ///
 ////////////////////////////////
 
+func (c *Client) ClientRegisterCapability(ctx context.Context, p RegistrationParams) (Null, error) {
+	panic("not implemented")
+}
+
 //////////////////////////////////
 /// ClientUnregisterCapability ///
 //////////////////////////////////
+
+func (c *Client) ClientUnregisterCapability(ctx context.Context, p UnregistrationParams) (Null, error) {
+	panic("not implemented")
+}
 
 /////////////////////////
 /// CodeActionResolve ///
@@ -18028,6 +18048,10 @@ type ShutdownHandler interface {
 //////////////////////
 /// TelemetryEvent ///
 //////////////////////
+
+func (c *Client) TelemetryEvent(ctx context.Context, p LSPAny) error {
+	panic("not implemented")
+}
 
 //////////////////////////////
 /// TextDocumentCodeAction ///
@@ -18391,6 +18415,10 @@ type TextDocumentPrepareTypeHierarchyResult struct {
 /// TextDocumentPublishDiagnostics ///
 //////////////////////////////////////
 
+func (c *Client) TextDocumentPublishDiagnostics(ctx context.Context, p PublishDiagnosticsParams) error {
+	panic("not implemented")
+}
+
 ///////////////////////////////////
 /// TextDocumentRangeFormatting ///
 ///////////////////////////////////
@@ -18559,17 +18587,33 @@ type TypeHierarchySupertypesResult struct {
 /// WindowLogMessage ///
 ////////////////////////
 
+func (c *Client) WindowLogMessage(ctx context.Context, p LogMessageParams) error {
+	panic("not implemented")
+}
+
 //////////////////////////
 /// WindowShowDocument ///
 //////////////////////////
+
+func (c *Client) WindowShowDocument(ctx context.Context, p ShowDocumentParams) (ShowDocumentResult, error) {
+	panic("not implemented")
+}
 
 /////////////////////////
 /// WindowShowMessage ///
 /////////////////////////
 
+func (c *Client) WindowShowMessage(ctx context.Context, p ShowMessageParams) error {
+	panic("not implemented")
+}
+
 ////////////////////////////////
 /// WindowShowMessageRequest ///
 ////////////////////////////////
+
+func (c *Client) WindowShowMessageRequest(ctx context.Context, p ShowMessageRequestParams) (WindowShowMessageRequestResult, error) {
+	panic("not implemented")
+}
 
 type WindowShowMessageRequestResult struct {
 	A Optional[MessageActionItem]
@@ -18587,17 +18631,33 @@ type WindowWorkDoneProgressCancelHandler interface {
 /// WindowWorkDoneProgressCreate ///
 ////////////////////////////////////
 
+func (c *Client) WindowWorkDoneProgressCreate(ctx context.Context, p WorkDoneProgressCreateParams) (Null, error) {
+	panic("not implemented")
+}
+
 //////////////////////////
 /// WorkspaceApplyEdit ///
 //////////////////////////
+
+func (c *Client) WorkspaceApplyEdit(ctx context.Context, p ApplyWorkspaceEditParams) (ApplyWorkspaceEditResult, error) {
+	panic("not implemented")
+}
 
 ////////////////////////////////
 /// WorkspaceCodeLensRefresh ///
 ////////////////////////////////
 
+func (c *Client) WorkspaceCodeLensRefresh(ctx context.Context) (Null, error) {
+	panic("not implemented")
+}
+
 //////////////////////////////
 /// WorkspaceConfiguration ///
 //////////////////////////////
+
+func (c *Client) WorkspaceConfiguration(ctx context.Context, p ConfigurationParams) ([]LSPAny, error) {
+	panic("not implemented")
+}
 
 ///////////////////////////
 /// WorkspaceDiagnostic ///
@@ -18610,6 +18670,10 @@ type WorkspaceDiagnosticHandler interface {
 //////////////////////////////////
 /// WorkspaceDiagnosticRefresh ///
 //////////////////////////////////
+
+func (c *Client) WorkspaceDiagnosticRefresh(ctx context.Context) (Null, error) {
+	panic("not implemented")
+}
 
 ///////////////////////////////////////
 /// WorkspaceDidChangeConfiguration ///
@@ -18675,13 +18739,25 @@ type WorkspaceExecuteCommandResult struct {
 /// WorkspaceInlayHintRefresh ///
 /////////////////////////////////
 
+func (c *Client) WorkspaceInlayHintRefresh(ctx context.Context) (Null, error) {
+	panic("not implemented")
+}
+
 ///////////////////////////////////
 /// WorkspaceInlineValueRefresh ///
 ///////////////////////////////////
 
+func (c *Client) WorkspaceInlineValueRefresh(ctx context.Context) (Null, error) {
+	panic("not implemented")
+}
+
 //////////////////////////////////////
 /// WorkspaceSemanticTokensRefresh ///
 //////////////////////////////////////
+
+func (c *Client) WorkspaceSemanticTokensRefresh(ctx context.Context) (Null, error) {
+	panic("not implemented")
+}
 
 ///////////////////////
 /// WorkspaceSymbol ///
@@ -18740,6 +18816,10 @@ type WorkspaceWillRenameFilesResult struct {
 /////////////////////////////////
 /// WorkspaceWorkspaceFolders ///
 /////////////////////////////////
+
+func (c *Client) WorkspaceWorkspaceFolders(ctx context.Context) (WorkspaceWorkspaceFoldersResult, error) {
+	panic("not implemented")
+}
 
 type WorkspaceWorkspaceFoldersResult struct {
 	A Optional[[]WorkspaceFolder]
