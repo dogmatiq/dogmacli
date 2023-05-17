@@ -41,28 +41,24 @@ func (g *Generator) emitStructType(
 			}
 
 			for _, p := range properties {
-				if _, ok := p.Type.(model.StringLit); ok {
-					// Don't add a struct field to represent string literal properties.
-					// These are always handled at the (un)marshaling level.
-					continue
-				}
-
 				g.enterProperty(p.Name)
 
-				i := g.typeInfo(p.Type)
-				t := g.typeExpr(p.Type)
+				info := g.typeInfo(p.Type)
 
-				if p.Optional && i.UseOptional {
-					t = jen.Id("Optional").Types(t)
+				if info.HasGoType {
+					expr := g.typeExpr(p.Type)
+					if p.Optional && !info.IsNativelyOptional {
+						expr = jen.Id("Optional").Types(expr)
+					}
+
+					documentation(grp, p.Documentation)
+
+					grp.
+						Id(identifier(p.Name)).
+						Add(expr)
+
+					grp.Line()
 				}
-
-				documentation(grp, p.Documentation)
-
-				grp.
-					Id(identifier(p.Name)).
-					Add(t)
-
-				grp.Line()
 
 				g.leaveProperty()
 			}
@@ -172,10 +168,10 @@ func (g *Generator) emitStructMarshalMethods(
 			}
 
 			for _, p := range properties {
-				i := g.typeInfo(p.Type)
+				info := g.typeInfo(p.Type)
 
 				fn := "marshalProperty"
-				if p.Optional && i.UseOptional {
+				if p.Optional && !info.IsNativelyOptional {
 					fn = "marshalOptionalProperty"
 				}
 

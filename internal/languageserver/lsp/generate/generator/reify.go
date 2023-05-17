@@ -8,21 +8,27 @@ import (
 )
 
 func (g *Generator) emitReifiedType(n string, t model.Type) {
+	if g.reified == nil {
+		g.reified = map[string]struct{}{}
+	}
+
+	g.reified[n] = struct{}{}
+
 	g.enterType(n)
 	model.VisitType(t, &reifyType{g, n})
 	g.leaveType()
 }
 
 func (g *Generator) emitReifiedTypes() {
-	literals := g.literals
-	g.literals = nil
+	unreified := g.unreified
+	g.unreified = nil
 
-	names := maps.Keys(literals)
+	names := maps.Keys(unreified)
 	slices.Sort(names)
 
 	for _, n := range names {
 		g.File.Line()
-		g.emitReifiedType(n, literals[n])
+		g.emitReifiedType(n, unreified[n])
 		g.emitReifiedTypes()
 	}
 }
@@ -48,11 +54,13 @@ func (g *Generator) leaveProperty() {
 func (g *Generator) reify(t model.Type) *jen.Statement {
 	name := identifier(g.scopes[len(g.scopes)-1]...)
 
-	if g.literals == nil {
-		g.literals = map[string]model.Type{}
+	if g.unreified == nil {
+		g.unreified = map[string]model.Type{}
 	}
 
-	g.literals[name] = t
+	if _, ok := g.reified[name]; !ok {
+		g.unreified[name] = t
+	}
 
 	return jen.Id(name)
 }

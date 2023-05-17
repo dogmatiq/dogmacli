@@ -5,11 +5,11 @@ import (
 )
 
 func (g *typeDef) Alias(d model.Alias) {
-	i := g.typeInfo(d.Type)
+	info := g.typeInfo(d.Type)
 
 	documentation(g.File, d.Documentation)
 
-	if i.IsLiteral {
+	if info.IsReified {
 		g.emitReifiedType(d.TypeName, d.Type)
 	} else {
 		g.emitAliasType(d)

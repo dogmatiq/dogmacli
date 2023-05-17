@@ -13,8 +13,9 @@ type Generator struct {
 	Model model.Model
 	File  *jen.File
 
-	scopes   [][]string
-	literals map[string]model.Type
+	scopes    [][]string
+	unreified map[string]model.Type
+	reified   map[string]struct{}
 }
 
 // Generate populates g.File.

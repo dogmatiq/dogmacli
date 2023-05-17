@@ -1,11 +1,14 @@
 package generator
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
+import (
+	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
+)
 
 type typeInfo struct {
-	IsLiteral        bool
-	UseOptional      bool
-	HasMarshalMethod bool
+	IsNamed            bool
+	IsReified          bool
+	IsNativelyOptional bool
+	HasGoType          bool
 }
 
 func (g *Generator) typeInfo(t model.Type) typeInfo {
@@ -18,31 +21,56 @@ func (g *Generator) typeInfo(t model.Type) typeInfo {
 type typeInfoX struct{}
 
 func (x typeInfoX) Bool() typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNamed:            true,
+		IsNativelyOptional: true,
+		HasGoType:          true,
+	}
 }
 
 func (x typeInfoX) Decimal() typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNamed:   true,
+		HasGoType: true,
+	}
 }
 
 func (x typeInfoX) String() typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNamed:            true,
+		IsNativelyOptional: true,
+		HasGoType:          true,
+	}
 }
 
 func (x typeInfoX) Integer() typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNamed:   true,
+		HasGoType: true,
+	}
 }
 
 func (x typeInfoX) UInteger() typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNamed:   true,
+		HasGoType: true,
+	}
 }
 
 func (x typeInfoX) DocumentURI() typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNamed:            true,
+		IsNativelyOptional: true,
+		HasGoType:          true,
+	}
 }
 
 func (x typeInfoX) URI() typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNamed:            true,
+		IsNativelyOptional: true,
+		HasGoType:          true,
+	}
 }
 
 func (x typeInfoX) Null() typeInfo {
@@ -50,45 +78,53 @@ func (x typeInfoX) Null() typeInfo {
 }
 
 func (x typeInfoX) Array(t model.Array) typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNativelyOptional: true,
+		HasGoType:          true,
+	}
 }
 
 func (x typeInfoX) Map(t model.Map) typeInfo {
-	return typeInfo{}
+	return typeInfo{
+		IsNativelyOptional: true,
+		HasGoType:          true,
+	}
 }
 
 func (x typeInfoX) And(t model.And) typeInfo {
 	return typeInfo{
-		IsLiteral:   true,
-		UseOptional: true,
+		IsNamed:   true,
+		IsReified: true,
+		HasGoType: true,
 	}
 }
 
 func (x typeInfoX) Or(t model.Or) typeInfo {
 	return typeInfo{
-		IsLiteral:   true,
-		UseOptional: true,
+		IsNamed:   true,
+		IsReified: true,
+		HasGoType: true,
 	}
 }
 
 func (x typeInfoX) Tuple(t model.Tuple) typeInfo {
 	return typeInfo{
-		IsLiteral:   true,
-		UseOptional: true,
+		IsNamed:   true,
+		IsReified: true,
+		HasGoType: true,
 	}
 }
 
 func (x typeInfoX) StructLit(t model.StructLit) typeInfo {
 	return typeInfo{
-		IsLiteral:   true,
-		UseOptional: true,
+		IsNamed:   true,
+		IsReified: true,
+		HasGoType: true,
 	}
 }
 
 func (x typeInfoX) StringLit(t model.StringLit) typeInfo {
-	return typeInfo{
-		IsLiteral: true,
-	}
+	return typeInfo{}
 }
 
 func (x typeInfoX) Reference(t model.Reference) typeInfo {
@@ -96,17 +132,21 @@ func (x typeInfoX) Reference(t model.Reference) typeInfo {
 }
 
 func (x typeInfoX) Alias(d model.Alias) typeInfo {
-	return model.TypeTo[typeInfo](d.Type, x)
+	info := model.TypeTo[typeInfo](d.Type, x)
+	info.IsNamed = true
+	return info
 }
 
 func (x typeInfoX) Enum(d model.Enum) typeInfo {
 	return typeInfo{
-		UseOptional: true,
+		IsNamed:   true,
+		HasGoType: true,
 	}
 }
 
 func (x typeInfoX) Struct(d model.Struct) typeInfo {
 	return typeInfo{
-		UseOptional: true,
+		IsNamed:   true,
+		HasGoType: true,
 	}
 }

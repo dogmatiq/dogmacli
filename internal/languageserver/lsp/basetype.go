@@ -1,5 +1,9 @@
 package lsp
 
-type URI = string
-type DocumentURI = URI
-type Null struct{}
+import "net/url"
+
+type (
+	DocumentURI = *url.URL
+	URI         = DocumentURI
+	Null        struct{}
+)

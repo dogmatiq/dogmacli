@@ -35,7 +35,10 @@ type (
 	Null struct{}
 
 	// Reference is a reference to a named type.
-	Reference struct{ Target TypeDef }
+	Reference struct {
+		TargetName string
+		Target     TypeDef
+	}
 
 	// StructLit is a literal (anonymous) struct.
 	StructLit struct {
@@ -132,7 +135,7 @@ func (b *builder) typeRef(in lowlevel.Type) Type {
 	case lowlevel.Base:
 		return baseType(in)
 	case lowlevel.Reference:
-		return Reference{b.typeDef(in.Name)}
+		return Reference{in.Name, b.typeDef(in.Name)}
 	case lowlevel.Array:
 		return Array{b.typeRef(*in.ArrayElement)}
 	case lowlevel.Map:

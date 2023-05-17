@@ -110,7 +110,7 @@ type ApplyWorkspaceEditResult struct {
 	// Depending on the client's failure handling strategy `failedChange` might
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
-	FailedChange uint32
+	FailedChange Optional[uint32]
 }
 
 func (x ApplyWorkspaceEditResult) MarshalJSON() ([]byte, error) {
@@ -137,7 +137,7 @@ func (x ApplyWorkspaceEditResult) marshalProperties(w *bytes.Buffer, n *int) err
 	if err := marshalProperty(w, n, "failureReason", x.FailureReason); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "failedChange", x.FailedChange); err != nil {
+	if err := marshalOptionalProperty(w, n, "failedChange", x.FailedChange); err != nil {
 		return err
 	}
 	return nil
@@ -642,7 +642,10 @@ func (x CancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type CancelParamsID struct{}
+type CancelParamsID struct {
+	A Optional[int32]
+	B string
+}
 
 ////////////////////////
 /// ChangeAnnotation ///
@@ -2512,9 +2515,15 @@ func (x CompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type CompletionItemDocumentation struct{}
+type CompletionItemDocumentation struct {
+	A string
+	B Optional[MarkupContent]
+}
 
-type CompletionItemTextEdit struct{}
+type CompletionItemTextEdit struct {
+	A Optional[TextEdit]
+	B Optional[InsertReplaceEdit]
+}
 
 //////////////////////////
 /// CompletionItemKind ///
@@ -2787,7 +2796,10 @@ func (x CompletionListItemDefaults) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
-type CompletionListItemDefaultsEditRange struct{}
+type CompletionListItemDefaultsEditRange struct {
+	A Optional[Range]
+	B Optional[CompletionListItemDefaultsEditRange]
+}
 
 /////////////////////////
 /// CompletionOptions ///
@@ -3218,7 +3230,10 @@ func (x CreateFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////
 
 // The declaration of a symbol representation as one or many {@link Location locations}.
-type Declaration struct{}
+type Declaration struct {
+	A Optional[Location]
+	B []Location
+}
 
 /////////////////////////////////////
 /// DeclarationClientCapabilities ///
@@ -3397,7 +3412,10 @@ func (x DeclarationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *in
 //
 // Servers should prefer returning `DefinitionLink` over `Definition` if supported
 // by the client.
-type Definition struct{}
+type Definition struct {
+	A Optional[Location]
+	B []Location
+}
 
 ////////////////////////////////////
 /// DefinitionClientCapabilities ///
@@ -3782,7 +3800,10 @@ func (x Diagnostic) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type DiagnosticCode struct{}
+type DiagnosticCode struct {
+	A Optional[int32]
+	B string
+}
 
 ////////////////////////////////////
 /// DiagnosticClientCapabilities ///
@@ -4217,7 +4238,10 @@ func (x DidChangeConfigurationRegistrationOptions) marshalProperties(w *bytes.Bu
 	return nil
 }
 
-type DidChangeConfigurationRegistrationOptionsSection struct{}
+type DidChangeConfigurationRegistrationOptionsSection struct {
+	A string
+	B []string
+}
 
 ///////////////////////////////////////
 /// DidChangeNotebookDocumentParams ///
@@ -4923,7 +4947,10 @@ func (x DocumentDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) err
 // pull request.
 //
 // @since 3.17.0
-type DocumentDiagnosticReport struct{}
+type DocumentDiagnosticReport struct {
+	A Optional[RelatedFullDocumentDiagnosticReport]
+	B Optional[RelatedUnchangedDocumentDiagnosticReport]
+}
 
 ////////////////////////////////////
 /// DocumentDiagnosticReportKind ///
@@ -4993,7 +5020,10 @@ func (x DocumentDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer
 	return nil
 }
 
-type DocumentDiagnosticReportPartialResultRelatedDocuments struct{}
+type DocumentDiagnosticReportPartialResultRelatedDocuments struct {
+	A Optional[FullDocumentDiagnosticReport]
+	B Optional[UnchangedDocumentDiagnosticReport]
+}
 
 //////////////////////
 /// DocumentFilter ///
@@ -5003,7 +5033,10 @@ type DocumentDiagnosticReportPartialResultRelatedDocuments struct{}
 // a notebook cell document.
 //
 // @since 3.17.0 - proposed support for NotebookCellTextDocumentFilter.
-type DocumentFilter struct{}
+type DocumentFilter struct {
+	A Optional[TextDocumentFilter]
+	B Optional[NotebookCellTextDocumentFilter]
+}
 
 ////////////////////////////////////////////
 /// DocumentFormattingClientCapabilities ///
@@ -7107,14 +7140,14 @@ type FoldingRange struct {
 	StartLine uint32
 
 	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
-	StartCharacter uint32
+	StartCharacter Optional[uint32]
 
 	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
 	EndLine uint32
 
 	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
-	EndCharacter uint32
+	EndCharacter Optional[uint32]
 
 	// Describes the kind of the folding range such as `comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
@@ -7150,13 +7183,13 @@ func (x FoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "startLine", x.StartLine); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "startCharacter", x.StartCharacter); err != nil {
+	if err := marshalOptionalProperty(w, n, "startCharacter", x.StartCharacter); err != nil {
 		return err
 	}
 	if err := marshalProperty(w, n, "endLine", x.EndLine); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "endCharacter", x.EndCharacter); err != nil {
+	if err := marshalOptionalProperty(w, n, "endCharacter", x.EndCharacter); err != nil {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
@@ -7182,7 +7215,7 @@ type FoldingRangeClientCapabilities struct {
 	// The maximum number of folding ranges that the client prefers to receive
 	// per document. The value serves as a hint, servers are free to follow the
 	// limit.
-	RangeLimit uint32
+	RangeLimit Optional[uint32]
 
 	// If set, the client signals that it only supports folding complete lines.
 	// If set, client will ignore specified `startCharacter` and `endCharacter`
@@ -7221,7 +7254,7 @@ func (x FoldingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "rangeLimit", x.RangeLimit); err != nil {
+	if err := marshalOptionalProperty(w, n, "rangeLimit", x.RangeLimit); err != nil {
 		return err
 	}
 	if err := marshalProperty(w, n, "lineFoldingOnly", x.LineFoldingOnly); err != nil {
@@ -7666,7 +7699,10 @@ func (x GeneralClientCapabilitiesStaleRequestSupport) marshalProperties(w *bytes
 // The glob pattern. Either a string pattern or a relative pattern.
 //
 // @since 3.17.0
-type GlobPattern struct{}
+type GlobPattern struct {
+	A Pattern
+	B Optional[RelativePattern]
+}
 
 /////////////
 /// Hover ///
@@ -7709,7 +7745,11 @@ func (x Hover) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type HoverContents struct{}
+type HoverContents struct {
+	A Optional[MarkupContent]
+	B Optional[MarkedString]
+	C []MarkedString
+}
 
 ///////////////////////////////
 /// HoverClientCapabilities ///
@@ -8287,9 +8327,15 @@ func (x InlayHint) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type InlayHintLabel struct{}
+type InlayHintLabel struct {
+	A string
+	B []InlayHintLabelPart
+}
 
-type InlayHintTooltip struct{}
+type InlayHintTooltip struct {
+	A string
+	B Optional[MarkupContent]
+}
 
 ///////////////////////////////////
 /// InlayHintClientCapabilities ///
@@ -8464,7 +8510,10 @@ func (x InlayHintLabelPart) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type InlayHintLabelPartTooltip struct{}
+type InlayHintLabelPartTooltip struct {
+	A string
+	B Optional[MarkupContent]
+}
 
 ////////////////////////
 /// InlayHintOptions ///
@@ -8651,7 +8700,11 @@ func (x InlayHintWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer,
 // The InlineValue types combines all inline value types into one type.
 //
 // @since 3.17.0
-type InlineValue struct{}
+type InlineValue struct {
+	A Optional[InlineValueText]
+	B Optional[InlineValueVariableLookup]
+	C Optional[InlineValueEvaluatableExpression]
+}
 
 /////////////////////////////////////
 /// InlineValueClientCapabilities ///
@@ -9179,7 +9232,16 @@ func (x *InsertTextMode) UnmarshalJSON(data []byte) error {
 // convenience it is allowed and assumed that all these properties are
 // optional as well.
 // @since 3.17.0
-type LSPAny struct{}
+type LSPAny struct {
+	A LSPObject
+	B LSPArray
+	C string
+	D Optional[int32]
+	E Optional[uint32]
+	F Optional[float64]
+	G bool
+	H Optional[Null]
+}
 
 ////////////////
 /// LSPArray ///
@@ -9666,7 +9728,10 @@ func (x MarkdownClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) e
 // @deprecated use MarkupContent instead.
 //
 // Deprecated: use MarkupContent instead.
-type MarkedString struct{}
+type MarkedString struct {
+	A string
+	B Optional[MarkedString]
+}
 
 /////////////////////
 /// MarkupContent ///
@@ -10259,7 +10324,10 @@ func (x NotebookCellTextDocumentFilter) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
-type NotebookCellTextDocumentFilterNotebook struct{}
+type NotebookCellTextDocumentFilterNotebook struct {
+	A string
+	B Optional[NotebookDocumentFilter]
+}
 
 ////////////////////////
 /// NotebookDocument ///
@@ -10533,7 +10601,11 @@ func (x NotebookDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n
 // against the notebook's URI (same as with documents)
 //
 // @since 3.17.0
-type NotebookDocumentFilter struct{}
+type NotebookDocumentFilter struct {
+	A Optional[NotebookDocumentFilter]
+	B Optional[NotebookDocumentFilter]
+	C Optional[NotebookDocumentFilter]
+}
 
 //////////////////////////////////
 /// NotebookDocumentIdentifier ///
@@ -10669,7 +10741,10 @@ func (x NotebookDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
-type NotebookDocumentSyncOptionsNotebookSelector struct{}
+type NotebookDocumentSyncOptionsNotebookSelector struct {
+	A Optional[NotebookDocumentSyncOptionsNotebookSelector]
+	B Optional[NotebookDocumentSyncOptionsNotebookSelector]
+}
 
 ///////////////////////////////////////////////
 /// NotebookDocumentSyncRegistrationOptions ///
@@ -10753,7 +10828,10 @@ func (x OptionalVersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buff
 	return nil
 }
 
-type OptionalVersionedTextDocumentIdentifierVersion struct{}
+type OptionalVersionedTextDocumentIdentifierVersion struct {
+	A Optional[int32]
+	B Optional[Null]
+}
 
 ////////////////////////////
 /// ParameterInformation ///
@@ -10804,9 +10882,15 @@ func (x ParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type ParameterInformationDocumentation struct{}
+type ParameterInformationDocumentation struct {
+	A string
+	B Optional[MarkupContent]
+}
 
-type ParameterInformationLabel struct{}
+type ParameterInformationLabel struct {
+	A string
+	B Optional[ParameterInformationLabel]
+}
 
 ///////////////////////////
 /// PartialResultParams ///
@@ -10997,7 +11081,11 @@ func (x PrepareRenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// PrepareRenameResult ///
 ///////////////////////////
 
-type PrepareRenameResult struct{}
+type PrepareRenameResult struct {
+	A Optional[Range]
+	B Optional[PrepareRenameResult]
+	C Optional[PrepareRenameResult]
+}
 
 /////////////////////////////////////
 /// PrepareSupportDefaultBehavior ///
@@ -11111,7 +11199,10 @@ func (x ProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// ProgressToken ///
 /////////////////////
 
-type ProgressToken struct{}
+type ProgressToken struct {
+	A Optional[int32]
+	B string
+}
 
 ////////////////////////////////////////////
 /// PublishDiagnosticsClientCapabilities ///
@@ -11224,7 +11315,7 @@ type PublishDiagnosticsParams struct {
 	// Optional the version number of the document the diagnostics are published for.
 	//
 	// @since 3.15.0
-	Version int32
+	Version Optional[int32]
 
 	// An array of diagnostic information items.
 	Diagnostics []Diagnostic
@@ -11251,7 +11342,7 @@ func (x PublishDiagnosticsParams) marshalProperties(w *bytes.Buffer, n *int) err
 	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+	if err := marshalOptionalProperty(w, n, "version", x.Version); err != nil {
 		return err
 	}
 	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
@@ -11665,7 +11756,10 @@ func (x RelatedFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, 
 	return nil
 }
 
-type RelatedFullDocumentDiagnosticReportRelatedDocuments struct{}
+type RelatedFullDocumentDiagnosticReportRelatedDocuments struct {
+	A Optional[FullDocumentDiagnosticReport]
+	B Optional[UnchangedDocumentDiagnosticReport]
+}
 
 ////////////////////////////////////////////////
 /// RelatedUnchangedDocumentDiagnosticReport ///
@@ -11714,7 +11808,10 @@ func (x RelatedUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buf
 	return nil
 }
 
-type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments struct{}
+type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments struct {
+	A Optional[FullDocumentDiagnosticReport]
+	B Optional[UnchangedDocumentDiagnosticReport]
+}
 
 ///////////////////////
 /// RelativePattern ///
@@ -11761,7 +11858,10 @@ func (x RelativePattern) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type RelativePatternBaseURI struct{}
+type RelativePatternBaseURI struct {
+	A Optional[WorkspaceFolder]
+	B URI
+}
 
 ////////////////////////////////
 /// RenameClientCapabilities ///
@@ -12644,9 +12744,15 @@ func (x SemanticTokensClientCapabilitiesRequests) marshalProperties(w *bytes.Buf
 	return nil
 }
 
-type SemanticTokensClientCapabilitiesRequestsFull struct{}
+type SemanticTokensClientCapabilitiesRequestsFull struct {
+	A bool
+	B Optional[SemanticTokensClientCapabilitiesRequestsFull]
+}
 
-type SemanticTokensClientCapabilitiesRequestsRange struct{}
+type SemanticTokensClientCapabilitiesRequestsRange struct {
+	A bool
+	B Optional[SemanticTokensClientCapabilitiesRequestsRange]
+}
 
 ///////////////////////////
 /// SemanticTokensDelta ///
@@ -12908,9 +13014,15 @@ func (x SemanticTokensOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 	return nil
 }
 
-type SemanticTokensOptionsFull struct{}
+type SemanticTokensOptionsFull struct {
+	A bool
+	B Optional[SemanticTokensOptionsFull]
+}
 
-type SemanticTokensOptionsRange struct{}
+type SemanticTokensOptionsRange struct {
+	A bool
+	B Optional[SemanticTokensOptionsRange]
+}
 
 ////////////////////////////
 /// SemanticTokensParams ///
@@ -13389,55 +13501,142 @@ func (x ServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type ServerCapabilitiesCallHierarchyProvider struct{}
+type ServerCapabilitiesCallHierarchyProvider struct {
+	A bool
+	B Optional[CallHierarchyOptions]
+	C Optional[CallHierarchyRegistrationOptions]
+}
 
-type ServerCapabilitiesCodeActionProvider struct{}
+type ServerCapabilitiesCodeActionProvider struct {
+	A bool
+	B Optional[CodeActionOptions]
+}
 
-type ServerCapabilitiesColorProvider struct{}
+type ServerCapabilitiesColorProvider struct {
+	A bool
+	B Optional[DocumentColorOptions]
+	C Optional[DocumentColorRegistrationOptions]
+}
 
-type ServerCapabilitiesDeclarationProvider struct{}
+type ServerCapabilitiesDeclarationProvider struct {
+	A bool
+	B Optional[DeclarationOptions]
+	C Optional[DeclarationRegistrationOptions]
+}
 
-type ServerCapabilitiesDefinitionProvider struct{}
+type ServerCapabilitiesDefinitionProvider struct {
+	A bool
+	B Optional[DefinitionOptions]
+}
 
-type ServerCapabilitiesDiagnosticProvider struct{}
+type ServerCapabilitiesDiagnosticProvider struct {
+	A Optional[DiagnosticOptions]
+	B Optional[DiagnosticRegistrationOptions]
+}
 
-type ServerCapabilitiesDocumentFormattingProvider struct{}
+type ServerCapabilitiesDocumentFormattingProvider struct {
+	A bool
+	B Optional[DocumentFormattingOptions]
+}
 
-type ServerCapabilitiesDocumentHighlightProvider struct{}
+type ServerCapabilitiesDocumentHighlightProvider struct {
+	A bool
+	B Optional[DocumentHighlightOptions]
+}
 
-type ServerCapabilitiesDocumentRangeFormattingProvider struct{}
+type ServerCapabilitiesDocumentRangeFormattingProvider struct {
+	A bool
+	B Optional[DocumentRangeFormattingOptions]
+}
 
-type ServerCapabilitiesDocumentSymbolProvider struct{}
+type ServerCapabilitiesDocumentSymbolProvider struct {
+	A bool
+	B Optional[DocumentSymbolOptions]
+}
 
-type ServerCapabilitiesFoldingRangeProvider struct{}
+type ServerCapabilitiesFoldingRangeProvider struct {
+	A bool
+	B Optional[FoldingRangeOptions]
+	C Optional[FoldingRangeRegistrationOptions]
+}
 
-type ServerCapabilitiesHoverProvider struct{}
+type ServerCapabilitiesHoverProvider struct {
+	A bool
+	B Optional[HoverOptions]
+}
 
-type ServerCapabilitiesImplementationProvider struct{}
+type ServerCapabilitiesImplementationProvider struct {
+	A bool
+	B Optional[ImplementationOptions]
+	C Optional[ImplementationRegistrationOptions]
+}
 
-type ServerCapabilitiesInlayHintProvider struct{}
+type ServerCapabilitiesInlayHintProvider struct {
+	A bool
+	B Optional[InlayHintOptions]
+	C Optional[InlayHintRegistrationOptions]
+}
 
-type ServerCapabilitiesInlineValueProvider struct{}
+type ServerCapabilitiesInlineValueProvider struct {
+	A bool
+	B Optional[InlineValueOptions]
+	C Optional[InlineValueRegistrationOptions]
+}
 
-type ServerCapabilitiesLinkedEditingRangeProvider struct{}
+type ServerCapabilitiesLinkedEditingRangeProvider struct {
+	A bool
+	B Optional[LinkedEditingRangeOptions]
+	C Optional[LinkedEditingRangeRegistrationOptions]
+}
 
-type ServerCapabilitiesMonikerProvider struct{}
+type ServerCapabilitiesMonikerProvider struct {
+	A bool
+	B Optional[MonikerOptions]
+	C Optional[MonikerRegistrationOptions]
+}
 
-type ServerCapabilitiesNotebookDocumentSync struct{}
+type ServerCapabilitiesNotebookDocumentSync struct {
+	A Optional[NotebookDocumentSyncOptions]
+	B Optional[NotebookDocumentSyncRegistrationOptions]
+}
 
-type ServerCapabilitiesReferencesProvider struct{}
+type ServerCapabilitiesReferencesProvider struct {
+	A bool
+	B Optional[ReferenceOptions]
+}
 
-type ServerCapabilitiesRenameProvider struct{}
+type ServerCapabilitiesRenameProvider struct {
+	A bool
+	B Optional[RenameOptions]
+}
 
-type ServerCapabilitiesSelectionRangeProvider struct{}
+type ServerCapabilitiesSelectionRangeProvider struct {
+	A bool
+	B Optional[SelectionRangeOptions]
+	C Optional[SelectionRangeRegistrationOptions]
+}
 
-type ServerCapabilitiesSemanticTokensProvider struct{}
+type ServerCapabilitiesSemanticTokensProvider struct {
+	A Optional[SemanticTokensOptions]
+	B Optional[SemanticTokensRegistrationOptions]
+}
 
-type ServerCapabilitiesTextDocumentSync struct{}
+type ServerCapabilitiesTextDocumentSync struct {
+	A Optional[TextDocumentSyncOptions]
+	B Optional[TextDocumentSyncKind]
+}
 
-type ServerCapabilitiesTypeDefinitionProvider struct{}
+type ServerCapabilitiesTypeDefinitionProvider struct {
+	A bool
+	B Optional[TypeDefinitionOptions]
+	C Optional[TypeDefinitionRegistrationOptions]
+}
 
-type ServerCapabilitiesTypeHierarchyProvider struct{}
+type ServerCapabilitiesTypeHierarchyProvider struct {
+	A bool
+	B Optional[TypeHierarchyOptions]
+	C Optional[TypeHierarchyRegistrationOptions]
+}
 
 type ServerCapabilitiesWorkspace struct {
 	// The server supports workspace folder.
@@ -13478,7 +13677,10 @@ func (x ServerCapabilitiesWorkspace) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
-type ServerCapabilitiesWorkspaceSymbolProvider struct{}
+type ServerCapabilitiesWorkspaceSymbolProvider struct {
+	A bool
+	B Optional[WorkspaceSymbolOptions]
+}
 
 //////////////////////
 /// SetTraceParams ///
@@ -13817,7 +14019,7 @@ type SignatureHelp struct {
 	//
 	// In future version of the protocol this property might become
 	// mandatory to better express this.
-	ActiveSignature uint32
+	ActiveSignature Optional[uint32]
 
 	// The active parameter of the active signature. If omitted or the value
 	// lies outside the range of `signatures[activeSignature].parameters`
@@ -13826,7 +14028,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory to better express the active parameter if the
 	// active signature does have any.
-	ActiveParameter uint32
+	ActiveParameter Optional[uint32]
 }
 
 func (x SignatureHelp) MarshalJSON() ([]byte, error) {
@@ -13850,10 +14052,10 @@ func (x SignatureHelp) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "signatures", x.Signatures); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "activeSignature", x.ActiveSignature); err != nil {
+	if err := marshalOptionalProperty(w, n, "activeSignature", x.ActiveSignature); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
+	if err := marshalOptionalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
 		return err
 	}
 	return nil
@@ -14241,7 +14443,7 @@ type SignatureInformation struct {
 	// If provided, this is used in place of `SignatureHelp.activeParameter`.
 	//
 	// @since 3.16.0
-	ActiveParameter uint32
+	ActiveParameter Optional[uint32]
 }
 
 func (x SignatureInformation) MarshalJSON() ([]byte, error) {
@@ -14271,13 +14473,16 @@ func (x SignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "parameters", x.Parameters); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
+	if err := marshalOptionalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
 		return err
 	}
 	return nil
 }
 
-type SignatureInformationDocumentation struct{}
+type SignatureInformationDocumentation struct {
+	A string
+	B Optional[MarkupContent]
+}
 
 /////////////////////////////////
 /// StaticRegistrationOptions ///
@@ -14758,7 +14963,10 @@ func (x TextDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 
 // An event describing a change to a text document. If only a text is provided
 // it is considered to be the full content of the document.
-type TextDocumentContentChangeEvent struct{}
+type TextDocumentContentChangeEvent struct {
+	A Optional[TextDocumentContentChangeEvent]
+	B Optional[TextDocumentContentChangeEvent]
+}
 
 ////////////////////////
 /// TextDocumentEdit ///
@@ -14806,7 +15014,10 @@ func (x TextDocumentEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type TextDocumentEditEdits struct{}
+type TextDocumentEditEdits struct {
+	A Optional[TextEdit]
+	B Optional[AnnotatedTextEdit]
+}
 
 //////////////////////////
 /// TextDocumentFilter ///
@@ -14828,7 +15039,11 @@ type TextDocumentEditEdits struct{}
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // @since 3.17.0
-type TextDocumentFilter struct{}
+type TextDocumentFilter struct {
+	A Optional[TextDocumentFilter]
+	B Optional[TextDocumentFilter]
+	C Optional[TextDocumentFilter]
+}
 
 //////////////////////////////
 /// TextDocumentIdentifier ///
@@ -14994,7 +15209,10 @@ func (x TextDocumentRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
-type TextDocumentRegistrationOptionsDocumentSelector struct{}
+type TextDocumentRegistrationOptionsDocumentSelector struct {
+	A DocumentSelector
+	B Optional[Null]
+}
 
 //////////////////////////////
 /// TextDocumentSaveReason ///
@@ -15217,7 +15435,10 @@ func (x TextDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) erro
 	return nil
 }
 
-type TextDocumentSyncOptionsSave struct{}
+type TextDocumentSyncOptionsSave struct {
+	A bool
+	B Optional[SaveOptions]
+}
 
 ////////////////
 /// TextEdit ///
@@ -16171,7 +16392,7 @@ type WorkDoneProgressBegin struct {
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100].
-	Percentage uint32
+	Percentage Optional[uint32]
 }
 
 func (x WorkDoneProgressBegin) MarshalJSON() ([]byte, error) {
@@ -16204,7 +16425,7 @@ func (x WorkDoneProgressBegin) marshalProperties(w *bytes.Buffer, n *int) error 
 	if err := marshalProperty(w, n, "message", x.Message); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "percentage", x.Percentage); err != nil {
+	if err := marshalOptionalProperty(w, n, "percentage", x.Percentage); err != nil {
 		return err
 	}
 	return nil
@@ -16402,7 +16623,7 @@ type WorkDoneProgressReport struct {
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100]
-	Percentage uint32
+	Percentage Optional[uint32]
 }
 
 func (x WorkDoneProgressReport) MarshalJSON() ([]byte, error) {
@@ -16432,7 +16653,7 @@ func (x WorkDoneProgressReport) marshalProperties(w *bytes.Buffer, n *int) error
 	if err := marshalProperty(w, n, "message", x.Message); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "percentage", x.Percentage); err != nil {
+	if err := marshalOptionalProperty(w, n, "percentage", x.Percentage); err != nil {
 		return err
 	}
 	return nil
@@ -16702,7 +16923,10 @@ func (x WorkspaceDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffe
 // A workspace diagnostic document report.
 //
 // @since 3.17.0
-type WorkspaceDocumentDiagnosticReport struct{}
+type WorkspaceDocumentDiagnosticReport struct {
+	A Optional[WorkspaceFullDocumentDiagnosticReport]
+	B Optional[WorkspaceUnchangedDocumentDiagnosticReport]
+}
 
 /////////////////////
 /// WorkspaceEdit ///
@@ -16775,7 +16999,12 @@ func (x WorkspaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type WorkspaceEditDocumentChanges struct{}
+type WorkspaceEditDocumentChanges struct {
+	A Optional[TextDocumentEdit]
+	B Optional[CreateFile]
+	C Optional[RenameFile]
+	D Optional[DeleteFile]
+}
 
 ///////////////////////////////////////
 /// WorkspaceEditClientCapabilities ///
@@ -17000,7 +17229,10 @@ func (x WorkspaceFoldersInitializeParams) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
-type WorkspaceFoldersInitializeParamsWorkspaceFolders struct{}
+type WorkspaceFoldersInitializeParamsWorkspaceFolders struct {
+	A []WorkspaceFolder
+	B Optional[Null]
+}
 
 //////////////////////////////////////////
 /// WorkspaceFoldersServerCapabilities ///
@@ -17047,7 +17279,10 @@ func (x WorkspaceFoldersServerCapabilities) marshalProperties(w *bytes.Buffer, n
 	return nil
 }
 
-type WorkspaceFoldersServerCapabilitiesChangeNotifications struct{}
+type WorkspaceFoldersServerCapabilitiesChangeNotifications struct {
+	A string
+	B bool
+}
 
 /////////////////////////////////////////////
 /// WorkspaceFullDocumentDiagnosticReport ///
@@ -17097,7 +17332,10 @@ func (x WorkspaceFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer
 	return nil
 }
 
-type WorkspaceFullDocumentDiagnosticReportVersion struct{}
+type WorkspaceFullDocumentDiagnosticReportVersion struct {
+	A Optional[int32]
+	B Optional[Null]
+}
 
 ///////////////////////
 /// WorkspaceSymbol ///
@@ -17153,7 +17391,10 @@ func (x WorkspaceSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
-type WorkspaceSymbolLocation struct{}
+type WorkspaceSymbolLocation struct {
+	A Optional[Location]
+	B Optional[WorkspaceSymbolLocation]
+}
 
 /////////////////////////////////////////
 /// WorkspaceSymbolClientCapabilities ///
@@ -17476,7 +17717,10 @@ func (x WorkspaceUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.B
 	return nil
 }
 
-type WorkspaceUnchangedDocumentDiagnosticReportVersion struct{}
+type WorkspaceUnchangedDocumentDiagnosticReportVersion struct {
+	A Optional[int32]
+	B Optional[Null]
+}
 
 ////////////////////////
 /// initializeParams ///
@@ -17618,8 +17862,17 @@ func (x InitializeParamsClientInfo) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
-type InitializeParamsRootPath struct{}
+type InitializeParamsRootPath struct {
+	A string
+	B Optional[Null]
+}
 
-type InitializeParamsRootURI struct{}
+type InitializeParamsRootURI struct {
+	A DocumentURI
+	B Optional[Null]
+}
 
-type initializeParamsProcessID struct{}
+type initializeParamsProcessID struct {
+	A Optional[int32]
+	B Optional[Null]
+}
