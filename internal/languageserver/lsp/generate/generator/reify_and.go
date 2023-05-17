@@ -5,7 +5,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *typeLit) And(t model.And) {
+func (g *reifyType) And(t model.And) {
 	g.File.
 		Type().
 		Id(g.Name).

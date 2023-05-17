@@ -10,12 +10,16 @@ func (g *typeDef) Alias(d model.Alias) {
 	documentation(g.File, d.Documentation)
 
 	if i.IsLiteral {
-		g.typeLit(d.TypeName, d.Type)
+		g.emitReifiedType(d.TypeName, d.Type)
 	} else {
-		g.File.
-			Type().
-			Id(identifier(d.TypeName)).
-			Op("=").
-			Add(g.typeExpr(d.Type))
+		g.emitAliasType(d)
 	}
+}
+
+func (g *Generator) emitAliasType(d model.Alias) {
+	g.File.
+		Type().
+		Id(identifier(d.TypeName)).
+		Op("=").
+		Add(g.typeExpr(d.Type))
 }

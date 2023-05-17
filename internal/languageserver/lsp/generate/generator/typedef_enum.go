@@ -10,21 +10,25 @@ import (
 
 func (g *typeDef) Enum(d model.Enum) {
 	documentation(g.File, d.Documentation)
+	g.emitEnumType(d)
+
+	g.File.Line()
+	g.emitEnumConstants(d)
+
+	if !d.SupportsCustomValues {
+		g.File.Line()
+		g.emitEnumUnmarshalMethod(d)
+	}
+}
+
+func (g *Generator) emitEnumType(d model.Enum) {
 	g.File.
 		Type().
 		Id(identifier(d.TypeName)).
 		Add(g.typeExpr(d.Type))
-
-	g.File.Line()
-	g.enumConstants(d)
-
-	if !d.SupportsCustomValues {
-		g.File.Line()
-		g.enumUnmarshalMethod(d)
-	}
 }
 
-func (g *Generator) enumConstants(d model.Enum) {
+func (g *Generator) emitEnumConstants(d model.Enum) {
 	g.File.
 		Const().
 		DefsFunc(func(grp *jen.Group) {
@@ -39,7 +43,7 @@ func (g *Generator) enumConstants(d model.Enum) {
 		})
 }
 
-func (g *Generator) enumUnmarshalMethod(d model.Enum) {
+func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 	g.File.
 		Func().
 		Params(

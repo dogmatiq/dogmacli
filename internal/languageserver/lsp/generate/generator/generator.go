@@ -28,13 +28,13 @@ func (g *Generator) Generate() {
 	)
 
 	for _, d := range defs {
-		g.banner(identifier(d.Name()))
-		g.typeDef(d)
-		g.flushLiterals()
+		g.emitBanner(identifier(d.Name()))
+		g.emitTypeDef(d)
+		g.emitReifiedTypes()
 	}
 }
 
-func (g *Generator) banner(s string) {
+func (g *Generator) emitBanner(s string) {
 	n := len(s)
 	w := n + 8
 

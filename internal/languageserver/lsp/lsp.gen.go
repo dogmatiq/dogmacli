@@ -883,6 +883,30 @@ type CodeActionDisabled struct {
 	Reason string
 }
 
+func (x CodeActionDisabled) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionDisabled) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "reason", x.Reason); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////////
 /// CodeActionClientCapabilities ///
 ////////////////////////////////////
@@ -980,6 +1004,30 @@ type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
 	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind
 }
 
+func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "codeActionKind", x.CodeActionKind); err != nil {
+		return err
+	}
+	return nil
+}
+
 type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 	// The code action kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -988,9 +1036,57 @@ type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 	ValueSet []CodeActionKind
 }
 
+func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
 type CodeActionClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily.
 	Properties []string
+}
+
+func (x CodeActionClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CodeActionClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -1893,15 +1989,20 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// the end of the snippet. Placeholders with equal identifiers are linked,
 	// that is typing in one will update others too.
 	SnippetSupport bool
+
 	// Client supports commit characters on a completion item.
 	CommitCharactersSupport bool
+
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
 	DocumentationFormat []MarkupKind
+
 	// Client supports the deprecated property on a completion item.
 	DeprecatedSupport bool
+
 	// Client supports the preselect property on a completion item.
 	PreselectSupport bool
+
 	// Client supports the tag property on a completion item. Clients supporting
 	// tags have to handle unknown tags gracefully. Clients especially need to
 	// preserve unknown tags when sending a completion item back to the server in
@@ -1909,23 +2010,27 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	//
 	// @since 3.15.0
 	TagSupport Optional[CompletionClientCapabilitiesCompletionItemTagSupport]
+
 	// Client support insert replace edit to control different behavior if a
 	// completion item is inserted in the text or should replace text.
 	//
 	// @since 3.16.0
 	InsertReplaceSupport bool
+
 	// Indicates which properties a client can resolve lazily on a completion
 	// item. Before version 3.16.0 only the predefined properties `documentation`
 	// and `details` could be resolved lazily.
 	//
 	// @since 3.16.0
 	ResolveSupport Optional[CompletionClientCapabilitiesCompletionItemResolveSupport]
+
 	// The client supports the `insertTextMode` property on
 	// a completion item to override the whitespace handling mode
 	// as defined by the client (see `insertTextMode`).
 	//
 	// @since 3.16.0
 	InsertTextModeSupport Optional[CompletionClientCapabilitiesCompletionItemInsertTextModeSupport]
+
 	// The client has support for completion item label
 	// details (see also `CompletionItemLabelDetails`).
 	//
@@ -1933,8 +2038,83 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	LabelDetailsSupport bool
 }
 
+func (x CompletionClientCapabilitiesCompletionItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionClientCapabilitiesCompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "snippetSupport", x.SnippetSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "commitCharactersSupport", x.CommitCharactersSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "documentationFormat", x.DocumentationFormat); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "deprecatedSupport", x.DeprecatedSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "preselectSupport", x.PreselectSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "insertReplaceSupport", x.InsertReplaceSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "insertTextModeSupport", x.InsertTextModeSupport); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "labelDetailsSupport", x.LabelDetailsSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
 	ValueSet []InsertTextMode
+}
+
+func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
@@ -1942,9 +2122,57 @@ type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
 	Properties []string
 }
 
+func (x CompletionClientCapabilitiesCompletionItemResolveSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionClientCapabilitiesCompletionItemResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 type CompletionClientCapabilitiesCompletionItemTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []CompletionItemTag
+}
+
+func (x CompletionClientCapabilitiesCompletionItemTagSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionClientCapabilitiesCompletionItemTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CompletionClientCapabilitiesCompletionItemKind struct {
@@ -1959,6 +2187,30 @@ type CompletionClientCapabilitiesCompletionItemKind struct {
 	ValueSet []CompletionItemKind
 }
 
+func (x CompletionClientCapabilitiesCompletionItemKind) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionClientCapabilitiesCompletionItemKind) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
 type CompletionClientCapabilitiesCompletionList struct {
 	// The client supports the following itemDefaults on
 	// a completion list.
@@ -1969,6 +2221,30 @@ type CompletionClientCapabilitiesCompletionList struct {
 	//
 	// @since 3.17.0
 	ItemDefaults []string
+}
+
+func (x CompletionClientCapabilitiesCompletionList) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionClientCapabilitiesCompletionList) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "itemDefaults", x.ItemDefaults); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -2453,22 +2729,62 @@ type CompletionListItemDefaults struct {
 	//
 	// @since 3.17.0
 	CommitCharacters []string
+
 	// A default edit range.
 	//
 	// @since 3.17.0
 	EditRange Optional[CompletionListItemDefaultsEditRange]
+
 	// A default insert text format.
 	//
 	// @since 3.17.0
 	InsertTextFormat Optional[InsertTextFormat]
+
 	// A default insert text mode.
 	//
 	// @since 3.17.0
 	InsertTextMode Optional[InsertTextMode]
+
 	// A default data value.
 	//
 	// @since 3.17.0
 	Data Optional[LSPAny]
+}
+
+func (x CompletionListItemDefaults) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionListItemDefaults) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "commitCharacters", x.CommitCharacters); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "editRange", x.EditRange); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "insertTextFormat", x.InsertTextFormat); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "insertTextMode", x.InsertTextMode); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
 }
 
 type CompletionListItemDefaultsEditRange struct{}
@@ -2555,6 +2871,30 @@ type CompletionOptionsCompletionItem struct {
 	//
 	// @since 3.17.0
 	LabelDetailsSupport bool
+}
+
+func (x CompletionOptionsCompletionItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionOptionsCompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "labelDetailsSupport", x.LabelDetailsSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -5755,9 +6095,57 @@ type DocumentSymbolClientCapabilitiesSymbolKind struct {
 	ValueSet []SymbolKind
 }
 
+func (x DocumentSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
 type DocumentSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag
+}
+
+func (x DocumentSymbolClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x DocumentSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////
@@ -6856,12 +7244,60 @@ type FoldingRangeClientCapabilitiesFoldingRange struct {
 	CollapsedText bool
 }
 
+func (x FoldingRangeClientCapabilitiesFoldingRange) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FoldingRangeClientCapabilitiesFoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "collapsedText", x.CollapsedText); err != nil {
+		return err
+	}
+	return nil
+}
+
 type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
 	// The folding range kind values the client supports. When this
 	// property exists the client also guarantees that it will
 	// handle values outside its set gracefully and falls back
 	// to a default value when unknown.
 	ValueSet []FoldingRangeKind
+}
+
+func (x FoldingRangeClientCapabilitiesFoldingRangeKind) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x FoldingRangeClientCapabilitiesFoldingRangeKind) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -7067,7 +7503,6 @@ func (x FormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 //
 // @since 3.17.0
 type FullDocumentDiagnosticReport struct {
-
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
 	// same document.
@@ -7190,10 +7625,38 @@ func (x GeneralClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) er
 type GeneralClientCapabilitiesStaleRequestSupport struct {
 	// The client will actively cancel the request.
 	Cancel bool
+
 	// The list of requests for which the client
 	// will retry the request if it receives a
 	// response with error code `ContentModified`
 	RetryOnContentModified []string
+}
+
+func (x GeneralClientCapabilitiesStaleRequestSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x GeneralClientCapabilitiesStaleRequestSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "cancel", x.Cancel); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "retryOnContentModified", x.RetryOnContentModified); err != nil {
+		return err
+	}
+	return nil
 }
 
 ///////////////////
@@ -7670,8 +8133,36 @@ func (x InitializeResult) marshalProperties(w *bytes.Buffer, n *int) error {
 type InitializeResultServerInfo struct {
 	// The name of the server as defined by the server.
 	Name string
+
 	// The server's version as defined by the server.
 	Version string
+}
+
+func (x InitializeResultServerInfo) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InitializeResultServerInfo) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -7846,6 +8337,30 @@ func (x InlayHintClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) 
 type InlayHintClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily.
 	Properties []string
+}
+
+func (x InlayHintClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InlayHintClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////
@@ -9858,25 +10373,117 @@ type NotebookDocumentChangeEventCells struct {
 	// Changes to the cell structure to add or
 	// remove cells.
 	Structure Optional[NotebookDocumentChangeEventCellsStructure]
+
 	// Changes to notebook cells properties like its
 	// kind, execution summary or metadata.
 	Data []NotebookCell
+
 	// Changes to the text content of notebook cells.
 	TextContent []NotebookDocumentChangeEventCellsTextContent
+}
+
+func (x NotebookDocumentChangeEventCells) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentChangeEventCells) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "structure", x.Structure); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "textContent", x.TextContent); err != nil {
+		return err
+	}
+	return nil
 }
 
 type NotebookDocumentChangeEventCellsStructure struct {
 	// The change to the cell array.
 	Array NotebookCellArrayChange
+
 	// Additional opened cell text documents.
 	DidOpen []TextDocumentItem
+
 	// Additional closed cell text documents.
 	DidClose []TextDocumentIdentifier
 }
 
+func (x NotebookDocumentChangeEventCellsStructure) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentChangeEventCellsStructure) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "array", x.Array); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "didOpen", x.DidOpen); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "didClose", x.DidClose); err != nil {
+		return err
+	}
+	return nil
+}
+
 type NotebookDocumentChangeEventCellsTextContent struct {
 	Document VersionedTextDocumentIdentifier
-	Changes  []TextDocumentContentChangeEvent
+
+	Changes []TextDocumentContentChangeEvent
+}
+
+func (x NotebookDocumentChangeEventCellsTextContent) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentChangeEventCellsTextContent) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "document", x.Document); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "changes", x.Changes); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////////////
@@ -10579,6 +11186,30 @@ func (x PublishDiagnosticsClientCapabilities) marshalProperties(w *bytes.Buffer,
 type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []DiagnosticTag
+}
+
+func (x PublishDiagnosticsClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PublishDiagnosticsClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////////
@@ -11980,9 +12611,37 @@ type SemanticTokensClientCapabilitiesRequests struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
 	Range Optional[SemanticTokensClientCapabilitiesRequestsRange]
+
 	// The client will send the `textDocument/semanticTokens/full` request if
 	// the server provides a corresponding handler.
 	Full Optional[SemanticTokensClientCapabilitiesRequestsFull]
+}
+
+func (x SemanticTokensClientCapabilitiesRequests) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensClientCapabilitiesRequests) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "full", x.Full); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SemanticTokensClientCapabilitiesRequestsFull struct{}
@@ -12785,10 +13444,38 @@ type ServerCapabilitiesWorkspace struct {
 	//
 	// @since 3.6.0
 	WorkspaceFolders Optional[WorkspaceFoldersServerCapabilities]
+
 	// The server is interested in notifications/requests for operations on files.
 	//
 	// @since 3.16.0
 	FileOperations Optional[FileOperationOptions]
+}
+
+func (x ServerCapabilitiesWorkspace) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ServerCapabilitiesWorkspace) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "workspaceFolders", x.WorkspaceFolders); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "fileOperations", x.FileOperations); err != nil {
+		return err
+	}
+	return nil
 }
 
 type ServerCapabilitiesWorkspaceSymbolProvider struct{}
@@ -13041,6 +13728,30 @@ type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
 	AdditionalPropertiesSupport bool
 }
 
+func (x ShowMessageRequestClientCapabilitiesMessageActionItem) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x ShowMessageRequestClientCapabilitiesMessageActionItem) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "additionalPropertiesSupport", x.AdditionalPropertiesSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 ////////////////////////////////
 /// ShowMessageRequestParams ///
 ////////////////////////////////
@@ -13204,13 +13915,45 @@ type SignatureHelpClientCapabilitiesSignatureInformation struct {
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
 	DocumentationFormat []MarkupKind
+
 	// Client capabilities specific to parameter information.
 	ParameterInformation Optional[SignatureHelpClientCapabilitiesSignatureInformationParameterInformation]
+
 	// The client supports the `activeParameter` property on `SignatureInformation`
 	// literal.
 	//
 	// @since 3.16.0
 	ActiveParameterSupport bool
+}
+
+func (x SignatureHelpClientCapabilitiesSignatureInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelpClientCapabilitiesSignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "documentationFormat", x.DocumentationFormat); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "parameterInformation", x.ParameterInformation); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "activeParameterSupport", x.ActiveParameterSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct {
@@ -13219,6 +13962,30 @@ type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation str
 	//
 	// @since 3.14.0
 	LabelOffsetSupport bool
+}
+
+func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "labelOffsetSupport", x.LabelOffsetSupport); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////////
@@ -15037,7 +15804,6 @@ func (x TypeHierarchySupertypesParams) marshalProperties(w *bytes.Buffer, n *int
 //
 // @since 3.17.0
 type UnchangedDocumentDiagnosticReport struct {
-
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
 	ResultID string
@@ -15381,7 +16147,6 @@ func (x WindowClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) err
 /////////////////////////////
 
 type WorkDoneProgressBegin struct {
-
 	// Mandatory title of the progress operation. Used to briefly inform about
 	// the kind of operation being performed.
 	//
@@ -15516,7 +16281,6 @@ func (x WorkDoneProgressCreateParams) marshalProperties(w *bytes.Buffer, n *int)
 ///////////////////////////
 
 type WorkDoneProgressEnd struct {
-
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
 	Message string
@@ -15619,7 +16383,6 @@ func (x WorkDoneProgressParams) marshalProperties(w *bytes.Buffer, n *int) error
 //////////////////////////////
 
 type WorkDoneProgressReport struct {
-
 	// Controls enablement state of a cancel button.
 	//
 	// Clients that don't support cancellation or don't support controlling the button's
@@ -16093,6 +16856,30 @@ type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
 	GroupsOnLabel bool
 }
 
+func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "groupsOnLabel", x.GroupsOnLabel); err != nil {
+		return err
+	}
+	return nil
+}
+
 ///////////////////////
 /// WorkspaceFolder ///
 ///////////////////////
@@ -16433,6 +17220,30 @@ type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
 	Properties []string
 }
 
+func (x WorkspaceSymbolClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 	// The symbol kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -16445,9 +17256,57 @@ type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 	ValueSet []SymbolKind
 }
 
+func (x WorkspaceSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
 type WorkspaceSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag
+}
+
+func (x WorkspaceSymbolClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////
@@ -16727,8 +17586,36 @@ func (x initializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 type InitializeParamsClientInfo struct {
 	// The name of the client as defined by the client.
 	Name string
+
 	// The client's version as defined by the client.
 	Version string
+}
+
+func (x InitializeParamsClientInfo) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x InitializeParamsClientInfo) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
 }
 
 type InitializeParamsRootPath struct{}

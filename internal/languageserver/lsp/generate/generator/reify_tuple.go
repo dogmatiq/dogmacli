@@ -5,13 +5,10 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *typeLit) StructLit(t model.StructLit) {
+func (g *reifyType) Tuple(t model.Tuple) {
 	g.File.
 		Type().
 		Id(g.Name).
 		StructFunc(func(grp *jen.Group) {
-			for _, p := range t.Properties {
-				g.structProperty(grp, p)
-			}
 		})
 }

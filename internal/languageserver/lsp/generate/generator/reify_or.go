@@ -5,7 +5,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *typeLit) Tuple(t model.Tuple) {
+func (g *reifyType) Or(t model.Or) {
 	g.File.
 		Type().
 		Id(g.Name).

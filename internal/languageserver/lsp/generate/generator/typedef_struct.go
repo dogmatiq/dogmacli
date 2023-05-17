@@ -1,67 +1,83 @@
 package generator
 
 import (
-	"fmt"
-
 	"github.com/dave/jennifer/jen"
-	"github.com/dogmatiq/dogmacli/internal/jenx"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
 func (g *typeDef) Struct(d model.Struct) {
 	documentation(g.File, d.Documentation)
+	g.emitStruct(
+		identifier(d.TypeName),
+		d.Embedded,
+		d.Properties,
+	)
+}
+
+func (g *Generator) emitStruct(
+	name string,
+	embedded []*model.Struct,
+	properties []model.Property,
+) {
+	g.emitStructType(name, embedded, properties)
+	g.emitStructMarshalMethods(name, embedded, properties)
+}
+
+func (g *Generator) emitStructType(
+	name string,
+	embedded []*model.Struct,
+	properties []model.Property,
+) {
 	g.File.
 		Type().
-		Id(identifier(d.TypeName)).
+		Id(name).
 		StructFunc(func(grp *jen.Group) {
-			for _, e := range d.Embedded {
+			for _, e := range embedded {
 				grp.Id(identifier(e.TypeName))
 			}
 
-			if len(d.Embedded) > 0 && len(d.Properties) > 0 {
+			if len(embedded) > 0 && len(properties) > 0 {
 				grp.Line()
 			}
 
-			for _, p := range d.Properties {
-				g.structProperty(grp, p)
+			for _, p := range properties {
+				if _, ok := p.Type.(model.StringLit); ok {
+					// Don't add a struct field to represent string literal properties.
+					// These are always handled at the (un)marshaling level.
+					continue
+				}
+
+				g.enterProperty(p.Name)
+
+				i := g.typeInfo(p.Type)
+				t := g.typeExpr(p.Type)
+
+				if p.Optional && i.UseOptional {
+					t = jen.Id("Optional").Types(t)
+				}
+
+				documentation(grp, p.Documentation)
+
+				grp.
+					Id(identifier(p.Name)).
+					Add(t)
+
 				grp.Line()
+
+				g.leaveProperty()
 			}
 		})
-
-	g.File.Line()
-	g.structMarshalMethods(d)
-
-	// g.File.Line()
-	// g.structUnmarshalMethod(d)
 }
 
-func (g *Generator) structProperty(grp *jen.Group, p model.Property) {
-	if _, ok := p.Type.(model.StringLit); ok {
-		return
-	}
-
-	g.pushName(p.Name)
-	defer g.popName()
-
-	documentation(grp, p.Documentation)
-
-	i := g.typeInfo(p.Type)
-	t := g.typeExpr(p.Type)
-
-	if p.Optional && i.UseOptional {
-		t = jen.Id("Optional").Types(t)
-	}
-
-	grp.
-		Id(identifier(p.Name)).
-		Add(t)
-}
-
-func (g *Generator) structMarshalMethods(d model.Struct) {
+func (g *Generator) emitStructMarshalMethods(
+	name string,
+	embedded []*model.Struct,
+	properties []model.Property,
+) {
 	g.File.
 		Func().
 		Params(
-			jen.Id("x").Id(identifier(d.TypeName)),
+			jen.Id("x").Id(name),
 		).
 		Id("MarshalJSON").
 		Params().
@@ -125,7 +141,7 @@ func (g *Generator) structMarshalMethods(d model.Struct) {
 		Line().
 		Func().
 		Params(
-			jen.Id("x").Id(identifier(d.TypeName)),
+			jen.Id("x").Id(name),
 		).
 		Id("marshalProperties").
 		Params(
@@ -136,7 +152,7 @@ func (g *Generator) structMarshalMethods(d model.Struct) {
 			jen.Error(),
 		).
 		BlockFunc(func(grp *jen.Group) {
-			for _, e := range d.Embedded {
+			for _, e := range embedded {
 				grp.
 					If(
 						jen.
@@ -155,7 +171,7 @@ func (g *Generator) structMarshalMethods(d model.Struct) {
 					)
 			}
 
-			for _, p := range d.Properties {
+			for _, p := range properties {
 				i := g.typeInfo(p.Type)
 
 				fn := "marshalProperty"
@@ -184,63 +200,5 @@ func (g *Generator) structMarshalMethods(d model.Struct) {
 			}
 
 			grp.Return(jen.Nil())
-		})
-}
-
-func (g *Generator) structUnmarshalMethod(d model.Struct) {
-	g.File.
-		Func().
-		Params(
-			jen.Id("x").Op("*").Id(identifier(d.TypeName)),
-		).
-		Id("UnmarshalJSON").
-		Params(
-			jen.Id("data").Index().Byte(),
-		).
-		Params(
-			jen.Error(),
-		).
-		BlockFunc(func(grp *jen.Group) {
-			grp.
-				Var().
-				Id("properties").
-				Map(jen.String()).
-				Qual("encoding/json", "RawMessage")
-
-			grp.
-				If(
-					jen.
-						Err().
-						Op(":=").
-						Qual("encoding/json", "Unmarshal").
-						Call(
-							jen.Id("data"),
-							jen.Op("&").Id("properties"),
-						),
-					jen.Err().Op("!=").Nil(),
-				).
-				Block(
-					jen.Return(
-						jenx.
-							Errorf(
-								fmt.Sprintf(
-									"%s: %%w",
-									identifier(d.TypeName),
-								),
-								jen.Err(),
-							),
-					),
-				)
-
-			// for _, e := range d.Embedded {
-			// }
-
-			// for _, p := range d.Properties {
-			// 	grp.Comment(p.Name)
-			// }
-
-			grp.
-				Line().
-				Return(jen.Nil())
 		})
 }

@@ -40,10 +40,10 @@ func (g *typeExpr) Map(t model.Map) *jen.Statement {
 		Add(g.typeExpr(t.Value))
 }
 
-func (g *typeExpr) And(t model.And) *jen.Statement             { return jen.Id(g.enqueueLiteral(t)) }
-func (g *typeExpr) Or(t model.Or) *jen.Statement               { return jen.Id(g.enqueueLiteral(t)) }
-func (g *typeExpr) Tuple(t model.Tuple) *jen.Statement         { return jen.Id(g.enqueueLiteral(t)) }
-func (g *typeExpr) StructLit(t model.StructLit) *jen.Statement { return jen.Id(g.enqueueLiteral(t)) }
+func (g *typeExpr) And(t model.And) *jen.Statement             { return g.reify(t) }
+func (g *typeExpr) Or(t model.Or) *jen.Statement               { return g.reify(t) }
+func (g *typeExpr) Tuple(t model.Tuple) *jen.Statement         { return g.reify(t) }
+func (g *typeExpr) StructLit(t model.StructLit) *jen.Statement { return g.reify(t) }
 
 func (g *typeExpr) StringLit(t model.StringLit) *jen.Statement {
 	panic("string literals do not have a type representation")
