@@ -9,6 +9,8 @@ import (
 )
 
 func (g *reifyType) Or(t model.Or) {
+	tag := "is" + g.Name
+
 	documentation(
 		g.File,
 		model.Documentation{},
@@ -17,18 +19,29 @@ func (g *reifyType) Or(t model.Or) {
 	g.File.
 		Type().
 		Id(g.Name).
-		StructFunc(func(grp *jen.Group) {
-			for i, m := range t.Types {
-				g.pushNestedScope(strconv.Itoa(i))
+		Interface(
+			jen.
+				Id(tag).
+				Params(),
+		)
 
-				info := g.typeInfo(m)
-				if info.TypeKind != reflect.Invalid {
-					grp.
-						Id(info.NameHint).
-						Add(info.TypeExpr())
-				}
+	for i, m := range t.Types {
+		g.pushNestedScope("Option" + strconv.Itoa(i))
+		info := g.typeInfo(m)
+		g.popNestedScope()
 
-				g.popNestedScope()
-			}
-		})
+		if info.Kind == reflect.Invalid {
+			continue
+		}
+
+		if info.Kind == reflect.Interface {
+		} else {
+			g.File.
+				Func().
+				Params(info.Expr()).
+				Id(tag).
+				Params().
+				Block()
+		}
+	}
 }

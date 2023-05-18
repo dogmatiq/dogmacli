@@ -20,8 +20,8 @@ func (g *method) Call(m model.Call) {
 	if m.Params != nil {
 		g.pushNestedScope("Params")
 		info := g.typeInfo(m.Params)
-		if info.TypeKind != reflect.Invalid {
-			params = info.TypeExpr()
+		if info.Kind != reflect.Invalid {
+			params = info.Expr()
 		}
 		g.popNestedScope()
 	}
@@ -36,8 +36,8 @@ func (g *method) Call(m model.Call) {
 	if m.Result != nil {
 		g.pushNestedScope("Result")
 		info := g.typeInfo(m.Result)
-		if info.TypeKind != reflect.Invalid {
-			result = info.TypeExpr()
+		if info.Kind != reflect.Invalid {
+			result = info.Expr()
 		}
 		g.popNestedScope()
 	}
@@ -100,8 +100,8 @@ func (g *method) Notification(m model.Notification) {
 	if m.Params != nil {
 		g.pushNestedScope("Params")
 		info := g.typeInfo(m.Params)
-		if info.TypeKind != reflect.Invalid {
-			params = info.TypeExpr()
+		if info.Kind != reflect.Invalid {
+			params = info.Expr()
 		}
 		g.popNestedScope()
 	}

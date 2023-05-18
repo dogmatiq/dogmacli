@@ -9,12 +9,26 @@ import (
 )
 
 type typeInfo struct {
-	Name        *string
-	NameHint    string
-	TypeExpr    func() *jen.Statement
-	TypeKind    reflect.Kind
+	Name        string
+	Kind        reflect.Kind
 	UseOptional bool
-	IsReified   bool
+
+	expr  *jen.Statement
+	reify func(typeInfo)
+}
+
+func (i typeInfo) IsReified() bool {
+	return i.reify != nil
+}
+
+func (i typeInfo) Expr() *jen.Statement {
+	if i.reify != nil {
+		i.reify(i)
+	}
+	if i.expr != nil {
+		return i.expr
+	}
+	return jen.Id(i.Name)
 }
 
 func (g *Generator) typeInfo(t model.Type) typeInfo {
@@ -30,77 +44,58 @@ type typeInfoX struct {
 }
 
 func (g *typeInfoX) Bool() typeInfo {
-	name := "Bool"
 	return typeInfo{
-		Name:     &name,
-		NameHint: name,
-		TypeExpr: func() *jen.Statement { return jen.Id(name) },
-		TypeKind: reflect.Bool,
+		Name: "Bool",
+		Kind: reflect.Bool,
 	}
 }
 
 func (g *typeInfoX) Decimal() typeInfo {
-	name := "Decimal"
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    reflect.Float64,
+		Name:        "Decimal",
+		Kind:        reflect.Float64,
 		UseOptional: true,
 	}
 }
 
 func (g *typeInfoX) String() typeInfo {
-	name := "String"
 	return typeInfo{
-		Name:     &name,
-		NameHint: name,
-		TypeExpr: func() *jen.Statement { return jen.Id(name) },
-		TypeKind: reflect.String,
+		Name: "String",
+		Kind: reflect.String,
 	}
 }
 
 func (g *typeInfoX) Integer() typeInfo {
-	name := "Integer"
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    reflect.Int32,
+		Name:        "Integer",
+		Kind:        reflect.Int32,
 		UseOptional: true,
 	}
 }
 
 func (g *typeInfoX) UInteger() typeInfo {
-	name := "UInteger"
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    reflect.Int32,
+		Name:        "UInteger",
+		Kind:        reflect.Int32,
 		UseOptional: true,
 	}
 }
 
 func (g *typeInfoX) DocumentURI() typeInfo {
-	name := "DocumentURI"
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    reflect.Pointer,
+		Name:        "DocumentURI",
+		Kind:        reflect.Pointer,
 		UseOptional: true,
+		expr:        jen.Op("*").Id("DocumentURI"),
 	}
 }
 
 func (g *typeInfoX) URI() typeInfo {
-	name := "URI"
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    reflect.Pointer,
+		Name:        "URI",
+		Kind:        reflect.Pointer,
 		UseOptional: true,
+		expr:        jen.Op("*").Id("URI"),
 	}
 }
 
@@ -109,89 +104,62 @@ func (g *typeInfoX) Null() typeInfo {
 }
 
 func (g *typeInfoX) Array(t model.Array) typeInfo {
-	e := g.typeInfo(t.Element)
-
 	return typeInfo{
-		NameHint:    fmt.Sprintf("%sArray", e.NameHint),
-		TypeExpr:    func() *jen.Statement { return jen.Index().Add(e.TypeExpr()) },
-		TypeKind:    reflect.Slice,
+		Name: fmt.Sprintf(
+			"%sArray",
+			g.typeInfo(t.Element).Name,
+		),
+		Kind:        reflect.Slice,
 		UseOptional: false,
+		reify:       func(i typeInfo) { g.reifyType(i.Name, t) },
 	}
 }
 
 func (g *typeInfoX) Map(t model.Map) typeInfo {
-	k := g.typeInfo(t.Key)
-	v := g.typeInfo(t.Value)
-
 	return typeInfo{
-		NameHint:    fmt.Sprintf("%s%sMap", k.NameHint, v.NameHint),
-		TypeExpr:    func() *jen.Statement { return jen.Map(k.TypeExpr()).Add(v.TypeExpr()) },
-		TypeKind:    reflect.Map,
+		Name: fmt.Sprintf(
+			"%s%sMap",
+			g.typeInfo(t.Key).Name,
+			g.typeInfo(t.Value).Name,
+		),
+		Kind:        reflect.Map,
 		UseOptional: false,
+		reify:       func(i typeInfo) { g.reifyType(i.Name, t) },
 	}
 }
 
 func (g *typeInfoX) And(t model.And) typeInfo {
-	name := g.nameFromScope()
-
 	return typeInfo{
-		Name:     &name,
-		NameHint: name,
-		TypeExpr: func() *jen.Statement {
-			g.reifyType(name, t)
-			return jen.Id(name)
-		},
-		TypeKind:    reflect.Struct,
+		Name:        g.nameFromScope(),
+		Kind:        reflect.Struct,
 		UseOptional: true,
-		IsReified:   true,
+		reify:       func(i typeInfo) { g.reifyType(i.Name, t) },
 	}
 }
 
 func (g *typeInfoX) Or(t model.Or) typeInfo {
-	name := g.nameFromScope()
-
 	return typeInfo{
-		Name:     &name,
-		NameHint: name,
-		TypeExpr: func() *jen.Statement {
-			g.reifyType(name, t)
-			return jen.Id(name)
-		},
-		TypeKind:    reflect.Struct,
-		UseOptional: true,
-		IsReified:   true,
+		Name:  g.nameFromScope(),
+		Kind:  reflect.Interface,
+		reify: func(i typeInfo) { g.reifyType(i.Name, t) },
 	}
 }
 
 func (g *typeInfoX) Tuple(t model.Tuple) typeInfo {
-	name := g.nameFromScope()
-
 	return typeInfo{
-		Name:     &name,
-		NameHint: name,
-		TypeExpr: func() *jen.Statement {
-			g.reifyType(name, t)
-			return jen.Id(name)
-		},
-		TypeKind:    reflect.Struct,
+		Name:        g.nameFromScope(),
+		Kind:        reflect.Struct,
 		UseOptional: true,
-		IsReified:   true,
+		reify:       func(i typeInfo) { g.reifyType(i.Name, t) },
 	}
 }
 
 func (g *typeInfoX) StructLit(t model.StructLit) typeInfo {
-	name := g.nameFromScope()
-
 	return typeInfo{
-		Name:     &name,
-		NameHint: name,
-		TypeExpr: func() *jen.Statement {
-			g.reifyType(name, t)
-			return jen.Id(name)
-		},
-		TypeKind:    reflect.Struct,
+		Name:        g.nameFromScope(),
+		Kind:        reflect.Struct,
 		UseOptional: true,
-		IsReified:   true,
+		reify:       func(i typeInfo) { g.reifyType(i.Name, t) },
 	}
 }
 
@@ -208,10 +176,8 @@ func (g *typeInfoX) Alias(d model.Alias) typeInfo {
 	underlying := g.typeInfo(d.Type)
 
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    underlying.TypeKind,
+		Name:        name,
+		Kind:        underlying.Kind,
 		UseOptional: underlying.UseOptional,
 	}
 }
@@ -221,10 +187,8 @@ func (g *typeInfoX) Enum(d model.Enum) typeInfo {
 	underlying := g.typeInfo(d.Type)
 
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    underlying.TypeKind,
+		Name:        name,
+		Kind:        underlying.Kind,
 		UseOptional: true,
 	}
 }
@@ -233,10 +197,8 @@ func (g *typeInfoX) Struct(d model.Struct) typeInfo {
 	name := identifier(d.TypeName)
 
 	return typeInfo{
-		Name:        &name,
-		NameHint:    name,
-		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
-		TypeKind:    reflect.Struct,
+		Name:        name,
+		Kind:        reflect.Struct,
 		UseOptional: true,
 	}
 }

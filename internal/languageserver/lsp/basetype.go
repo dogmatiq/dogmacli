@@ -8,6 +8,6 @@ type (
 	String      string
 	Integer     int32
 	UInteger    uint32
-	DocumentURI = *url.URL
-	URI         = DocumentURI
+	DocumentURI url.URL
+	URI         url.URL
 )

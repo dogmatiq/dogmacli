@@ -6,15 +6,9 @@ import (
 	"golang.org/x/exp/slices"
 )
 
-func (g *Generator) emitReifiedType(n string, t model.Type) {
-	if g.reified == nil {
-		g.reified = map[string]struct{}{}
-	}
-
-	g.reified[n] = struct{}{}
-
-	g.pushScope(n)
-	model.VisitType(t, &reifyType{g, n})
+func (g *Generator) emitReifiedType(name string, t model.Type) {
+	g.pushScope(name)
+	model.VisitType(t, &reifyType{g, name})
 	g.popScope()
 }
 
@@ -36,14 +30,19 @@ func (g *Generator) nameFromScope() string {
 	return identifier(g.scopes[len(g.scopes)-1]...)
 }
 
-func (g *Generator) reifyType(name string, t model.Type) string {
-	if g.unreified == nil {
-		g.unreified = map[string]model.Type{}
+func (g *Generator) reifyType(name string, t model.Type) {
+	if g.reified == nil {
+		g.reified = map[string]struct{}{}
 	}
+
 	if _, ok := g.reified[name]; !ok {
+		g.reified[name] = struct{}{}
+
+		if g.unreified == nil {
+			g.unreified = map[string]model.Type{}
+		}
 		g.unreified[name] = t
 	}
-	return name
 }
 
 type reifyType struct {
@@ -60,6 +59,4 @@ func (g *reifyType) DocumentURI()                { panic("not implemented") }
 func (g *reifyType) URI()                        { panic("not implemented") }
 func (g *reifyType) Null()                       { panic("not implemented") }
 func (g *reifyType) Reference(model.Reference)   { panic("not implemented") }
-func (g *reifyType) Array(model.Array)           { panic("not implemented") }
-func (g *reifyType) Map(model.Map)               { panic("not implemented") }
 func (g *reifyType) StringLit(t model.StringLit) { panic("not implemented") }

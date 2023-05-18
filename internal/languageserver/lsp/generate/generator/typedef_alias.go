@@ -15,13 +15,12 @@ func (g *typeDef) Alias(d model.Alias) {
 		d.TypeName,
 	)
 
-	if underlying.IsReified {
-		g.emitReifiedType(*info.Name, d.Type)
+	if underlying.IsReified() {
+		g.emitReifiedType(info.Name, d.Type)
 	} else {
 		g.File.
 			Type().
-			Add(info.TypeExpr()).
-			Op("=").
-			Add(underlying.TypeExpr())
+			Add(info.Expr()).
+			Add(underlying.Expr())
 	}
 }

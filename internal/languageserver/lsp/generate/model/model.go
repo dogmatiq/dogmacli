@@ -15,7 +15,7 @@ type Model struct {
 type Documentation = lowlevel.Documentation
 
 // Root returns the root node of the meta-model.
-func Root() Model {
+func Root() *Model {
 	b := &builder{
 		aliases: map[string]*Alias{},
 		structs: map[string]*Struct{},
@@ -30,8 +30,8 @@ type builder struct {
 	structs map[string]*Struct
 }
 
-func (b *builder) BuildModel(in lowlevel.Model) Model {
-	out := Model{
+func (b *builder) BuildModel(in lowlevel.Model) *Model {
+	out := &Model{
 		Version: in.MetaData.Version,
 	}
 

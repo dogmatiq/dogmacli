@@ -16,7 +16,7 @@ func (g *typeDef) Struct(d model.Struct) {
 	)
 
 	g.emitStruct(
-		*g.typeInfoForDef(d).Name,
+		g.typeInfoForDef(d).Name,
 		d.Embedded,
 		d.Properties,
 	)
@@ -42,7 +42,7 @@ func (g *Generator) emitStructType(
 		StructFunc(func(grp *jen.Group) {
 			for _, t := range embedded {
 				info := g.typeInfo(t)
-				grp.Id(*info.Name)
+				grp.Id(info.Name)
 			}
 
 			if len(embedded) > 0 && len(properties) > 0 {
@@ -54,8 +54,8 @@ func (g *Generator) emitStructType(
 
 				info := g.typeInfo(p.Type)
 
-				if info.TypeKind != reflect.Invalid {
-					expr := info.TypeExpr()
+				if info.Kind != reflect.Invalid {
+					expr := info.Expr()
 					if p.Optional && info.UseOptional {
 						expr = jen.Id("Optional").Types(expr)
 					}
@@ -100,14 +100,10 @@ func (g *Generator) emitStructMarshalMethods(
 
 			grp.
 				Line().
-				Id("w").
-				Dot("WriteByte").
-				Call(
-					jen.LitRune('{'),
-				)
+				Id("w").Dot("WriteByte").
+				Call(jen.LitRune('{'))
 
 			grp.
-				Line().
 				If(
 					jen.
 						Err().
@@ -127,12 +123,8 @@ func (g *Generator) emitStructMarshalMethods(
 				)
 
 			grp.
-				Line().
-				Id("w").
-				Dot("WriteByte").
-				Call(
-					jen.LitRune('}'),
-				)
+				Id("w").Dot("WriteByte").
+				Call(jen.LitRune('}'))
 
 			grp.
 				Line().
@@ -165,7 +157,7 @@ func (g *Generator) emitStructMarshalMethods(
 						jen.
 							Err().
 							Op(":=").
-							Id("x").Op(".").Id(*info.Name).
+							Id("x").Op(".").Id(info.Name).
 							Dot("marshalProperties").
 							Call(
 								jen.Id("w"),

@@ -27,14 +27,18 @@ func (g *typeDef) Enum(d model.Enum) {
 	}
 }
 
+func enumMemberName(d model.Enum, m model.EnumMember) string {
+	return identifier(m.Name, d.TypeName)
+}
+
 func (g *Generator) emitEnumType(d model.Enum) {
 	info := g.typeInfoForDef(d)
 	underlying := g.typeInfo(d.Type)
 
 	g.File.
 		Type().
-		Add(info.TypeExpr()).
-		Add(underlying.TypeExpr())
+		Add(info.Expr()).
+		Add(underlying.Expr())
 }
 
 func (g *Generator) emitEnumConstants(d model.Enum) {
@@ -46,8 +50,8 @@ func (g *Generator) emitEnumConstants(d model.Enum) {
 			for _, m := range d.Members {
 				documentation(grp, m.Documentation, "")
 				grp.
-					Id(identifier(*info.Name, m.Name)).
-					Add(info.TypeExpr()).
+					Id(enumMemberName(d, m)).
+					Add(info.Expr()).
 					Op("=").
 					Lit(m.Value)
 			}
@@ -60,7 +64,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 	g.File.
 		Func().
 		Params(
-			jen.Id("x").Op("*").Add(info.TypeExpr()),
+			jen.Id("x").Op("*").Add(info.Expr()),
 		).
 		Id("UnmarshalJSON").
 		Params(
@@ -80,7 +84,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 							jen.Id("data"),
 							jen.
 								Parens(
-									jen.Op("*").Add(info.TypeExpr()),
+									jen.Op("*").Add(info.Expr()),
 								).
 								Call(
 									jen.Id("x"),
@@ -92,10 +96,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 					jen.Return(
 						jenx.
 							Errorf(
-								fmt.Sprintf(
-									"%s: %%w",
-									*info.Name,
-								),
+								fmt.Sprintf("%s: %%w", info.Name),
 								jen.Err(),
 							),
 					),
@@ -107,7 +108,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 				BlockFunc(func(grp *jen.Group) {
 					for _, m := range d.Members {
 						grp.Case(
-							jen.Id(identifier(*info.Name, m.Name)),
+							jen.Id(enumMemberName(d, m)),
 						)
 					}
 
@@ -117,10 +118,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 							jen.Return(
 								jenx.
 									Errorf(
-										fmt.Sprintf(
-											"%s: %%v is not a member of the enum",
-											*info.Name,
-										),
+										fmt.Sprintf("%s: %%v is not a member of the enum", info.Name),
 										jen.Id("x"),
 									),
 							),

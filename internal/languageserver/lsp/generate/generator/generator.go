@@ -10,7 +10,7 @@ import (
 
 // Generator generates Go code from the LSP meta-model.
 type Generator struct {
-	Model model.Model
+	Model *model.Model
 	File  *jen.File
 
 	scopes    [][]string
