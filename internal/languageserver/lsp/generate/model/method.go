@@ -1,41 +1,29 @@
 package model
 
-import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
-
-// Method is an interface for JSON-RPC methods.
+// Method is a node that describes a JSON-RPC method.
 type Method interface {
-	Name() string
-	accept(MethodVisitor)
+	Node
+
+	MethodName() string
+	Direction() MethodDirection
 }
 
-type (
-	// MethodCommon contains the common fields of Call and Notification.
-	MethodCommon struct {
-		MethodName          string
-		Documentation       Documentation
-		Direction           MethodDirection
-		Params              Type
-		RegistrationMethod  string
-		RegistrationOptions Type
-	}
+// MethodDirection indicates the direction that a JSON-RPC request is sent.
+type MethodDirection int
 
-	// Call is a JSON-RPC method that has a response.
-	Call struct {
-		MethodCommon
+type method struct {
+	node
+	name string
+	dir  MethodDirection
+}
 
-		Result        Type
-		PartialResult Type
-		ErrorData     Type
-	}
+func (m *method) MethodName() string {
+	return m.name
+}
 
-	// Notification is a JSON-RPC method that has no response.
-	Notification struct {
-		MethodCommon
-	}
-
-	// MethodDirection indicates the direction that a JSON-RPC request is sent.
-	MethodDirection int
-)
+func (m *method) Direction() MethodDirection {
+	return m.dir
+}
 
 const (
 	// HandledByLanguageServer indicates that a JSON-RPC method request is sent
@@ -47,86 +35,10 @@ const (
 	HandledByIDE
 )
 
-// Name returns the method name.
-func (m Call) Name() string {
-	return m.MethodName
-}
-
-// Name returns the method name.
-func (m Notification) Name() string {
-	return m.MethodName
-}
-
-func (b *builder) call(in lowlevel.Request) *Call {
-	return &Call{
-		MethodCommon: MethodCommon{
-			MethodName:          in.Method,
-			Documentation:       in.Documentation,
-			Direction:           methodDirection(in.Direction),
-			Params:              b.typeRef(in.Params),
-			RegistrationMethod:  in.RegistrationMethod,
-			RegistrationOptions: b.typeRef(in.RegistrationOptions),
-		},
-		Result:        b.typeRef(in.Result),
-		PartialResult: b.typeRef(in.PartialResult),
-		ErrorData:     b.typeRef(in.ErrorData),
-	}
-}
-
-func (b *builder) notification(in lowlevel.Notification) *Notification {
-	return &Notification{
-		MethodCommon: MethodCommon{
-			MethodName:          in.Method,
-			Documentation:       in.Documentation,
-			Direction:           methodDirection(in.Direction),
-			Params:              b.typeRef(in.Params),
-			RegistrationMethod:  in.RegistrationMethod,
-			RegistrationOptions: b.typeRef(in.RegistrationOptions),
-		},
-	}
-}
-
+// methodDirection converts a low-level message direction to a MethodDirection.
 func methodDirection(dir string) MethodDirection {
 	if dir == "clientToServer" {
 		return HandledByLanguageServer
 	}
 	return HandledByIDE
 }
-
-// MethodVisitor provides logic specific to each Method implementation.
-type MethodVisitor interface {
-	Call(*Call)
-	Notification(*Notification)
-}
-
-// VisitMethod dispatches to v based on the concrete type of m.
-func VisitMethod(m Method, v MethodVisitor) {
-	m.accept(v)
-}
-
-// MethodTransform produces a value of type T from a TypeDef.
-type MethodTransform[T any] interface {
-	Call(*Call) T
-	Notification(*Notification) T
-}
-
-// MethodTo transforms m to a value of type T using x.
-func MethodTo[T any](
-	m Method,
-	x MethodTransform[T],
-) T {
-	v := &methodX[T]{X: x}
-	VisitMethod(m, v)
-	return v.V
-}
-
-type methodX[T any] struct {
-	X MethodTransform[T]
-	V T
-}
-
-func (m *Call) accept(v MethodVisitor)         { v.Call(m) }
-func (m *Notification) accept(v MethodVisitor) { v.Notification(m) }
-
-func (v *methodX[T]) Call(m *Call)                 { v.V = v.X.Call(m) }
-func (v *methodX[T]) Notification(m *Notification) { v.V = v.X.Notification(m) }

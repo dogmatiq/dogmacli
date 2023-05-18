@@ -6,21 +6,12 @@ import (
 
 // Alias describes a named type alias.
 type Alias struct {
-	TypeName      string
-	Documentation Documentation
-	Type          Type
+	typeDef
+
+	Type Type
 }
 
-// Name returns the type name.
-func (d *Alias) Name() string {
-	return d.TypeName
-}
-
-func (b *builder) alias(in lowlevel.Alias, out *Alias) {
-	out.TypeName = in.Name
+func (b *builder) buildAlias(in lowlevel.Alias, out *Alias) {
 	out.Documentation = in.Documentation
-	out.Type = b.typeRef(in.Type)
+	out.Type = b.buildType(in.Type)
 }
-
-func (d *Alias) accept(v TypeDefVisitor) { v.Alias(d) }
-func (v *typeDefX[T]) Alias(d *Alias)    { v.V = v.X.Alias(d) }

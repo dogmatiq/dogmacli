@@ -8,39 +8,40 @@ import (
 
 // Enum describes a named enumeration type.
 type Enum struct {
-	TypeName             string
-	Documentation        Documentation
-	Type                 Type
-	Members              []EnumMember
-	SupportsCustomValues bool
+	typeDef
+
+	Type    Type
+	Lax     bool
+	Members []*EnumMember
 }
 
 // EnumMember describes a value within an enumeration.
 type EnumMember struct {
+	node
+
 	Name          string
 	Documentation Documentation
 	Value         any
 }
 
-// Name returns the type name.
-func (d *Enum) Name() string {
-	return d.TypeName
+// AcceptVisitor dispatches to the appropriate method on the given visitor.
+func (n *EnumMember) AcceptVisitor(v Visitor) {
+	v.VisitEnumMember(n)
 }
 
-func (b *builder) enum(in lowlevel.Enum, out *Enum) {
-	out.TypeName = in.Name
+func (b *builder) buildEnum(in lowlevel.Enum, out *Enum) {
 	out.Documentation = in.Documentation
-	out.Type = b.typeRef(in.Type)
-	out.SupportsCustomValues = in.SupportsCustomValues
+	out.Type = b.buildType(in.Type)
+	out.Lax = in.SupportsCustomValues
 
 	for _, m := range in.Members {
 		out.Members = append(
 			out.Members,
-			EnumMember{
-				Name:          m.Name,
-				Documentation: m.Documentation,
-				Value:         normalizeEnumValue(m.Value),
-			},
+			build(b, func(n *EnumMember) {
+				n.Name = m.Name
+				n.Documentation = m.Documentation
+				n.Value = normalizeEnumValue(m.Value)
+			}),
 		)
 	}
 }
@@ -53,6 +54,3 @@ func normalizeEnumValue(v any) any {
 	}
 	return v
 }
-
-func (d *Enum) accept(v TypeDefVisitor) { v.Enum(d) }
-func (v *typeDefX[T]) Enum(d *Enum)     { v.V = v.X.Enum(d) }

@@ -137,7 +137,7 @@ func (t *Type) UnmarshalJSON(data []byte) error {
 		return json.Unmarshal(t.RawValue, &t.MapValue)
 	case Literal:
 		return json.Unmarshal(t.RawValue, &t.StructLit)
-	case StringLit:
+	case StringLiteral:
 		return json.Unmarshal(t.RawValue, &t.StringLit)
 	}
 
@@ -170,8 +170,8 @@ const (
 	// Literal indicates that the Type is a literal (anonymous) structure.
 	Literal Kind = "literal"
 
-	// StringLit indicates that the Type is a string with a specific value.
-	StringLit Kind = "stringLiteral"
+	// StringLiteral indicates that the Type is a string with a specific value.
+	StringLiteral Kind = "stringLiteral"
 
 	// And indicates that the Type is an intersection of other types.
 	And Kind = "and"
