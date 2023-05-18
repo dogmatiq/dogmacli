@@ -8,7 +8,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *typeDef) Enum(d model.Enum) {
+func (g *typeDef) Enum(d *model.Enum) {
 	documentation(
 		g.File,
 		d.Documentation,
@@ -27,11 +27,11 @@ func (g *typeDef) Enum(d model.Enum) {
 	}
 }
 
-func enumMemberName(d model.Enum, m model.EnumMember) string {
+func enumMemberName(d *model.Enum, m model.EnumMember) string {
 	return identifier(m.Name, d.TypeName)
 }
 
-func (g *Generator) emitEnumType(d model.Enum) {
+func (g *Generator) emitEnumType(d *model.Enum) {
 	info := g.typeInfoForDef(d)
 	underlying := g.typeInfo(d.Type)
 
@@ -41,7 +41,7 @@ func (g *Generator) emitEnumType(d model.Enum) {
 		Add(underlying.Expr())
 }
 
-func (g *Generator) emitEnumConstants(d model.Enum) {
+func (g *Generator) emitEnumConstants(d *model.Enum) {
 	info := g.typeInfoForDef(d)
 
 	g.File.
@@ -58,7 +58,7 @@ func (g *Generator) emitEnumConstants(d model.Enum) {
 		})
 }
 
-func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
+func (g *Generator) emitEnumUnmarshalMethod(d *model.Enum) {
 	info := g.typeInfoForDef(d)
 
 	g.File.

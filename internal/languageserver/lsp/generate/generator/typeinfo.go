@@ -103,7 +103,7 @@ func (g *typeInfoX) Null() typeInfo {
 	return typeInfo{}
 }
 
-func (g *typeInfoX) Array(t model.Array) typeInfo {
+func (g *typeInfoX) Array(t *model.Array) typeInfo {
 	return typeInfo{
 		Name: fmt.Sprintf(
 			"%sArray",
@@ -115,7 +115,7 @@ func (g *typeInfoX) Array(t model.Array) typeInfo {
 	}
 }
 
-func (g *typeInfoX) Map(t model.Map) typeInfo {
+func (g *typeInfoX) Map(t *model.Map) typeInfo {
 	return typeInfo{
 		Name: fmt.Sprintf(
 			"%s%sMap",
@@ -128,7 +128,7 @@ func (g *typeInfoX) Map(t model.Map) typeInfo {
 	}
 }
 
-func (g *typeInfoX) And(t model.And) typeInfo {
+func (g *typeInfoX) And(t *model.And) typeInfo {
 	return typeInfo{
 		Name:        g.nameFromScope(),
 		Kind:        reflect.Struct,
@@ -137,7 +137,7 @@ func (g *typeInfoX) And(t model.And) typeInfo {
 	}
 }
 
-func (g *typeInfoX) Or(t model.Or) typeInfo {
+func (g *typeInfoX) Or(t *model.Or) typeInfo {
 	return typeInfo{
 		Name:  g.nameFromScope(),
 		Kind:  reflect.Interface,
@@ -145,7 +145,7 @@ func (g *typeInfoX) Or(t model.Or) typeInfo {
 	}
 }
 
-func (g *typeInfoX) Tuple(t model.Tuple) typeInfo {
+func (g *typeInfoX) Tuple(t *model.Tuple) typeInfo {
 	return typeInfo{
 		Name:        g.nameFromScope(),
 		Kind:        reflect.Struct,
@@ -154,7 +154,7 @@ func (g *typeInfoX) Tuple(t model.Tuple) typeInfo {
 	}
 }
 
-func (g *typeInfoX) StructLit(t model.StructLit) typeInfo {
+func (g *typeInfoX) StructLit(t *model.StructLit) typeInfo {
 	return typeInfo{
 		Name:        g.nameFromScope(),
 		Kind:        reflect.Struct,
@@ -163,15 +163,15 @@ func (g *typeInfoX) StructLit(t model.StructLit) typeInfo {
 	}
 }
 
-func (g *typeInfoX) StringLit(t model.StringLit) typeInfo {
+func (g *typeInfoX) StringLit(t *model.StringLit) typeInfo {
 	return typeInfo{}
 }
 
-func (g *typeInfoX) Reference(t model.Reference) typeInfo {
+func (g *typeInfoX) Reference(t *model.Reference) typeInfo {
 	return model.TypeDefTo[typeInfo](t.Target, g)
 }
 
-func (g *typeInfoX) Alias(d model.Alias) typeInfo {
+func (g *typeInfoX) Alias(d *model.Alias) typeInfo {
 	name := identifier(d.TypeName)
 	underlying := g.typeInfo(d.Type)
 
@@ -182,7 +182,7 @@ func (g *typeInfoX) Alias(d model.Alias) typeInfo {
 	}
 }
 
-func (g *typeInfoX) Enum(d model.Enum) typeInfo {
+func (g *typeInfoX) Enum(d *model.Enum) typeInfo {
 	name := identifier(d.TypeName)
 	underlying := g.typeInfo(d.Type)
 
@@ -193,7 +193,7 @@ func (g *typeInfoX) Enum(d model.Enum) typeInfo {
 	}
 }
 
-func (g *typeInfoX) Struct(d model.Struct) typeInfo {
+func (g *typeInfoX) Struct(d *model.Struct) typeInfo {
 	name := identifier(d.TypeName)
 
 	return typeInfo{

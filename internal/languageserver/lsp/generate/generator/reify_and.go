@@ -4,7 +4,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *reifyType) And(t model.And) {
+func (g *reifyType) And(t *model.And) {
 	documentation(
 		g.File,
 		model.Documentation{},

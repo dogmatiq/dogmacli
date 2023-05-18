@@ -4,7 +4,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *reifyType) Array(t model.Array) {
+func (g *reifyType) Array(t *model.Array) {
 	documentation(
 		g.File,
 		model.Documentation{},

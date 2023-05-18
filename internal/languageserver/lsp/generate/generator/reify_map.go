@@ -4,7 +4,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *reifyType) Map(t model.Map) {
+func (g *reifyType) Map(t *model.Map) {
 	documentation(
 		g.File,
 		model.Documentation{},

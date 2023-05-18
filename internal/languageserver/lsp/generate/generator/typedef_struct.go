@@ -7,7 +7,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *typeDef) Struct(d model.Struct) {
+func (g *typeDef) Struct(d *model.Struct) {
 	documentation(
 		g.File,
 		d.Documentation,
@@ -25,7 +25,7 @@ func (g *typeDef) Struct(d model.Struct) {
 func (g *Generator) emitStruct(
 	name string,
 	embedded []model.Type,
-	properties []model.Property,
+	properties []*model.Property,
 ) {
 	g.emitStructType(name, embedded, properties)
 	g.emitStructMarshalMethods(name, embedded, properties)
@@ -34,7 +34,7 @@ func (g *Generator) emitStruct(
 func (g *Generator) emitStructType(
 	name string,
 	embedded []model.Type,
-	properties []model.Property,
+	properties []*model.Property,
 ) {
 	g.File.
 		Type().
@@ -77,7 +77,7 @@ func (g *Generator) emitStructType(
 func (g *Generator) emitStructMarshalMethods(
 	name string,
 	embedded []model.Type,
-	properties []model.Property,
+	properties []*model.Property,
 ) {
 	g.File.
 		Func().
@@ -179,7 +179,7 @@ func (g *Generator) emitStructMarshalMethods(
 				}
 
 				expr := jen.Id("x").Dot(identifier(p.Name))
-				if t, ok := p.Type.(model.StringLit); ok {
+				if t, ok := p.Type.(*model.StringLit); ok {
 					expr = jen.Lit(t.Value)
 				}
 

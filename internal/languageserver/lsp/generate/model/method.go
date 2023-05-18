@@ -57,8 +57,8 @@ func (m Notification) Name() string {
 	return m.MethodName
 }
 
-func (b *builder) call(in lowlevel.Request) Call {
-	return Call{
+func (b *builder) call(in lowlevel.Request) *Call {
+	return &Call{
 		MethodCommon: MethodCommon{
 			MethodName:          in.Method,
 			Documentation:       in.Documentation,
@@ -73,8 +73,8 @@ func (b *builder) call(in lowlevel.Request) Call {
 	}
 }
 
-func (b *builder) notification(in lowlevel.Notification) Notification {
-	return Notification{
+func (b *builder) notification(in lowlevel.Notification) *Notification {
+	return &Notification{
 		MethodCommon: MethodCommon{
 			MethodName:          in.Method,
 			Documentation:       in.Documentation,
@@ -95,8 +95,8 @@ func methodDirection(dir string) MethodDirection {
 
 // MethodVisitor provides logic specific to each Method implementation.
 type MethodVisitor interface {
-	Call(Call)
-	Notification(Notification)
+	Call(*Call)
+	Notification(*Notification)
 }
 
 // VisitMethod dispatches to v based on the concrete type of m.
@@ -106,8 +106,8 @@ func VisitMethod(m Method, v MethodVisitor) {
 
 // MethodTransform produces a value of type T from a TypeDef.
 type MethodTransform[T any] interface {
-	Call(Call) T
-	Notification(Notification) T
+	Call(*Call) T
+	Notification(*Notification) T
 }
 
 // MethodTo transforms m to a value of type T using x.
@@ -125,8 +125,8 @@ type methodX[T any] struct {
 	V T
 }
 
-func (m Call) accept(v MethodVisitor)         { v.Call(m) }
-func (m Notification) accept(v MethodVisitor) { v.Notification(m) }
+func (m *Call) accept(v MethodVisitor)         { v.Call(m) }
+func (m *Notification) accept(v MethodVisitor) { v.Notification(m) }
 
-func (v *methodX[T]) Call(m Call)                 { v.V = v.X.Call(m) }
-func (v *methodX[T]) Notification(m Notification) { v.V = v.X.Notification(m) }
+func (v *methodX[T]) Call(m *Call)                 { v.V = v.X.Call(m) }
+func (v *methodX[T]) Notification(m *Notification) { v.V = v.X.Notification(m) }

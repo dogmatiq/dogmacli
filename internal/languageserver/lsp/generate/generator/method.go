@@ -15,7 +15,7 @@ func (g *Generator) emitMethod(m model.Method) {
 
 type method struct{ *Generator }
 
-func (g *method) Call(m model.Call) {
+func (g *method) Call(m *model.Call) {
 	params := jen.Null()
 	if m.Params != nil {
 		g.pushNestedScope("Params")
@@ -95,7 +95,7 @@ func (g *method) Call(m model.Call) {
 	}
 }
 
-func (g *method) Notification(m model.Notification) {
+func (g *method) Notification(m *model.Notification) {
 	params := jen.Null()
 	if m.Params != nil {
 		g.pushNestedScope("Params")

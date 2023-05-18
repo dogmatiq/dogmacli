@@ -4,7 +4,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *typeDef) Alias(d model.Alias) {
+func (g *typeDef) Alias(d *model.Alias) {
 	info := g.typeInfoForDef(d)
 	underlying := g.typeInfo(d.Type)
 

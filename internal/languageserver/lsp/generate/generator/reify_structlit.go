@@ -4,7 +4,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *reifyType) StructLit(t model.StructLit) {
+func (g *reifyType) StructLit(t *model.StructLit) {
 	documentation(
 		g.File,
 		model.Documentation{},

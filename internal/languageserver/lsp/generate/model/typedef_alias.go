@@ -12,7 +12,7 @@ type Alias struct {
 }
 
 // Name returns the type name.
-func (d Alias) Name() string {
+func (d *Alias) Name() string {
 	return d.TypeName
 }
 
@@ -22,5 +22,5 @@ func (b *builder) alias(in lowlevel.Alias, out *Alias) {
 	out.Type = b.typeRef(in.Type)
 }
 
-func (d Alias) accept(v TypeDefVisitor) { v.Alias(d) }
-func (v *typeDefX[T]) Alias(d Alias)    { v.V = v.X.Alias(d) }
+func (d *Alias) accept(v TypeDefVisitor) { v.Alias(d) }
+func (v *typeDefX[T]) Alias(d *Alias)    { v.V = v.X.Alias(d) }

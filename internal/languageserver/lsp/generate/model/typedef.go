@@ -8,9 +8,9 @@ type TypeDef interface {
 
 // TypeDefVisitor provides logic specific to each TypeDef implementation.
 type TypeDefVisitor interface {
-	Alias(Alias)
-	Enum(Enum)
-	Struct(Struct)
+	Alias(*Alias)
+	Enum(*Enum)
+	Struct(*Struct)
 }
 
 // VisitTypeDef dispatches to v based on the concrete type of d.
@@ -20,9 +20,9 @@ func VisitTypeDef(d TypeDef, v TypeDefVisitor) {
 
 // TypeDefTransform produces a value of type T from a TypeDef.
 type TypeDefTransform[T any] interface {
-	Alias(Alias) T
-	Enum(Enum) T
-	Struct(Struct) T
+	Alias(*Alias) T
+	Enum(*Enum) T
+	Struct(*Struct) T
 }
 
 // TypeDefTo transforms d to a value of type T using x.

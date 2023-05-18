@@ -50,13 +50,13 @@ type reifyType struct {
 	Name string
 }
 
-func (g *reifyType) Bool()                       { panic("not implemented") }
-func (g *reifyType) Decimal()                    { panic("not implemented") }
-func (g *reifyType) String()                     { panic("not implemented") }
-func (g *reifyType) Integer()                    { panic("not implemented") }
-func (g *reifyType) UInteger()                   { panic("not implemented") }
-func (g *reifyType) DocumentURI()                { panic("not implemented") }
-func (g *reifyType) URI()                        { panic("not implemented") }
-func (g *reifyType) Null()                       { panic("not implemented") }
-func (g *reifyType) Reference(model.Reference)   { panic("not implemented") }
-func (g *reifyType) StringLit(t model.StringLit) { panic("not implemented") }
+func (g *reifyType) Bool()                      { panic("not implemented") }
+func (g *reifyType) Decimal()                   { panic("not implemented") }
+func (g *reifyType) String()                    { panic("not implemented") }
+func (g *reifyType) Integer()                   { panic("not implemented") }
+func (g *reifyType) UInteger()                  { panic("not implemented") }
+func (g *reifyType) DocumentURI()               { panic("not implemented") }
+func (g *reifyType) URI()                       { panic("not implemented") }
+func (g *reifyType) Null()                      { panic("not implemented") }
+func (g *reifyType) Reference(*model.Reference) { panic("not implemented") }
+func (g *reifyType) StringLit(*model.StringLit) { panic("not implemented") }

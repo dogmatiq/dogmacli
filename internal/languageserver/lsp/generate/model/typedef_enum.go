@@ -23,7 +23,7 @@ type EnumMember struct {
 }
 
 // Name returns the type name.
-func (d Enum) Name() string {
+func (d *Enum) Name() string {
 	return d.TypeName
 }
 
@@ -54,5 +54,5 @@ func normalizeEnumValue(v any) any {
 	return v
 }
 
-func (d Enum) accept(v TypeDefVisitor) { v.Enum(d) }
-func (v *typeDefX[T]) Enum(d Enum)     { v.V = v.X.Enum(d) }
+func (d *Enum) accept(v TypeDefVisitor) { v.Enum(d) }
+func (v *typeDefX[T]) Enum(d *Enum)     { v.V = v.X.Enum(d) }

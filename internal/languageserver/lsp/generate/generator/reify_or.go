@@ -8,7 +8,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *reifyType) Or(t model.Or) {
+func (g *reifyType) Or(t *model.Or) {
 	tag := "is" + g.Name
 
 	documentation(

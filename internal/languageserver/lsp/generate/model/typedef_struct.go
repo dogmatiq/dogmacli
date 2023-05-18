@@ -7,7 +7,7 @@ type Struct struct {
 	TypeName      string
 	Documentation Documentation
 	Embedded      []Type
-	Properties    []Property
+	Properties    []*Property
 }
 
 // Property describes a field within a structure.
@@ -19,7 +19,7 @@ type Property struct {
 }
 
 // Name returns the type name.
-func (d Struct) Name() string {
+func (d *Struct) Name() string {
 	return d.TypeName
 }
 
@@ -45,11 +45,11 @@ func (b *builder) structure(in lowlevel.Struct, out *Struct) {
 
 func (b *builder) properties(
 	in []lowlevel.Property,
-) (out []Property) {
+) (out []*Property) {
 	for _, p := range in {
 		out = append(
 			out,
-			Property{
+			&Property{
 				Name:          p.Name,
 				Documentation: p.Documentation,
 				Optional:      p.Optional,
@@ -61,5 +61,5 @@ func (b *builder) properties(
 	return out
 }
 
-func (d Struct) accept(v TypeDefVisitor) { v.Struct(d) }
-func (v *typeDefX[T]) Struct(d Struct)   { v.V = v.X.Struct(d) }
+func (d *Struct) accept(v TypeDefVisitor) { v.Struct(d) }
+func (v *typeDefX[T]) Struct(d *Struct)   { v.V = v.X.Struct(d) }

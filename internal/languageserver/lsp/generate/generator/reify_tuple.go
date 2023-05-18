@@ -5,7 +5,7 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *reifyType) Tuple(t model.Tuple) {
+func (g *reifyType) Tuple(t *model.Tuple) {
 	documentation(
 		g.File,
 		model.Documentation{},
