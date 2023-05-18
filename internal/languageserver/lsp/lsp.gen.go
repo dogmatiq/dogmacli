@@ -16,6 +16,8 @@ import (
 // A special text edit with an additional change annotation.
 //
 // @since 3.16.0.
+//
+// Generated from the LSP 'AnnotatedTextEdit' structure.
 type AnnotatedTextEdit struct {
 	TextEdit
 
@@ -55,11 +57,13 @@ func (x AnnotatedTextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////
 
 // The parameters passed via an apply workspace edit request.
+//
+// Generated from the LSP 'ApplyWorkspaceEditParams' structure.
 type ApplyWorkspaceEditParams struct {
 	// An optional label of the workspace edit. This label is
 	// presented in the user interface for example on an undo
 	// stack to undo the workspace edit.
-	Label string
+	Label String
 
 	// The edits to apply.
 	Edit WorkspaceEdit
@@ -99,19 +103,21 @@ func (x ApplyWorkspaceEditParams) marshalProperties(w *bytes.Buffer, n *int) err
 // The result returned from the apply workspace edit request.
 //
 // @since 3.17 renamed from ApplyWorkspaceEditResponse
+//
+// Generated from the LSP 'ApplyWorkspaceEditResult' structure.
 type ApplyWorkspaceEditResult struct {
 	// Indicates whether the edit was applied or not.
-	Applied bool
+	Applied Bool
 
 	// An optional textual description for why the edit was not applied.
 	// This may be used by the server for diagnostic logging or to provide
 	// a suitable error for a request that triggered the edit.
-	FailureReason string
+	FailureReason String
 
 	// Depending on the client's failure handling strategy `failedChange` might
 	// contain the index of the change that failed. This property is only available
 	// if the client signals a `failureHandlingStrategy` in its client capabilities.
-	FailedChange Optional[uint32]
+	FailedChange Optional[UInteger]
 }
 
 func (x ApplyWorkspaceEditResult) MarshalJSON() ([]byte, error) {
@@ -149,9 +155,11 @@ func (x ApplyWorkspaceEditResult) marshalProperties(w *bytes.Buffer, n *int) err
 /////////////////////////////
 
 // A base for all symbol information.
+//
+// Generated from the LSP 'BaseSymbolInformation' structure.
 type BaseSymbolInformation struct {
 	// The name of this symbol.
-	Name string
+	Name String
 
 	// The kind of this symbol.
 	Kind SymbolKind
@@ -165,7 +173,7 @@ type BaseSymbolInformation struct {
 	// user interface purposes (e.g. to render a qualifier in the user interface
 	// if necessary). It can't be used to re-infer a hierarchy for the document
 	// symbols.
-	ContainerName string
+	ContainerName String
 }
 
 func (x BaseSymbolInformation) MarshalJSON() ([]byte, error) {
@@ -206,11 +214,13 @@ func (x BaseSymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error 
 ///////////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyClientCapabilities' structure.
 type CallHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x CallHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -244,6 +254,8 @@ func (x CallHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 // Represents an incoming call, e.g. a caller of a method or constructor.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyIncomingCall' structure.
 type CallHierarchyIncomingCall struct {
 	// The item that makes the call.
 	From CallHierarchyItem
@@ -287,6 +299,8 @@ func (x CallHierarchyIncomingCall) marshalProperties(w *bytes.Buffer, n *int) er
 // The parameter of a `callHierarchy/incomingCalls` request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyIncomingCallsParams' structure.
 type CallHierarchyIncomingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -332,9 +346,11 @@ func (x CallHierarchyIncomingCallsParams) marshalProperties(w *bytes.Buffer, n *
 // of call hierarchy.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyItem' structure.
 type CallHierarchyItem struct {
 	// The name of this item.
-	Name string
+	Name String
 
 	// The kind of this item.
 	Kind SymbolKind
@@ -343,7 +359,7 @@ type CallHierarchyItem struct {
 	Tags []SymbolTag
 
 	// More detail for this item, e.g. the signature of a function.
-	Detail string
+	Detail String
 
 	// The resource identifier of this item.
 	URI DocumentURI
@@ -412,6 +428,8 @@ func (x CallHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
 // Call hierarchy options used during static registration.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyOptions' structure.
 type CallHierarchyOptions struct {
 	WorkDoneProgressOptions
 }
@@ -447,6 +465,8 @@ func (x CallHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyOutgoingCall' structure.
 type CallHierarchyOutgoingCall struct {
 	// The item that is called.
 	To CallHierarchyItem
@@ -491,6 +511,8 @@ func (x CallHierarchyOutgoingCall) marshalProperties(w *bytes.Buffer, n *int) er
 // The parameter of a `callHierarchy/outgoingCalls` request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyOutgoingCallsParams' structure.
 type CallHierarchyOutgoingCallsParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -535,6 +557,8 @@ func (x CallHierarchyOutgoingCallsParams) marshalProperties(w *bytes.Buffer, n *
 // The parameter of a `textDocument/prepareCallHierarchy` request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyPrepareParams' structure.
 type CallHierarchyPrepareParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -574,6 +598,8 @@ func (x CallHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) e
 // Call hierarchy options used during static or dynamic registration.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CallHierarchyRegistrationOptions' structure.
 type CallHierarchyRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CallHierarchyOptions
@@ -614,6 +640,7 @@ func (x CallHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 /// CancelParams ///
 ////////////////////
 
+// Generated from the LSP 'CancelParams' structure.
 type CancelParams struct {
 	// The request id to cancel.
 	ID CancelParamsID
@@ -643,9 +670,10 @@ func (x CancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type CancelParamsID struct {
-	A Optional[int32]
-	B Optional[string]
+	Integer Integer
+	String  String
 }
 
 ////////////////////////
@@ -655,18 +683,20 @@ type CancelParamsID struct {
 // Additional information that describes document changes.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'ChangeAnnotation' structure.
 type ChangeAnnotation struct {
 	// A human-readable string describing the actual change. The string
 	// is rendered prominent in the user interface.
-	Label string
+	Label String
 
 	// A flag which indicates that user confirmation is needed
 	// before applying the change.
-	NeedsConfirmation bool
+	NeedsConfirmation Bool
 
 	// A human-readable string which is rendered less prominent in
 	// the user interface.
-	Description string
+	Description String
 }
 
 func (x ChangeAnnotation) MarshalJSON() ([]byte, error) {
@@ -704,13 +734,17 @@ func (x ChangeAnnotation) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////////////////////
 
 // An identifier to refer to a change annotation stored with a workspace edit.
-type ChangeAnnotationIdentifier = string
+//
+// Generated from the LSP 'ChangeAnnotationIdentifier' type alias.
+type ChangeAnnotationIdentifier = String
 
 //////////////////////////
 /// ClientCapabilities ///
 //////////////////////////
 
 // Defines the capabilities provided by the client.
+//
+// Generated from the LSP 'ClientCapabilities' structure.
 type ClientCapabilities struct {
 	// Workspace specific client capabilities.
 	Workspace Optional[WorkspaceClientCapabilities]
@@ -782,9 +816,11 @@ func (x ClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 // to refactor code.
 //
 // A CodeAction must set either `edit` and/or a `command`. If both are supplied, the `edit` is applied first, then the `command` is executed.
+//
+// Generated from the LSP 'CodeAction' structure.
 type CodeAction struct {
 	// A short, human-readable, title for this code action.
-	Title string
+	Title String
 
 	// The kind of the code action.
 	//
@@ -801,7 +837,7 @@ type CodeAction struct {
 	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
 	//
 	// @since 3.15.0
-	IsPreferred bool
+	IsPreferred Bool
 
 	// Marks that the code action cannot currently be applied.
 	//
@@ -880,11 +916,12 @@ func (x CodeAction) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CodeActionDisabled struct {
 	// Human readable description of why the code action is currently disabled.
 	//
 	// This is displayed in the code actions UI.
-	Reason string
+	Reason String
 }
 
 func (x CodeActionDisabled) MarshalJSON() ([]byte, error) {
@@ -916,9 +953,11 @@ func (x CodeActionDisabled) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////////
 
 // The Client Capabilities of a {@link CodeActionRequest}.
+//
+// Generated from the LSP 'CodeActionClientCapabilities' structure.
 type CodeActionClientCapabilities struct {
 	// Whether code action supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client support code action literals of type `CodeAction` as a valid
 	// response of the `textDocument/codeAction` request. If the property is not
@@ -930,19 +969,19 @@ type CodeActionClientCapabilities struct {
 	// Whether code action supports the `isPreferred` property.
 	//
 	// @since 3.15.0
-	IsPreferredSupport bool
+	IsPreferredSupport Bool
 
 	// Whether code action supports the `disabled` property.
 	//
 	// @since 3.16.0
-	DisabledSupport bool
+	DisabledSupport Bool
 
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/codeAction` and a
 	// `codeAction/resolve` request.
 	//
 	// @since 3.16.0
-	DataSupport bool
+	DataSupport Bool
 
 	// Whether the client supports resolving additional code action
 	// properties via a separate `codeAction/resolve` request.
@@ -957,7 +996,7 @@ type CodeActionClientCapabilities struct {
 	// for confirmation.
 	//
 	// @since 3.16.0
-	HonorsChangeAnnotations bool
+	HonorsChangeAnnotations Bool
 }
 
 func (x CodeActionClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -1002,6 +1041,7 @@ func (x CodeActionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
 	// The code action kind is support with the following value
 	// set.
@@ -1032,6 +1072,7 @@ func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) marshalProperties(
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
 	// The code action kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -1064,9 +1105,10 @@ func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) mars
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CodeActionClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily.
-	Properties []string
+	Properties []String
 }
 
 func (x CodeActionClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
@@ -1099,6 +1141,8 @@ func (x CodeActionClientCapabilitiesResolveSupport) marshalProperties(w *bytes.B
 
 // Contains additional diagnostic information about the context in which
 // a {@link CodeActionProvider.provideCodeActions code action} is run.
+//
+// Generated from the LSP 'CodeActionContext' structure.
 type CodeActionContext struct {
 	// An array of diagnostics known on the client side overlapping the range provided to the
 	// `textDocument/codeAction` request. They are provided so that the server knows which
@@ -1154,7 +1198,9 @@ func (x CodeActionContext) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////////
 
 // A set of predefined code action kinds
-type CodeActionKind string
+//
+// Generated from the LSP 'CodeActionKind' enumeration.
+type CodeActionKind String
 
 const (
 	// Empty kind.
@@ -1213,6 +1259,8 @@ const (
 /////////////////////////
 
 // Provider options for a {@link CodeActionRequest}.
+//
+// Generated from the LSP 'CodeActionOptions' structure.
 type CodeActionOptions struct {
 	WorkDoneProgressOptions
 
@@ -1226,7 +1274,7 @@ type CodeActionOptions struct {
 	// information for a code action.
 	//
 	// @since 3.16.0
-	ResolveProvider bool
+	ResolveProvider Bool
 }
 
 func (x CodeActionOptions) MarshalJSON() ([]byte, error) {
@@ -1264,6 +1312,8 @@ func (x CodeActionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////
 
 // The parameters of a {@link CodeActionRequest}.
+//
+// Generated from the LSP 'CodeActionParams' structure.
 type CodeActionParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1319,6 +1369,8 @@ func (x CodeActionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////////////
 
 // Registration options for a {@link CodeActionRequest}.
+//
+// Generated from the LSP 'CodeActionRegistrationOptions' structure.
 type CodeActionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeActionOptions
@@ -1358,7 +1410,9 @@ func (x CodeActionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 // The reason why code actions were requested.
 //
 // @since 3.17.0
-type CodeActionTriggerKind uint32
+//
+// Generated from the LSP 'CodeActionTriggerKind' enumeration.
+type CodeActionTriggerKind UInteger
 
 const (
 	// Code actions were explicitly requested by the user or by an extension.
@@ -1371,7 +1425,7 @@ const (
 )
 
 func (x *CodeActionTriggerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*CodeActionTriggerKind)(x)); err != nil {
 		return fmt.Errorf("CodeActionTriggerKind: %w", err)
 	}
 
@@ -1392,6 +1446,8 @@ func (x *CodeActionTriggerKind) UnmarshalJSON(data []byte) error {
 // Structure to capture a description for an error code.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CodeDescription' structure.
 type CodeDescription struct {
 	// An URI to open with more information about the diagnostic error.
 	Href URI
@@ -1430,6 +1486,8 @@ func (x CodeDescription) marshalProperties(w *bytes.Buffer, n *int) error {
 //
 // A code lens is _unresolved_ when no command is associated to it. For performance
 // reasons the creation of a code lens and resolving should be done in two stages.
+//
+// Generated from the LSP 'CodeLens' structure.
 type CodeLens struct {
 	// The range in which this code lens is valid. Should only span a single line.
 	Range Range
@@ -1478,9 +1536,11 @@ func (x CodeLens) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////////////////////
 
 // The client capabilities  of a {@link CodeLensRequest}.
+//
+// Generated from the LSP 'CodeLensClientCapabilities' structure.
 type CodeLensClientCapabilities struct {
 	// Whether code lens supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x CodeLensClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -1512,11 +1572,13 @@ func (x CodeLensClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) e
 ///////////////////////
 
 // Code Lens provider options of a {@link CodeLensRequest}.
+//
+// Generated from the LSP 'CodeLensOptions' structure.
 type CodeLensOptions struct {
 	WorkDoneProgressOptions
 
 	// Code lens has a resolve provider as well.
-	ResolveProvider bool
+	ResolveProvider Bool
 }
 
 func (x CodeLensOptions) MarshalJSON() ([]byte, error) {
@@ -1551,6 +1613,8 @@ func (x CodeLensOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////////
 
 // The parameters of a {@link CodeLensRequest}.
+//
+// Generated from the LSP 'CodeLensParams' structure.
 type CodeLensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1594,6 +1658,8 @@ func (x CodeLensParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////////
 
 // Registration options for a {@link CodeLensRequest}.
+//
+// Generated from the LSP 'CodeLensRegistrationOptions' structure.
 type CodeLensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CodeLensOptions
@@ -1631,6 +1697,8 @@ func (x CodeLensRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) 
 ///////////////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'CodeLensWorkspaceClientCapabilities' structure.
 type CodeLensWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from the
 	// server to the client.
@@ -1639,7 +1707,7 @@ type CodeLensWorkspaceClientCapabilities struct {
 	// code lenses currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detect a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool
+	RefreshSupport Bool
 }
 
 func (x CodeLensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -1671,18 +1739,20 @@ func (x CodeLensWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, 
 /////////////
 
 // Represents a color in RGBA space.
+//
+// Generated from the LSP 'Color' structure.
 type Color struct {
 	// The red component of this color in the range [0-1].
-	Red float64
+	Red Decimal
 
 	// The green component of this color in the range [0-1].
-	Green float64
+	Green Decimal
 
 	// The blue component of this color in the range [0-1].
-	Blue float64
+	Blue Decimal
 
 	// The alpha component of this color in the range [0-1].
-	Alpha float64
+	Alpha Decimal
 }
 
 func (x Color) MarshalJSON() ([]byte, error) {
@@ -1723,6 +1793,8 @@ func (x Color) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////
 
 // Represents a color range from a document.
+//
+// Generated from the LSP 'ColorInformation' structure.
 type ColorInformation struct {
 	// The range in the document where this color appears.
 	Range Range
@@ -1762,11 +1834,12 @@ func (x ColorInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 /// ColorPresentation ///
 /////////////////////////
 
+// Generated from the LSP 'ColorPresentation' structure.
 type ColorPresentation struct {
 	// The label of this color presentation. It will be shown on the color
 	// picker header. By default this is also the text that is inserted when selecting
 	// this color presentation.
-	Label string
+	Label String
 
 	// An {@link TextEdit edit} which is applied to a document when selecting
 	// this presentation for the color.  When `falsy` the {@link ColorPresentation.label label}
@@ -1813,6 +1886,8 @@ func (x ColorPresentation) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////
 
 // Parameters for a {@link ColorPresentationRequest}.
+//
+// Generated from the LSP 'ColorPresentationParams' structure.
 type ColorPresentationParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -1871,12 +1946,14 @@ func (x ColorPresentationParams) marshalProperties(w *bytes.Buffer, n *int) erro
 // will be used to represent a command in the UI and, optionally,
 // an array of arguments which will be passed to the command handler
 // function when invoked.
+//
+// Generated from the LSP 'Command' structure.
 type Command struct {
 	// Title of the command, like `save`.
-	Title string
+	Title String
 
 	// The identifier of the actual command handler.
-	Command string
+	Command String
 
 	// Arguments that the command handler should be
 	// invoked with.
@@ -1918,9 +1995,11 @@ func (x Command) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////////
 
 // Completion client capabilities
+//
+// Generated from the LSP 'CompletionClientCapabilities' structure.
 type CompletionClientCapabilities struct {
 	// Whether completion supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
@@ -1937,7 +2016,7 @@ type CompletionClientCapabilities struct {
 
 	// The client supports to send additional context information for a
 	// `textDocument/completion` request.
-	ContextSupport bool
+	ContextSupport Bool
 
 	// The client supports the following `CompletionList` specific
 	// capabilities.
@@ -1985,6 +2064,7 @@ func (x CompletionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionClientCapabilitiesCompletionItem struct {
 	// Client supports snippets as insert text.
 	//
@@ -1992,20 +2072,20 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
 	// the end of the snippet. Placeholders with equal identifiers are linked,
 	// that is typing in one will update others too.
-	SnippetSupport bool
+	SnippetSupport Bool
 
 	// Client supports commit characters on a completion item.
-	CommitCharactersSupport bool
+	CommitCharactersSupport Bool
 
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
 	DocumentationFormat []MarkupKind
 
 	// Client supports the deprecated property on a completion item.
-	DeprecatedSupport bool
+	DeprecatedSupport Bool
 
 	// Client supports the preselect property on a completion item.
-	PreselectSupport bool
+	PreselectSupport Bool
 
 	// Client supports the tag property on a completion item. Clients supporting
 	// tags have to handle unknown tags gracefully. Clients especially need to
@@ -2019,7 +2099,7 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// completion item is inserted in the text or should replace text.
 	//
 	// @since 3.16.0
-	InsertReplaceSupport bool
+	InsertReplaceSupport Bool
 
 	// Indicates which properties a client can resolve lazily on a completion
 	// item. Before version 3.16.0 only the predefined properties `documentation`
@@ -2039,7 +2119,7 @@ type CompletionClientCapabilitiesCompletionItem struct {
 	// details (see also `CompletionItemLabelDetails`).
 	//
 	// @since 3.17.0
-	LabelDetailsSupport bool
+	LabelDetailsSupport Bool
 }
 
 func (x CompletionClientCapabilitiesCompletionItem) MarshalJSON() ([]byte, error) {
@@ -2093,6 +2173,7 @@ func (x CompletionClientCapabilitiesCompletionItem) marshalProperties(w *bytes.B
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
 	ValueSet []InsertTextMode
 }
@@ -2121,9 +2202,10 @@ func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) marshal
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
 	// The properties that a client can resolve lazily.
-	Properties []string
+	Properties []String
 }
 
 func (x CompletionClientCapabilitiesCompletionItemResolveSupport) MarshalJSON() ([]byte, error) {
@@ -2150,6 +2232,7 @@ func (x CompletionClientCapabilitiesCompletionItemResolveSupport) marshalPropert
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionClientCapabilitiesCompletionItemTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []CompletionItemTag
@@ -2179,6 +2262,7 @@ func (x CompletionClientCapabilitiesCompletionItemTagSupport) marshalProperties(
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionClientCapabilitiesCompletionItemKind struct {
 	// The completion item kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -2215,6 +2299,7 @@ func (x CompletionClientCapabilitiesCompletionItemKind) marshalProperties(w *byt
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionClientCapabilitiesCompletionList struct {
 	// The client supports the following itemDefaults on
 	// a completion list.
@@ -2224,7 +2309,7 @@ type CompletionClientCapabilitiesCompletionList struct {
 	// no properties are supported.
 	//
 	// @since 3.17.0
-	ItemDefaults []string
+	ItemDefaults []String
 }
 
 func (x CompletionClientCapabilitiesCompletionList) MarshalJSON() ([]byte, error) {
@@ -2256,13 +2341,15 @@ func (x CompletionClientCapabilitiesCompletionList) marshalProperties(w *bytes.B
 /////////////////////////
 
 // Contains additional information about the context in which a completion request is triggered.
+//
+// Generated from the LSP 'CompletionContext' structure.
 type CompletionContext struct {
 	// How the completion was triggered.
 	TriggerKind CompletionTriggerKind
 
 	// The trigger character (a single character) that has trigger code complete.
 	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
-	TriggerCharacter string
+	TriggerCharacter String
 }
 
 func (x CompletionContext) MarshalJSON() ([]byte, error) {
@@ -2298,6 +2385,8 @@ func (x CompletionContext) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // A completion item represents a text snippet that is
 // proposed to complete text that is being typed.
+//
+// Generated from the LSP 'CompletionItem' structure.
 type CompletionItem struct {
 	// The label of this completion item.
 	//
@@ -2306,7 +2395,7 @@ type CompletionItem struct {
 	//
 	// If label details are provided the label itself should
 	// be an unqualified name of the completion item.
-	Label string
+	Label String
 
 	// Additional details for the label
 	//
@@ -2324,7 +2413,7 @@ type CompletionItem struct {
 
 	// A human-readable string with additional information
 	// about this item, like type or symbol information.
-	Detail string
+	Detail String
 
 	// A human-readable string that represents a doc-comment.
 	Documentation Optional[CompletionItemDocumentation]
@@ -2333,24 +2422,24 @@ type CompletionItem struct {
 	// @deprecated Use `tags` instead.
 	//
 	// Deprecated: Use `tags` instead.
-	Deprecated bool
+	Deprecated Bool
 
 	// Select this item when showing.
 	//
 	// *Note* that only one completion item can be selected and that the
 	// tool / client decides which item that is. The rule is that the *first*
 	// item of those that match best is selected.
-	Preselect bool
+	Preselect Bool
 
 	// A string that should be used when comparing this item
 	// with other items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
-	SortText string
+	SortText String
 
 	// A string that should be used when filtering a set of
 	// completion items. When `falsy` the {@link CompletionItem.label label}
 	// is used.
-	FilterText string
+	FilterText String
 
 	// A string that should be inserted into a document when selecting
 	// this completion. When `falsy` the {@link CompletionItem.label label}
@@ -2363,7 +2452,7 @@ type CompletionItem struct {
 	// `console` is provided it will only insert `sole`. Therefore it is
 	// recommended to use `textEdit` instead since it avoids additional client
 	// side interpretation.
-	InsertText string
+	InsertText String
 
 	// The format of the insert text. The format applies to both the
 	// `insertText` property and the `newText` property of a provided
@@ -2412,7 +2501,7 @@ type CompletionItem struct {
 	// property is used as a text.
 	//
 	// @since 3.17.0
-	TextEditText string
+	TextEditText String
 
 	// An optional array of additional {@link TextEdit text edits} that are applied when
 	// selecting this completion. Edits must not overlap (including the same insert position)
@@ -2426,7 +2515,7 @@ type CompletionItem struct {
 	// An optional set of characters that when pressed while this completion is active will accept it first and
 	// then type that character. *Note* that all commit characters should have `length=1` and that superfluous
 	// characters will be ignored.
-	CommitCharacters []string
+	CommitCharacters []String
 
 	// An optional {@link Command command} that is executed *after* inserting this completion. *Note* that
 	// additional modifications to the current document should be described with the
@@ -2516,14 +2605,16 @@ func (x CompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type CompletionItemDocumentation struct {
-	A Optional[string]
-	B Optional[MarkupContent]
+	String        String
+	MarkupContent MarkupContent
 }
 
+// Generated from an LSP 'or' type.
 type CompletionItemTextEdit struct {
-	A Optional[TextEdit]
-	B Optional[InsertReplaceEdit]
+	TextEdit          TextEdit
+	InsertReplaceEdit InsertReplaceEdit
 }
 
 //////////////////////////
@@ -2531,38 +2622,40 @@ type CompletionItemTextEdit struct {
 //////////////////////////
 
 // The kind of a completion entry.
-type CompletionItemKind uint32
+//
+// Generated from the LSP 'CompletionItemKind' enumeration.
+type CompletionItemKind UInteger
 
 const (
-	CompletionItemKindText          CompletionItemKind = 1
-	CompletionItemKindMethod        CompletionItemKind = 2
-	CompletionItemKindFunction      CompletionItemKind = 3
-	CompletionItemKindConstructor   CompletionItemKind = 4
-	CompletionItemKindField         CompletionItemKind = 5
-	CompletionItemKindVariable      CompletionItemKind = 6
-	CompletionItemKindClass         CompletionItemKind = 7
-	CompletionItemKindInterface     CompletionItemKind = 8
-	CompletionItemKindModule        CompletionItemKind = 9
-	CompletionItemKindProperty      CompletionItemKind = 10
-	CompletionItemKindUnit          CompletionItemKind = 11
-	CompletionItemKindValue         CompletionItemKind = 12
-	CompletionItemKindEnum          CompletionItemKind = 13
-	CompletionItemKindKeyword       CompletionItemKind = 14
-	CompletionItemKindSnippet       CompletionItemKind = 15
-	CompletionItemKindColor         CompletionItemKind = 16
-	CompletionItemKindFile          CompletionItemKind = 17
-	CompletionItemKindReference     CompletionItemKind = 18
-	CompletionItemKindFolder        CompletionItemKind = 19
-	CompletionItemKindEnumMember    CompletionItemKind = 20
-	CompletionItemKindConstant      CompletionItemKind = 21
-	CompletionItemKindStruct        CompletionItemKind = 22
-	CompletionItemKindEvent         CompletionItemKind = 23
-	CompletionItemKindOperator      CompletionItemKind = 24
+	CompletionItemKindText CompletionItemKind = 1
+	CompletionItemKindMethod CompletionItemKind = 2
+	CompletionItemKindFunction CompletionItemKind = 3
+	CompletionItemKindConstructor CompletionItemKind = 4
+	CompletionItemKindField CompletionItemKind = 5
+	CompletionItemKindVariable CompletionItemKind = 6
+	CompletionItemKindClass CompletionItemKind = 7
+	CompletionItemKindInterface CompletionItemKind = 8
+	CompletionItemKindModule CompletionItemKind = 9
+	CompletionItemKindProperty CompletionItemKind = 10
+	CompletionItemKindUnit CompletionItemKind = 11
+	CompletionItemKindValue CompletionItemKind = 12
+	CompletionItemKindEnum CompletionItemKind = 13
+	CompletionItemKindKeyword CompletionItemKind = 14
+	CompletionItemKindSnippet CompletionItemKind = 15
+	CompletionItemKindColor CompletionItemKind = 16
+	CompletionItemKindFile CompletionItemKind = 17
+	CompletionItemKindReference CompletionItemKind = 18
+	CompletionItemKindFolder CompletionItemKind = 19
+	CompletionItemKindEnumMember CompletionItemKind = 20
+	CompletionItemKindConstant CompletionItemKind = 21
+	CompletionItemKindStruct CompletionItemKind = 22
+	CompletionItemKindEvent CompletionItemKind = 23
+	CompletionItemKindOperator CompletionItemKind = 24
 	CompletionItemKindTypeParameter CompletionItemKind = 25
 )
 
 func (x *CompletionItemKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*CompletionItemKind)(x)); err != nil {
 		return fmt.Errorf("CompletionItemKind: %w", err)
 	}
 
@@ -2606,14 +2699,16 @@ func (x *CompletionItemKind) UnmarshalJSON(data []byte) error {
 // Additional details for a completion item label.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'CompletionItemLabelDetails' structure.
 type CompletionItemLabelDetails struct {
 	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
 	// without any spacing. Should be used for function signatures and type annotations.
-	Detail string
+	Detail String
 
 	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
 	// for fully qualified names and file paths.
-	Description string
+	Description String
 }
 
 func (x CompletionItemLabelDetails) MarshalJSON() ([]byte, error) {
@@ -2651,7 +2746,9 @@ func (x CompletionItemLabelDetails) marshalProperties(w *bytes.Buffer, n *int) e
 // item.
 //
 // @since 3.15.0
-type CompletionItemTag uint32
+//
+// Generated from the LSP 'CompletionItemTag' enumeration.
+type CompletionItemTag UInteger
 
 const (
 	// Render a completion as obsolete, usually using a strike-out.
@@ -2659,7 +2756,7 @@ const (
 )
 
 func (x *CompletionItemTag) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*CompletionItemTag)(x)); err != nil {
 		return fmt.Errorf("CompletionItemTag: %w", err)
 	}
 
@@ -2678,12 +2775,14 @@ func (x *CompletionItemTag) UnmarshalJSON(data []byte) error {
 
 // Represents a collection of {@link CompletionItem completion items} to be presented
 // in the editor.
+//
+// Generated from the LSP 'CompletionList' structure.
 type CompletionList struct {
 	// This list it not complete. Further typing results in recomputing this list.
 	//
 	// Recomputed lists have all their items replaced (not appended) in the
 	// incomplete completion sessions.
-	IsIncomplete bool
+	IsIncomplete Bool
 
 	// In many cases the items of an actual completion result share the same
 	// value for properties like `commitCharacters` or the range of a text
@@ -2734,11 +2833,12 @@ func (x CompletionList) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionListItemDefaults struct {
 	// A default commit character set.
 	//
 	// @since 3.17.0
-	CommitCharacters []string
+	CommitCharacters []String
 
 	// A default edit range.
 	//
@@ -2797,9 +2897,44 @@ func (x CompletionListItemDefaults) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type CompletionListItemDefaultsEditRange struct {
-	A Optional[Range]
-	B Optional[CompletionListItemDefaultsEditRange]
+	Range                                Range
+	CompletionListItemDefaultsEditRange1 CompletionListItemDefaultsEditRange1
+}
+
+// Generated from an LSP 'literal' type.
+type CompletionListItemDefaultsEditRange1 struct {
+	Insert Range
+
+	Replace Range
+}
+
+func (x CompletionListItemDefaultsEditRange1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x CompletionListItemDefaultsEditRange1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "insert", x.Insert); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "replace", x.Replace); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////
@@ -2807,6 +2942,8 @@ type CompletionListItemDefaultsEditRange struct {
 /////////////////////////
 
 // Completion options.
+//
+// Generated from the LSP 'CompletionOptions' structure.
 type CompletionOptions struct {
 	WorkDoneProgressOptions
 
@@ -2818,7 +2955,7 @@ type CompletionOptions struct {
 	//
 	// If code complete should automatically be trigger on characters not being valid inside
 	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
-	TriggerCharacters []string
+	TriggerCharacters []String
 
 	// The list of all possible characters that commit a completion. This field can be used
 	// if clients don't support individual commit characters per completion item. See
@@ -2828,11 +2965,11 @@ type CompletionOptions struct {
 	// completion item the ones on the completion item win.
 	//
 	// @since 3.2.0
-	AllCommitCharacters []string
+	AllCommitCharacters []String
 
 	// The server provides support to resolve additional
 	// information for a completion item.
-	ResolveProvider bool
+	ResolveProvider Bool
 
 	// The server supports the following `CompletionItem` specific
 	// capabilities.
@@ -2877,13 +3014,14 @@ func (x CompletionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type CompletionOptionsCompletionItem struct {
 	// The server has support for completion item label
 	// details (see also `CompletionItemLabelDetails`) when
 	// receiving a completion item in a resolve call.
 	//
 	// @since 3.17.0
-	LabelDetailsSupport bool
+	LabelDetailsSupport Bool
 }
 
 func (x CompletionOptionsCompletionItem) MarshalJSON() ([]byte, error) {
@@ -2915,6 +3053,8 @@ func (x CompletionOptionsCompletionItem) marshalProperties(w *bytes.Buffer, n *i
 ////////////////////////
 
 // Completion parameters
+//
+// Generated from the LSP 'CompletionParams' structure.
 type CompletionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -2963,6 +3103,8 @@ func (x CompletionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////////////
 
 // Registration options for a {@link CompletionRequest}.
+//
+// Generated from the LSP 'CompletionRegistrationOptions' structure.
 type CompletionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	CompletionOptions
@@ -3000,7 +3142,9 @@ func (x CompletionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 /////////////////////////////
 
 // How a completion was triggered
-type CompletionTriggerKind uint32
+//
+// Generated from the LSP 'CompletionTriggerKind' enumeration.
+type CompletionTriggerKind UInteger
 
 const (
 	// Completion was triggered by typing an identifier (24x7 code
@@ -3014,7 +3158,7 @@ const (
 )
 
 func (x *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*CompletionTriggerKind)(x)); err != nil {
 		return fmt.Errorf("CompletionTriggerKind: %w", err)
 	}
 
@@ -3033,12 +3177,13 @@ func (x *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
 /// ConfigurationItem ///
 /////////////////////////
 
+// Generated from the LSP 'ConfigurationItem' structure.
 type ConfigurationItem struct {
 	// The scope to get the configuration section for.
-	ScopeURI string
+	ScopeURI String
 
 	// The configuration section asked for.
-	Section string
+	Section String
 }
 
 func (x ConfigurationItem) MarshalJSON() ([]byte, error) {
@@ -3073,6 +3218,8 @@ func (x ConfigurationItem) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////
 
 // The parameters of a configuration request.
+//
+// Generated from the LSP 'ConfigurationParams' structure.
 type ConfigurationParams struct {
 	Items []ConfigurationItem
 }
@@ -3106,6 +3253,8 @@ func (x ConfigurationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////
 
 // Create file operation.
+//
+// Generated from the LSP 'CreateFile' structure.
 type CreateFile struct {
 	ResourceOperation
 
@@ -3154,12 +3303,14 @@ func (x CreateFile) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////
 
 // Options to create a file.
+//
+// Generated from the LSP 'CreateFileOptions' structure.
 type CreateFileOptions struct {
 	// Overwrite existing file. Overwrite wins over `ignoreIfExists`
-	Overwrite bool
+	Overwrite Bool
 
 	// Ignore if exists.
-	IgnoreIfExists bool
+	IgnoreIfExists Bool
 }
 
 func (x CreateFileOptions) MarshalJSON() ([]byte, error) {
@@ -3197,6 +3348,8 @@ func (x CreateFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // files.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'CreateFilesParams' structure.
 type CreateFilesParams struct {
 	// An array of all files/folders created in this operation.
 	Files []FileCreate
@@ -3231,9 +3384,12 @@ func (x CreateFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////
 
 // The declaration of a symbol representation as one or many {@link Location locations}.
+//
+// Generated from the LSP 'Declaration' type alias.
+// Generated from an LSP 'or' type.
 type Declaration struct {
-	A Optional[Location]
-	B Optional[[]Location]
+	Location      Location
+	LocationArray []Location
 }
 
 /////////////////////////////////////
@@ -3241,14 +3397,16 @@ type Declaration struct {
 /////////////////////////////////////
 
 // @since 3.14.0
+//
+// Generated from the LSP 'DeclarationClientCapabilities' structure.
 type DeclarationClientCapabilities struct {
 	// Whether declaration supports dynamic registration. If this is set to `true`
 	// the client supports the new `DeclarationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports additional metadata in the form of declaration links.
-	LinkSupport bool
+	LinkSupport Bool
 }
 
 func (x DeclarationClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -3289,12 +3447,15 @@ func (x DeclarationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int
 //
 // Servers should prefer returning `DeclarationLink` over `Declaration` if supported
 // by the client.
+//
+// Generated from the LSP 'DeclarationLink' type alias.
 type DeclarationLink = LocationLink
 
 //////////////////////////
 /// DeclarationOptions ///
 //////////////////////////
 
+// Generated from the LSP 'DeclarationOptions' structure.
 type DeclarationOptions struct {
 	WorkDoneProgressOptions
 }
@@ -3327,6 +3488,7 @@ func (x DeclarationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 /// DeclarationParams ///
 /////////////////////////
 
+// Generated from the LSP 'DeclarationParams' structure.
 type DeclarationParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -3367,6 +3529,7 @@ func (x DeclarationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// DeclarationRegistrationOptions ///
 //////////////////////////////////////
 
+// Generated from the LSP 'DeclarationRegistrationOptions' structure.
 type DeclarationRegistrationOptions struct {
 	DeclarationOptions
 	TextDocumentRegistrationOptions
@@ -3413,9 +3576,12 @@ func (x DeclarationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *in
 //
 // Servers should prefer returning `DefinitionLink` over `Definition` if supported
 // by the client.
+//
+// Generated from the LSP 'Definition' type alias.
+// Generated from an LSP 'or' type.
 type Definition struct {
-	A Optional[Location]
-	B Optional[[]Location]
+	Location      Location
+	LocationArray []Location
 }
 
 ////////////////////////////////////
@@ -3423,14 +3589,16 @@ type Definition struct {
 ////////////////////////////////////
 
 // Client Capabilities for a {@link DefinitionRequest}.
+//
+// Generated from the LSP 'DefinitionClientCapabilities' structure.
 type DefinitionClientCapabilities struct {
 	// Whether definition supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
-	LinkSupport bool
+	LinkSupport Bool
 }
 
 func (x DefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -3468,6 +3636,8 @@ func (x DefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 //
 // Provides additional metadata over normal {@link Location location} definitions, including the range of
 // the defining symbol
+//
+// Generated from the LSP 'DefinitionLink' type alias.
 type DefinitionLink = LocationLink
 
 /////////////////////////
@@ -3475,6 +3645,8 @@ type DefinitionLink = LocationLink
 /////////////////////////
 
 // Server Capabilities for a {@link DefinitionRequest}.
+//
+// Generated from the LSP 'DefinitionOptions' structure.
 type DefinitionOptions struct {
 	WorkDoneProgressOptions
 }
@@ -3508,6 +3680,8 @@ func (x DefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////
 
 // Parameters for a {@link DefinitionRequest}.
+//
+// Generated from the LSP 'DefinitionParams' structure.
 type DefinitionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -3549,6 +3723,8 @@ func (x DefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////////////
 
 // Registration options for a {@link DefinitionRequest}.
+//
+// Generated from the LSP 'DefinitionRegistrationOptions' structure.
 type DefinitionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DefinitionOptions
@@ -3586,6 +3762,8 @@ func (x DefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 //////////////////
 
 // Delete file operation
+//
+// Generated from the LSP 'DeleteFile' structure.
 type DeleteFile struct {
 	ResourceOperation
 
@@ -3634,12 +3812,14 @@ func (x DeleteFile) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////
 
 // Delete file options
+//
+// Generated from the LSP 'DeleteFileOptions' structure.
 type DeleteFileOptions struct {
 	// Delete the content recursively if a folder is denoted.
-	Recursive bool
+	Recursive Bool
 
 	// Ignore the operation if the file doesn't exist.
-	IgnoreIfNotExists bool
+	IgnoreIfNotExists Bool
 }
 
 func (x DeleteFileOptions) MarshalJSON() ([]byte, error) {
@@ -3677,6 +3857,8 @@ func (x DeleteFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // files.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'DeleteFilesParams' structure.
 type DeleteFilesParams struct {
 	// An array of all files/folders deleted in this operation.
 	Files []FileDelete
@@ -3712,6 +3894,8 @@ func (x DeleteFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
 // are only valid in the scope of a resource.
+//
+// Generated from the LSP 'Diagnostic' structure.
 type Diagnostic struct {
 	// The range at which the message applies
 	Range Range
@@ -3732,10 +3916,10 @@ type Diagnostic struct {
 	// A human-readable string describing the source of this
 	// diagnostic, e.g. 'typescript' or 'super lint'. It usually
 	// appears in the user interface.
-	Source string
+	Source String
 
 	// The diagnostic's message. It usually appears in the user interface
-	Message string
+	Message String
 
 	// Additional metadata about the diagnostic.
 	//
@@ -3801,9 +3985,10 @@ func (x Diagnostic) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type DiagnosticCode struct {
-	A Optional[int32]
-	B Optional[string]
+	Integer Integer
+	String  String
 }
 
 ////////////////////////////////////
@@ -3813,14 +3998,16 @@ type DiagnosticCode struct {
 // Client capabilities specific to diagnostic pull requests.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DiagnosticClientCapabilities' structure.
 type DiagnosticClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Whether the clients supports related documents for document diagnostic pulls.
-	RelatedDocumentSupport bool
+	RelatedDocumentSupport Bool
 }
 
 func (x DiagnosticClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -3857,21 +4044,23 @@ func (x DiagnosticClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 // Diagnostic options.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DiagnosticOptions' structure.
 type DiagnosticOptions struct {
 	WorkDoneProgressOptions
 
 	// An optional identifier under which the diagnostics are
 	// managed by the client.
-	Identifier string
+	Identifier String
 
 	// Whether the language has inter file dependencies meaning that
 	// editing code in one file can result in a different diagnostic
 	// set in another file. Inter file dependencies are common for
 	// most programming languages and typically uncommon for linters.
-	InterFileDependencies bool
+	InterFileDependencies Bool
 
 	// The server provides support for workspace diagnostics as well.
-	WorkspaceDiagnostics bool
+	WorkspaceDiagnostics Bool
 }
 
 func (x DiagnosticOptions) MarshalJSON() ([]byte, error) {
@@ -3914,6 +4103,8 @@ func (x DiagnosticOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // Diagnostic registration options.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DiagnosticRegistrationOptions' structure.
 type DiagnosticRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DiagnosticOptions
@@ -3957,12 +4148,14 @@ func (x DiagnosticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 // Represents a related message and source code location for a diagnostic. This should be
 // used to point to code locations that cause or related to a diagnostics, e.g when duplicating
 // a symbol in a scope.
+//
+// Generated from the LSP 'DiagnosticRelatedInformation' structure.
 type DiagnosticRelatedInformation struct {
 	// The location of this related diagnostic information.
 	Location Location
 
 	// The message of this related diagnostic information.
-	Message string
+	Message String
 }
 
 func (x DiagnosticRelatedInformation) MarshalJSON() ([]byte, error) {
@@ -3999,8 +4192,10 @@ func (x DiagnosticRelatedInformation) marshalProperties(w *bytes.Buffer, n *int)
 // Cancellation data returned from a diagnostic request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DiagnosticServerCancellationData' structure.
 type DiagnosticServerCancellationData struct {
-	RetriggerRequest bool
+	RetriggerRequest Bool
 }
 
 func (x DiagnosticServerCancellationData) MarshalJSON() ([]byte, error) {
@@ -4032,7 +4227,9 @@ func (x DiagnosticServerCancellationData) marshalProperties(w *bytes.Buffer, n *
 //////////////////////////
 
 // The diagnostic's severity.
-type DiagnosticSeverity uint32
+//
+// Generated from the LSP 'DiagnosticSeverity' enumeration.
+type DiagnosticSeverity UInteger
 
 const (
 	// Reports an error.
@@ -4046,7 +4243,7 @@ const (
 )
 
 func (x *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*DiagnosticSeverity)(x)); err != nil {
 		return fmt.Errorf("DiagnosticSeverity: %w", err)
 	}
 
@@ -4069,7 +4266,9 @@ func (x *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
 // The diagnostic tags.
 //
 // @since 3.15.0
-type DiagnosticTag uint32
+//
+// Generated from the LSP 'DiagnosticTag' enumeration.
+type DiagnosticTag UInteger
 
 const (
 	// Unused or unnecessary code.
@@ -4084,7 +4283,7 @@ const (
 )
 
 func (x *DiagnosticTag) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*DiagnosticTag)(x)); err != nil {
 		return fmt.Errorf("DiagnosticTag: %w", err)
 	}
 
@@ -4105,6 +4304,8 @@ func (x *DiagnosticTag) UnmarshalJSON(data []byte) error {
 // Workspace client capabilities specific to diagnostic pull requests.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DiagnosticWorkspaceClientCapabilities' structure.
 type DiagnosticWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from
 	// the server to the client.
@@ -4113,7 +4314,7 @@ type DiagnosticWorkspaceClientCapabilities struct {
 	// pulled diagnostics currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool
+	RefreshSupport Bool
 }
 
 func (x DiagnosticWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -4144,9 +4345,10 @@ func (x DiagnosticWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer
 /// DidChangeConfigurationClientCapabilities ///
 ////////////////////////////////////////////////
 
+// Generated from the LSP 'DidChangeConfigurationClientCapabilities' structure.
 type DidChangeConfigurationClientCapabilities struct {
 	// Did change configuration notification supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x DidChangeConfigurationClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -4178,6 +4380,8 @@ func (x DidChangeConfigurationClientCapabilities) marshalProperties(w *bytes.Buf
 ////////////////////////////////////
 
 // The parameters of a change configuration notification.
+//
+// Generated from the LSP 'DidChangeConfigurationParams' structure.
 type DidChangeConfigurationParams struct {
 	// The actual changed settings
 	Settings LSPAny
@@ -4211,6 +4415,7 @@ func (x DidChangeConfigurationParams) marshalProperties(w *bytes.Buffer, n *int)
 /// DidChangeConfigurationRegistrationOptions ///
 /////////////////////////////////////////////////
 
+// Generated from the LSP 'DidChangeConfigurationRegistrationOptions' structure.
 type DidChangeConfigurationRegistrationOptions struct {
 	Section Optional[DidChangeConfigurationRegistrationOptionsSection]
 }
@@ -4239,9 +4444,10 @@ func (x DidChangeConfigurationRegistrationOptions) marshalProperties(w *bytes.Bu
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type DidChangeConfigurationRegistrationOptionsSection struct {
-	A Optional[string]
-	B Optional[[]string]
+	String      String
+	StringArray []String
 }
 
 ///////////////////////////////////////
@@ -4251,6 +4457,8 @@ type DidChangeConfigurationRegistrationOptionsSection struct {
 // The params sent in a change notebook document notification.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DidChangeNotebookDocumentParams' structure.
 type DidChangeNotebookDocumentParams struct {
 	// The notebook document that did change. The version number points
 	// to the version after all provided changes have been applied. If
@@ -4306,6 +4514,8 @@ func (x DidChangeNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *i
 ///////////////////////////////////
 
 // The change text document notification's parameters.
+//
+// Generated from the LSP 'DidChangeTextDocumentParams' structure.
 type DidChangeTextDocumentParams struct {
 	// The document that did change. The version number points
 	// to the version after all provided content changes have
@@ -4357,17 +4567,18 @@ func (x DidChangeTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) 
 /// DidChangeWatchedFilesClientCapabilities ///
 ///////////////////////////////////////////////
 
+// Generated from the LSP 'DidChangeWatchedFilesClientCapabilities' structure.
 type DidChangeWatchedFilesClientCapabilities struct {
 	// Did change watched files notification supports dynamic registration. Please note
 	// that the current protocol doesn't support static configuration for file changes
 	// from the server side.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Whether the client has support for {@link  RelativePattern relative pattern}
 	// or not.
 	//
 	// @since 3.17.0
-	RelativePatternSupport bool
+	RelativePatternSupport Bool
 }
 
 func (x DidChangeWatchedFilesClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -4402,6 +4613,8 @@ func (x DidChangeWatchedFilesClientCapabilities) marshalProperties(w *bytes.Buff
 ///////////////////////////////////
 
 // The watched files change notification's parameters.
+//
+// Generated from the LSP 'DidChangeWatchedFilesParams' structure.
 type DidChangeWatchedFilesParams struct {
 	// The actual file events.
 	Changes []FileEvent
@@ -4436,6 +4649,8 @@ func (x DidChangeWatchedFilesParams) marshalProperties(w *bytes.Buffer, n *int) 
 ////////////////////////////////////////////////
 
 // Describe options to be used when registered for text document change events.
+//
+// Generated from the LSP 'DidChangeWatchedFilesRegistrationOptions' structure.
 type DidChangeWatchedFilesRegistrationOptions struct {
 	// The watchers to register.
 	Watchers []FileSystemWatcher
@@ -4470,6 +4685,8 @@ func (x DidChangeWatchedFilesRegistrationOptions) marshalProperties(w *bytes.Buf
 ///////////////////////////////////////
 
 // The parameters of a `workspace/didChangeWorkspaceFolders` notification.
+//
+// Generated from the LSP 'DidChangeWorkspaceFoldersParams' structure.
 type DidChangeWorkspaceFoldersParams struct {
 	// The actual workspace folder change event.
 	Event WorkspaceFoldersChangeEvent
@@ -4506,6 +4723,8 @@ func (x DidChangeWorkspaceFoldersParams) marshalProperties(w *bytes.Buffer, n *i
 // The params sent in a close notebook document notification.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DidCloseNotebookDocumentParams' structure.
 type DidCloseNotebookDocumentParams struct {
 	// The notebook document that got closed.
 	NotebookDocument NotebookDocumentIdentifier
@@ -4547,6 +4766,8 @@ func (x DidCloseNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *in
 //////////////////////////////////
 
 // The parameters sent in a close text document notification
+//
+// Generated from the LSP 'DidCloseTextDocumentParams' structure.
 type DidCloseTextDocumentParams struct {
 	// The document that was closed.
 	TextDocument TextDocumentIdentifier
@@ -4583,6 +4804,8 @@ func (x DidCloseTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) e
 // The params sent in an open notebook document notification.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DidOpenNotebookDocumentParams' structure.
 type DidOpenNotebookDocumentParams struct {
 	// The notebook document that got opened.
 	NotebookDocument NotebookDocument
@@ -4624,6 +4847,8 @@ func (x DidOpenNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int
 /////////////////////////////////
 
 // The parameters sent in an open text document notification
+//
+// Generated from the LSP 'DidOpenTextDocumentParams' structure.
 type DidOpenTextDocumentParams struct {
 	// The document that was opened.
 	TextDocument TextDocumentItem
@@ -4660,6 +4885,8 @@ func (x DidOpenTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) er
 // The params sent in a save notebook document notification.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DidSaveNotebookDocumentParams' structure.
 type DidSaveNotebookDocumentParams struct {
 	// The notebook document that got saved.
 	NotebookDocument NotebookDocumentIdentifier
@@ -4694,13 +4921,15 @@ func (x DidSaveNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int
 /////////////////////////////////
 
 // The parameters sent in a save text document notification
+//
+// Generated from the LSP 'DidSaveTextDocumentParams' structure.
 type DidSaveTextDocumentParams struct {
 	// The document that was saved.
 	TextDocument TextDocumentIdentifier
 
 	// Optional the content when saved. Depends on the includeText value
 	// when the save notification was requested.
-	Text string
+	Text String
 }
 
 func (x DidSaveTextDocumentParams) MarshalJSON() ([]byte, error) {
@@ -4734,11 +4963,12 @@ func (x DidSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) er
 /// DocumentColorClientCapabilities ///
 ///////////////////////////////////////
 
+// Generated from the LSP 'DocumentColorClientCapabilities' structure.
 type DocumentColorClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `DocumentColorRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x DocumentColorClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -4769,6 +4999,7 @@ func (x DocumentColorClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 /// DocumentColorOptions ///
 ////////////////////////////
 
+// Generated from the LSP 'DocumentColorOptions' structure.
 type DocumentColorOptions struct {
 	WorkDoneProgressOptions
 }
@@ -4802,6 +5033,8 @@ func (x DocumentColorOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////
 
 // Parameters for a {@link DocumentColorRequest}.
+//
+// Generated from the LSP 'DocumentColorParams' structure.
 type DocumentColorParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -4844,6 +5077,7 @@ func (x DocumentColorParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// DocumentColorRegistrationOptions ///
 ////////////////////////////////////////
 
+// Generated from the LSP 'DocumentColorRegistrationOptions' structure.
 type DocumentColorRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentColorOptions
@@ -4887,6 +5121,8 @@ func (x DocumentColorRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 // Parameters of the document diagnostic request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DocumentDiagnosticParams' structure.
 type DocumentDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -4895,10 +5131,10 @@ type DocumentDiagnosticParams struct {
 	TextDocument TextDocumentIdentifier
 
 	// The additional identifier  provided during registration.
-	Identifier string
+	Identifier String
 
 	// The result id of a previous response if provided.
-	PreviousResultID string
+	PreviousResultID String
 }
 
 func (x DocumentDiagnosticParams) MarshalJSON() ([]byte, error) {
@@ -4948,9 +5184,12 @@ func (x DocumentDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) err
 // pull request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DocumentDiagnosticReport' type alias.
+// Generated from an LSP 'or' type.
 type DocumentDiagnosticReport struct {
-	A Optional[RelatedFullDocumentDiagnosticReport]
-	B Optional[RelatedUnchangedDocumentDiagnosticReport]
+	RelatedFullDocumentDiagnosticReport      RelatedFullDocumentDiagnosticReport
+	RelatedUnchangedDocumentDiagnosticReport RelatedUnchangedDocumentDiagnosticReport
 }
 
 ////////////////////////////////////
@@ -4960,7 +5199,9 @@ type DocumentDiagnosticReport struct {
 // The document diagnostic report kinds.
 //
 // @since 3.17.0
-type DocumentDiagnosticReportKind string
+//
+// Generated from the LSP 'DocumentDiagnosticReportKind' enumeration.
+type DocumentDiagnosticReportKind String
 
 const (
 	// A diagnostic report with a full
@@ -4972,7 +5213,7 @@ const (
 )
 
 func (x *DocumentDiagnosticReportKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*DocumentDiagnosticReportKind)(x)); err != nil {
 		return fmt.Errorf("DocumentDiagnosticReportKind: %w", err)
 	}
 
@@ -4993,6 +5234,8 @@ func (x *DocumentDiagnosticReportKind) UnmarshalJSON(data []byte) error {
 // A partial result for a document diagnostic report.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'DocumentDiagnosticReportPartialResult' structure.
 type DocumentDiagnosticReportPartialResult struct {
 	RelatedDocuments map[DocumentURI]DocumentDiagnosticReportPartialResultRelatedDocuments
 }
@@ -5021,9 +5264,10 @@ func (x DocumentDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type DocumentDiagnosticReportPartialResultRelatedDocuments struct {
-	A Optional[FullDocumentDiagnosticReport]
-	B Optional[UnchangedDocumentDiagnosticReport]
+	FullDocumentDiagnosticReport      FullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport UnchangedDocumentDiagnosticReport
 }
 
 //////////////////////
@@ -5034,9 +5278,12 @@ type DocumentDiagnosticReportPartialResultRelatedDocuments struct {
 // a notebook cell document.
 //
 // @since 3.17.0 - proposed support for NotebookCellTextDocumentFilter.
+//
+// Generated from the LSP 'DocumentFilter' type alias.
+// Generated from an LSP 'or' type.
 type DocumentFilter struct {
-	A Optional[TextDocumentFilter]
-	B Optional[NotebookCellTextDocumentFilter]
+	TextDocumentFilter             TextDocumentFilter
+	NotebookCellTextDocumentFilter NotebookCellTextDocumentFilter
 }
 
 ////////////////////////////////////////////
@@ -5044,9 +5291,11 @@ type DocumentFilter struct {
 ////////////////////////////////////////////
 
 // Client capabilities of a {@link DocumentFormattingRequest}.
+//
+// Generated from the LSP 'DocumentFormattingClientCapabilities' structure.
 type DocumentFormattingClientCapabilities struct {
 	// Whether formatting supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x DocumentFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -5078,6 +5327,8 @@ func (x DocumentFormattingClientCapabilities) marshalProperties(w *bytes.Buffer,
 /////////////////////////////////
 
 // Provider options for a {@link DocumentFormattingRequest}.
+//
+// Generated from the LSP 'DocumentFormattingOptions' structure.
 type DocumentFormattingOptions struct {
 	WorkDoneProgressOptions
 }
@@ -5111,6 +5362,8 @@ func (x DocumentFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) er
 ////////////////////////////////
 
 // The parameters of a {@link DocumentFormattingRequest}.
+//
+// Generated from the LSP 'DocumentFormattingParams' structure.
 type DocumentFormattingParams struct {
 	WorkDoneProgressParams
 
@@ -5156,6 +5409,8 @@ func (x DocumentFormattingParams) marshalProperties(w *bytes.Buffer, n *int) err
 /////////////////////////////////////////////
 
 // Registration options for a {@link DocumentFormattingRequest}.
+//
+// Generated from the LSP 'DocumentFormattingRegistrationOptions' structure.
 type DocumentFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentFormattingOptions
@@ -5195,6 +5450,8 @@ func (x DocumentFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer
 // A document highlight is a range inside a text document which deserves
 // special attention. Usually a document highlight is visualized by changing
 // the background color of its range.
+//
+// Generated from the LSP 'DocumentHighlight' structure.
 type DocumentHighlight struct {
 	// The range this highlight applies to.
 	Range Range
@@ -5235,9 +5492,11 @@ func (x DocumentHighlight) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////////////////
 
 // Client Capabilities for a {@link DocumentHighlightRequest}.
+//
+// Generated from the LSP 'DocumentHighlightClientCapabilities' structure.
 type DocumentHighlightClientCapabilities struct {
 	// Whether document highlight supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x DocumentHighlightClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -5269,7 +5528,9 @@ func (x DocumentHighlightClientCapabilities) marshalProperties(w *bytes.Buffer, 
 /////////////////////////////
 
 // A document highlight kind.
-type DocumentHighlightKind uint32
+//
+// Generated from the LSP 'DocumentHighlightKind' enumeration.
+type DocumentHighlightKind UInteger
 
 const (
 	// A textual occurrence.
@@ -5281,7 +5542,7 @@ const (
 )
 
 func (x *DocumentHighlightKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*DocumentHighlightKind)(x)); err != nil {
 		return fmt.Errorf("DocumentHighlightKind: %w", err)
 	}
 
@@ -5301,6 +5562,8 @@ func (x *DocumentHighlightKind) UnmarshalJSON(data []byte) error {
 ////////////////////////////////
 
 // Provider options for a {@link DocumentHighlightRequest}.
+//
+// Generated from the LSP 'DocumentHighlightOptions' structure.
 type DocumentHighlightOptions struct {
 	WorkDoneProgressOptions
 }
@@ -5334,6 +5597,8 @@ func (x DocumentHighlightOptions) marshalProperties(w *bytes.Buffer, n *int) err
 ///////////////////////////////
 
 // Parameters for a {@link DocumentHighlightRequest}.
+//
+// Generated from the LSP 'DocumentHighlightParams' structure.
 type DocumentHighlightParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -5375,6 +5640,8 @@ func (x DocumentHighlightParams) marshalProperties(w *bytes.Buffer, n *int) erro
 ////////////////////////////////////////////
 
 // Registration options for a {@link DocumentHighlightRequest}.
+//
+// Generated from the LSP 'DocumentHighlightRegistrationOptions' structure.
 type DocumentHighlightRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentHighlightOptions
@@ -5413,12 +5680,14 @@ func (x DocumentHighlightRegistrationOptions) marshalProperties(w *bytes.Buffer,
 
 // A document link is a range in a text document that links to an internal or external resource, like another
 // text document or a web site.
+//
+// Generated from the LSP 'DocumentLink' structure.
 type DocumentLink struct {
 	// The range this link applies to.
 	Range Range
 
 	// The uri this link points to. If missing a resolve request is sent later.
-	Target URI
+	Target Optional[URI]
 
 	// The tooltip text when you hover over this link.
 	//
@@ -5427,7 +5696,7 @@ type DocumentLink struct {
 	// user settings, and localization.
 	//
 	// @since 3.15.0
-	Tooltip string
+	Tooltip String
 
 	// A data entry field that is preserved on a document link between a
 	// DocumentLinkRequest and a DocumentLinkResolveRequest.
@@ -5455,7 +5724,7 @@ func (x DocumentLink) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "range", x.Range); err != nil {
 		return err
 	}
-	if err := marshalProperty(w, n, "target", x.Target); err != nil {
+	if err := marshalOptionalProperty(w, n, "target", x.Target); err != nil {
 		return err
 	}
 	if err := marshalProperty(w, n, "tooltip", x.Tooltip); err != nil {
@@ -5472,14 +5741,16 @@ func (x DocumentLink) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////////////////////////
 
 // The client capabilities of a {@link DocumentLinkRequest}.
+//
+// Generated from the LSP 'DocumentLinkClientCapabilities' structure.
 type DocumentLinkClientCapabilities struct {
 	// Whether document link supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Whether the client supports the `tooltip` property on `DocumentLink`.
 	//
 	// @since 3.15.0
-	TooltipSupport bool
+	TooltipSupport Bool
 }
 
 func (x DocumentLinkClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -5514,11 +5785,13 @@ func (x DocumentLinkClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 ///////////////////////////
 
 // Provider options for a {@link DocumentLinkRequest}.
+//
+// Generated from the LSP 'DocumentLinkOptions' structure.
 type DocumentLinkOptions struct {
 	WorkDoneProgressOptions
 
 	// Document links have a resolve provider as well.
-	ResolveProvider bool
+	ResolveProvider Bool
 }
 
 func (x DocumentLinkOptions) MarshalJSON() ([]byte, error) {
@@ -5553,6 +5826,8 @@ func (x DocumentLinkOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////////////
 
 // The parameters of a {@link DocumentLinkRequest}.
+//
+// Generated from the LSP 'DocumentLinkParams' structure.
 type DocumentLinkParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -5596,6 +5871,8 @@ func (x DocumentLinkParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////////////
 
 // Registration options for a {@link DocumentLinkRequest}.
+//
+// Generated from the LSP 'DocumentLinkRegistrationOptions' structure.
 type DocumentLinkRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentLinkOptions
@@ -5633,9 +5910,11 @@ func (x DocumentLinkRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 //////////////////////////////////////////////////
 
 // Client capabilities of a {@link DocumentOnTypeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentOnTypeFormattingClientCapabilities' structure.
 type DocumentOnTypeFormattingClientCapabilities struct {
 	// Whether on type formatting supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x DocumentOnTypeFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -5667,12 +5946,14 @@ func (x DocumentOnTypeFormattingClientCapabilities) marshalProperties(w *bytes.B
 ///////////////////////////////////////
 
 // Provider options for a {@link DocumentOnTypeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentOnTypeFormattingOptions' structure.
 type DocumentOnTypeFormattingOptions struct {
 	// A character on which formatting should be triggered, like `{`.
-	FirstTriggerCharacter string
+	FirstTriggerCharacter String
 
 	// More trigger characters.
-	MoreTriggerCharacter []string
+	MoreTriggerCharacter []String
 }
 
 func (x DocumentOnTypeFormattingOptions) MarshalJSON() ([]byte, error) {
@@ -5707,6 +5988,8 @@ func (x DocumentOnTypeFormattingOptions) marshalProperties(w *bytes.Buffer, n *i
 //////////////////////////////////////
 
 // The parameters of a {@link DocumentOnTypeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentOnTypeFormattingParams' structure.
 type DocumentOnTypeFormattingParams struct {
 	// The document to format.
 	TextDocument TextDocumentIdentifier
@@ -5720,7 +6003,7 @@ type DocumentOnTypeFormattingParams struct {
 	// on type request. That is not necessarily the last character that
 	// got inserted into the document since the client could auto insert
 	// characters as well (e.g. like automatic brace completion).
-	Ch string
+	Ch String
 
 	// The formatting options.
 	Options FormattingOptions
@@ -5764,6 +6047,8 @@ func (x DocumentOnTypeFormattingParams) marshalProperties(w *bytes.Buffer, n *in
 ///////////////////////////////////////////////////
 
 // Registration options for a {@link DocumentOnTypeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentOnTypeFormattingRegistrationOptions' structure.
 type DocumentOnTypeFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentOnTypeFormattingOptions
@@ -5801,9 +6086,11 @@ func (x DocumentOnTypeFormattingRegistrationOptions) marshalProperties(w *bytes.
 /////////////////////////////////////////////////
 
 // Client capabilities of a {@link DocumentRangeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentRangeFormattingClientCapabilities' structure.
 type DocumentRangeFormattingClientCapabilities struct {
 	// Whether range formatting supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x DocumentRangeFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -5835,6 +6122,8 @@ func (x DocumentRangeFormattingClientCapabilities) marshalProperties(w *bytes.Bu
 //////////////////////////////////////
 
 // Provider options for a {@link DocumentRangeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentRangeFormattingOptions' structure.
 type DocumentRangeFormattingOptions struct {
 	WorkDoneProgressOptions
 }
@@ -5868,6 +6157,8 @@ func (x DocumentRangeFormattingOptions) marshalProperties(w *bytes.Buffer, n *in
 /////////////////////////////////////
 
 // The parameters of a {@link DocumentRangeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentRangeFormattingParams' structure.
 type DocumentRangeFormattingParams struct {
 	WorkDoneProgressParams
 
@@ -5919,6 +6210,8 @@ func (x DocumentRangeFormattingParams) marshalProperties(w *bytes.Buffer, n *int
 //////////////////////////////////////////////////
 
 // Registration options for a {@link DocumentRangeFormattingRequest}.
+//
+// Generated from the LSP 'DocumentRangeFormattingRegistrationOptions' structure.
 type DocumentRangeFormattingRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentRangeFormattingOptions
@@ -5960,6 +6253,8 @@ func (x DocumentRangeFormattingRegistrationOptions) marshalProperties(w *bytes.B
 // @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
 //
 // The use of a string as a document filter is deprecated @since 3.16.0.
+//
+// Generated from the LSP 'DocumentSelector' type alias.
 type DocumentSelector = []DocumentFilter
 
 //////////////////////
@@ -5970,13 +6265,15 @@ type DocumentSelector = []DocumentFilter
 // that appear in a document. Document symbols can be hierarchical and they
 // have two ranges: one that encloses its definition and one that points to
 // its most interesting range, e.g. the range of an identifier.
+//
+// Generated from the LSP 'DocumentSymbol' structure.
 type DocumentSymbol struct {
 	// The name of this symbol. Will be displayed in the user interface and therefore must not be
 	// an empty string or a string only consisting of white spaces.
-	Name string
+	Name String
 
 	// More detail for this symbol, e.g the signature of a function.
-	Detail string
+	Detail String
 
 	// The kind of this symbol.
 	Kind SymbolKind
@@ -5991,7 +6288,7 @@ type DocumentSymbol struct {
 	// @deprecated Use tags instead
 	//
 	// Deprecated: Use tags instead
-	Deprecated bool
+	Deprecated Bool
 
 	// The range enclosing this symbol not including leading/trailing whitespace but everything else
 	// like comments. This information is typically used to determine if the clients cursor is
@@ -6056,16 +6353,18 @@ func (x DocumentSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////////////
 
 // Client Capabilities for a {@link DocumentSymbolRequest}.
+//
+// Generated from the LSP 'DocumentSymbolClientCapabilities' structure.
 type DocumentSymbolClientCapabilities struct {
 	// Whether document symbol supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Specific capabilities for the `SymbolKind` in the
 	// `textDocument/documentSymbol` request.
 	SymbolKind Optional[DocumentSymbolClientCapabilitiesSymbolKind]
 
 	// The client supports hierarchical document symbols.
-	HierarchicalDocumentSymbolSupport bool
+	HierarchicalDocumentSymbolSupport Bool
 
 	// The client supports tags on `SymbolInformation`. Tags are supported on
 	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
@@ -6078,7 +6377,7 @@ type DocumentSymbolClientCapabilities struct {
 	// registering a document symbol provider.
 	//
 	// @since 3.16.0
-	LabelSupport bool
+	LabelSupport Bool
 }
 
 func (x DocumentSymbolClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -6117,6 +6416,7 @@ func (x DocumentSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type DocumentSymbolClientCapabilitiesSymbolKind struct {
 	// The symbol kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -6153,6 +6453,7 @@ func (x DocumentSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.B
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type DocumentSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag
@@ -6187,6 +6488,8 @@ func (x DocumentSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.B
 /////////////////////////////
 
 // Provider options for a {@link DocumentSymbolRequest}.
+//
+// Generated from the LSP 'DocumentSymbolOptions' structure.
 type DocumentSymbolOptions struct {
 	WorkDoneProgressOptions
 
@@ -6194,7 +6497,7 @@ type DocumentSymbolOptions struct {
 	// are shown for the same document.
 	//
 	// @since 3.16.0
-	Label string
+	Label String
 }
 
 func (x DocumentSymbolOptions) MarshalJSON() ([]byte, error) {
@@ -6229,6 +6532,8 @@ func (x DocumentSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 ////////////////////////////
 
 // Parameters for a {@link DocumentSymbolRequest}.
+//
+// Generated from the LSP 'DocumentSymbolParams' structure.
 type DocumentSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -6272,6 +6577,8 @@ func (x DocumentSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////////////////
 
 // Registration options for a {@link DocumentSymbolRequest}.
+//
+// Generated from the LSP 'DocumentSymbolRegistrationOptions' structure.
 type DocumentSymbolRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	DocumentSymbolOptions
@@ -6309,18 +6616,20 @@ func (x DocumentSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 //////////////////
 
 // Predefined error codes.
-type ErrorCodes int32
+//
+// Generated from the LSP 'ErrorCodes' enumeration.
+type ErrorCodes Integer
 
 const (
-	ErrorCodesParseError     ErrorCodes = -32700
+	ErrorCodesParseError ErrorCodes = -32700
 	ErrorCodesInvalidRequest ErrorCodes = -32600
 	ErrorCodesMethodNotFound ErrorCodes = -32601
-	ErrorCodesInvalidParams  ErrorCodes = -32602
-	ErrorCodesInternalError  ErrorCodes = -32603
+	ErrorCodesInvalidParams ErrorCodes = -32602
+	ErrorCodesInternalError ErrorCodes = -32603
 	// Error code indicating that a server received a notification or
 	// request before the server has received the `initialize` request.
 	ErrorCodesServerNotInitialized ErrorCodes = -32002
-	ErrorCodesUnknownErrorCode     ErrorCodes = -32001
+	ErrorCodesUnknownErrorCode ErrorCodes = -32001
 )
 
 ////////////////////////////////////////
@@ -6328,9 +6637,11 @@ const (
 ////////////////////////////////////////
 
 // The client capabilities of a {@link ExecuteCommandRequest}.
+//
+// Generated from the LSP 'ExecuteCommandClientCapabilities' structure.
 type ExecuteCommandClientCapabilities struct {
 	// Execute command supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x ExecuteCommandClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -6362,11 +6673,13 @@ func (x ExecuteCommandClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 /////////////////////////////
 
 // The server capabilities of a {@link ExecuteCommandRequest}.
+//
+// Generated from the LSP 'ExecuteCommandOptions' structure.
 type ExecuteCommandOptions struct {
 	WorkDoneProgressOptions
 
 	// The commands to be executed on the server
-	Commands []string
+	Commands []String
 }
 
 func (x ExecuteCommandOptions) MarshalJSON() ([]byte, error) {
@@ -6401,11 +6714,13 @@ func (x ExecuteCommandOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 ////////////////////////////
 
 // The parameters of a {@link ExecuteCommandRequest}.
+//
+// Generated from the LSP 'ExecuteCommandParams' structure.
 type ExecuteCommandParams struct {
 	WorkDoneProgressParams
 
 	// The identifier of the actual command handler.
-	Command string
+	Command String
 
 	// Arguments that the command should be invoked with.
 	Arguments []LSPAny
@@ -6446,6 +6761,8 @@ func (x ExecuteCommandParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////////////////
 
 // Registration options for a {@link ExecuteCommandRequest}.
+//
+// Generated from the LSP 'ExecuteCommandRegistrationOptions' structure.
 type ExecuteCommandRegistrationOptions struct {
 	ExecuteCommandOptions
 }
@@ -6478,15 +6795,16 @@ func (x ExecuteCommandRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 /// ExecutionSummary ///
 ////////////////////////
 
+// Generated from the LSP 'ExecutionSummary' structure.
 type ExecutionSummary struct {
 	// A strict monotonically increasing value
 	// indicating the execution order of a cell
 	// inside a notebook.
-	ExecutionOrder uint32
+	ExecutionOrder UInteger
 
 	// Whether the execution was successful or
 	// not if known by the client.
-	Success bool
+	Success Bool
 }
 
 func (x ExecutionSummary) MarshalJSON() ([]byte, error) {
@@ -6520,7 +6838,8 @@ func (x ExecutionSummary) marshalProperties(w *bytes.Buffer, n *int) error {
 /// FailureHandlingKind ///
 ///////////////////////////
 
-type FailureHandlingKind string
+// Generated from the LSP 'FailureHandlingKind' enumeration.
+type FailureHandlingKind String
 
 const (
 	// Applying the workspace change is simply aborted if one of the changes provided
@@ -6539,7 +6858,7 @@ const (
 )
 
 func (x *FailureHandlingKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*FailureHandlingKind)(x)); err != nil {
 		return fmt.Errorf("FailureHandlingKind: %w", err)
 	}
 
@@ -6560,7 +6879,9 @@ func (x *FailureHandlingKind) UnmarshalJSON(data []byte) error {
 //////////////////////
 
 // The file event type
-type FileChangeType uint32
+//
+// Generated from the LSP 'FileChangeType' enumeration.
+type FileChangeType UInteger
 
 const (
 	// The file got created.
@@ -6572,7 +6893,7 @@ const (
 )
 
 func (x *FileChangeType) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*FileChangeType)(x)); err != nil {
 		return fmt.Errorf("FileChangeType: %w", err)
 	}
 
@@ -6594,9 +6915,11 @@ func (x *FileChangeType) UnmarshalJSON(data []byte) error {
 // Represents information on a file/folder create.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileCreate' structure.
 type FileCreate struct {
 	// A file:// URI for the location of the file/folder being created.
-	URI string
+	URI String
 }
 
 func (x FileCreate) MarshalJSON() ([]byte, error) {
@@ -6630,9 +6953,11 @@ func (x FileCreate) marshalProperties(w *bytes.Buffer, n *int) error {
 // Represents information on a file/folder delete.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileDelete' structure.
 type FileDelete struct {
 	// A file:// URI for the location of the file/folder being deleted.
-	URI string
+	URI String
 }
 
 func (x FileDelete) MarshalJSON() ([]byte, error) {
@@ -6664,6 +6989,8 @@ func (x FileDelete) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////
 
 // An event describing a file change.
+//
+// Generated from the LSP 'FileEvent' structure.
 type FileEvent struct {
 	// The file's uri.
 	URI DocumentURI
@@ -6709,27 +7036,29 @@ func (x FileEvent) marshalProperties(w *bytes.Buffer, n *int) error {
 // like renaming a file in the UI.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileOperationClientCapabilities' structure.
 type FileOperationClientCapabilities struct {
 	// Whether the client supports dynamic registration for file requests/notifications.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client has support for sending didCreateFiles notifications.
-	DidCreate bool
+	DidCreate Bool
 
 	// The client has support for sending willCreateFiles requests.
-	WillCreate bool
+	WillCreate Bool
 
 	// The client has support for sending didRenameFiles notifications.
-	DidRename bool
+	DidRename Bool
 
 	// The client has support for sending willRenameFiles requests.
-	WillRename bool
+	WillRename Bool
 
 	// The client has support for sending didDeleteFiles notifications.
-	DidDelete bool
+	DidDelete Bool
 
 	// The client has support for sending willDeleteFiles requests.
-	WillDelete bool
+	WillDelete Bool
 }
 
 func (x FileOperationClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -6782,9 +7111,11 @@ func (x FileOperationClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 // the server is interested in receiving.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileOperationFilter' structure.
 type FileOperationFilter struct {
 	// A Uri scheme like `file` or `untitled`.
-	Scheme string
+	Scheme String
 
 	// The actual file operation pattern.
 	Pattern FileOperationPattern
@@ -6824,6 +7155,8 @@ func (x FileOperationFilter) marshalProperties(w *bytes.Buffer, n *int) error {
 // Options for notifications/requests for user operations on files.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileOperationOptions' structure.
 type FileOperationOptions struct {
 	// The server is interested in receiving didCreateFiles notifications.
 	DidCreate Optional[FileOperationRegistrationOptions]
@@ -6891,6 +7224,8 @@ func (x FileOperationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // the server is interested in receiving.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileOperationPattern' structure.
 type FileOperationPattern struct {
 	// The glob pattern to match. Glob patterns can have the following syntax:
 	// - `*` to match one or more characters in a path segment
@@ -6899,7 +7234,7 @@ type FileOperationPattern struct {
 	// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
 	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
 	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-	Glob string
+	Glob String
 
 	// Whether to match files or folders with this pattern.
 	//
@@ -6948,7 +7283,9 @@ func (x FileOperationPattern) marshalProperties(w *bytes.Buffer, n *int) error {
 // both.
 //
 // @since 3.16.0
-type FileOperationPatternKind string
+//
+// Generated from the LSP 'FileOperationPatternKind' enumeration.
+type FileOperationPatternKind String
 
 const (
 	// The pattern matches a file only.
@@ -6958,7 +7295,7 @@ const (
 )
 
 func (x *FileOperationPatternKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*FileOperationPatternKind)(x)); err != nil {
 		return fmt.Errorf("FileOperationPatternKind: %w", err)
 	}
 
@@ -6979,9 +7316,11 @@ func (x *FileOperationPatternKind) UnmarshalJSON(data []byte) error {
 // Matching options for the file operation pattern.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileOperationPatternOptions' structure.
 type FileOperationPatternOptions struct {
 	// The pattern should be matched ignoring casing.
-	IgnoreCase bool
+	IgnoreCase Bool
 }
 
 func (x FileOperationPatternOptions) MarshalJSON() ([]byte, error) {
@@ -7015,6 +7354,8 @@ func (x FileOperationPatternOptions) marshalProperties(w *bytes.Buffer, n *int) 
 // The options to register for file operations.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileOperationRegistrationOptions' structure.
 type FileOperationRegistrationOptions struct {
 	// The actual filters.
 	Filters []FileOperationFilter
@@ -7051,12 +7392,14 @@ func (x FileOperationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 // Represents information on a file/folder rename.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'FileRename' structure.
 type FileRename struct {
 	// A file:// URI for the original location of the file/folder being renamed.
-	OldURI string
+	OldURI String
 
 	// A file:// URI for the new location of the file/folder being renamed.
-	NewURI string
+	NewURI String
 }
 
 func (x FileRename) MarshalJSON() ([]byte, error) {
@@ -7090,6 +7433,7 @@ func (x FileRename) marshalProperties(w *bytes.Buffer, n *int) error {
 /// FileSystemWatcher ///
 /////////////////////////
 
+// Generated from the LSP 'FileSystemWatcher' structure.
 type FileSystemWatcher struct {
 	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
 	//
@@ -7135,20 +7479,22 @@ func (x FileSystemWatcher) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
 // than the number of lines in the document. Clients are free to ignore invalid ranges.
+//
+// Generated from the LSP 'FoldingRange' structure.
 type FoldingRange struct {
 	// The zero-based start line of the range to fold. The folded area starts after the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	StartLine uint32
+	StartLine UInteger
 
 	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
-	StartCharacter Optional[uint32]
+	StartCharacter Optional[UInteger]
 
 	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
 	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	EndLine uint32
+	EndLine UInteger
 
 	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
-	EndCharacter Optional[uint32]
+	EndCharacter Optional[UInteger]
 
 	// Describes the kind of the folding range such as `comment' or 'region'. The kind
 	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
@@ -7160,7 +7506,7 @@ type FoldingRange struct {
 	// will be chosen by the client.
 	//
 	// @since 3.17.0
-	CollapsedText string
+	CollapsedText String
 }
 
 func (x FoldingRange) MarshalJSON() ([]byte, error) {
@@ -7206,22 +7552,23 @@ func (x FoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
 /// FoldingRangeClientCapabilities ///
 //////////////////////////////////////
 
+// Generated from the LSP 'FoldingRangeClientCapabilities' structure.
 type FoldingRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration for folding range
 	// providers. If this is set to `true` the client supports the new
 	// `FoldingRangeRegistrationOptions` return value for the corresponding
 	// server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The maximum number of folding ranges that the client prefers to receive
 	// per document. The value serves as a hint, servers are free to follow the
 	// limit.
-	RangeLimit Optional[uint32]
+	RangeLimit Optional[UInteger]
 
 	// If set, the client signals that it only supports folding complete lines.
 	// If set, client will ignore specified `startCharacter` and `endCharacter`
 	// properties in a FoldingRange.
-	LineFoldingOnly bool
+	LineFoldingOnly Bool
 
 	// Specific options for the folding range kind.
 	//
@@ -7270,12 +7617,13 @@ func (x FoldingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type FoldingRangeClientCapabilitiesFoldingRange struct {
 	// If set, the client signals that it supports setting collapsedText on
 	// folding ranges to display custom labels instead of the default text.
 	//
 	// @since 3.17.0
-	CollapsedText bool
+	CollapsedText Bool
 }
 
 func (x FoldingRangeClientCapabilitiesFoldingRange) MarshalJSON() ([]byte, error) {
@@ -7302,6 +7650,7 @@ func (x FoldingRangeClientCapabilitiesFoldingRange) marshalProperties(w *bytes.B
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
 	// The folding range kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -7339,7 +7688,9 @@ func (x FoldingRangeClientCapabilitiesFoldingRangeKind) marshalProperties(w *byt
 ////////////////////////
 
 // A set of predefined range kinds.
-type FoldingRangeKind string
+//
+// Generated from the LSP 'FoldingRangeKind' enumeration.
+type FoldingRangeKind String
 
 const (
 	// Folding range for a comment
@@ -7354,6 +7705,7 @@ const (
 /// FoldingRangeOptions ///
 ///////////////////////////
 
+// Generated from the LSP 'FoldingRangeOptions' structure.
 type FoldingRangeOptions struct {
 	WorkDoneProgressOptions
 }
@@ -7387,6 +7739,8 @@ func (x FoldingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////////////
 
 // Parameters for a {@link FoldingRangeRequest}.
+//
+// Generated from the LSP 'FoldingRangeParams' structure.
 type FoldingRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -7429,6 +7783,7 @@ func (x FoldingRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// FoldingRangeRegistrationOptions ///
 ///////////////////////////////////////
 
+// Generated from the LSP 'FoldingRangeRegistrationOptions' structure.
 type FoldingRangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	FoldingRangeOptions
@@ -7470,27 +7825,29 @@ func (x FoldingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 /////////////////////////
 
 // Value-object describing what options formatting should use.
+//
+// Generated from the LSP 'FormattingOptions' structure.
 type FormattingOptions struct {
 	// Size of a tab in spaces.
-	TabSize uint32
+	TabSize UInteger
 
 	// Prefer spaces over tabs.
-	InsertSpaces bool
+	InsertSpaces Bool
 
 	// Trim trailing whitespace on a line.
 	//
 	// @since 3.15.0
-	TrimTrailingWhitespace bool
+	TrimTrailingWhitespace Bool
 
 	// Insert a newline character at the end of the file if one does not exist.
 	//
 	// @since 3.15.0
-	InsertFinalNewline bool
+	InsertFinalNewline Bool
 
 	// Trim all newlines after the final newline at the end of the file.
 	//
 	// @since 3.15.0
-	TrimFinalNewlines bool
+	TrimFinalNewlines Bool
 }
 
 func (x FormattingOptions) MarshalJSON() ([]byte, error) {
@@ -7536,11 +7893,13 @@ func (x FormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // A diagnostic report with a full set of problems.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'FullDocumentDiagnosticReport' structure.
 type FullDocumentDiagnosticReport struct {
 	// An optional result id. If provided it will
 	// be sent on the next diagnostic request for the
 	// same document.
-	ResultID string
+	ResultID String
 
 	// The actual items.
 	Items []Diagnostic
@@ -7583,6 +7942,8 @@ func (x FullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int)
 // General client capabilities.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'GeneralClientCapabilities' structure.
 type GeneralClientCapabilities struct {
 	// Client capability that signals how the client
 	// handles stale requests (e.g. a request
@@ -7656,14 +8017,15 @@ func (x GeneralClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) er
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type GeneralClientCapabilitiesStaleRequestSupport struct {
 	// The client will actively cancel the request.
-	Cancel bool
+	Cancel Bool
 
 	// The list of requests for which the client
 	// will retry the request if it receives a
 	// response with error code `ContentModified`
-	RetryOnContentModified []string
+	RetryOnContentModified []String
 }
 
 func (x GeneralClientCapabilitiesStaleRequestSupport) MarshalJSON() ([]byte, error) {
@@ -7700,9 +8062,12 @@ func (x GeneralClientCapabilitiesStaleRequestSupport) marshalProperties(w *bytes
 // The glob pattern. Either a string pattern or a relative pattern.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'GlobPattern' type alias.
+// Generated from an LSP 'or' type.
 type GlobPattern struct {
-	A Optional[Pattern]
-	B Optional[RelativePattern]
+	Pattern         Pattern
+	RelativePattern RelativePattern
 }
 
 /////////////
@@ -7710,6 +8075,8 @@ type GlobPattern struct {
 /////////////
 
 // The result of a hover request.
+//
+// Generated from the LSP 'Hover' structure.
 type Hover struct {
 	// The hover's content
 	Contents HoverContents
@@ -7746,19 +8113,21 @@ func (x Hover) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type HoverContents struct {
-	A Optional[MarkupContent]
-	B Optional[MarkedString]
-	C Optional[[]MarkedString]
+	MarkupContent     MarkupContent
+	MarkedString      MarkedString
+	MarkedStringArray []MarkedString
 }
 
 ///////////////////////////////
 /// HoverClientCapabilities ///
 ///////////////////////////////
 
+// Generated from the LSP 'HoverClientCapabilities' structure.
 type HoverClientCapabilities struct {
 	// Whether hover supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Client supports the following content formats for the content
 	// property. The order describes the preferred format of the client.
@@ -7797,6 +8166,8 @@ func (x HoverClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) erro
 ////////////////////
 
 // Hover options.
+//
+// Generated from the LSP 'HoverOptions' structure.
 type HoverOptions struct {
 	WorkDoneProgressOptions
 }
@@ -7830,6 +8201,8 @@ func (x HoverOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////
 
 // Parameters for a {@link HoverRequest}.
+//
+// Generated from the LSP 'HoverParams' structure.
 type HoverParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -7867,6 +8240,8 @@ func (x HoverParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////
 
 // Registration options for a {@link HoverRequest}.
+//
+// Generated from the LSP 'HoverRegistrationOptions' structure.
 type HoverRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	HoverOptions
@@ -7904,16 +8279,18 @@ func (x HoverRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) err
 ////////////////////////////////////////
 
 // @since 3.6.0
+//
+// Generated from the LSP 'ImplementationClientCapabilities' structure.
 type ImplementationClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `ImplementationRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports additional metadata in the form of definition links.
 	//
 	// @since 3.14.0
-	LinkSupport bool
+	LinkSupport Bool
 }
 
 func (x ImplementationClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -7947,6 +8324,7 @@ func (x ImplementationClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 /// ImplementationOptions ///
 /////////////////////////////
 
+// Generated from the LSP 'ImplementationOptions' structure.
 type ImplementationOptions struct {
 	WorkDoneProgressOptions
 }
@@ -7979,6 +8357,7 @@ func (x ImplementationOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 /// ImplementationParams ///
 ////////////////////////////
 
+// Generated from the LSP 'ImplementationParams' structure.
 type ImplementationParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -8019,6 +8398,7 @@ func (x ImplementationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// ImplementationRegistrationOptions ///
 /////////////////////////////////////////
 
+// Generated from the LSP 'ImplementationRegistrationOptions' structure.
 type ImplementationRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	ImplementationOptions
@@ -8061,12 +8441,14 @@ func (x ImplementationRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 
 // The data type of the ResponseError if the
 // initialize request fails.
+//
+// Generated from the LSP 'InitializeError' structure.
 type InitializeError struct {
 	// Indicates whether the client execute the following retry logic:
 	// (1) show the message provided by the ResponseError to the user
 	// (2) user selects retry or cancel
 	// (3) if user selected retry the initialize method is sent again.
-	Retry bool
+	Retry Bool
 }
 
 func (x InitializeError) MarshalJSON() ([]byte, error) {
@@ -8097,6 +8479,7 @@ func (x InitializeError) marshalProperties(w *bytes.Buffer, n *int) error {
 /// InitializeParams ///
 ////////////////////////
 
+// Generated from the LSP 'InitializeParams' structure.
 type InitializeParams struct {
 	initializeParams
 	WorkspaceFoldersInitializeParams
@@ -8134,6 +8517,8 @@ func (x InitializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////
 
 // The result returned from an initialize request.
+//
+// Generated from the LSP 'InitializeResult' structure.
 type InitializeResult struct {
 	// The capabilities the language server provides.
 	Capabilities ServerCapabilities
@@ -8171,12 +8556,13 @@ func (x InitializeResult) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type InitializeResultServerInfo struct {
 	// The name of the server as defined by the server.
-	Name string
+	Name String
 
 	// The server's version as defined by the server.
-	Version string
+	Version String
 }
 
 func (x InitializeResultServerInfo) MarshalJSON() ([]byte, error) {
@@ -8210,6 +8596,7 @@ func (x InitializeResultServerInfo) marshalProperties(w *bytes.Buffer, n *int) e
 /// InitializedParams ///
 /////////////////////////
 
+// Generated from the LSP 'InitializedParams' structure.
 type InitializedParams struct{}
 
 func (x InitializedParams) MarshalJSON() ([]byte, error) {
@@ -8240,6 +8627,8 @@ func (x InitializedParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // Inlay hint information.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlayHint' structure.
 type InlayHint struct {
 	// The position of this hint.
 	Position Position
@@ -8269,14 +8658,14 @@ type InlayHint struct {
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingLeft bool
+	PaddingLeft Bool
 
 	// Render padding after the hint.
 	//
 	// Note: Padding should use the editor's background color, not the
 	// background color of the hint itself. That means padding can be used
 	// to visually align/separate an inlay hint.
-	PaddingRight bool
+	PaddingRight Bool
 
 	// A data entry field that is preserved on an inlay hint between
 	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
@@ -8328,14 +8717,16 @@ func (x InlayHint) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type InlayHintLabel struct {
-	A Optional[string]
-	B Optional[[]InlayHintLabelPart]
+	String                  String
+	InlayHintLabelPartArray []InlayHintLabelPart
 }
 
+// Generated from an LSP 'or' type.
 type InlayHintTooltip struct {
-	A Optional[string]
-	B Optional[MarkupContent]
+	String        String
+	MarkupContent MarkupContent
 }
 
 ///////////////////////////////////
@@ -8345,9 +8736,11 @@ type InlayHintTooltip struct {
 // Inlay hint client capabilities.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlayHintClientCapabilities' structure.
 type InlayHintClientCapabilities struct {
 	// Whether inlay hints support dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Indicates which properties a client can resolve lazily on an inlay
 	// hint.
@@ -8381,9 +8774,10 @@ func (x InlayHintClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type InlayHintClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily.
-	Properties []string
+	Properties []String
 }
 
 func (x InlayHintClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
@@ -8417,7 +8811,9 @@ func (x InlayHintClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Bu
 // Inlay hint kinds.
 //
 // @since 3.17.0
-type InlayHintKind uint32
+//
+// Generated from the LSP 'InlayHintKind' enumeration.
+type InlayHintKind UInteger
 
 const (
 	// An inlay hint that for a type annotation.
@@ -8427,7 +8823,7 @@ const (
 )
 
 func (x *InlayHintKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*InlayHintKind)(x)); err != nil {
 		return fmt.Errorf("InlayHintKind: %w", err)
 	}
 
@@ -8449,9 +8845,11 @@ func (x *InlayHintKind) UnmarshalJSON(data []byte) error {
 // of inlay hints.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlayHintLabelPart' structure.
 type InlayHintLabelPart struct {
 	// The value of this label part.
-	Value string
+	Value String
 
 	// The tooltip text when you hover over this label part. Depending on
 	// the client capability `inlayHint.resolveSupport` clients might resolve
@@ -8511,9 +8909,10 @@ func (x InlayHintLabelPart) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type InlayHintLabelPartTooltip struct {
-	A Optional[string]
-	B Optional[MarkupContent]
+	String        String
+	MarkupContent MarkupContent
 }
 
 ////////////////////////
@@ -8523,12 +8922,14 @@ type InlayHintLabelPartTooltip struct {
 // Inlay hint options used during static registration.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlayHintOptions' structure.
 type InlayHintOptions struct {
 	WorkDoneProgressOptions
 
 	// The server provides support to resolve additional
 	// information for an inlay hint item.
-	ResolveProvider bool
+	ResolveProvider Bool
 }
 
 func (x InlayHintOptions) MarshalJSON() ([]byte, error) {
@@ -8565,6 +8966,8 @@ func (x InlayHintOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // A parameter literal used in inlay hint requests.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlayHintParams' structure.
 type InlayHintParams struct {
 	WorkDoneProgressParams
 
@@ -8612,6 +9015,8 @@ func (x InlayHintParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // Inlay hint options used during static or dynamic registration.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlayHintRegistrationOptions' structure.
 type InlayHintRegistrationOptions struct {
 	InlayHintOptions
 	TextDocumentRegistrationOptions
@@ -8655,6 +9060,8 @@ func (x InlayHintRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int)
 // Client workspace capabilities specific to inlay hints.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlayHintWorkspaceClientCapabilities' structure.
 type InlayHintWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from
 	// the server to the client.
@@ -8663,7 +9070,7 @@ type InlayHintWorkspaceClientCapabilities struct {
 	// inlay hints currently shown. It should be used with absolute care and
 	// is useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool
+	RefreshSupport Bool
 }
 
 func (x InlayHintWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -8701,10 +9108,13 @@ func (x InlayHintWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer,
 // The InlineValue types combines all inline value types into one type.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValue' type alias.
+// Generated from an LSP 'or' type.
 type InlineValue struct {
-	A Optional[InlineValueText]
-	B Optional[InlineValueVariableLookup]
-	C Optional[InlineValueEvaluatableExpression]
+	InlineValueText                  InlineValueText
+	InlineValueVariableLookup        InlineValueVariableLookup
+	InlineValueEvaluatableExpression InlineValueEvaluatableExpression
 }
 
 /////////////////////////////////////
@@ -8714,9 +9124,11 @@ type InlineValue struct {
 // Client capabilities specific to inline values.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueClientCapabilities' structure.
 type InlineValueClientCapabilities struct {
 	// Whether implementation supports dynamic registration for inline value providers.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x InlineValueClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -8748,9 +9160,11 @@ func (x InlineValueClientCapabilities) marshalProperties(w *bytes.Buffer, n *int
 //////////////////////////
 
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueContext' structure.
 type InlineValueContext struct {
 	// The stack frame (as a DAP Id) where the execution has stopped.
-	FrameID int32
+	FrameID Integer
 
 	// The document range where execution has stopped.
 	// Typically the end position of the range denotes the line where the inline values are shown.
@@ -8793,13 +9207,15 @@ func (x InlineValueContext) marshalProperties(w *bytes.Buffer, n *int) error {
 // An optional expression can be used to override the extracted expression.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueEvaluatableExpression' structure.
 type InlineValueEvaluatableExpression struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the evaluatable expression from the underlying document.
 	Range Range
 
 	// If specified the expression overrides the extracted expression.
-	Expression string
+	Expression String
 }
 
 func (x InlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
@@ -8836,6 +9252,8 @@ func (x InlineValueEvaluatableExpression) marshalProperties(w *bytes.Buffer, n *
 // Inline value options used during static registration.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueOptions' structure.
 type InlineValueOptions struct {
 	WorkDoneProgressOptions
 }
@@ -8871,6 +9289,8 @@ func (x InlineValueOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // A parameter literal used in inline value requests.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueParams' structure.
 type InlineValueParams struct {
 	WorkDoneProgressParams
 
@@ -8925,6 +9345,8 @@ func (x InlineValueParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // Inline value options used during static or dynamic registration.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueRegistrationOptions' structure.
 type InlineValueRegistrationOptions struct {
 	InlineValueOptions
 	TextDocumentRegistrationOptions
@@ -8968,12 +9390,14 @@ func (x InlineValueRegistrationOptions) marshalProperties(w *bytes.Buffer, n *in
 // Provide inline value as text.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueText' structure.
 type InlineValueText struct {
 	// The document range for which the inline value applies.
 	Range Range
 
 	// The text of the inline value.
-	Text string
+	Text String
 }
 
 func (x InlineValueText) MarshalJSON() ([]byte, error) {
@@ -9012,16 +9436,18 @@ func (x InlineValueText) marshalProperties(w *bytes.Buffer, n *int) error {
 // An optional variable name can be used to override the extracted name.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueVariableLookup' structure.
 type InlineValueVariableLookup struct {
 	// The document range for which the inline value applies.
 	// The range is used to extract the variable name from the underlying document.
 	Range Range
 
 	// If specified the name of the variable to look up.
-	VariableName string
+	VariableName String
 
 	// How to perform the lookup.
-	CaseSensitiveLookup bool
+	CaseSensitiveLookup Bool
 }
 
 func (x InlineValueVariableLookup) MarshalJSON() ([]byte, error) {
@@ -9061,6 +9487,8 @@ func (x InlineValueVariableLookup) marshalProperties(w *bytes.Buffer, n *int) er
 // Client workspace capabilities specific to inline values.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'InlineValueWorkspaceClientCapabilities' structure.
 type InlineValueWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from the
 	// server to the client.
@@ -9069,7 +9497,7 @@ type InlineValueWorkspaceClientCapabilities struct {
 	// inline values currently shown. It should be used with absolute care and is
 	// useful for situation where a server for example detects a project wide
 	// change that requires such a calculation.
-	RefreshSupport bool
+	RefreshSupport Bool
 }
 
 func (x InlineValueWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -9103,9 +9531,11 @@ func (x InlineValueWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffe
 // A special text edit to provide an insert and a replace operation.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'InsertReplaceEdit' structure.
 type InsertReplaceEdit struct {
 	// The string to be inserted.
-	NewText string
+	NewText String
 
 	// The range if the insert is requested
 	Insert Range
@@ -9150,7 +9580,9 @@ func (x InsertReplaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // Defines whether the insert text in a completion item should be interpreted as
 // plain text or a snippet.
-type InsertTextFormat uint32
+//
+// Generated from the LSP 'InsertTextFormat' enumeration.
+type InsertTextFormat UInteger
 
 const (
 	// The primary text to be inserted is treated as a plain string.
@@ -9167,7 +9599,7 @@ const (
 )
 
 func (x *InsertTextFormat) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*InsertTextFormat)(x)); err != nil {
 		return fmt.Errorf("InsertTextFormat: %w", err)
 	}
 
@@ -9189,7 +9621,9 @@ func (x *InsertTextFormat) UnmarshalJSON(data []byte) error {
 // item insertion.
 //
 // @since 3.16.0
-type InsertTextMode uint32
+//
+// Generated from the LSP 'InsertTextMode' enumeration.
+type InsertTextMode UInteger
 
 const (
 	// The insertion or replace strings is taken as it is. If the
@@ -9209,7 +9643,7 @@ const (
 )
 
 func (x *InsertTextMode) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*InsertTextMode)(x)); err != nil {
 		return fmt.Errorf("InsertTextMode: %w", err)
 	}
 
@@ -9233,14 +9667,17 @@ func (x *InsertTextMode) UnmarshalJSON(data []byte) error {
 // convenience it is allowed and assumed that all these properties are
 // optional as well.
 // @since 3.17.0
+//
+// Generated from the LSP 'LSPAny' type alias.
+// Generated from an LSP 'or' type.
 type LSPAny struct {
-	A Optional[LSPObject]
-	B Optional[LSPArray]
-	C Optional[string]
-	D Optional[int32]
-	E Optional[uint32]
-	F Optional[float64]
-	G Optional[bool]
+	LSPObject LSPObject
+	LSPArray  LSPArray
+	String    String
+	Integer   Integer
+	UInteger  UInteger
+	Decimal   Decimal
+	Bool      Bool
 }
 
 ////////////////
@@ -9249,13 +9686,16 @@ type LSPAny struct {
 
 // LSP arrays.
 // @since 3.17.0
+//
+// Generated from the LSP 'LSPArray' type alias.
 type LSPArray = []LSPAny
 
 /////////////////////
 /// LSPErrorCodes ///
 /////////////////////
 
-type LSPErrorCodes int32
+// Generated from the LSP 'LSPErrorCodes' enumeration.
+type LSPErrorCodes Integer
 
 const (
 	// A request failed but it was syntactically correct, e.g the
@@ -9291,7 +9731,9 @@ const (
 
 // LSP object definition.
 // @since 3.17.0
-type LSPObject = map[string]LSPAny
+//
+// Generated from the LSP 'LSPObject' type alias.
+type LSPObject = map[String]LSPAny
 
 ////////////////////////////////////////////
 /// LinkedEditingRangeClientCapabilities ///
@@ -9300,11 +9742,13 @@ type LSPObject = map[string]LSPAny
 // Client capabilities for the linked editing range request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'LinkedEditingRangeClientCapabilities' structure.
 type LinkedEditingRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x LinkedEditingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -9335,6 +9779,7 @@ func (x LinkedEditingRangeClientCapabilities) marshalProperties(w *bytes.Buffer,
 /// LinkedEditingRangeOptions ///
 /////////////////////////////////
 
+// Generated from the LSP 'LinkedEditingRangeOptions' structure.
 type LinkedEditingRangeOptions struct {
 	WorkDoneProgressOptions
 }
@@ -9367,6 +9812,7 @@ func (x LinkedEditingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) er
 /// LinkedEditingRangeParams ///
 ////////////////////////////////
 
+// Generated from the LSP 'LinkedEditingRangeParams' structure.
 type LinkedEditingRangeParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -9403,6 +9849,7 @@ func (x LinkedEditingRangeParams) marshalProperties(w *bytes.Buffer, n *int) err
 /// LinkedEditingRangeRegistrationOptions ///
 /////////////////////////////////////////////
 
+// Generated from the LSP 'LinkedEditingRangeRegistrationOptions' structure.
 type LinkedEditingRangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	LinkedEditingRangeOptions
@@ -9446,6 +9893,8 @@ func (x LinkedEditingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer
 // The result of a linked editing range request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'LinkedEditingRanges' structure.
 type LinkedEditingRanges struct {
 	// A list of ranges that can be edited together. The ranges must have
 	// identical length and contain identical text content. The ranges cannot overlap.
@@ -9454,7 +9903,7 @@ type LinkedEditingRanges struct {
 	// An optional word pattern (regular expression) that describes valid contents for
 	// the given ranges. If no pattern is provided, the client configuration's word
 	// pattern will be used.
-	WordPattern string
+	WordPattern String
 }
 
 func (x LinkedEditingRanges) MarshalJSON() ([]byte, error) {
@@ -9490,6 +9939,8 @@ func (x LinkedEditingRanges) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // Represents a location inside a resource, such as a line
 // inside a text file.
+//
+// Generated from the LSP 'Location' structure.
 type Location struct {
 	URI DocumentURI
 
@@ -9529,6 +9980,8 @@ func (x Location) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // Represents the connection of two locations. Provides additional metadata over normal {@link Location locations},
 // including an origin range.
+//
+// Generated from the LSP 'LocationLink' structure.
 type LocationLink struct {
 	// Span of the origin of this link.
 	//
@@ -9587,12 +10040,14 @@ func (x LocationLink) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////
 
 // The log message parameters.
+//
+// Generated from the LSP 'LogMessageParams' structure.
 type LogMessageParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType
 
 	// The actual message.
-	Message string
+	Message String
 }
 
 func (x LogMessageParams) MarshalJSON() ([]byte, error) {
@@ -9626,10 +10081,11 @@ func (x LogMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// LogTraceParams ///
 //////////////////////
 
+// Generated from the LSP 'LogTraceParams' structure.
 type LogTraceParams struct {
-	Message string
+	Message String
 
-	Verbose string
+	Verbose String
 }
 
 func (x LogTraceParams) MarshalJSON() ([]byte, error) {
@@ -9666,18 +10122,20 @@ func (x LogTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // Client capabilities specific to the used markdown parser.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'MarkdownClientCapabilities' structure.
 type MarkdownClientCapabilities struct {
 	// The name of the parser.
-	Parser string
+	Parser String
 
 	// The version of the parser.
-	Version string
+	Version String
 
 	// A list of HTML tags that the client allows / supports in
 	// Markdown.
 	//
 	// @since 3.17.0
-	AllowedTags []string
+	AllowedTags []String
 }
 
 func (x MarkdownClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -9727,10 +10185,47 @@ func (x MarkdownClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) e
 // Note that markdown strings will be sanitized - that means html will be escaped.
 // @deprecated use MarkupContent instead.
 //
+// Generated from the LSP 'MarkedString' type alias.
+//
 // Deprecated: use MarkupContent instead.
+// Generated from an LSP 'or' type.
 type MarkedString struct {
-	A Optional[string]
-	B Optional[MarkedString]
+	String        String
+	MarkedString1 MarkedString1
+}
+
+// Generated from an LSP 'literal' type.
+type MarkedString1 struct {
+	Language String
+
+	Value String
+}
+
+func (x MarkedString1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x MarkedString1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////
@@ -9761,12 +10256,14 @@ type MarkedString struct {
 //
 // *Please Note* that clients might sanitize the return markdown. A client could decide to
 // remove HTML from the markdown to avoid script execution.
+//
+// Generated from the LSP 'MarkupContent' structure.
 type MarkupContent struct {
 	// The type of the Markup
 	Kind MarkupKind
 
 	// The content itself
-	Value string
+	Value String
 }
 
 func (x MarkupContent) MarshalJSON() ([]byte, error) {
@@ -9805,7 +10302,9 @@ func (x MarkupContent) marshalProperties(w *bytes.Buffer, n *int) error {
 //
 // Please note that `MarkupKinds` must not start with a `$`. This kinds
 // are reserved for internal usage.
-type MarkupKind string
+//
+// Generated from the LSP 'MarkupKind' enumeration.
+type MarkupKind String
 
 const (
 	// Plain text is supported as a content format
@@ -9815,7 +10314,7 @@ const (
 )
 
 func (x *MarkupKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*MarkupKind)(x)); err != nil {
 		return fmt.Errorf("MarkupKind: %w", err)
 	}
 
@@ -9833,9 +10332,10 @@ func (x *MarkupKind) UnmarshalJSON(data []byte) error {
 /// MessageActionItem ///
 /////////////////////////
 
+// Generated from the LSP 'MessageActionItem' structure.
 type MessageActionItem struct {
 	// A short title like 'Retry', 'Open Log' etc.
-	Title string
+	Title String
 }
 
 func (x MessageActionItem) MarshalJSON() ([]byte, error) {
@@ -9867,7 +10367,9 @@ func (x MessageActionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////
 
 // The message type
-type MessageType uint32
+//
+// Generated from the LSP 'MessageType' enumeration.
+type MessageType UInteger
 
 const (
 	// An error message.
@@ -9881,7 +10383,7 @@ const (
 )
 
 func (x *MessageType) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*MessageType)(x)); err != nil {
 		return fmt.Errorf("MessageType: %w", err)
 	}
 
@@ -9904,13 +10406,15 @@ func (x *MessageType) UnmarshalJSON(data []byte) error {
 // Moniker definition to match LSIF 0.5 moniker definition.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'Moniker' structure.
 type Moniker struct {
 	// The scheme of the moniker. For example tsc or .Net
-	Scheme string
+	Scheme String
 
 	// The identifier of the moniker. The value is opaque in LSIF however
 	// schema owners are allowed to define the structure if they want.
-	Identifier string
+	Identifier String
 
 	// The scope in which the moniker is unique
 	Unique UniquenessLevel
@@ -9959,11 +10463,13 @@ func (x Moniker) marshalProperties(w *bytes.Buffer, n *int) error {
 // Client capabilities specific to the moniker request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'MonikerClientCapabilities' structure.
 type MonikerClientCapabilities struct {
 	// Whether moniker supports dynamic registration. If this is set to `true`
 	// the client supports the new `MonikerRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x MonikerClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -9997,7 +10503,9 @@ func (x MonikerClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) er
 // The moniker kind.
 //
 // @since 3.16.0
-type MonikerKind string
+//
+// Generated from the LSP 'MonikerKind' enumeration.
+type MonikerKind String
 
 const (
 	// The moniker represent a symbol that is imported into a project
@@ -10010,7 +10518,7 @@ const (
 )
 
 func (x *MonikerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*MonikerKind)(x)); err != nil {
 		return fmt.Errorf("MonikerKind: %w", err)
 	}
 
@@ -10029,6 +10537,7 @@ func (x *MonikerKind) UnmarshalJSON(data []byte) error {
 /// MonikerOptions ///
 //////////////////////
 
+// Generated from the LSP 'MonikerOptions' structure.
 type MonikerOptions struct {
 	WorkDoneProgressOptions
 }
@@ -10061,6 +10570,7 @@ func (x MonikerOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 /// MonikerParams ///
 /////////////////////
 
+// Generated from the LSP 'MonikerParams' structure.
 type MonikerParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -10101,6 +10611,7 @@ func (x MonikerParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// MonikerRegistrationOptions ///
 //////////////////////////////////
 
+// Generated from the LSP 'MonikerRegistrationOptions' structure.
 type MonikerRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	MonikerOptions
@@ -10144,6 +10655,8 @@ func (x MonikerRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) e
 // notebook cell or the cell's text document.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookCell' structure.
 type NotebookCell struct {
 	// The cell's kind
 	Kind NotebookCellKind
@@ -10203,12 +10716,14 @@ func (x NotebookCell) marshalProperties(w *bytes.Buffer, n *int) error {
 // array from state S to S'.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookCellArrayChange' structure.
 type NotebookCellArrayChange struct {
 	// The start oftest of the cell that changed.
-	Start uint32
+	Start UInteger
 
 	// The deleted cells
-	DeleteCount uint32
+	DeleteCount UInteger
 
 	// The new cells, if any
 	Cells []NotebookCell
@@ -10251,7 +10766,9 @@ func (x NotebookCellArrayChange) marshalProperties(w *bytes.Buffer, n *int) erro
 // A notebook cell kind.
 //
 // @since 3.17.0
-type NotebookCellKind uint32
+//
+// Generated from the LSP 'NotebookCellKind' enumeration.
+type NotebookCellKind UInteger
 
 const (
 	// A markup-cell is formatted source that is used for display.
@@ -10261,7 +10778,7 @@ const (
 )
 
 func (x *NotebookCellKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*NotebookCellKind)(x)); err != nil {
 		return fmt.Errorf("NotebookCellKind: %w", err)
 	}
 
@@ -10283,6 +10800,8 @@ func (x *NotebookCellKind) UnmarshalJSON(data []byte) error {
 // document by different properties.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookCellTextDocumentFilter' structure.
 type NotebookCellTextDocumentFilter struct {
 	// A filter that matches against the notebook
 	// containing the notebook cell. If a string
@@ -10294,7 +10813,7 @@ type NotebookCellTextDocumentFilter struct {
 	//
 	// Will be matched against the language id of the
 	// notebook cell document. '*' matches every language.
-	Language string
+	Language String
 }
 
 func (x NotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
@@ -10324,9 +10843,10 @@ func (x NotebookCellTextDocumentFilter) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type NotebookCellTextDocumentFilterNotebook struct {
-	A Optional[string]
-	B Optional[NotebookDocumentFilter]
+	String                 String
+	NotebookDocumentFilter NotebookDocumentFilter
 }
 
 ////////////////////////
@@ -10336,16 +10856,18 @@ type NotebookCellTextDocumentFilterNotebook struct {
 // A notebook document.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocument' structure.
 type NotebookDocument struct {
 	// The notebook document's uri.
 	URI URI
 
 	// The type of the notebook.
-	NotebookType string
+	NotebookType String
 
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
-	Version int32
+	Version Integer
 
 	// Additional metadata stored with the notebook
 	// document.
@@ -10400,6 +10922,8 @@ func (x NotebookDocument) marshalProperties(w *bytes.Buffer, n *int) error {
 // A change event for a notebook document.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocumentChangeEvent' structure.
 type NotebookDocumentChangeEvent struct {
 	// The changed meta data if any.
 	//
@@ -10437,6 +10961,7 @@ func (x NotebookDocumentChangeEvent) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type NotebookDocumentChangeEventCells struct {
 	// Changes to the cell structure to add or
 	// remove cells.
@@ -10480,6 +11005,7 @@ func (x NotebookDocumentChangeEventCells) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type NotebookDocumentChangeEventCellsStructure struct {
 	// The change to the cell array.
 	Array NotebookCellArrayChange
@@ -10521,6 +11047,7 @@ func (x NotebookDocumentChangeEventCellsStructure) marshalProperties(w *bytes.Bu
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type NotebookDocumentChangeEventCellsTextContent struct {
 	Document VersionedTextDocumentIdentifier
 
@@ -10561,6 +11088,8 @@ func (x NotebookDocumentChangeEventCellsTextContent) marshalProperties(w *bytes.
 // Capabilities specific to the notebook document support.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocumentClientCapabilities' structure.
 type NotebookDocumentClientCapabilities struct {
 	// Capabilities specific to notebook document synchronization
 	//
@@ -10601,10 +11130,139 @@ func (x NotebookDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n
 // against the notebook's URI (same as with documents)
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocumentFilter' type alias.
+// Generated from an LSP 'or' type.
 type NotebookDocumentFilter struct {
-	A Optional[NotebookDocumentFilter]
-	B Optional[NotebookDocumentFilter]
-	C Optional[NotebookDocumentFilter]
+	NotebookDocumentFilter0 NotebookDocumentFilter0
+	NotebookDocumentFilter1 NotebookDocumentFilter1
+	NotebookDocumentFilter2 NotebookDocumentFilter2
+}
+
+// Generated from an LSP 'literal' type.
+type NotebookDocumentFilter0 struct {
+	// The type of the enclosing notebook.
+	NotebookType String
+
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+
+	// A glob pattern.
+	Pattern String
+}
+
+func (x NotebookDocumentFilter0) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentFilter0) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type NotebookDocumentFilter1 struct {
+	// The type of the enclosing notebook.
+	NotebookType String
+
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+
+	// A glob pattern.
+	Pattern String
+}
+
+func (x NotebookDocumentFilter1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentFilter1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type NotebookDocumentFilter2 struct {
+	// The type of the enclosing notebook.
+	NotebookType String
+
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+
+	// A glob pattern.
+	Pattern String
+}
+
+func (x NotebookDocumentFilter2) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentFilter2) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////////
@@ -10614,6 +11272,8 @@ type NotebookDocumentFilter struct {
 // A literal to identify a notebook document in the client.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocumentIdentifier' structure.
 type NotebookDocumentIdentifier struct {
 	// The notebook document's uri.
 	URI URI
@@ -10650,15 +11310,17 @@ func (x NotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) e
 // Notebook specific client capabilities.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocumentSyncClientCapabilities' structure.
 type NotebookDocumentSyncClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is
 	// set to `true` the client supports the new
 	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports sending execution summary data per cell.
-	ExecutionSummarySupport bool
+	ExecutionSummarySupport Bool
 }
 
 func (x NotebookDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -10705,13 +11367,15 @@ func (x NotebookDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffe
 // cell will be synced.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocumentSyncOptions' structure.
 type NotebookDocumentSyncOptions struct {
 	// The notebooks to be synced
 	NotebookSelector []NotebookDocumentSyncOptionsNotebookSelector
 
 	// Whether save notification should be forwarded to
 	// the server. Will only be honored if mode === `notebook`.
-	Save bool
+	Save Bool
 }
 
 func (x NotebookDocumentSyncOptions) MarshalJSON() ([]byte, error) {
@@ -10741,9 +11405,156 @@ func (x NotebookDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type NotebookDocumentSyncOptionsNotebookSelector struct {
-	A Optional[NotebookDocumentSyncOptionsNotebookSelector]
-	B Optional[NotebookDocumentSyncOptionsNotebookSelector]
+	NotebookDocumentSyncOptionsNotebookSelector0 NotebookDocumentSyncOptionsNotebookSelector0
+	NotebookDocumentSyncOptionsNotebookSelector1 NotebookDocumentSyncOptionsNotebookSelector1
+}
+
+// Generated from an LSP 'literal' type.
+type NotebookDocumentSyncOptionsNotebookSelector0 struct {
+	// The notebook to be synced If a string
+	// value is provided it matches against the
+	// notebook type. '*' matches every notebook.
+	Notebook NotebookDocumentSyncOptionsNotebookSelector0Notebook
+
+	// The cells of the matching notebook to be synced.
+	Cells []NotebookDocumentSyncOptionsNotebookSelector0Cells
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector0) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector0) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "notebook", x.Notebook); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type NotebookDocumentSyncOptionsNotebookSelector0Cells struct {
+	Language String
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector0Cells) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector0Cells) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'or' type.
+type NotebookDocumentSyncOptionsNotebookSelector0Notebook struct {
+	String                 String
+	NotebookDocumentFilter NotebookDocumentFilter
+}
+
+// Generated from an LSP 'literal' type.
+type NotebookDocumentSyncOptionsNotebookSelector1 struct {
+	// The notebook to be synced If a string
+	// value is provided it matches against the
+	// notebook type. '*' matches every notebook.
+	Notebook Optional[NotebookDocumentSyncOptionsNotebookSelector1Notebook]
+
+	// The cells of the matching notebook to be synced.
+	Cells []NotebookDocumentSyncOptionsNotebookSelector1Cells
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalOptionalProperty(w, n, "notebook", x.Notebook); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type NotebookDocumentSyncOptionsNotebookSelector1Cells struct {
+	Language String
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector1Cells) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x NotebookDocumentSyncOptionsNotebookSelector1Cells) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'or' type.
+type NotebookDocumentSyncOptionsNotebookSelector1Notebook struct {
+	String                 String
+	NotebookDocumentFilter NotebookDocumentFilter
 }
 
 ///////////////////////////////////////////////
@@ -10753,6 +11564,8 @@ type NotebookDocumentSyncOptionsNotebookSelector struct {
 // Registration options specific to a notebook.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'NotebookDocumentSyncRegistrationOptions' structure.
 type NotebookDocumentSyncRegistrationOptions struct {
 	NotebookDocumentSyncOptions
 	StaticRegistrationOptions
@@ -10790,6 +11603,8 @@ func (x NotebookDocumentSyncRegistrationOptions) marshalProperties(w *bytes.Buff
 ///////////////////////////////////////////////
 
 // A text document identifier to optionally denote a specific version of a text document.
+//
+// Generated from the LSP 'OptionalVersionedTextDocumentIdentifier' structure.
 type OptionalVersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
 
@@ -10828,8 +11643,9 @@ func (x OptionalVersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buff
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type OptionalVersionedTextDocumentIdentifierVersion struct {
-	A Optional[int32]
+	Integer Integer
 }
 
 ////////////////////////////
@@ -10838,6 +11654,8 @@ type OptionalVersionedTextDocumentIdentifierVersion struct {
 
 // Represents a parameter of a callable-signature. A parameter can
 // have a label and a doc-comment.
+//
+// Generated from the LSP 'ParameterInformation' structure.
 type ParameterInformation struct {
 	// The label of this parameter information.
 	//
@@ -10881,20 +11699,26 @@ func (x ParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type ParameterInformationDocumentation struct {
-	A Optional[string]
-	B Optional[MarkupContent]
+	String        String
+	MarkupContent MarkupContent
 }
 
+// Generated from an LSP 'or' type.
 type ParameterInformationLabel struct {
-	A Optional[string]
-	B Optional[ParameterInformationLabel]
+	String                     String
+	ParameterInformationLabel1 ParameterInformationLabel1
 }
+
+// Generated from an LSP 'tuple' type.
+type ParameterInformationLabel1 struct{}
 
 ///////////////////////////
 /// PartialResultParams ///
 ///////////////////////////
 
+// Generated from the LSP 'PartialResultParams' structure.
 type PartialResultParams struct {
 	// An optional token that a server can use to report partial results (e.g. streaming) to
 	// the client.
@@ -10938,7 +11762,9 @@ func (x PartialResultParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
 //
 // @since 3.17.0
-type Pattern = string
+//
+// Generated from the LSP 'Pattern' type alias.
+type Pattern = String
 
 ////////////////
 /// Position ///
@@ -10971,12 +11797,14 @@ type Pattern = string
 // that denotes `\r|\n` or `\n|` where `|` represents the character offset.
 //
 // @since 3.17.0 - support for negotiated position encoding.
+//
+// Generated from the LSP 'Position' structure.
 type Position struct {
 	// Line position in a document (zero-based).
 	//
 	// If a line number is greater than the number of lines in a document, it defaults back to the number of lines in the document.
 	// If a line number is negative, it defaults to 0.
-	Line uint32
+	Line UInteger
 
 	// Character offset on a line in a document (zero-based).
 	//
@@ -10985,7 +11813,7 @@ type Position struct {
 	//
 	// If the character value is greater than the line length it defaults back to the
 	// line length.
-	Character uint32
+	Character UInteger
 }
 
 func (x Position) MarshalJSON() ([]byte, error) {
@@ -11022,7 +11850,9 @@ func (x Position) marshalProperties(w *bytes.Buffer, n *int) error {
 // A set of predefined position encoding kinds.
 //
 // @since 3.17.0
-type PositionEncodingKind string
+//
+// Generated from the LSP 'PositionEncodingKind' enumeration.
+type PositionEncodingKind String
 
 const (
 	// Character offsets count UTF-8 code units (e.g. bytes).
@@ -11044,6 +11874,7 @@ const (
 /// PrepareRenameParams ///
 ///////////////////////////
 
+// Generated from the LSP 'PrepareRenameParams' structure.
 type PrepareRenameParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -11080,17 +11911,83 @@ func (x PrepareRenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// PrepareRenameResult ///
 ///////////////////////////
 
+// Generated from the LSP 'PrepareRenameResult' type alias.
+// Generated from an LSP 'or' type.
 type PrepareRenameResult struct {
-	A Optional[Range]
-	B Optional[PrepareRenameResult]
-	C Optional[PrepareRenameResult]
+	Range                Range
+	PrepareRenameResult1 PrepareRenameResult1
+	PrepareRenameResult2 PrepareRenameResult2
+}
+
+// Generated from an LSP 'literal' type.
+type PrepareRenameResult1 struct {
+	Range Range
+
+	Placeholder String
+}
+
+func (x PrepareRenameResult1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PrepareRenameResult1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "placeholder", x.Placeholder); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type PrepareRenameResult2 struct {
+	DefaultBehavior Bool
+}
+
+func (x PrepareRenameResult2) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x PrepareRenameResult2) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "defaultBehavior", x.DefaultBehavior); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////
 /// PrepareSupportDefaultBehavior ///
 /////////////////////////////////////
 
-type PrepareSupportDefaultBehavior uint32
+// Generated from the LSP 'PrepareSupportDefaultBehavior' enumeration.
+type PrepareSupportDefaultBehavior UInteger
 
 const (
 	// The client's default behavior is to select the identifier
@@ -11099,7 +11996,7 @@ const (
 )
 
 func (x *PrepareSupportDefaultBehavior) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*PrepareSupportDefaultBehavior)(x)); err != nil {
 		return fmt.Errorf("PrepareSupportDefaultBehavior: %w", err)
 	}
 
@@ -11119,13 +12016,15 @@ func (x *PrepareSupportDefaultBehavior) UnmarshalJSON(data []byte) error {
 // A previous result id in a workspace pull request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'PreviousResultId' structure.
 type PreviousResultID struct {
 	// The URI for which the client knowns a
 	// result id.
 	URI DocumentURI
 
 	// The value of the previous result id.
-	Value string
+	Value String
 }
 
 func (x PreviousResultID) MarshalJSON() ([]byte, error) {
@@ -11159,6 +12058,7 @@ func (x PreviousResultID) marshalProperties(w *bytes.Buffer, n *int) error {
 /// ProgressParams ///
 //////////////////////
 
+// Generated from the LSP 'ProgressParams' structure.
 type ProgressParams struct {
 	// The progress token provided by the client or server.
 	Token ProgressToken
@@ -11198,9 +12098,11 @@ func (x ProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// ProgressToken ///
 /////////////////////
 
+// Generated from the LSP 'ProgressToken' type alias.
+// Generated from an LSP 'or' type.
 type ProgressToken struct {
-	A Optional[int32]
-	B Optional[string]
+	Integer Integer
+	String  String
 }
 
 ////////////////////////////////////////////
@@ -11208,9 +12110,11 @@ type ProgressToken struct {
 ////////////////////////////////////////////
 
 // The publish diagnostic client capabilities.
+//
+// Generated from the LSP 'PublishDiagnosticsClientCapabilities' structure.
 type PublishDiagnosticsClientCapabilities struct {
 	// Whether the clients accepts diagnostics with related information.
-	RelatedInformation bool
+	RelatedInformation Bool
 
 	// Client supports the tag property to provide meta data about a diagnostic.
 	// Clients supporting tags have to handle unknown tags gracefully.
@@ -11222,19 +12126,19 @@ type PublishDiagnosticsClientCapabilities struct {
 	// `textDocument/publishDiagnostics` notification's parameter.
 	//
 	// @since 3.15.0
-	VersionSupport bool
+	VersionSupport Bool
 
 	// Client supports a codeDescription property
 	//
 	// @since 3.16.0
-	CodeDescriptionSupport bool
+	CodeDescriptionSupport Bool
 
 	// Whether code action supports the `data` property which is
 	// preserved between a `textDocument/publishDiagnostics` and
 	// `textDocument/codeAction` request.
 	//
 	// @since 3.16.0
-	DataSupport bool
+	DataSupport Bool
 }
 
 func (x PublishDiagnosticsClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -11273,6 +12177,7 @@ func (x PublishDiagnosticsClientCapabilities) marshalProperties(w *bytes.Buffer,
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []DiagnosticTag
@@ -11307,6 +12212,8 @@ func (x PublishDiagnosticsClientCapabilitiesTagSupport) marshalProperties(w *byt
 ////////////////////////////////
 
 // The publish diagnostic notification's parameters.
+//
+// Generated from the LSP 'PublishDiagnosticsParams' structure.
 type PublishDiagnosticsParams struct {
 	// The URI for which diagnostic information is reported.
 	URI DocumentURI
@@ -11314,7 +12221,7 @@ type PublishDiagnosticsParams struct {
 	// Optional the version number of the document the diagnostics are published for.
 	//
 	// @since 3.15.0
-	Version Optional[int32]
+	Version Optional[Integer]
 
 	// An array of diagnostic information items.
 	Diagnostics []Diagnostic
@@ -11367,6 +12274,8 @@ func (x PublishDiagnosticsParams) marshalProperties(w *bytes.Buffer, n *int) err
 //	}
 //
 // ```
+//
+// Generated from the LSP 'Range' structure.
 type Range struct {
 	// The range's start position.
 	Start Position
@@ -11407,9 +12316,11 @@ func (x Range) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////////
 
 // Client Capabilities for a {@link ReferencesRequest}.
+//
+// Generated from the LSP 'ReferenceClientCapabilities' structure.
 type ReferenceClientCapabilities struct {
 	// Whether references supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x ReferenceClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -11442,9 +12353,11 @@ func (x ReferenceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) 
 
 // Value-object that contains additional information when
 // requesting references.
+//
+// Generated from the LSP 'ReferenceContext' structure.
 type ReferenceContext struct {
 	// Include the declaration of the current symbol.
-	IncludeDeclaration bool
+	IncludeDeclaration Bool
 }
 
 func (x ReferenceContext) MarshalJSON() ([]byte, error) {
@@ -11476,6 +12389,8 @@ func (x ReferenceContext) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////
 
 // Reference options.
+//
+// Generated from the LSP 'ReferenceOptions' structure.
 type ReferenceOptions struct {
 	WorkDoneProgressOptions
 }
@@ -11509,6 +12424,8 @@ func (x ReferenceOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////
 
 // Parameters for a {@link ReferencesRequest}.
+//
+// Generated from the LSP 'ReferenceParams' structure.
 type ReferenceParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -11555,6 +12472,8 @@ func (x ReferenceParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////////
 
 // Registration options for a {@link ReferencesRequest}.
+//
+// Generated from the LSP 'ReferenceRegistrationOptions' structure.
 type ReferenceRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	ReferenceOptions
@@ -11592,13 +12511,15 @@ func (x ReferenceRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int)
 ////////////////////
 
 // General parameters to to register for an notification or to register a provider.
+//
+// Generated from the LSP 'Registration' structure.
 type Registration struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again.
-	ID string
+	ID String
 
 	// The method / capability to register for.
-	Method string
+	Method String
 
 	// Options necessary for the registration.
 	RegisterOptions Optional[LSPAny]
@@ -11638,6 +12559,7 @@ func (x Registration) marshalProperties(w *bytes.Buffer, n *int) error {
 /// RegistrationParams ///
 //////////////////////////
 
+// Generated from the LSP 'RegistrationParams' structure.
 type RegistrationParams struct {
 	Registrations []Registration
 }
@@ -11673,12 +12595,14 @@ func (x RegistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // Client capabilities specific to regular expressions.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'RegularExpressionsClientCapabilities' structure.
 type RegularExpressionsClientCapabilities struct {
 	// The engine's name.
-	Engine string
+	Engine String
 
 	// The engine's version.
-	Version string
+	Version String
 }
 
 func (x RegularExpressionsClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -11715,6 +12639,8 @@ func (x RegularExpressionsClientCapabilities) marshalProperties(w *bytes.Buffer,
 // A full diagnostic report with a set of related documents.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'RelatedFullDocumentDiagnosticReport' structure.
 type RelatedFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
 
@@ -11755,9 +12681,10 @@ func (x RelatedFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, 
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type RelatedFullDocumentDiagnosticReportRelatedDocuments struct {
-	A Optional[FullDocumentDiagnosticReport]
-	B Optional[UnchangedDocumentDiagnosticReport]
+	FullDocumentDiagnosticReport      FullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport UnchangedDocumentDiagnosticReport
 }
 
 ////////////////////////////////////////////////
@@ -11767,6 +12694,8 @@ type RelatedFullDocumentDiagnosticReportRelatedDocuments struct {
 // An unchanged diagnostic report with a set of related documents.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'RelatedUnchangedDocumentDiagnosticReport' structure.
 type RelatedUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
 
@@ -11807,9 +12736,10 @@ func (x RelatedUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buf
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments struct {
-	A Optional[FullDocumentDiagnosticReport]
-	B Optional[UnchangedDocumentDiagnosticReport]
+	FullDocumentDiagnosticReport      FullDocumentDiagnosticReport
+	UnchangedDocumentDiagnosticReport UnchangedDocumentDiagnosticReport
 }
 
 ///////////////////////
@@ -11821,6 +12751,8 @@ type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments struct {
 // folder root, but it can be another absolute URI as well.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'RelativePattern' structure.
 type RelativePattern struct {
 	// A workspace folder or a base URI to which this pattern will be matched
 	// against relatively.
@@ -11857,24 +12789,26 @@ func (x RelativePattern) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type RelativePatternBaseURI struct {
-	A Optional[WorkspaceFolder]
-	B Optional[URI]
+	WorkspaceFolder WorkspaceFolder
+	URI             URI
 }
 
 ////////////////////////////////
 /// RenameClientCapabilities ///
 ////////////////////////////////
 
+// Generated from the LSP 'RenameClientCapabilities' structure.
 type RenameClientCapabilities struct {
 	// Whether rename supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Client supports testing for validity of rename operations
 	// before execution.
 	//
 	// @since 3.12.0
-	PrepareSupport bool
+	PrepareSupport Bool
 
 	// Client supports the default behavior result.
 	//
@@ -11891,7 +12825,7 @@ type RenameClientCapabilities struct {
 	// for confirmation.
 	//
 	// @since 3.16.0
-	HonorsChangeAnnotations bool
+	HonorsChangeAnnotations Bool
 }
 
 func (x RenameClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -11932,6 +12866,8 @@ func (x RenameClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) err
 //////////////////
 
 // Rename file operation
+//
+// Generated from the LSP 'RenameFile' structure.
 type RenameFile struct {
 	ResourceOperation
 
@@ -11986,12 +12922,14 @@ func (x RenameFile) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////
 
 // Rename file options
+//
+// Generated from the LSP 'RenameFileOptions' structure.
 type RenameFileOptions struct {
 	// Overwrite target if existing. Overwrite wins over `ignoreIfExists`
-	Overwrite bool
+	Overwrite Bool
 
 	// Ignores if target exists.
-	IgnoreIfExists bool
+	IgnoreIfExists Bool
 }
 
 func (x RenameFileOptions) MarshalJSON() ([]byte, error) {
@@ -12029,6 +12967,8 @@ func (x RenameFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // files.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'RenameFilesParams' structure.
 type RenameFilesParams struct {
 	// An array of all files/folders renamed in this operation. When a folder is renamed, only
 	// the folder will be included, and not its children.
@@ -12064,13 +13004,15 @@ func (x RenameFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////
 
 // Provider options for a {@link RenameRequest}.
+//
+// Generated from the LSP 'RenameOptions' structure.
 type RenameOptions struct {
 	WorkDoneProgressOptions
 
 	// Renames should be checked and tested before being executed.
 	//
 	// @since version 3.12.0
-	PrepareProvider bool
+	PrepareProvider Bool
 }
 
 func (x RenameOptions) MarshalJSON() ([]byte, error) {
@@ -12105,6 +13047,8 @@ func (x RenameOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////
 
 // The parameters of a {@link RenameRequest}.
+//
+// Generated from the LSP 'RenameParams' structure.
 type RenameParams struct {
 	WorkDoneProgressParams
 
@@ -12117,7 +13061,7 @@ type RenameParams struct {
 	// The new name of the symbol. If the given name is not valid the
 	// request must return a {@link ResponseError} with an
 	// appropriate message set.
-	NewName string
+	NewName String
 }
 
 func (x RenameParams) MarshalJSON() ([]byte, error) {
@@ -12158,6 +13102,8 @@ func (x RenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////////
 
 // Registration options for a {@link RenameRequest}.
+//
+// Generated from the LSP 'RenameRegistrationOptions' structure.
 type RenameRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	RenameOptions
@@ -12195,9 +13141,11 @@ func (x RenameRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) er
 /////////////////////////
 
 // A generic resource operation.
+//
+// Generated from the LSP 'ResourceOperation' structure.
 type ResourceOperation struct {
 	// The resource operation kind.
-	Kind string
+	Kind String
 
 	// An optional annotation identifier describing the operation.
 	//
@@ -12236,7 +13184,8 @@ func (x ResourceOperation) marshalProperties(w *bytes.Buffer, n *int) error {
 /// ResourceOperationKind ///
 /////////////////////////////
 
-type ResourceOperationKind string
+// Generated from the LSP 'ResourceOperationKind' enumeration.
+type ResourceOperationKind String
 
 const (
 	// Supports creating new files and folders.
@@ -12248,7 +13197,7 @@ const (
 )
 
 func (x *ResourceOperationKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*ResourceOperationKind)(x)); err != nil {
 		return fmt.Errorf("ResourceOperationKind: %w", err)
 	}
 
@@ -12268,9 +13217,11 @@ func (x *ResourceOperationKind) UnmarshalJSON(data []byte) error {
 ///////////////////
 
 // Save options.
+//
+// Generated from the LSP 'SaveOptions' structure.
 type SaveOptions struct {
 	// The client is supposed to include the content on save.
-	IncludeText bool
+	IncludeText Bool
 }
 
 func (x SaveOptions) MarshalJSON() ([]byte, error) {
@@ -12303,6 +13254,8 @@ func (x SaveOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // A selection range represents a part of a selection hierarchy. A selection range
 // may have a parent selection range that contains it.
+//
+// Generated from the LSP 'SelectionRange' structure.
 type SelectionRange struct {
 	// The {@link Range range} of this selection range.
 	Range Range
@@ -12342,11 +13295,12 @@ func (x SelectionRange) marshalProperties(w *bytes.Buffer, n *int) error {
 /// SelectionRangeClientCapabilities ///
 ////////////////////////////////////////
 
+// Generated from the LSP 'SelectionRangeClientCapabilities' structure.
 type SelectionRangeClientCapabilities struct {
 	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
 	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
 	// capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x SelectionRangeClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -12377,6 +13331,7 @@ func (x SelectionRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 /// SelectionRangeOptions ///
 /////////////////////////////
 
+// Generated from the LSP 'SelectionRangeOptions' structure.
 type SelectionRangeOptions struct {
 	WorkDoneProgressOptions
 }
@@ -12410,6 +13365,8 @@ func (x SelectionRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 ////////////////////////////
 
 // A parameter literal used in selection range requests.
+//
+// Generated from the LSP 'SelectionRangeParams' structure.
 type SelectionRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -12458,6 +13415,7 @@ func (x SelectionRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// SelectionRangeRegistrationOptions ///
 /////////////////////////////////////////
 
+// Generated from the LSP 'SelectionRangeRegistrationOptions' structure.
 type SelectionRangeRegistrationOptions struct {
 	SelectionRangeOptions
 	TextDocumentRegistrationOptions
@@ -12503,18 +13461,20 @@ func (x SelectionRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 // corresponding client capabilities.
 //
 // @since 3.16.0
-type SemanticTokenModifiers string
+//
+// Generated from the LSP 'SemanticTokenModifiers' enumeration.
+type SemanticTokenModifiers String
 
 const (
-	SemanticTokenModifiersDeclaration    SemanticTokenModifiers = "declaration"
-	SemanticTokenModifiersDefinition     SemanticTokenModifiers = "definition"
-	SemanticTokenModifiersReadonly       SemanticTokenModifiers = "readonly"
-	SemanticTokenModifiersStatic         SemanticTokenModifiers = "static"
-	SemanticTokenModifiersDeprecated     SemanticTokenModifiers = "deprecated"
-	SemanticTokenModifiersAbstract       SemanticTokenModifiers = "abstract"
-	SemanticTokenModifiersAsync          SemanticTokenModifiers = "async"
-	SemanticTokenModifiersModification   SemanticTokenModifiers = "modification"
-	SemanticTokenModifiersDocumentation  SemanticTokenModifiers = "documentation"
+	SemanticTokenModifiersDeclaration SemanticTokenModifiers = "declaration"
+	SemanticTokenModifiersDefinition SemanticTokenModifiers = "definition"
+	SemanticTokenModifiersReadonly SemanticTokenModifiers = "readonly"
+	SemanticTokenModifiersStatic SemanticTokenModifiers = "static"
+	SemanticTokenModifiersDeprecated SemanticTokenModifiers = "deprecated"
+	SemanticTokenModifiersAbstract SemanticTokenModifiers = "abstract"
+	SemanticTokenModifiersAsync SemanticTokenModifiers = "async"
+	SemanticTokenModifiersModification SemanticTokenModifiers = "modification"
+	SemanticTokenModifiersDocumentation SemanticTokenModifiers = "documentation"
 	SemanticTokenModifiersDefaultLibrary SemanticTokenModifiers = "defaultLibrary"
 )
 
@@ -12527,33 +13487,35 @@ const (
 // corresponding client capabilities.
 //
 // @since 3.16.0
-type SemanticTokenTypes string
+//
+// Generated from the LSP 'SemanticTokenTypes' enumeration.
+type SemanticTokenTypes String
 
 const (
 	SemanticTokenTypesNamespace SemanticTokenTypes = "namespace"
 	// Represents a generic type. Acts as a fallback for types which can't be mapped to
 	// a specific type like class or enum.
-	SemanticTokenTypesType          SemanticTokenTypes = "type"
-	SemanticTokenTypesClass         SemanticTokenTypes = "class"
-	SemanticTokenTypesEnum          SemanticTokenTypes = "enum"
-	SemanticTokenTypesInterface     SemanticTokenTypes = "interface"
-	SemanticTokenTypesStruct        SemanticTokenTypes = "struct"
+	SemanticTokenTypesType SemanticTokenTypes = "type"
+	SemanticTokenTypesClass SemanticTokenTypes = "class"
+	SemanticTokenTypesEnum SemanticTokenTypes = "enum"
+	SemanticTokenTypesInterface SemanticTokenTypes = "interface"
+	SemanticTokenTypesStruct SemanticTokenTypes = "struct"
 	SemanticTokenTypesTypeParameter SemanticTokenTypes = "typeParameter"
-	SemanticTokenTypesParameter     SemanticTokenTypes = "parameter"
-	SemanticTokenTypesVariable      SemanticTokenTypes = "variable"
-	SemanticTokenTypesProperty      SemanticTokenTypes = "property"
-	SemanticTokenTypesEnumMember    SemanticTokenTypes = "enumMember"
-	SemanticTokenTypesEvent         SemanticTokenTypes = "event"
-	SemanticTokenTypesFunction      SemanticTokenTypes = "function"
-	SemanticTokenTypesMethod        SemanticTokenTypes = "method"
-	SemanticTokenTypesMacro         SemanticTokenTypes = "macro"
-	SemanticTokenTypesKeyword       SemanticTokenTypes = "keyword"
-	SemanticTokenTypesModifier      SemanticTokenTypes = "modifier"
-	SemanticTokenTypesComment       SemanticTokenTypes = "comment"
-	SemanticTokenTypesString        SemanticTokenTypes = "string"
-	SemanticTokenTypesNumber        SemanticTokenTypes = "number"
-	SemanticTokenTypesRegexp        SemanticTokenTypes = "regexp"
-	SemanticTokenTypesOperator      SemanticTokenTypes = "operator"
+	SemanticTokenTypesParameter SemanticTokenTypes = "parameter"
+	SemanticTokenTypesVariable SemanticTokenTypes = "variable"
+	SemanticTokenTypesProperty SemanticTokenTypes = "property"
+	SemanticTokenTypesEnumMember SemanticTokenTypes = "enumMember"
+	SemanticTokenTypesEvent SemanticTokenTypes = "event"
+	SemanticTokenTypesFunction SemanticTokenTypes = "function"
+	SemanticTokenTypesMethod SemanticTokenTypes = "method"
+	SemanticTokenTypesMacro SemanticTokenTypes = "macro"
+	SemanticTokenTypesKeyword SemanticTokenTypes = "keyword"
+	SemanticTokenTypesModifier SemanticTokenTypes = "modifier"
+	SemanticTokenTypesComment SemanticTokenTypes = "comment"
+	SemanticTokenTypesString SemanticTokenTypes = "string"
+	SemanticTokenTypesNumber SemanticTokenTypes = "number"
+	SemanticTokenTypesRegexp SemanticTokenTypes = "regexp"
+	SemanticTokenTypesOperator SemanticTokenTypes = "operator"
 	// @since 3.17.0
 	SemanticTokenTypesDecorator SemanticTokenTypes = "decorator"
 )
@@ -12563,15 +13525,17 @@ const (
 //////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokens' structure.
 type SemanticTokens struct {
 	// An optional result id. If provided and clients support delta updating
 	// the client will include the result id in the next semantic token request.
 	// A server can then instead of computing all semantic tokens again simply
 	// send a delta.
-	ResultID string
+	ResultID String
 
 	// The actual tokens.
-	Data []uint32
+	Data []UInteger
 }
 
 func (x SemanticTokens) MarshalJSON() ([]byte, error) {
@@ -12606,11 +13570,13 @@ func (x SemanticTokens) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensClientCapabilities' structure.
 type SemanticTokensClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Which requests the client supports and might send to the server
 	// depending on the server's capability. Please note that clients might not
@@ -12623,19 +13589,19 @@ type SemanticTokensClientCapabilities struct {
 	Requests SemanticTokensClientCapabilitiesRequests
 
 	// The token types that the client supports.
-	TokenTypes []string
+	TokenTypes []String
 
 	// The token modifiers that the client supports.
-	TokenModifiers []string
+	TokenModifiers []String
 
 	// The token formats the clients supports.
 	Formats []TokenFormat
 
 	// Whether the client supports tokens that can overlap each other.
-	OverlappingTokenSupport bool
+	OverlappingTokenSupport Bool
 
 	// Whether the client supports tokens that can span multiple lines.
-	MultilineTokenSupport bool
+	MultilineTokenSupport Bool
 
 	// Whether the client allows the server to actively cancel a
 	// semantic token request, e.g. supports returning
@@ -12643,7 +13609,7 @@ type SemanticTokensClientCapabilities struct {
 	// needs to retrigger the request.
 	//
 	// @since 3.17.0
-	ServerCancelSupport bool
+	ServerCancelSupport Bool
 
 	// Whether the client uses semantic tokens to augment existing
 	// syntax tokens. If set to `true` client side created syntax
@@ -12655,7 +13621,7 @@ type SemanticTokensClientCapabilities struct {
 	// specified.
 	//
 	// @since 3.17.0
-	AugmentsSyntaxTokens bool
+	AugmentsSyntaxTokens Bool
 }
 
 func (x SemanticTokensClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -12706,6 +13672,7 @@ func (x SemanticTokensClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type SemanticTokensClientCapabilitiesRequests struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
 	// the server provides a corresponding handler.
@@ -12743,14 +13710,71 @@ func (x SemanticTokensClientCapabilitiesRequests) marshalProperties(w *bytes.Buf
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type SemanticTokensClientCapabilitiesRequestsFull struct {
-	A Optional[bool]
-	B Optional[SemanticTokensClientCapabilitiesRequestsFull]
+	Bool                                          Bool
+	SemanticTokensClientCapabilitiesRequestsFull1 SemanticTokensClientCapabilitiesRequestsFull1
 }
 
+// Generated from an LSP 'literal' type.
+type SemanticTokensClientCapabilitiesRequestsFull1 struct {
+	// The client will send the `textDocument/semanticTokens/full/delta` request if
+	// the server provides a corresponding handler.
+	Delta Bool
+}
+
+func (x SemanticTokensClientCapabilitiesRequestsFull1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensClientCapabilitiesRequestsFull1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "delta", x.Delta); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'or' type.
 type SemanticTokensClientCapabilitiesRequestsRange struct {
-	A Optional[bool]
-	B Optional[SemanticTokensClientCapabilitiesRequestsRange]
+	Bool                                           Bool
+	SemanticTokensClientCapabilitiesRequestsRange1 SemanticTokensClientCapabilitiesRequestsRange1
+}
+
+// Generated from an LSP 'literal' type.
+type SemanticTokensClientCapabilitiesRequestsRange1 struct{}
+
+func (x SemanticTokensClientCapabilitiesRequestsRange1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensClientCapabilitiesRequestsRange1) marshalProperties(w *bytes.Buffer, n *int) error {
+	return nil
 }
 
 ///////////////////////////
@@ -12758,8 +13782,10 @@ type SemanticTokensClientCapabilitiesRequestsRange struct {
 ///////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensDelta' structure.
 type SemanticTokensDelta struct {
-	ResultID string
+	ResultID String
 
 	// The semantic token edits to transform a previous result into a new result.
 	Edits []SemanticTokensEdit
@@ -12797,6 +13823,8 @@ func (x SemanticTokensDelta) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensDeltaParams' structure.
 type SemanticTokensDeltaParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -12806,7 +13834,7 @@ type SemanticTokensDeltaParams struct {
 
 	// The result id of a previous response. The result Id can either point to a full response
 	// or a delta response depending on what was received last.
-	PreviousResultID string
+	PreviousResultID String
 }
 
 func (x SemanticTokensDeltaParams) MarshalJSON() ([]byte, error) {
@@ -12847,6 +13875,8 @@ func (x SemanticTokensDeltaParams) marshalProperties(w *bytes.Buffer, n *int) er
 ////////////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensDeltaPartialResult' structure.
 type SemanticTokensDeltaPartialResult struct {
 	Edits []SemanticTokensEdit
 }
@@ -12880,15 +13910,17 @@ func (x SemanticTokensDeltaPartialResult) marshalProperties(w *bytes.Buffer, n *
 //////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensEdit' structure.
 type SemanticTokensEdit struct {
 	// The start offset of the edit.
-	Start uint32
+	Start UInteger
 
 	// The count of elements to remove.
-	DeleteCount uint32
+	DeleteCount UInteger
 
 	// The elements to insert.
-	Data []uint32
+	Data []UInteger
 }
 
 func (x SemanticTokensEdit) MarshalJSON() ([]byte, error) {
@@ -12926,12 +13958,14 @@ func (x SemanticTokensEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensLegend' structure.
 type SemanticTokensLegend struct {
 	// The token types a server uses.
-	TokenTypes []string
+	TokenTypes []String
 
 	// The token modifiers a server uses.
-	TokenModifiers []string
+	TokenModifiers []String
 }
 
 func (x SemanticTokensLegend) MarshalJSON() ([]byte, error) {
@@ -12966,6 +14000,8 @@ func (x SemanticTokensLegend) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensOptions' structure.
 type SemanticTokensOptions struct {
 	WorkDoneProgressOptions
 
@@ -13013,14 +14049,70 @@ func (x SemanticTokensOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type SemanticTokensOptionsFull struct {
-	A Optional[bool]
-	B Optional[SemanticTokensOptionsFull]
+	Bool                       Bool
+	SemanticTokensOptionsFull1 SemanticTokensOptionsFull1
 }
 
+// Generated from an LSP 'literal' type.
+type SemanticTokensOptionsFull1 struct {
+	// The server supports deltas for full documents.
+	Delta Bool
+}
+
+func (x SemanticTokensOptionsFull1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensOptionsFull1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "delta", x.Delta); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'or' type.
 type SemanticTokensOptionsRange struct {
-	A Optional[bool]
-	B Optional[SemanticTokensOptionsRange]
+	Bool                        Bool
+	SemanticTokensOptionsRange1 SemanticTokensOptionsRange1
+}
+
+// Generated from an LSP 'literal' type.
+type SemanticTokensOptionsRange1 struct{}
+
+func (x SemanticTokensOptionsRange1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x SemanticTokensOptionsRange1) marshalProperties(w *bytes.Buffer, n *int) error {
+	return nil
 }
 
 ////////////////////////////
@@ -13028,6 +14120,8 @@ type SemanticTokensOptionsRange struct {
 ////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensParams' structure.
 type SemanticTokensParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -13071,8 +14165,10 @@ func (x SemanticTokensParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensPartialResult' structure.
 type SemanticTokensPartialResult struct {
-	Data []uint32
+	Data []UInteger
 }
 
 func (x SemanticTokensPartialResult) MarshalJSON() ([]byte, error) {
@@ -13104,6 +14200,8 @@ func (x SemanticTokensPartialResult) marshalProperties(w *bytes.Buffer, n *int) 
 /////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensRangeParams' structure.
 type SemanticTokensRangeParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -13153,6 +14251,8 @@ func (x SemanticTokensRangeParams) marshalProperties(w *bytes.Buffer, n *int) er
 /////////////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensRegistrationOptions' structure.
 type SemanticTokensRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SemanticTokensOptions
@@ -13194,6 +14294,8 @@ func (x SemanticTokensRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 /////////////////////////////////////////////////
 
 // @since 3.16.0
+//
+// Generated from the LSP 'SemanticTokensWorkspaceClientCapabilities' structure.
 type SemanticTokensWorkspaceClientCapabilities struct {
 	// Whether the client implementation supports a refresh request sent from
 	// the server to the client.
@@ -13202,7 +14304,7 @@ type SemanticTokensWorkspaceClientCapabilities struct {
 	// semantic tokens currently shown. It should be used with absolute care
 	// and is useful for situation where a server for example detects a project
 	// wide change that requires such a calculation.
-	RefreshSupport bool
+	RefreshSupport Bool
 }
 
 func (x SemanticTokensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -13235,6 +14337,8 @@ func (x SemanticTokensWorkspaceClientCapabilities) marshalProperties(w *bytes.Bu
 
 // Defines the capabilities provided by a language
 // server.
+//
+// Generated from the LSP 'ServerCapabilities' structure.
 type ServerCapabilities struct {
 	// The position encoding the server picked from the encodings offered
 	// by the client via the client capability `general.positionEncodings`.
@@ -13500,143 +14604,169 @@ func (x ServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesCallHierarchyProvider struct {
-	A Optional[bool]
-	B Optional[CallHierarchyOptions]
-	C Optional[CallHierarchyRegistrationOptions]
+	Bool                             Bool
+	CallHierarchyOptions             CallHierarchyOptions
+	CallHierarchyRegistrationOptions CallHierarchyRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesCodeActionProvider struct {
-	A Optional[bool]
-	B Optional[CodeActionOptions]
+	Bool              Bool
+	CodeActionOptions CodeActionOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesColorProvider struct {
-	A Optional[bool]
-	B Optional[DocumentColorOptions]
-	C Optional[DocumentColorRegistrationOptions]
+	Bool                             Bool
+	DocumentColorOptions             DocumentColorOptions
+	DocumentColorRegistrationOptions DocumentColorRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesDeclarationProvider struct {
-	A Optional[bool]
-	B Optional[DeclarationOptions]
-	C Optional[DeclarationRegistrationOptions]
+	Bool                           Bool
+	DeclarationOptions             DeclarationOptions
+	DeclarationRegistrationOptions DeclarationRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesDefinitionProvider struct {
-	A Optional[bool]
-	B Optional[DefinitionOptions]
+	Bool              Bool
+	DefinitionOptions DefinitionOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesDiagnosticProvider struct {
-	A Optional[DiagnosticOptions]
-	B Optional[DiagnosticRegistrationOptions]
+	DiagnosticOptions             DiagnosticOptions
+	DiagnosticRegistrationOptions DiagnosticRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesDocumentFormattingProvider struct {
-	A Optional[bool]
-	B Optional[DocumentFormattingOptions]
+	Bool                      Bool
+	DocumentFormattingOptions DocumentFormattingOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesDocumentHighlightProvider struct {
-	A Optional[bool]
-	B Optional[DocumentHighlightOptions]
+	Bool                     Bool
+	DocumentHighlightOptions DocumentHighlightOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesDocumentRangeFormattingProvider struct {
-	A Optional[bool]
-	B Optional[DocumentRangeFormattingOptions]
+	Bool                           Bool
+	DocumentRangeFormattingOptions DocumentRangeFormattingOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesDocumentSymbolProvider struct {
-	A Optional[bool]
-	B Optional[DocumentSymbolOptions]
+	Bool                  Bool
+	DocumentSymbolOptions DocumentSymbolOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesFoldingRangeProvider struct {
-	A Optional[bool]
-	B Optional[FoldingRangeOptions]
-	C Optional[FoldingRangeRegistrationOptions]
+	Bool                            Bool
+	FoldingRangeOptions             FoldingRangeOptions
+	FoldingRangeRegistrationOptions FoldingRangeRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesHoverProvider struct {
-	A Optional[bool]
-	B Optional[HoverOptions]
+	Bool         Bool
+	HoverOptions HoverOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesImplementationProvider struct {
-	A Optional[bool]
-	B Optional[ImplementationOptions]
-	C Optional[ImplementationRegistrationOptions]
+	Bool                              Bool
+	ImplementationOptions             ImplementationOptions
+	ImplementationRegistrationOptions ImplementationRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesInlayHintProvider struct {
-	A Optional[bool]
-	B Optional[InlayHintOptions]
-	C Optional[InlayHintRegistrationOptions]
+	Bool                         Bool
+	InlayHintOptions             InlayHintOptions
+	InlayHintRegistrationOptions InlayHintRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesInlineValueProvider struct {
-	A Optional[bool]
-	B Optional[InlineValueOptions]
-	C Optional[InlineValueRegistrationOptions]
+	Bool                           Bool
+	InlineValueOptions             InlineValueOptions
+	InlineValueRegistrationOptions InlineValueRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesLinkedEditingRangeProvider struct {
-	A Optional[bool]
-	B Optional[LinkedEditingRangeOptions]
-	C Optional[LinkedEditingRangeRegistrationOptions]
+	Bool                                  Bool
+	LinkedEditingRangeOptions             LinkedEditingRangeOptions
+	LinkedEditingRangeRegistrationOptions LinkedEditingRangeRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesMonikerProvider struct {
-	A Optional[bool]
-	B Optional[MonikerOptions]
-	C Optional[MonikerRegistrationOptions]
+	Bool                       Bool
+	MonikerOptions             MonikerOptions
+	MonikerRegistrationOptions MonikerRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesNotebookDocumentSync struct {
-	A Optional[NotebookDocumentSyncOptions]
-	B Optional[NotebookDocumentSyncRegistrationOptions]
+	NotebookDocumentSyncOptions             NotebookDocumentSyncOptions
+	NotebookDocumentSyncRegistrationOptions NotebookDocumentSyncRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesReferencesProvider struct {
-	A Optional[bool]
-	B Optional[ReferenceOptions]
+	Bool             Bool
+	ReferenceOptions ReferenceOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesRenameProvider struct {
-	A Optional[bool]
-	B Optional[RenameOptions]
+	Bool          Bool
+	RenameOptions RenameOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesSelectionRangeProvider struct {
-	A Optional[bool]
-	B Optional[SelectionRangeOptions]
-	C Optional[SelectionRangeRegistrationOptions]
+	Bool                              Bool
+	SelectionRangeOptions             SelectionRangeOptions
+	SelectionRangeRegistrationOptions SelectionRangeRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesSemanticTokensProvider struct {
-	A Optional[SemanticTokensOptions]
-	B Optional[SemanticTokensRegistrationOptions]
+	SemanticTokensOptions             SemanticTokensOptions
+	SemanticTokensRegistrationOptions SemanticTokensRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesTextDocumentSync struct {
-	A Optional[TextDocumentSyncOptions]
-	B Optional[TextDocumentSyncKind]
+	TextDocumentSyncOptions TextDocumentSyncOptions
+	TextDocumentSyncKind    TextDocumentSyncKind
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesTypeDefinitionProvider struct {
-	A Optional[bool]
-	B Optional[TypeDefinitionOptions]
-	C Optional[TypeDefinitionRegistrationOptions]
+	Bool                              Bool
+	TypeDefinitionOptions             TypeDefinitionOptions
+	TypeDefinitionRegistrationOptions TypeDefinitionRegistrationOptions
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesTypeHierarchyProvider struct {
-	A Optional[bool]
-	B Optional[TypeHierarchyOptions]
-	C Optional[TypeHierarchyRegistrationOptions]
+	Bool                             Bool
+	TypeHierarchyOptions             TypeHierarchyOptions
+	TypeHierarchyRegistrationOptions TypeHierarchyRegistrationOptions
 }
 
+// Generated from an LSP 'literal' type.
 type ServerCapabilitiesWorkspace struct {
 	// The server supports workspace folder.
 	//
@@ -13676,15 +14806,17 @@ func (x ServerCapabilitiesWorkspace) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type ServerCapabilitiesWorkspaceSymbolProvider struct {
-	A Optional[bool]
-	B Optional[WorkspaceSymbolOptions]
+	Bool                   Bool
+	WorkspaceSymbolOptions WorkspaceSymbolOptions
 }
 
 //////////////////////
 /// SetTraceParams ///
 //////////////////////
 
+// Generated from the LSP 'SetTraceParams' structure.
 type SetTraceParams struct {
 	Value TraceValues
 }
@@ -13720,10 +14852,12 @@ func (x SetTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // Client capabilities for the showDocument request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'ShowDocumentClientCapabilities' structure.
 type ShowDocumentClientCapabilities struct {
 	// The client has support for the showDocument
 	// request.
-	Support bool
+	Support Bool
 }
 
 func (x ShowDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -13757,6 +14891,8 @@ func (x ShowDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 // Params to show a resource in the UI.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'ShowDocumentParams' structure.
 type ShowDocumentParams struct {
 	// The uri to show.
 	URI URI
@@ -13764,13 +14900,13 @@ type ShowDocumentParams struct {
 	// Indicates to show the resource in an external program.
 	// To show, for example, `https://code.visualstudio.com/`
 	// in the default WEB browser set `external` to `true`.
-	External bool
+	External Bool
 
 	// An optional property to indicate whether the editor
 	// showing the document should take focus or not.
 	// Clients might ignore this property if an external
 	// program is started.
-	TakeFocus bool
+	TakeFocus Bool
 
 	// An optional selection range if the document is a text
 	// document. Clients might ignore the property if an
@@ -13819,9 +14955,11 @@ func (x ShowDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // The result of a showDocument request.
 //
 // @since 3.16.0
+//
+// Generated from the LSP 'ShowDocumentResult' structure.
 type ShowDocumentResult struct {
 	// A boolean indicating if the show was successful.
-	Success bool
+	Success Bool
 }
 
 func (x ShowDocumentResult) MarshalJSON() ([]byte, error) {
@@ -13853,12 +14991,14 @@ func (x ShowDocumentResult) marshalProperties(w *bytes.Buffer, n *int) error {
 /////////////////////////
 
 // The parameters of a notification message.
+//
+// Generated from the LSP 'ShowMessageParams' structure.
 type ShowMessageParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType
 
 	// The actual message.
-	Message string
+	Message String
 }
 
 func (x ShowMessageParams) MarshalJSON() ([]byte, error) {
@@ -13893,6 +15033,8 @@ func (x ShowMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////////////////
 
 // Show message request client capabilities
+//
+// Generated from the LSP 'ShowMessageRequestClientCapabilities' structure.
 type ShowMessageRequestClientCapabilities struct {
 	// Capabilities specific to the `MessageActionItem` type.
 	MessageActionItem Optional[ShowMessageRequestClientCapabilitiesMessageActionItem]
@@ -13922,11 +15064,12 @@ func (x ShowMessageRequestClientCapabilities) marshalProperties(w *bytes.Buffer,
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
 	// Whether the client supports additional attributes which
 	// are preserved and send back to the server in the
 	// request's response.
-	AdditionalPropertiesSupport bool
+	AdditionalPropertiesSupport Bool
 }
 
 func (x ShowMessageRequestClientCapabilitiesMessageActionItem) MarshalJSON() ([]byte, error) {
@@ -13957,12 +15100,13 @@ func (x ShowMessageRequestClientCapabilitiesMessageActionItem) marshalProperties
 /// ShowMessageRequestParams ///
 ////////////////////////////////
 
+// Generated from the LSP 'ShowMessageRequestParams' structure.
 type ShowMessageRequestParams struct {
 	// The message type. See {@link MessageType}
 	Type MessageType
 
 	// The actual message.
-	Message string
+	Message String
 
 	// The message action items to present.
 	Actions []MessageActionItem
@@ -14005,6 +15149,8 @@ func (x ShowMessageRequestParams) marshalProperties(w *bytes.Buffer, n *int) err
 // Signature help represents the signature of something
 // callable. There can be multiple signature but only one
 // active and only one active parameter.
+//
+// Generated from the LSP 'SignatureHelp' structure.
 type SignatureHelp struct {
 	// One or more signatures.
 	Signatures []SignatureInformation
@@ -14018,7 +15164,7 @@ type SignatureHelp struct {
 	//
 	// In future version of the protocol this property might become
 	// mandatory to better express this.
-	ActiveSignature Optional[uint32]
+	ActiveSignature Optional[UInteger]
 
 	// The active parameter of the active signature. If omitted or the value
 	// lies outside the range of `signatures[activeSignature].parameters`
@@ -14027,7 +15173,7 @@ type SignatureHelp struct {
 	// In future version of the protocol this property might become
 	// mandatory to better express the active parameter if the
 	// active signature does have any.
-	ActiveParameter Optional[uint32]
+	ActiveParameter Optional[UInteger]
 }
 
 func (x SignatureHelp) MarshalJSON() ([]byte, error) {
@@ -14065,9 +15211,11 @@ func (x SignatureHelp) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////////////
 
 // Client Capabilities for a {@link SignatureHelpRequest}.
+//
+// Generated from the LSP 'SignatureHelpClientCapabilities' structure.
 type SignatureHelpClientCapabilities struct {
 	// Whether signature help supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports the following `SignatureInformation`
 	// specific properties.
@@ -14079,7 +15227,7 @@ type SignatureHelpClientCapabilities struct {
 	// `SignatureHelpOptions`.
 	//
 	// @since 3.15.0
-	ContextSupport bool
+	ContextSupport Bool
 }
 
 func (x SignatureHelpClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -14112,6 +15260,7 @@ func (x SignatureHelpClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type SignatureHelpClientCapabilitiesSignatureInformation struct {
 	// Client supports the following content formats for the documentation
 	// property. The order describes the preferred format of the client.
@@ -14124,7 +15273,7 @@ type SignatureHelpClientCapabilitiesSignatureInformation struct {
 	// literal.
 	//
 	// @since 3.16.0
-	ActiveParameterSupport bool
+	ActiveParameterSupport Bool
 }
 
 func (x SignatureHelpClientCapabilitiesSignatureInformation) MarshalJSON() ([]byte, error) {
@@ -14157,12 +15306,13 @@ func (x SignatureHelpClientCapabilitiesSignatureInformation) marshalProperties(w
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct {
 	// The client supports processing label offsets instead of a
 	// simple label string.
 	//
 	// @since 3.14.0
-	LabelOffsetSupport bool
+	LabelOffsetSupport Bool
 }
 
 func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) MarshalJSON() ([]byte, error) {
@@ -14196,6 +15346,8 @@ func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation)
 // Additional information about the context in which a signature help request was triggered.
 //
 // @since 3.15.0
+//
+// Generated from the LSP 'SignatureHelpContext' structure.
 type SignatureHelpContext struct {
 	// Action that caused signature help to be triggered.
 	TriggerKind SignatureHelpTriggerKind
@@ -14203,13 +15355,13 @@ type SignatureHelpContext struct {
 	// Character that caused signature help to be triggered.
 	//
 	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
-	TriggerCharacter string
+	TriggerCharacter String
 
 	// `true` if signature help was already showing when it was triggered.
 	//
 	// Retriggers occurs when the signature help is already active and can be caused by actions such as
 	// typing a trigger character, a cursor move, or document content changes.
-	IsRetrigger bool
+	IsRetrigger Bool
 
 	// The currently active `SignatureHelp`.
 	//
@@ -14256,11 +15408,13 @@ func (x SignatureHelpContext) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////
 
 // Server Capabilities for a {@link SignatureHelpRequest}.
+//
+// Generated from the LSP 'SignatureHelpOptions' structure.
 type SignatureHelpOptions struct {
 	WorkDoneProgressOptions
 
 	// List of characters that trigger signature help automatically.
-	TriggerCharacters []string
+	TriggerCharacters []String
 
 	// List of characters that re-trigger signature help.
 	//
@@ -14268,7 +15422,7 @@ type SignatureHelpOptions struct {
 	// are also counted as re-trigger characters.
 	//
 	// @since 3.15.0
-	RetriggerCharacters []string
+	RetriggerCharacters []String
 }
 
 func (x SignatureHelpOptions) MarshalJSON() ([]byte, error) {
@@ -14306,6 +15460,8 @@ func (x SignatureHelpOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////
 
 // Parameters for a {@link SignatureHelpRequest}.
+//
+// Generated from the LSP 'SignatureHelpParams' structure.
 type SignatureHelpParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -14352,6 +15508,8 @@ func (x SignatureHelpParams) marshalProperties(w *bytes.Buffer, n *int) error {
 ////////////////////////////////////////
 
 // Registration options for a {@link SignatureHelpRequest}.
+//
+// Generated from the LSP 'SignatureHelpRegistrationOptions' structure.
 type SignatureHelpRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SignatureHelpOptions
@@ -14391,7 +15549,9 @@ func (x SignatureHelpRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 // How a signature help was triggered.
 //
 // @since 3.15.0
-type SignatureHelpTriggerKind uint32
+//
+// Generated from the LSP 'SignatureHelpTriggerKind' enumeration.
+type SignatureHelpTriggerKind UInteger
 
 const (
 	// Signature help was invoked manually by the user or by a command.
@@ -14403,7 +15563,7 @@ const (
 )
 
 func (x *SignatureHelpTriggerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*SignatureHelpTriggerKind)(x)); err != nil {
 		return fmt.Errorf("SignatureHelpTriggerKind: %w", err)
 	}
 
@@ -14425,10 +15585,12 @@ func (x *SignatureHelpTriggerKind) UnmarshalJSON(data []byte) error {
 // Represents the signature of something callable. A signature
 // can have a label, like a function-name, a doc-comment, and
 // a set of parameters.
+//
+// Generated from the LSP 'SignatureInformation' structure.
 type SignatureInformation struct {
 	// The label of this signature. Will be shown in
 	// the UI.
-	Label string
+	Label String
 
 	// The human-readable doc-comment of this signature. Will be shown
 	// in the UI but can be omitted.
@@ -14442,7 +15604,7 @@ type SignatureInformation struct {
 	// If provided, this is used in place of `SignatureHelp.activeParameter`.
 	//
 	// @since 3.16.0
-	ActiveParameter Optional[uint32]
+	ActiveParameter Optional[UInteger]
 }
 
 func (x SignatureInformation) MarshalJSON() ([]byte, error) {
@@ -14478,9 +15640,10 @@ func (x SignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type SignatureInformationDocumentation struct {
-	A Optional[string]
-	B Optional[MarkupContent]
+	String        String
+	MarkupContent MarkupContent
 }
 
 /////////////////////////////////
@@ -14489,10 +15652,12 @@ type SignatureInformationDocumentation struct {
 
 // Static registration options to be returned in the initialize
 // request.
+//
+// Generated from the LSP 'StaticRegistrationOptions' structure.
 type StaticRegistrationOptions struct {
 	// The id used to register the request. The id can be used to deregister
 	// the request again. See also Registration#id.
-	ID string
+	ID String
 }
 
 func (x StaticRegistrationOptions) MarshalJSON() ([]byte, error) {
@@ -14525,6 +15690,8 @@ func (x StaticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) er
 
 // Represents information about programming constructs like variables, classes,
 // interfaces etc.
+//
+// Generated from the LSP 'SymbolInformation' structure.
 type SymbolInformation struct {
 	BaseSymbolInformation
 
@@ -14533,7 +15700,7 @@ type SymbolInformation struct {
 	// @deprecated Use tags instead
 	//
 	// Deprecated: Use tags instead
-	Deprecated bool
+	Deprecated Bool
 
 	// The location of this symbol. The location's range is used by a tool
 	// to reveal the location in the editor. If the symbol is selected in the
@@ -14582,39 +15749,41 @@ func (x SymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 //////////////////
 
 // A symbol kind.
-type SymbolKind uint32
+//
+// Generated from the LSP 'SymbolKind' enumeration.
+type SymbolKind UInteger
 
 const (
-	SymbolKindFile          SymbolKind = 1
-	SymbolKindModule        SymbolKind = 2
-	SymbolKindNamespace     SymbolKind = 3
-	SymbolKindPackage       SymbolKind = 4
-	SymbolKindClass         SymbolKind = 5
-	SymbolKindMethod        SymbolKind = 6
-	SymbolKindProperty      SymbolKind = 7
-	SymbolKindField         SymbolKind = 8
-	SymbolKindConstructor   SymbolKind = 9
-	SymbolKindEnum          SymbolKind = 10
-	SymbolKindInterface     SymbolKind = 11
-	SymbolKindFunction      SymbolKind = 12
-	SymbolKindVariable      SymbolKind = 13
-	SymbolKindConstant      SymbolKind = 14
-	SymbolKindString        SymbolKind = 15
-	SymbolKindNumber        SymbolKind = 16
-	SymbolKindBoolean       SymbolKind = 17
-	SymbolKindArray         SymbolKind = 18
-	SymbolKindObject        SymbolKind = 19
-	SymbolKindKey           SymbolKind = 20
-	SymbolKindNull          SymbolKind = 21
-	SymbolKindEnumMember    SymbolKind = 22
-	SymbolKindStruct        SymbolKind = 23
-	SymbolKindEvent         SymbolKind = 24
-	SymbolKindOperator      SymbolKind = 25
+	SymbolKindFile SymbolKind = 1
+	SymbolKindModule SymbolKind = 2
+	SymbolKindNamespace SymbolKind = 3
+	SymbolKindPackage SymbolKind = 4
+	SymbolKindClass SymbolKind = 5
+	SymbolKindMethod SymbolKind = 6
+	SymbolKindProperty SymbolKind = 7
+	SymbolKindField SymbolKind = 8
+	SymbolKindConstructor SymbolKind = 9
+	SymbolKindEnum SymbolKind = 10
+	SymbolKindInterface SymbolKind = 11
+	SymbolKindFunction SymbolKind = 12
+	SymbolKindVariable SymbolKind = 13
+	SymbolKindConstant SymbolKind = 14
+	SymbolKindString SymbolKind = 15
+	SymbolKindNumber SymbolKind = 16
+	SymbolKindBoolean SymbolKind = 17
+	SymbolKindArray SymbolKind = 18
+	SymbolKindObject SymbolKind = 19
+	SymbolKindKey SymbolKind = 20
+	SymbolKindNull SymbolKind = 21
+	SymbolKindEnumMember SymbolKind = 22
+	SymbolKindStruct SymbolKind = 23
+	SymbolKindEvent SymbolKind = 24
+	SymbolKindOperator SymbolKind = 25
 	SymbolKindTypeParameter SymbolKind = 26
 )
 
 func (x *SymbolKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*SymbolKind)(x)); err != nil {
 		return fmt.Errorf("SymbolKind: %w", err)
 	}
 
@@ -14659,7 +15828,9 @@ func (x *SymbolKind) UnmarshalJSON(data []byte) error {
 // Symbol tags are extra annotations that tweak the rendering of a symbol.
 //
 // @since 3.16
-type SymbolTag uint32
+//
+// Generated from the LSP 'SymbolTag' enumeration.
+type SymbolTag UInteger
 
 const (
 	// Render a symbol as obsolete, usually using a strike-out.
@@ -14667,7 +15838,7 @@ const (
 )
 
 func (x *SymbolTag) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*SymbolTag)(x)); err != nil {
 		return fmt.Errorf("SymbolTag: %w", err)
 	}
 
@@ -14685,6 +15856,8 @@ func (x *SymbolTag) UnmarshalJSON(data []byte) error {
 /////////////////////////////////////////////
 
 // Describe options to be used when registered for text document change events.
+//
+// Generated from the LSP 'TextDocumentChangeRegistrationOptions' structure.
 type TextDocumentChangeRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 
@@ -14724,6 +15897,8 @@ func (x TextDocumentChangeRegistrationOptions) marshalProperties(w *bytes.Buffer
 //////////////////////////////////////
 
 // Text document specific client capabilities.
+//
+// Generated from the LSP 'TextDocumentClientCapabilities' structure.
 type TextDocumentClientCapabilities struct {
 	// Defines which synchronization capabilities the client supports.
 	Synchronization Optional[TextDocumentSyncClientCapabilities]
@@ -14962,9 +16137,86 @@ func (x TextDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 
 // An event describing a change to a text document. If only a text is provided
 // it is considered to be the full content of the document.
+//
+// Generated from the LSP 'TextDocumentContentChangeEvent' type alias.
+// Generated from an LSP 'or' type.
 type TextDocumentContentChangeEvent struct {
-	A Optional[TextDocumentContentChangeEvent]
-	B Optional[TextDocumentContentChangeEvent]
+	TextDocumentContentChangeEvent0 TextDocumentContentChangeEvent0
+	TextDocumentContentChangeEvent1 TextDocumentContentChangeEvent1
+}
+
+// Generated from an LSP 'literal' type.
+type TextDocumentContentChangeEvent0 struct {
+	// The range of the document that changed.
+	Range Range
+
+	// The optional length of the range that got replaced.
+	//
+	// @deprecated use range instead.
+	RangeLength Optional[UInteger]
+
+	// The new text for the provided range.
+	Text String
+}
+
+func (x TextDocumentContentChangeEvent0) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentContentChangeEvent0) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	if err := marshalOptionalProperty(w, n, "rangeLength", x.RangeLength); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type TextDocumentContentChangeEvent1 struct {
+	// The new text of the whole document.
+	Text String
+}
+
+func (x TextDocumentContentChangeEvent1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentContentChangeEvent1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
 }
 
 ////////////////////////
@@ -14975,6 +16227,8 @@ type TextDocumentContentChangeEvent struct {
 // on a document version Si and after they are applied move the document to version Si+1.
 // So the creator of a TextDocumentEdit doesn't need to sort the array of edits or do any
 // kind of ordering. However the edits must be non overlapping.
+//
+// Generated from the LSP 'TextDocumentEdit' structure.
 type TextDocumentEdit struct {
 	// The text document to change.
 	TextDocument OptionalVersionedTextDocumentIdentifier
@@ -15013,9 +16267,10 @@ func (x TextDocumentEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentEditEdits struct {
-	A Optional[TextEdit]
-	B Optional[AnnotatedTextEdit]
+	TextEdit          TextEdit
+	AnnotatedTextEdit AnnotatedTextEdit
 }
 
 //////////////////////////
@@ -15038,10 +16293,139 @@ type TextDocumentEditEdits struct {
 // @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'TextDocumentFilter' type alias.
+// Generated from an LSP 'or' type.
 type TextDocumentFilter struct {
-	A Optional[TextDocumentFilter]
-	B Optional[TextDocumentFilter]
-	C Optional[TextDocumentFilter]
+	TextDocumentFilter0 TextDocumentFilter0
+	TextDocumentFilter1 TextDocumentFilter1
+	TextDocumentFilter2 TextDocumentFilter2
+}
+
+// Generated from an LSP 'literal' type.
+type TextDocumentFilter0 struct {
+	// A language id, like `typescript`.
+	Language String
+
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+
+	// A glob pattern, like `*.{ts,js}`.
+	Pattern String
+}
+
+func (x TextDocumentFilter0) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentFilter0) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type TextDocumentFilter1 struct {
+	// A language id, like `typescript`.
+	Language String
+
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+
+	// A glob pattern, like `*.{ts,js}`.
+	Pattern String
+}
+
+func (x TextDocumentFilter1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentFilter1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+// Generated from an LSP 'literal' type.
+type TextDocumentFilter2 struct {
+	// A language id, like `typescript`.
+	Language String
+
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+
+	// A glob pattern, like `*.{ts,js}`.
+	Pattern String
+}
+
+func (x TextDocumentFilter2) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x TextDocumentFilter2) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
+		return err
+	}
+	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
 }
 
 //////////////////////////////
@@ -15049,6 +16433,8 @@ type TextDocumentFilter struct {
 //////////////////////////////
 
 // A literal to identify a text document in the client.
+//
+// Generated from the LSP 'TextDocumentIdentifier' structure.
 type TextDocumentIdentifier struct {
 	// The text document's uri.
 	URI DocumentURI
@@ -15084,19 +16470,21 @@ func (x TextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error
 
 // An item to transfer a text document from the client to the
 // server.
+//
+// Generated from the LSP 'TextDocumentItem' structure.
 type TextDocumentItem struct {
 	// The text document's uri.
 	URI DocumentURI
 
 	// The text document's language identifier.
-	LanguageID string
+	LanguageID String
 
 	// The version number of this document (it will increase after each
 	// change, including undo/redo).
-	Version int32
+	Version Integer
 
 	// The content of the opened text document.
-	Text string
+	Text String
 }
 
 func (x TextDocumentItem) MarshalJSON() ([]byte, error) {
@@ -15138,6 +16526,8 @@ func (x TextDocumentItem) marshalProperties(w *bytes.Buffer, n *int) error {
 
 // A parameter literal used in requests to pass a text document and a position inside that
 // document.
+//
+// Generated from the LSP 'TextDocumentPositionParams' structure.
 type TextDocumentPositionParams struct {
 	// The text document.
 	TextDocument TextDocumentIdentifier
@@ -15178,6 +16568,8 @@ func (x TextDocumentPositionParams) marshalProperties(w *bytes.Buffer, n *int) e
 ///////////////////////////////////////
 
 // General text document registration options.
+//
+// Generated from the LSP 'TextDocumentRegistrationOptions' structure.
 type TextDocumentRegistrationOptions struct {
 	// A document selector to identify the scope of the registration. If set to null
 	// the document selector provided on the client side will be used.
@@ -15208,8 +16600,9 @@ func (x TextDocumentRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentRegistrationOptionsDocumentSelector struct {
-	A Optional[DocumentSelector]
+	DocumentSelector DocumentSelector
 }
 
 //////////////////////////////
@@ -15217,7 +16610,9 @@ type TextDocumentRegistrationOptionsDocumentSelector struct {
 //////////////////////////////
 
 // Represents reasons why a text document is saved.
-type TextDocumentSaveReason uint32
+//
+// Generated from the LSP 'TextDocumentSaveReason' enumeration.
+type TextDocumentSaveReason UInteger
 
 const (
 	// Manually triggered, e.g. by the user pressing save, by starting debugging,
@@ -15230,7 +16625,7 @@ const (
 )
 
 func (x *TextDocumentSaveReason) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*TextDocumentSaveReason)(x)); err != nil {
 		return fmt.Errorf("TextDocumentSaveReason: %w", err)
 	}
 
@@ -15250,6 +16645,8 @@ func (x *TextDocumentSaveReason) UnmarshalJSON(data []byte) error {
 ///////////////////////////////////////////
 
 // Save registration options.
+//
+// Generated from the LSP 'TextDocumentSaveRegistrationOptions' structure.
 type TextDocumentSaveRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SaveOptions
@@ -15286,20 +16683,21 @@ func (x TextDocumentSaveRegistrationOptions) marshalProperties(w *bytes.Buffer, 
 /// TextDocumentSyncClientCapabilities ///
 //////////////////////////////////////////
 
+// Generated from the LSP 'TextDocumentSyncClientCapabilities' structure.
 type TextDocumentSyncClientCapabilities struct {
 	// Whether text document synchronization supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports sending will save notifications.
-	WillSave bool
+	WillSave Bool
 
 	// The client supports sending a will save request and
 	// waits for a response providing text edits which will
 	// be applied to the document before it is saved.
-	WillSaveWaitUntil bool
+	WillSaveWaitUntil Bool
 
 	// The client supports did save notifications.
-	DidSave bool
+	DidSave Bool
 }
 
 func (x TextDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -15341,7 +16739,9 @@ func (x TextDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffer, n
 
 // Defines how the host (editor) should sync
 // document changes to the language server.
-type TextDocumentSyncKind uint32
+//
+// Generated from the LSP 'TextDocumentSyncKind' enumeration.
+type TextDocumentSyncKind UInteger
 
 const (
 	// Documents should not be synced at all.
@@ -15356,7 +16756,7 @@ const (
 )
 
 func (x *TextDocumentSyncKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*uint32)(x)); err != nil {
+	if err := json.Unmarshal(data, (*TextDocumentSyncKind)(x)); err != nil {
 		return fmt.Errorf("TextDocumentSyncKind: %w", err)
 	}
 
@@ -15375,10 +16775,11 @@ func (x *TextDocumentSyncKind) UnmarshalJSON(data []byte) error {
 /// TextDocumentSyncOptions ///
 ///////////////////////////////
 
+// Generated from the LSP 'TextDocumentSyncOptions' structure.
 type TextDocumentSyncOptions struct {
 	// Open and close notifications are sent to the server. If omitted open close notification should not
 	// be sent.
-	OpenClose bool
+	OpenClose Bool
 
 	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
 	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
@@ -15386,11 +16787,11 @@ type TextDocumentSyncOptions struct {
 
 	// If present will save notifications are sent to the server. If omitted the notification should not be
 	// sent.
-	WillSave bool
+	WillSave Bool
 
 	// If present will save wait until requests are sent to the server. If omitted the request should not be
 	// sent.
-	WillSaveWaitUntil bool
+	WillSaveWaitUntil Bool
 
 	// If present save notifications are sent to the server. If omitted the notification should not be
 	// sent.
@@ -15433,9 +16834,10 @@ func (x TextDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) erro
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentSyncOptionsSave struct {
-	A Optional[bool]
-	B Optional[SaveOptions]
+	Bool        Bool
+	SaveOptions SaveOptions
 }
 
 ////////////////
@@ -15443,6 +16845,8 @@ type TextDocumentSyncOptionsSave struct {
 ////////////////
 
 // A text edit applicable to a text document.
+//
+// Generated from the LSP 'TextEdit' structure.
 type TextEdit struct {
 	// The range of the text document to be manipulated. To insert
 	// text into a document create a range where start === end.
@@ -15450,7 +16854,7 @@ type TextEdit struct {
 
 	// The string to be inserted. For delete operations use an
 	// empty string.
-	NewText string
+	NewText String
 }
 
 func (x TextEdit) MarshalJSON() ([]byte, error) {
@@ -15484,14 +16888,15 @@ func (x TextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 /// TokenFormat ///
 ///////////////////
 
-type TokenFormat string
+// Generated from the LSP 'TokenFormat' enumeration.
+type TokenFormat String
 
 const (
 	TokenFormatRelative TokenFormat = "relative"
 )
 
 func (x *TokenFormat) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*TokenFormat)(x)); err != nil {
 		return fmt.Errorf("TokenFormat: %w", err)
 	}
 
@@ -15508,7 +16913,8 @@ func (x *TokenFormat) UnmarshalJSON(data []byte) error {
 /// TraceValues ///
 ///////////////////
 
-type TraceValues string
+// Generated from the LSP 'TraceValues' enumeration.
+type TraceValues String
 
 const (
 	// Turn tracing off.
@@ -15520,7 +16926,7 @@ const (
 )
 
 func (x *TraceValues) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*TraceValues)(x)); err != nil {
 		return fmt.Errorf("TraceValues: %w", err)
 	}
 
@@ -15540,16 +16946,18 @@ func (x *TraceValues) UnmarshalJSON(data []byte) error {
 ////////////////////////////////////////
 
 // Since 3.6.0
+//
+// Generated from the LSP 'TypeDefinitionClientCapabilities' structure.
 type TypeDefinitionClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `TypeDefinitionRegistrationOptions` return value
 	// for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// The client supports additional metadata in the form of definition links.
 	//
 	// Since 3.14.0
-	LinkSupport bool
+	LinkSupport Bool
 }
 
 func (x TypeDefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -15583,6 +16991,7 @@ func (x TypeDefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 /// TypeDefinitionOptions ///
 /////////////////////////////
 
+// Generated from the LSP 'TypeDefinitionOptions' structure.
 type TypeDefinitionOptions struct {
 	WorkDoneProgressOptions
 }
@@ -15615,6 +17024,7 @@ func (x TypeDefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 /// TypeDefinitionParams ///
 ////////////////////////////
 
+// Generated from the LSP 'TypeDefinitionParams' structure.
 type TypeDefinitionParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -15655,6 +17065,7 @@ func (x TypeDefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 /// TypeDefinitionRegistrationOptions ///
 /////////////////////////////////////////
 
+// Generated from the LSP 'TypeDefinitionRegistrationOptions' structure.
 type TypeDefinitionRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	TypeDefinitionOptions
@@ -15696,11 +17107,13 @@ func (x TypeDefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 ///////////////////////////////////////
 
 // @since 3.17.0
+//
+// Generated from the LSP 'TypeHierarchyClientCapabilities' structure.
 type TypeHierarchyClientCapabilities struct {
 	// Whether implementation supports dynamic registration. If this is set to `true`
 	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
 	// return value for the corresponding server capability as well.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 }
 
 func (x TypeHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
@@ -15732,9 +17145,11 @@ func (x TypeHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 /////////////////////////
 
 // @since 3.17.0
+//
+// Generated from the LSP 'TypeHierarchyItem' structure.
 type TypeHierarchyItem struct {
 	// The name of this item.
-	Name string
+	Name String
 
 	// The kind of this item.
 	Kind SymbolKind
@@ -15743,7 +17158,7 @@ type TypeHierarchyItem struct {
 	Tags []SymbolTag
 
 	// More detail for this item, e.g. the signature of a function.
-	Detail string
+	Detail String
 
 	// The resource identifier of this item.
 	URI DocumentURI
@@ -15816,6 +17231,8 @@ func (x TypeHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
 // Type hierarchy options used during static registration.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'TypeHierarchyOptions' structure.
 type TypeHierarchyOptions struct {
 	WorkDoneProgressOptions
 }
@@ -15851,6 +17268,8 @@ func (x TypeHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 // The parameter of a `textDocument/prepareTypeHierarchy` request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'TypeHierarchyPrepareParams' structure.
 type TypeHierarchyPrepareParams struct {
 	TextDocumentPositionParams
 	WorkDoneProgressParams
@@ -15890,6 +17309,8 @@ func (x TypeHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) e
 // Type hierarchy options used during static or dynamic registration.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'TypeHierarchyRegistrationOptions' structure.
 type TypeHierarchyRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	TypeHierarchyOptions
@@ -15933,6 +17354,8 @@ func (x TypeHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 // The parameter of a `typeHierarchy/subtypes` request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'TypeHierarchySubtypesParams' structure.
 type TypeHierarchySubtypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -15977,6 +17400,8 @@ func (x TypeHierarchySubtypesParams) marshalProperties(w *bytes.Buffer, n *int) 
 // The parameter of a `typeHierarchy/supertypes` request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'TypeHierarchySupertypesParams' structure.
 type TypeHierarchySupertypesParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
@@ -16022,10 +17447,12 @@ func (x TypeHierarchySupertypesParams) marshalProperties(w *bytes.Buffer, n *int
 // report is still accurate.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'UnchangedDocumentDiagnosticReport' structure.
 type UnchangedDocumentDiagnosticReport struct {
 	// A result id which will be sent on the next
 	// diagnostic request for the same document.
-	ResultID string
+	ResultID String
 }
 
 func (x UnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
@@ -16062,7 +17489,9 @@ func (x UnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n 
 // Moniker uniqueness level to define scope of the moniker.
 //
 // @since 3.16.0
-type UniquenessLevel string
+//
+// Generated from the LSP 'UniquenessLevel' enumeration.
+type UniquenessLevel String
 
 const (
 	// The moniker is only unique inside a document
@@ -16078,7 +17507,7 @@ const (
 )
 
 func (x *UniquenessLevel) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*string)(x)); err != nil {
+	if err := json.Unmarshal(data, (*UniquenessLevel)(x)); err != nil {
 		return fmt.Errorf("UniquenessLevel: %w", err)
 	}
 
@@ -16100,13 +17529,15 @@ func (x *UniquenessLevel) UnmarshalJSON(data []byte) error {
 //////////////////////
 
 // General parameters to unregister a request or notification.
+//
+// Generated from the LSP 'Unregistration' structure.
 type Unregistration struct {
 	// The id used to unregister the request or notification. Usually an id
 	// provided during the register request.
-	ID string
+	ID String
 
 	// The method to unregister for.
-	Method string
+	Method String
 }
 
 func (x Unregistration) MarshalJSON() ([]byte, error) {
@@ -16140,6 +17571,7 @@ func (x Unregistration) marshalProperties(w *bytes.Buffer, n *int) error {
 /// UnregistrationParams ///
 ////////////////////////////
 
+// Generated from the LSP 'UnregistrationParams' structure.
 type UnregistrationParams struct {
 	Unregisterations []Unregistration
 }
@@ -16175,9 +17607,11 @@ func (x UnregistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // A versioned notebook document identifier.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'VersionedNotebookDocumentIdentifier' structure.
 type VersionedNotebookDocumentIdentifier struct {
 	// The version number of this notebook document.
-	Version int32
+	Version Integer
 
 	// The notebook document's uri.
 	URI URI
@@ -16215,11 +17649,13 @@ func (x VersionedNotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, 
 ///////////////////////////////////////
 
 // A text document identifier to denote a specific version of a text document.
+//
+// Generated from the LSP 'VersionedTextDocumentIdentifier' structure.
 type VersionedTextDocumentIdentifier struct {
 	TextDocumentIdentifier
 
 	// The version number of this document.
-	Version int32
+	Version Integer
 }
 
 func (x VersionedTextDocumentIdentifier) MarshalJSON() ([]byte, error) {
@@ -16253,7 +17689,8 @@ func (x VersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *i
 /// WatchKind ///
 /////////////////
 
-type WatchKind uint32
+// Generated from the LSP 'WatchKind' enumeration.
+type WatchKind UInteger
 
 const (
 	// Interested in create events.
@@ -16269,6 +17706,8 @@ const (
 //////////////////////////////////
 
 // The parameters sent in a will save text document notification.
+//
+// Generated from the LSP 'WillSaveTextDocumentParams' structure.
 type WillSaveTextDocumentParams struct {
 	// The document that will be saved.
 	TextDocument TextDocumentIdentifier
@@ -16308,6 +17747,7 @@ func (x WillSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) e
 /// WindowClientCapabilities ///
 ////////////////////////////////
 
+// Generated from the LSP 'WindowClientCapabilities' structure.
 type WindowClientCapabilities struct {
 	// It indicates whether the client supports server initiated
 	// progress using the `window/workDoneProgress/create` request.
@@ -16318,7 +17758,7 @@ type WindowClientCapabilities struct {
 	// capabilities.
 	//
 	// @since 3.15.0
-	WorkDoneProgress bool
+	WorkDoneProgress Bool
 
 	// Capabilities specific to the showMessage request.
 	//
@@ -16365,24 +17805,25 @@ func (x WindowClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) err
 /// WorkDoneProgressBegin ///
 /////////////////////////////
 
+// Generated from the LSP 'WorkDoneProgressBegin' structure.
 type WorkDoneProgressBegin struct {
 	// Mandatory title of the progress operation. Used to briefly inform about
 	// the kind of operation being performed.
 	//
 	// Examples: "Indexing" or "Linking dependencies".
-	Title string
+	Title String
 
 	// Controls if a cancel button should show to allow the user to cancel the
 	// long running operation. Clients that don't support cancellation are allowed
 	// to ignore the setting.
-	Cancellable bool
+	Cancellable Bool
 
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message string
+	Message String
 
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
@@ -16390,7 +17831,7 @@ type WorkDoneProgressBegin struct {
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100].
-	Percentage Optional[uint32]
+	Percentage Optional[UInteger]
 }
 
 func (x WorkDoneProgressBegin) MarshalJSON() ([]byte, error) {
@@ -16433,6 +17874,7 @@ func (x WorkDoneProgressBegin) marshalProperties(w *bytes.Buffer, n *int) error 
 /// WorkDoneProgressCancelParams ///
 ////////////////////////////////////
 
+// Generated from the LSP 'WorkDoneProgressCancelParams' structure.
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
 	Token ProgressToken
@@ -16466,6 +17908,7 @@ func (x WorkDoneProgressCancelParams) marshalProperties(w *bytes.Buffer, n *int)
 /// WorkDoneProgressCreateParams ///
 ////////////////////////////////////
 
+// Generated from the LSP 'WorkDoneProgressCreateParams' structure.
 type WorkDoneProgressCreateParams struct {
 	// The token to be used to report progress.
 	Token ProgressToken
@@ -16499,10 +17942,11 @@ func (x WorkDoneProgressCreateParams) marshalProperties(w *bytes.Buffer, n *int)
 /// WorkDoneProgressEnd ///
 ///////////////////////////
 
+// Generated from the LSP 'WorkDoneProgressEnd' structure.
 type WorkDoneProgressEnd struct {
 	// Optional, a final message indicating to for example indicate the outcome
 	// of the operation.
-	Message string
+	Message String
 }
 
 func (x WorkDoneProgressEnd) MarshalJSON() ([]byte, error) {
@@ -16536,8 +17980,9 @@ func (x WorkDoneProgressEnd) marshalProperties(w *bytes.Buffer, n *int) error {
 /// WorkDoneProgressOptions ///
 ///////////////////////////////
 
+// Generated from the LSP 'WorkDoneProgressOptions' structure.
 type WorkDoneProgressOptions struct {
-	WorkDoneProgress bool
+	WorkDoneProgress Bool
 }
 
 func (x WorkDoneProgressOptions) MarshalJSON() ([]byte, error) {
@@ -16568,6 +18013,7 @@ func (x WorkDoneProgressOptions) marshalProperties(w *bytes.Buffer, n *int) erro
 /// WorkDoneProgressParams ///
 //////////////////////////////
 
+// Generated from the LSP 'WorkDoneProgressParams' structure.
 type WorkDoneProgressParams struct {
 	// An optional token that a server can use to report work done progress.
 	WorkDoneToken Optional[ProgressToken]
@@ -16601,19 +18047,20 @@ func (x WorkDoneProgressParams) marshalProperties(w *bytes.Buffer, n *int) error
 /// WorkDoneProgressReport ///
 //////////////////////////////
 
+// Generated from the LSP 'WorkDoneProgressReport' structure.
 type WorkDoneProgressReport struct {
 	// Controls enablement state of a cancel button.
 	//
 	// Clients that don't support cancellation or don't support controlling the button's
 	// enablement state are allowed to ignore the property.
-	Cancellable bool
+	Cancellable Bool
 
 	// Optional, more detailed associated progress message. Contains
 	// complementary information to the `title`.
 	//
 	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
 	// If unset, the previous progress message (if any) is still valid.
-	Message string
+	Message String
 
 	// Optional progress percentage to display (value 100 is considered 100%).
 	// If not provided infinite progress is assumed and clients are allowed
@@ -16621,7 +18068,7 @@ type WorkDoneProgressReport struct {
 	//
 	// The value should be steadily rising. Clients are free to ignore values
 	// that are not following this rule. The value range is [0, 100]
-	Percentage Optional[uint32]
+	Percentage Optional[UInteger]
 }
 
 func (x WorkDoneProgressReport) MarshalJSON() ([]byte, error) {
@@ -16662,11 +18109,13 @@ func (x WorkDoneProgressReport) marshalProperties(w *bytes.Buffer, n *int) error
 ///////////////////////////////////
 
 // Workspace specific client capabilities.
+//
+// Generated from the LSP 'WorkspaceClientCapabilities' structure.
 type WorkspaceClientCapabilities struct {
 	// The client supports applying batch edits
 	// to the workspace by supporting the request
 	// 'workspace/applyEdit'
-	ApplyEdit bool
+	ApplyEdit Bool
 
 	// Capabilities specific to `WorkspaceEdit`s.
 	WorkspaceEdit Optional[WorkspaceEditClientCapabilities]
@@ -16686,12 +18135,12 @@ type WorkspaceClientCapabilities struct {
 	// The client has support for workspace folders.
 	//
 	// @since 3.6.0
-	WorkspaceFolders bool
+	WorkspaceFolders Bool
 
 	// The client supports `workspace/configuration` requests.
 	//
 	// @since 3.6.0
-	Configuration bool
+	Configuration Bool
 
 	// Capabilities specific to the semantic token requests scoped to the
 	// workspace.
@@ -16799,12 +18248,14 @@ func (x WorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) 
 // Parameters of the workspace diagnostic request.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'WorkspaceDiagnosticParams' structure.
 type WorkspaceDiagnosticParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 
 	// The additional identifier provided during registration.
-	Identifier string
+	Identifier String
 
 	// The currently known diagnostic reports with their
 	// previous result ids.
@@ -16851,6 +18302,8 @@ func (x WorkspaceDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) er
 // A workspace diagnostic report.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'WorkspaceDiagnosticReport' structure.
 type WorkspaceDiagnosticReport struct {
 	Items []WorkspaceDocumentDiagnosticReport
 }
@@ -16886,6 +18339,8 @@ func (x WorkspaceDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) er
 // A partial result for a workspace diagnostic report.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'WorkspaceDiagnosticReportPartialResult' structure.
 type WorkspaceDiagnosticReportPartialResult struct {
 	Items []WorkspaceDocumentDiagnosticReport
 }
@@ -16921,9 +18376,12 @@ func (x WorkspaceDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffe
 // A workspace diagnostic document report.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'WorkspaceDocumentDiagnosticReport' type alias.
+// Generated from an LSP 'or' type.
 type WorkspaceDocumentDiagnosticReport struct {
-	A Optional[WorkspaceFullDocumentDiagnosticReport]
-	B Optional[WorkspaceUnchangedDocumentDiagnosticReport]
+	WorkspaceFullDocumentDiagnosticReport      WorkspaceFullDocumentDiagnosticReport
+	WorkspaceUnchangedDocumentDiagnosticReport WorkspaceUnchangedDocumentDiagnosticReport
 }
 
 /////////////////////
@@ -16942,6 +18400,8 @@ type WorkspaceDocumentDiagnosticReport struct {
 // An invalid sequence (e.g. (1) delete file a.txt and (2) insert text into file a.txt) will
 // cause failure of the operation. How the client recovers from the failure is described by
 // the client capability: `workspace.workspaceEdit.failureHandling`
+//
+// Generated from the LSP 'WorkspaceEdit' structure.
 type WorkspaceEdit struct {
 	// Holds changes to existing resources.
 	Changes map[DocumentURI][]TextEdit
@@ -16997,20 +18457,22 @@ func (x WorkspaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceEditDocumentChanges struct {
-	A Optional[TextDocumentEdit]
-	B Optional[CreateFile]
-	C Optional[RenameFile]
-	D Optional[DeleteFile]
+	TextDocumentEdit TextDocumentEdit
+	CreateFile       CreateFile
+	RenameFile       RenameFile
+	DeleteFile       DeleteFile
 }
 
 ///////////////////////////////////////
 /// WorkspaceEditClientCapabilities ///
 ///////////////////////////////////////
 
+// Generated from the LSP 'WorkspaceEditClientCapabilities' structure.
 type WorkspaceEditClientCapabilities struct {
 	// The client supports versioned document changes in `WorkspaceEdit`s
-	DocumentChanges bool
+	DocumentChanges Bool
 
 	// The resource operations the client supports. Clients should at least
 	// support 'create', 'rename' and 'delete' files and folders.
@@ -17031,7 +18493,7 @@ type WorkspaceEditClientCapabilities struct {
 	// character.
 	//
 	// @since 3.16.0
-	NormalizesLineEndings bool
+	NormalizesLineEndings Bool
 
 	// Whether the client in general supports change annotations on text edits,
 	// create file, rename file and delete file changes.
@@ -17076,11 +18538,12 @@ func (x WorkspaceEditClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
 	// Whether the client groups edits with equal labels into tree nodes,
 	// for instance all edits labelled with "Changes in Strings" would
 	// be a tree node.
-	GroupsOnLabel bool
+	GroupsOnLabel Bool
 }
 
 func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) MarshalJSON() ([]byte, error) {
@@ -17112,13 +18575,15 @@ func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) marshalPropertie
 ///////////////////////
 
 // A workspace folder inside a client.
+//
+// Generated from the LSP 'WorkspaceFolder' structure.
 type WorkspaceFolder struct {
 	// The associated URI for this workspace folder.
 	URI URI
 
 	// The name of the workspace folder. Used to refer to this
 	// workspace folder in the user interface.
-	Name string
+	Name String
 }
 
 func (x WorkspaceFolder) MarshalJSON() ([]byte, error) {
@@ -17153,6 +18618,8 @@ func (x WorkspaceFolder) marshalProperties(w *bytes.Buffer, n *int) error {
 ///////////////////////////////////
 
 // The workspace folder change event.
+//
+// Generated from the LSP 'WorkspaceFoldersChangeEvent' structure.
 type WorkspaceFoldersChangeEvent struct {
 	// The array of added workspace folders
 	Added []WorkspaceFolder
@@ -17192,6 +18659,7 @@ func (x WorkspaceFoldersChangeEvent) marshalProperties(w *bytes.Buffer, n *int) 
 /// WorkspaceFoldersInitializeParams ///
 ////////////////////////////////////////
 
+// Generated from the LSP 'WorkspaceFoldersInitializeParams' structure.
 type WorkspaceFoldersInitializeParams struct {
 	// The workspace folders configured in the client when the server starts.
 	//
@@ -17227,17 +18695,19 @@ func (x WorkspaceFoldersInitializeParams) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceFoldersInitializeParamsWorkspaceFolders struct {
-	A Optional[[]WorkspaceFolder]
+	WorkspaceFolderArray []WorkspaceFolder
 }
 
 //////////////////////////////////////////
 /// WorkspaceFoldersServerCapabilities ///
 //////////////////////////////////////////
 
+// Generated from the LSP 'WorkspaceFoldersServerCapabilities' structure.
 type WorkspaceFoldersServerCapabilities struct {
 	// The server has support for workspace folders
-	Supported bool
+	Supported Bool
 
 	// Whether the server wants to receive workspace folder
 	// change notifications.
@@ -17276,9 +18746,10 @@ func (x WorkspaceFoldersServerCapabilities) marshalProperties(w *bytes.Buffer, n
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceFoldersServerCapabilitiesChangeNotifications struct {
-	A Optional[string]
-	B Optional[bool]
+	String String
+	Bool   Bool
 }
 
 /////////////////////////////////////////////
@@ -17288,6 +18759,8 @@ type WorkspaceFoldersServerCapabilitiesChangeNotifications struct {
 // A full document diagnostic report for a workspace diagnostic result.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'WorkspaceFullDocumentDiagnosticReport' structure.
 type WorkspaceFullDocumentDiagnosticReport struct {
 	FullDocumentDiagnosticReport
 
@@ -17329,8 +18802,9 @@ func (x WorkspaceFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceFullDocumentDiagnosticReportVersion struct {
-	A Optional[int32]
+	Integer Integer
 }
 
 ///////////////////////
@@ -17342,6 +18816,8 @@ type WorkspaceFullDocumentDiagnosticReportVersion struct {
 // See also SymbolInformation.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'WorkspaceSymbol' structure.
 type WorkspaceSymbol struct {
 	BaseSymbolInformation
 
@@ -17387,9 +18863,39 @@ func (x WorkspaceSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceSymbolLocation struct {
-	A Optional[Location]
-	B Optional[WorkspaceSymbolLocation]
+	Location                 Location
+	WorkspaceSymbolLocation1 WorkspaceSymbolLocation1
+}
+
+// Generated from an LSP 'literal' type.
+type WorkspaceSymbolLocation1 struct {
+	URI DocumentURI
+}
+
+func (x WorkspaceSymbolLocation1) MarshalJSON() ([]byte, error) {
+	var (
+		w bytes.Buffer
+		n int
+	)
+
+	w.WriteByte('{')
+
+	if err := x.marshalProperties(&w, &n); err != nil {
+		return nil, err
+	}
+
+	w.WriteByte('}')
+
+	return w.Bytes(), nil
+}
+
+func (x WorkspaceSymbolLocation1) marshalProperties(w *bytes.Buffer, n *int) error {
+	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
 }
 
 /////////////////////////////////////////
@@ -17397,9 +18903,11 @@ type WorkspaceSymbolLocation struct {
 /////////////////////////////////////////
 
 // Client capabilities for a {@link WorkspaceSymbolRequest}.
+//
+// Generated from the LSP 'WorkspaceSymbolClientCapabilities' structure.
 type WorkspaceSymbolClientCapabilities struct {
 	// Symbol request supports dynamic registration.
-	DynamicRegistration bool
+	DynamicRegistration Bool
 
 	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
 	SymbolKind Optional[WorkspaceSymbolClientCapabilitiesSymbolKind]
@@ -17451,10 +18959,11 @@ func (x WorkspaceSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n 
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily. Usually
 	// `location.range`
-	Properties []string
+	Properties []String
 }
 
 func (x WorkspaceSymbolClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
@@ -17481,6 +18990,7 @@ func (x WorkspaceSymbolClientCapabilitiesResolveSupport) marshalProperties(w *by
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
 	// The symbol kind values the client supports. When this
 	// property exists the client also guarantees that it will
@@ -17517,6 +19027,7 @@ func (x WorkspaceSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type WorkspaceSymbolClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
 	ValueSet []SymbolTag
@@ -17551,6 +19062,8 @@ func (x WorkspaceSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.
 //////////////////////////////
 
 // Server capabilities for a {@link WorkspaceSymbolRequest}.
+//
+// Generated from the LSP 'WorkspaceSymbolOptions' structure.
 type WorkspaceSymbolOptions struct {
 	WorkDoneProgressOptions
 
@@ -17558,7 +19071,7 @@ type WorkspaceSymbolOptions struct {
 	// information for a workspace symbol.
 	//
 	// @since 3.17.0
-	ResolveProvider bool
+	ResolveProvider Bool
 }
 
 func (x WorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
@@ -17593,13 +19106,15 @@ func (x WorkspaceSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error
 /////////////////////////////
 
 // The parameters of a {@link WorkspaceSymbolRequest}.
+//
+// Generated from the LSP 'WorkspaceSymbolParams' structure.
 type WorkspaceSymbolParams struct {
 	WorkDoneProgressParams
 	PartialResultParams
 
 	// A query string to filter symbols by. Clients may send an empty
 	// string here to request all symbols.
-	Query string
+	Query String
 }
 
 func (x WorkspaceSymbolParams) MarshalJSON() ([]byte, error) {
@@ -17637,6 +19152,8 @@ func (x WorkspaceSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error 
 //////////////////////////////////////////
 
 // Registration options for a {@link WorkspaceSymbolRequest}.
+//
+// Generated from the LSP 'WorkspaceSymbolRegistrationOptions' structure.
 type WorkspaceSymbolRegistrationOptions struct {
 	WorkspaceSymbolOptions
 }
@@ -17672,6 +19189,8 @@ func (x WorkspaceSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n
 // An unchanged document diagnostic report for a workspace diagnostic result.
 //
 // @since 3.17.0
+//
+// Generated from the LSP 'WorkspaceUnchangedDocumentDiagnosticReport' structure.
 type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	UnchangedDocumentDiagnosticReport
 
@@ -17713,8 +19232,9 @@ func (x WorkspaceUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.B
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceUnchangedDocumentDiagnosticReportVersion struct {
-	A Optional[int32]
+	Integer Integer
 }
 
 ////////////////////////
@@ -17722,6 +19242,8 @@ type WorkspaceUnchangedDocumentDiagnosticReportVersion struct {
 ////////////////////////
 
 // The initialize parameters
+//
+// Generated from the LSP '_InitializeParams' structure.
 type initializeParams struct {
 	WorkDoneProgressParams
 
@@ -17745,7 +19267,7 @@ type initializeParams struct {
 	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
 	//
 	// @since 3.16.0
-	Locale string
+	Locale String
 
 	// The rootPath of the workspace. Is null
 	// if no folder is open.
@@ -17822,12 +19344,13 @@ func (x initializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+// Generated from an LSP 'literal' type.
 type InitializeParamsClientInfo struct {
 	// The name of the client as defined by the client.
-	Name string
+	Name String
 
 	// The client's version as defined by the client.
-	Version string
+	Version String
 }
 
 func (x InitializeParamsClientInfo) MarshalJSON() ([]byte, error) {
@@ -17857,16 +19380,19 @@ func (x InitializeParamsClientInfo) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+// Generated from an LSP 'or' type.
 type InitializeParamsRootPath struct {
-	A Optional[string]
+	String String
 }
 
+// Generated from an LSP 'or' type.
 type InitializeParamsRootURI struct {
-	A Optional[DocumentURI]
+	DocumentURI DocumentURI
 }
 
+// Generated from an LSP 'or' type.
 type initializeParamsProcessID struct {
-	A Optional[int32]
+	Integer Integer
 }
 
 /////////////////////
@@ -17909,8 +19435,9 @@ type CallHierarchyIncomingCallsHandler interface {
 	HandleCallHierarchyIncomingCalls(context.Context, CallHierarchyIncomingCallsParams) (CallHierarchyIncomingCallsResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type CallHierarchyIncomingCallsResult struct {
-	A Optional[[]CallHierarchyIncomingCall]
+	CallHierarchyIncomingCallArray []CallHierarchyIncomingCall
 }
 
 //////////////////////////////////
@@ -17921,15 +19448,16 @@ type CallHierarchyOutgoingCallsHandler interface {
 	HandleCallHierarchyOutgoingCalls(context.Context, CallHierarchyOutgoingCallsParams) (CallHierarchyOutgoingCallsResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type CallHierarchyOutgoingCallsResult struct {
-	A Optional[[]CallHierarchyOutgoingCall]
+	CallHierarchyOutgoingCallArray []CallHierarchyOutgoingCall
 }
 
 ////////////////////////////////
 /// ClientRegisterCapability ///
 ////////////////////////////////
 
-func (c *Client) ClientRegisterCapability(ctx context.Context, p RegistrationParams) (Null, error) {
+func (c *Client) ClientRegisterCapability(ctx context.Context, p RegistrationParams) error {
 	panic("not implemented")
 }
 
@@ -17937,7 +19465,7 @@ func (c *Client) ClientRegisterCapability(ctx context.Context, p RegistrationPar
 /// ClientUnregisterCapability ///
 //////////////////////////////////
 
-func (c *Client) ClientUnregisterCapability(ctx context.Context, p UnregistrationParams) (Null, error) {
+func (c *Client) ClientUnregisterCapability(ctx context.Context, p UnregistrationParams) error {
 	panic("not implemented")
 }
 
@@ -18042,7 +19570,7 @@ type NotebookDocumentDidSaveHandler interface {
 ////////////////
 
 type ShutdownHandler interface {
-	HandleShutdown(context.Context) (Null, error)
+	HandleShutdown(context.Context) error
 }
 
 //////////////////////
@@ -18061,13 +19589,15 @@ type TextDocumentCodeActionHandler interface {
 	HandleTextDocumentCodeAction(context.Context, CodeActionParams) (TextDocumentCodeActionResult, error)
 }
 
-type TextDocumentCodeActionPartialResult struct {
-	A Optional[Command]
-	B Optional[CodeAction]
+// Generated from an LSP 'or' type.
+type TextDocumentCodeActionResult struct {
+	TextDocumentCodeActionResult0Array []TextDocumentCodeActionResult0
 }
 
-type TextDocumentCodeActionResult struct {
-	A Optional[[]TextDocumentCodeActionResult]
+// Generated from an LSP 'or' type.
+type TextDocumentCodeActionResult0 struct {
+	Command    Command
+	CodeAction CodeAction
 }
 
 ////////////////////////////
@@ -18078,8 +19608,9 @@ type TextDocumentCodeLensHandler interface {
 	HandleTextDocumentCodeLens(context.Context, CodeLensParams) (TextDocumentCodeLensResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentCodeLensResult struct {
-	A Optional[[]CodeLens]
+	CodeLensArray []CodeLens
 }
 
 /////////////////////////////////////
@@ -18090,38 +19621,6 @@ type TextDocumentColorPresentationHandler interface {
 	HandleTextDocumentColorPresentation(context.Context, ColorPresentationParams) ([]ColorPresentation, error)
 }
 
-type TextDocumentColorPresentationRegistrationOptions struct {
-	WorkDoneProgressOptions
-	TextDocumentRegistrationOptions
-}
-
-func (x TextDocumentColorPresentationRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentColorPresentationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
 //////////////////////////////
 /// TextDocumentCompletion ///
 //////////////////////////////
@@ -18130,9 +19629,10 @@ type TextDocumentCompletionHandler interface {
 	HandleTextDocumentCompletion(context.Context, CompletionParams) (TextDocumentCompletionResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentCompletionResult struct {
-	A Optional[[]CompletionItem]
-	B Optional[CompletionList]
+	CompletionItemArray []CompletionItem
+	CompletionList      CompletionList
 }
 
 ///////////////////////////////
@@ -18143,14 +19643,10 @@ type TextDocumentDeclarationHandler interface {
 	HandleTextDocumentDeclaration(context.Context, DeclarationParams) (TextDocumentDeclarationResult, error)
 }
 
-type TextDocumentDeclarationPartialResult struct {
-	A Optional[[]Location]
-	B Optional[[]DeclarationLink]
-}
-
+// Generated from an LSP 'or' type.
 type TextDocumentDeclarationResult struct {
-	A Optional[Declaration]
-	B Optional[[]DeclarationLink]
+	Declaration          Declaration
+	DeclarationLinkArray []DeclarationLink
 }
 
 //////////////////////////////
@@ -18161,14 +19657,10 @@ type TextDocumentDefinitionHandler interface {
 	HandleTextDocumentDefinition(context.Context, DefinitionParams) (TextDocumentDefinitionResult, error)
 }
 
-type TextDocumentDefinitionPartialResult struct {
-	A Optional[[]Location]
-	B Optional[[]DefinitionLink]
-}
-
+// Generated from an LSP 'or' type.
 type TextDocumentDefinitionResult struct {
-	A Optional[Definition]
-	B Optional[[]DefinitionLink]
+	Definition          Definition
+	DefinitionLinkArray []DefinitionLink
 }
 
 //////////////////////////////
@@ -18227,8 +19719,9 @@ type TextDocumentDocumentHighlightHandler interface {
 	HandleTextDocumentDocumentHighlight(context.Context, DocumentHighlightParams) (TextDocumentDocumentHighlightResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentDocumentHighlightResult struct {
-	A Optional[[]DocumentHighlight]
+	DocumentHighlightArray []DocumentHighlight
 }
 
 ////////////////////////////////
@@ -18239,8 +19732,9 @@ type TextDocumentDocumentLinkHandler interface {
 	HandleTextDocumentDocumentLink(context.Context, DocumentLinkParams) (TextDocumentDocumentLinkResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentDocumentLinkResult struct {
-	A Optional[[]DocumentLink]
+	DocumentLinkArray []DocumentLink
 }
 
 //////////////////////////////////
@@ -18251,14 +19745,10 @@ type TextDocumentDocumentSymbolHandler interface {
 	HandleTextDocumentDocumentSymbol(context.Context, DocumentSymbolParams) (TextDocumentDocumentSymbolResult, error)
 }
 
-type TextDocumentDocumentSymbolPartialResult struct {
-	A Optional[[]SymbolInformation]
-	B Optional[[]DocumentSymbol]
-}
-
+// Generated from an LSP 'or' type.
 type TextDocumentDocumentSymbolResult struct {
-	A Optional[[]SymbolInformation]
-	B Optional[[]DocumentSymbol]
+	SymbolInformationArray []SymbolInformation
+	DocumentSymbolArray    []DocumentSymbol
 }
 
 ////////////////////////////////
@@ -18269,8 +19759,9 @@ type TextDocumentFoldingRangeHandler interface {
 	HandleTextDocumentFoldingRange(context.Context, FoldingRangeParams) (TextDocumentFoldingRangeResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentFoldingRangeResult struct {
-	A Optional[[]FoldingRange]
+	FoldingRangeArray []FoldingRange
 }
 
 //////////////////////////////
@@ -18281,8 +19772,9 @@ type TextDocumentFormattingHandler interface {
 	HandleTextDocumentFormatting(context.Context, DocumentFormattingParams) (TextDocumentFormattingResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentFormattingResult struct {
-	A Optional[[]TextEdit]
+	TextEditArray []TextEdit
 }
 
 /////////////////////////
@@ -18293,8 +19785,9 @@ type TextDocumentHoverHandler interface {
 	HandleTextDocumentHover(context.Context, HoverParams) (TextDocumentHoverResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentHoverResult struct {
-	A Optional[Hover]
+	Hover Hover
 }
 
 //////////////////////////////////
@@ -18305,14 +19798,10 @@ type TextDocumentImplementationHandler interface {
 	HandleTextDocumentImplementation(context.Context, ImplementationParams) (TextDocumentImplementationResult, error)
 }
 
-type TextDocumentImplementationPartialResult struct {
-	A Optional[[]Location]
-	B Optional[[]DefinitionLink]
-}
-
+// Generated from an LSP 'or' type.
 type TextDocumentImplementationResult struct {
-	A Optional[Definition]
-	B Optional[[]DefinitionLink]
+	Definition          Definition
+	DefinitionLinkArray []DefinitionLink
 }
 
 /////////////////////////////
@@ -18323,8 +19812,9 @@ type TextDocumentInlayHintHandler interface {
 	HandleTextDocumentInlayHint(context.Context, InlayHintParams) (TextDocumentInlayHintResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentInlayHintResult struct {
-	A Optional[[]InlayHint]
+	InlayHintArray []InlayHint
 }
 
 ///////////////////////////////
@@ -18335,8 +19825,9 @@ type TextDocumentInlineValueHandler interface {
 	HandleTextDocumentInlineValue(context.Context, InlineValueParams) (TextDocumentInlineValueResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentInlineValueResult struct {
-	A Optional[[]InlineValue]
+	InlineValueArray []InlineValue
 }
 
 //////////////////////////////////////
@@ -18347,8 +19838,9 @@ type TextDocumentLinkedEditingRangeHandler interface {
 	HandleTextDocumentLinkedEditingRange(context.Context, LinkedEditingRangeParams) (TextDocumentLinkedEditingRangeResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentLinkedEditingRangeResult struct {
-	A Optional[LinkedEditingRanges]
+	LinkedEditingRanges LinkedEditingRanges
 }
 
 ///////////////////////////
@@ -18359,8 +19851,9 @@ type TextDocumentMonikerHandler interface {
 	HandleTextDocumentMoniker(context.Context, MonikerParams) (TextDocumentMonikerResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentMonikerResult struct {
-	A Optional[[]Moniker]
+	MonikerArray []Moniker
 }
 
 ////////////////////////////////////
@@ -18371,8 +19864,9 @@ type TextDocumentOnTypeFormattingHandler interface {
 	HandleTextDocumentOnTypeFormatting(context.Context, DocumentOnTypeFormattingParams) (TextDocumentOnTypeFormattingResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentOnTypeFormattingResult struct {
-	A Optional[[]TextEdit]
+	TextEditArray []TextEdit
 }
 
 ////////////////////////////////////////
@@ -18383,8 +19877,9 @@ type TextDocumentPrepareCallHierarchyHandler interface {
 	HandleTextDocumentPrepareCallHierarchy(context.Context, CallHierarchyPrepareParams) (TextDocumentPrepareCallHierarchyResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentPrepareCallHierarchyResult struct {
-	A Optional[[]CallHierarchyItem]
+	CallHierarchyItemArray []CallHierarchyItem
 }
 
 /////////////////////////////////
@@ -18395,8 +19890,9 @@ type TextDocumentPrepareRenameHandler interface {
 	HandleTextDocumentPrepareRename(context.Context, PrepareRenameParams) (TextDocumentPrepareRenameResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentPrepareRenameResult struct {
-	A Optional[PrepareRenameResult]
+	PrepareRenameResult PrepareRenameResult
 }
 
 ////////////////////////////////////////
@@ -18407,8 +19903,9 @@ type TextDocumentPrepareTypeHierarchyHandler interface {
 	HandleTextDocumentPrepareTypeHierarchy(context.Context, TypeHierarchyPrepareParams) (TextDocumentPrepareTypeHierarchyResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentPrepareTypeHierarchyResult struct {
-	A Optional[[]TypeHierarchyItem]
+	TypeHierarchyItemArray []TypeHierarchyItem
 }
 
 //////////////////////////////////////
@@ -18427,8 +19924,9 @@ type TextDocumentRangeFormattingHandler interface {
 	HandleTextDocumentRangeFormatting(context.Context, DocumentRangeFormattingParams) (TextDocumentRangeFormattingResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentRangeFormattingResult struct {
-	A Optional[[]TextEdit]
+	TextEditArray []TextEdit
 }
 
 //////////////////////////////
@@ -18439,8 +19937,9 @@ type TextDocumentReferencesHandler interface {
 	HandleTextDocumentReferences(context.Context, ReferenceParams) (TextDocumentReferencesResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentReferencesResult struct {
-	A Optional[[]Location]
+	LocationArray []Location
 }
 
 //////////////////////////
@@ -18451,8 +19950,9 @@ type TextDocumentRenameHandler interface {
 	HandleTextDocumentRename(context.Context, RenameParams) (TextDocumentRenameResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentRenameResult struct {
-	A Optional[WorkspaceEdit]
+	WorkspaceEdit WorkspaceEdit
 }
 
 //////////////////////////////////
@@ -18463,8 +19963,9 @@ type TextDocumentSelectionRangeHandler interface {
 	HandleTextDocumentSelectionRange(context.Context, SelectionRangeParams) (TextDocumentSelectionRangeResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentSelectionRangeResult struct {
-	A Optional[[]SelectionRange]
+	SelectionRangeArray []SelectionRange
 }
 
 //////////////////////////////////////
@@ -18475,8 +19976,9 @@ type TextDocumentSemanticTokensFullHandler interface {
 	HandleTextDocumentSemanticTokensFull(context.Context, SemanticTokensParams) (TextDocumentSemanticTokensFullResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentSemanticTokensFullResult struct {
-	A Optional[SemanticTokens]
+	SemanticTokens SemanticTokens
 }
 
 ///////////////////////////////////////////
@@ -18487,14 +19989,10 @@ type TextDocumentSemanticTokensFullDeltaHandler interface {
 	HandleTextDocumentSemanticTokensFullDelta(context.Context, SemanticTokensDeltaParams) (TextDocumentSemanticTokensFullDeltaResult, error)
 }
 
-type TextDocumentSemanticTokensFullDeltaPartialResult struct {
-	A Optional[SemanticTokensPartialResult]
-	B Optional[SemanticTokensDeltaPartialResult]
-}
-
+// Generated from an LSP 'or' type.
 type TextDocumentSemanticTokensFullDeltaResult struct {
-	A Optional[SemanticTokens]
-	B Optional[SemanticTokensDelta]
+	SemanticTokens      SemanticTokens
+	SemanticTokensDelta SemanticTokensDelta
 }
 
 ///////////////////////////////////////
@@ -18505,8 +20003,9 @@ type TextDocumentSemanticTokensRangeHandler interface {
 	HandleTextDocumentSemanticTokensRange(context.Context, SemanticTokensRangeParams) (TextDocumentSemanticTokensRangeResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentSemanticTokensRangeResult struct {
-	A Optional[SemanticTokens]
+	SemanticTokens SemanticTokens
 }
 
 /////////////////////////////////
@@ -18517,8 +20016,9 @@ type TextDocumentSignatureHelpHandler interface {
 	HandleTextDocumentSignatureHelp(context.Context, SignatureHelpParams) (TextDocumentSignatureHelpResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentSignatureHelpResult struct {
-	A Optional[SignatureHelp]
+	SignatureHelp SignatureHelp
 }
 
 //////////////////////////////////
@@ -18529,14 +20029,10 @@ type TextDocumentTypeDefinitionHandler interface {
 	HandleTextDocumentTypeDefinition(context.Context, TypeDefinitionParams) (TextDocumentTypeDefinitionResult, error)
 }
 
-type TextDocumentTypeDefinitionPartialResult struct {
-	A Optional[[]Location]
-	B Optional[[]DefinitionLink]
-}
-
+// Generated from an LSP 'or' type.
 type TextDocumentTypeDefinitionResult struct {
-	A Optional[Definition]
-	B Optional[[]DefinitionLink]
+	Definition          Definition
+	DefinitionLinkArray []DefinitionLink
 }
 
 ////////////////////////////
@@ -18555,8 +20051,9 @@ type TextDocumentWillSaveWaitUntilHandler interface {
 	HandleTextDocumentWillSaveWaitUntil(context.Context, WillSaveTextDocumentParams) (TextDocumentWillSaveWaitUntilResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TextDocumentWillSaveWaitUntilResult struct {
-	A Optional[[]TextEdit]
+	TextEditArray []TextEdit
 }
 
 /////////////////////////////
@@ -18567,8 +20064,9 @@ type TypeHierarchySubtypesHandler interface {
 	HandleTypeHierarchySubtypes(context.Context, TypeHierarchySubtypesParams) (TypeHierarchySubtypesResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TypeHierarchySubtypesResult struct {
-	A Optional[[]TypeHierarchyItem]
+	TypeHierarchyItemArray []TypeHierarchyItem
 }
 
 ///////////////////////////////
@@ -18579,8 +20077,9 @@ type TypeHierarchySupertypesHandler interface {
 	HandleTypeHierarchySupertypes(context.Context, TypeHierarchySupertypesParams) (TypeHierarchySupertypesResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type TypeHierarchySupertypesResult struct {
-	A Optional[[]TypeHierarchyItem]
+	TypeHierarchyItemArray []TypeHierarchyItem
 }
 
 ////////////////////////
@@ -18615,8 +20114,9 @@ func (c *Client) WindowShowMessageRequest(ctx context.Context, p ShowMessageRequ
 	panic("not implemented")
 }
 
+// Generated from an LSP 'or' type.
 type WindowShowMessageRequestResult struct {
-	A Optional[MessageActionItem]
+	MessageActionItem MessageActionItem
 }
 
 ////////////////////////////////////
@@ -18631,7 +20131,7 @@ type WindowWorkDoneProgressCancelHandler interface {
 /// WindowWorkDoneProgressCreate ///
 ////////////////////////////////////
 
-func (c *Client) WindowWorkDoneProgressCreate(ctx context.Context, p WorkDoneProgressCreateParams) (Null, error) {
+func (c *Client) WindowWorkDoneProgressCreate(ctx context.Context, p WorkDoneProgressCreateParams) error {
 	panic("not implemented")
 }
 
@@ -18647,7 +20147,7 @@ func (c *Client) WorkspaceApplyEdit(ctx context.Context, p ApplyWorkspaceEditPar
 /// WorkspaceCodeLensRefresh ///
 ////////////////////////////////
 
-func (c *Client) WorkspaceCodeLensRefresh(ctx context.Context) (Null, error) {
+func (c *Client) WorkspaceCodeLensRefresh(ctx context.Context) error {
 	panic("not implemented")
 }
 
@@ -18671,7 +20171,7 @@ type WorkspaceDiagnosticHandler interface {
 /// WorkspaceDiagnosticRefresh ///
 //////////////////////////////////
 
-func (c *Client) WorkspaceDiagnosticRefresh(ctx context.Context) (Null, error) {
+func (c *Client) WorkspaceDiagnosticRefresh(ctx context.Context) error {
 	panic("not implemented")
 }
 
@@ -18731,15 +20231,16 @@ type WorkspaceExecuteCommandHandler interface {
 	HandleWorkspaceExecuteCommand(context.Context, ExecuteCommandParams) (WorkspaceExecuteCommandResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceExecuteCommandResult struct {
-	A Optional[LSPAny]
+	LSPAny LSPAny
 }
 
 /////////////////////////////////
 /// WorkspaceInlayHintRefresh ///
 /////////////////////////////////
 
-func (c *Client) WorkspaceInlayHintRefresh(ctx context.Context) (Null, error) {
+func (c *Client) WorkspaceInlayHintRefresh(ctx context.Context) error {
 	panic("not implemented")
 }
 
@@ -18747,7 +20248,7 @@ func (c *Client) WorkspaceInlayHintRefresh(ctx context.Context) (Null, error) {
 /// WorkspaceInlineValueRefresh ///
 ///////////////////////////////////
 
-func (c *Client) WorkspaceInlineValueRefresh(ctx context.Context) (Null, error) {
+func (c *Client) WorkspaceInlineValueRefresh(ctx context.Context) error {
 	panic("not implemented")
 }
 
@@ -18755,7 +20256,7 @@ func (c *Client) WorkspaceInlineValueRefresh(ctx context.Context) (Null, error) 
 /// WorkspaceSemanticTokensRefresh ///
 //////////////////////////////////////
 
-func (c *Client) WorkspaceSemanticTokensRefresh(ctx context.Context) (Null, error) {
+func (c *Client) WorkspaceSemanticTokensRefresh(ctx context.Context) error {
 	panic("not implemented")
 }
 
@@ -18767,14 +20268,10 @@ type WorkspaceSymbolHandler interface {
 	HandleWorkspaceSymbol(context.Context, WorkspaceSymbolParams) (WorkspaceSymbolResult, error)
 }
 
-type WorkspaceSymbolPartialResult struct {
-	A Optional[[]SymbolInformation]
-	B Optional[[]WorkspaceSymbol]
-}
-
+// Generated from an LSP 'or' type.
 type WorkspaceSymbolResult struct {
-	A Optional[[]SymbolInformation]
-	B Optional[[]WorkspaceSymbol]
+	SymbolInformationArray []SymbolInformation
+	WorkspaceSymbolArray   []WorkspaceSymbol
 }
 
 ////////////////////////////////
@@ -18785,8 +20282,9 @@ type WorkspaceWillCreateFilesHandler interface {
 	HandleWorkspaceWillCreateFiles(context.Context, CreateFilesParams) (WorkspaceWillCreateFilesResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceWillCreateFilesResult struct {
-	A Optional[WorkspaceEdit]
+	WorkspaceEdit WorkspaceEdit
 }
 
 ////////////////////////////////
@@ -18797,8 +20295,9 @@ type WorkspaceWillDeleteFilesHandler interface {
 	HandleWorkspaceWillDeleteFiles(context.Context, DeleteFilesParams) (WorkspaceWillDeleteFilesResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceWillDeleteFilesResult struct {
-	A Optional[WorkspaceEdit]
+	WorkspaceEdit WorkspaceEdit
 }
 
 ////////////////////////////////
@@ -18809,8 +20308,9 @@ type WorkspaceWillRenameFilesHandler interface {
 	HandleWorkspaceWillRenameFiles(context.Context, RenameFilesParams) (WorkspaceWillRenameFilesResult, error)
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceWillRenameFilesResult struct {
-	A Optional[WorkspaceEdit]
+	WorkspaceEdit WorkspaceEdit
 }
 
 /////////////////////////////////
@@ -18821,8 +20321,9 @@ func (c *Client) WorkspaceWorkspaceFolders(ctx context.Context) (WorkspaceWorksp
 	panic("not implemented")
 }
 
+// Generated from an LSP 'or' type.
 type WorkspaceWorkspaceFoldersResult struct {
-	A Optional[[]WorkspaceFolder]
+	WorkspaceFolderArray []WorkspaceFolder
 }
 
 //////////////////////////////

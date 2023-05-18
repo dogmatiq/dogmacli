@@ -1,6 +1,8 @@
 package generator
 
 import (
+	"reflect"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
@@ -17,32 +19,38 @@ func (g *method) Call(m model.Call) {
 	params := jen.Null()
 	if m.Params != nil {
 		g.pushNestedScope("Params")
-		params = g.typeExpr(m.Params)
+		info := g.typeInfo(m.Params)
+		if info.TypeKind != reflect.Invalid {
+			params = info.TypeExpr()
+		}
 		g.popNestedScope()
 	}
 
 	if m.RegistrationOptions != nil {
 		g.pushNestedScope("RegistrationOptions")
-		g.typeExpr(m.RegistrationOptions)
+		g.typeInfo(m.RegistrationOptions)
 		g.popNestedScope()
 	}
 
 	result := jen.Null()
 	if m.Result != nil {
 		g.pushNestedScope("Result")
-		result = g.typeExpr(m.Result)
+		info := g.typeInfo(m.Result)
+		if info.TypeKind != reflect.Invalid {
+			result = info.TypeExpr()
+		}
 		g.popNestedScope()
 	}
 
 	if m.PartialResult != nil {
 		g.pushNestedScope("PartialResult")
-		g.typeExpr(m.PartialResult)
+		g.typeInfo(m.PartialResult)
 		g.popNestedScope()
 	}
 
 	if m.ErrorData != nil {
 		g.pushNestedScope("ErrorData")
-		g.typeExpr(m.ErrorData)
+		g.typeInfo(m.ErrorData)
 		g.popNestedScope()
 	}
 
@@ -91,13 +99,16 @@ func (g *method) Notification(m model.Notification) {
 	params := jen.Null()
 	if m.Params != nil {
 		g.pushNestedScope("Params")
-		params = g.typeExpr(m.Params)
+		info := g.typeInfo(m.Params)
+		if info.TypeKind != reflect.Invalid {
+			params = info.TypeExpr()
+		}
 		g.popNestedScope()
 	}
 
 	if m.RegistrationOptions != nil {
 		g.pushNestedScope("RegistrationOptions")
-		g.typeExpr(m.RegistrationOptions)
+		g.typeInfo(m.RegistrationOptions)
 		g.popNestedScope()
 	}
 

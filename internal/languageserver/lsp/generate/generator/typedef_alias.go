@@ -5,21 +5,23 @@ import (
 )
 
 func (g *typeDef) Alias(d model.Alias) {
-	info := g.typeInfo(d.Type)
+	info := g.typeInfoForDef(d)
+	underlying := g.typeInfo(d.Type)
 
-	documentation(g.File, d.Documentation)
+	documentation(
+		g.File,
+		d.Documentation,
+		"Generated from the LSP '%s' type alias.",
+		d.TypeName,
+	)
 
-	if info.IsReified {
-		g.emitReifiedType(d.TypeName, d.Type)
+	if underlying.IsReified {
+		g.emitReifiedType(*info.Name, d.Type)
 	} else {
-		g.emitAliasType(d)
+		g.File.
+			Type().
+			Add(info.TypeExpr()).
+			Op("=").
+			Add(underlying.TypeExpr())
 	}
-}
-
-func (g *Generator) emitAliasType(d model.Alias) {
-	g.File.
-		Type().
-		Id(identifier(d.TypeName)).
-		Op("=").
-		Add(g.typeExpr(d.Type))
 }

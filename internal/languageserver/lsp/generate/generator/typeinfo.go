@@ -1,152 +1,242 @@
 package generator
 
 import (
+	"fmt"
+	"reflect"
+
+	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
 type typeInfo struct {
-	IsNamed            bool
-	IsReified          bool
-	IsNativelyOptional bool
-	HasGoType          bool
+	Name        *string
+	NameHint    string
+	TypeExpr    func() *jen.Statement
+	TypeKind    reflect.Kind
+	UseOptional bool
+	IsReified   bool
 }
 
 func (g *Generator) typeInfo(t model.Type) typeInfo {
-	return model.TypeTo[typeInfo](
-		t,
-		typeInfoX{},
-	)
+	return model.TypeTo[typeInfo](t, &typeInfoX{g})
 }
 
-type typeInfoX struct{}
+func (g *Generator) typeInfoForDef(d model.TypeDef) typeInfo {
+	return model.TypeDefTo[typeInfo](d, &typeInfoX{g})
+}
 
-func (x typeInfoX) Bool() typeInfo {
+type typeInfoX struct {
+	*Generator
+}
+
+func (g *typeInfoX) Bool() typeInfo {
+	name := "Bool"
 	return typeInfo{
-		IsNamed:            true,
-		IsNativelyOptional: true,
-		HasGoType:          true,
+		Name:     &name,
+		NameHint: name,
+		TypeExpr: func() *jen.Statement { return jen.Id(name) },
+		TypeKind: reflect.Bool,
 	}
 }
 
-func (x typeInfoX) Decimal() typeInfo {
+func (g *typeInfoX) Decimal() typeInfo {
+	name := "Decimal"
 	return typeInfo{
-		IsNamed:   true,
-		HasGoType: true,
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    reflect.Float64,
+		UseOptional: true,
 	}
 }
 
-func (x typeInfoX) String() typeInfo {
+func (g *typeInfoX) String() typeInfo {
+	name := "String"
 	return typeInfo{
-		IsNamed:            true,
-		IsNativelyOptional: true,
-		HasGoType:          true,
+		Name:     &name,
+		NameHint: name,
+		TypeExpr: func() *jen.Statement { return jen.Id(name) },
+		TypeKind: reflect.String,
 	}
 }
 
-func (x typeInfoX) Integer() typeInfo {
+func (g *typeInfoX) Integer() typeInfo {
+	name := "Integer"
 	return typeInfo{
-		IsNamed:   true,
-		HasGoType: true,
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    reflect.Int32,
+		UseOptional: true,
 	}
 }
 
-func (x typeInfoX) UInteger() typeInfo {
+func (g *typeInfoX) UInteger() typeInfo {
+	name := "UInteger"
 	return typeInfo{
-		IsNamed:   true,
-		HasGoType: true,
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    reflect.Int32,
+		UseOptional: true,
 	}
 }
 
-func (x typeInfoX) DocumentURI() typeInfo {
+func (g *typeInfoX) DocumentURI() typeInfo {
+	name := "DocumentURI"
 	return typeInfo{
-		IsNamed:            true,
-		IsNativelyOptional: true,
-		HasGoType:          true,
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    reflect.Pointer,
+		UseOptional: true,
 	}
 }
 
-func (x typeInfoX) URI() typeInfo {
+func (g *typeInfoX) URI() typeInfo {
+	name := "URI"
 	return typeInfo{
-		IsNamed:            true,
-		IsNativelyOptional: true,
-		HasGoType:          true,
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    reflect.Pointer,
+		UseOptional: true,
 	}
 }
 
-func (x typeInfoX) Null() typeInfo {
+func (g *typeInfoX) Null() typeInfo {
 	return typeInfo{}
 }
 
-func (x typeInfoX) Array(t model.Array) typeInfo {
+func (g *typeInfoX) Array(t model.Array) typeInfo {
+	e := g.typeInfo(t.Element)
+
 	return typeInfo{
-		IsNativelyOptional: true,
-		HasGoType:          true,
+		NameHint:    fmt.Sprintf("%sArray", e.NameHint),
+		TypeExpr:    func() *jen.Statement { return jen.Index().Add(e.TypeExpr()) },
+		TypeKind:    reflect.Slice,
+		UseOptional: false,
 	}
 }
 
-func (x typeInfoX) Map(t model.Map) typeInfo {
+func (g *typeInfoX) Map(t model.Map) typeInfo {
+	k := g.typeInfo(t.Key)
+	v := g.typeInfo(t.Value)
+
 	return typeInfo{
-		IsNativelyOptional: true,
-		HasGoType:          true,
+		NameHint:    fmt.Sprintf("%s%sMap", k.NameHint, v.NameHint),
+		TypeExpr:    func() *jen.Statement { return jen.Map(k.TypeExpr()).Add(v.TypeExpr()) },
+		TypeKind:    reflect.Map,
+		UseOptional: false,
 	}
 }
 
-func (x typeInfoX) And(t model.And) typeInfo {
+func (g *typeInfoX) And(t model.And) typeInfo {
+	name := g.nameFromScope()
+
 	return typeInfo{
-		IsNamed:   true,
-		IsReified: true,
-		HasGoType: true,
+		Name:     &name,
+		NameHint: name,
+		TypeExpr: func() *jen.Statement {
+			g.reifyType(name, t)
+			return jen.Id(name)
+		},
+		TypeKind:    reflect.Struct,
+		UseOptional: true,
+		IsReified:   true,
 	}
 }
 
-func (x typeInfoX) Or(t model.Or) typeInfo {
+func (g *typeInfoX) Or(t model.Or) typeInfo {
+	name := g.nameFromScope()
+
 	return typeInfo{
-		IsNamed:   true,
-		IsReified: true,
-		HasGoType: true,
+		Name:     &name,
+		NameHint: name,
+		TypeExpr: func() *jen.Statement {
+			g.reifyType(name, t)
+			return jen.Id(name)
+		},
+		TypeKind:    reflect.Struct,
+		UseOptional: true,
+		IsReified:   true,
 	}
 }
 
-func (x typeInfoX) Tuple(t model.Tuple) typeInfo {
+func (g *typeInfoX) Tuple(t model.Tuple) typeInfo {
+	name := g.nameFromScope()
+
 	return typeInfo{
-		IsNamed:   true,
-		IsReified: true,
-		HasGoType: true,
+		Name:     &name,
+		NameHint: name,
+		TypeExpr: func() *jen.Statement {
+			g.reifyType(name, t)
+			return jen.Id(name)
+		},
+		TypeKind:    reflect.Struct,
+		UseOptional: true,
+		IsReified:   true,
 	}
 }
 
-func (x typeInfoX) StructLit(t model.StructLit) typeInfo {
+func (g *typeInfoX) StructLit(t model.StructLit) typeInfo {
+	name := g.nameFromScope()
+
 	return typeInfo{
-		IsNamed:   true,
-		IsReified: true,
-		HasGoType: true,
+		Name:     &name,
+		NameHint: name,
+		TypeExpr: func() *jen.Statement {
+			g.reifyType(name, t)
+			return jen.Id(name)
+		},
+		TypeKind:    reflect.Struct,
+		UseOptional: true,
+		IsReified:   true,
 	}
 }
 
-func (x typeInfoX) StringLit(t model.StringLit) typeInfo {
+func (g *typeInfoX) StringLit(t model.StringLit) typeInfo {
 	return typeInfo{}
 }
 
-func (x typeInfoX) Reference(t model.Reference) typeInfo {
-	return model.TypeDefTo[typeInfo](t.Target, x)
+func (g *typeInfoX) Reference(t model.Reference) typeInfo {
+	return model.TypeDefTo[typeInfo](t.Target, g)
 }
 
-func (x typeInfoX) Alias(d model.Alias) typeInfo {
-	info := model.TypeTo[typeInfo](d.Type, x)
-	info.IsNamed = true
-	return info
-}
+func (g *typeInfoX) Alias(d model.Alias) typeInfo {
+	name := identifier(d.TypeName)
+	underlying := g.typeInfo(d.Type)
 
-func (x typeInfoX) Enum(d model.Enum) typeInfo {
 	return typeInfo{
-		IsNamed:   true,
-		HasGoType: true,
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    underlying.TypeKind,
+		UseOptional: underlying.UseOptional,
 	}
 }
 
-func (x typeInfoX) Struct(d model.Struct) typeInfo {
+func (g *typeInfoX) Enum(d model.Enum) typeInfo {
+	name := identifier(d.TypeName)
+	underlying := g.typeInfo(d.Type)
+
 	return typeInfo{
-		IsNamed:   true,
-		HasGoType: true,
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    underlying.TypeKind,
+		UseOptional: true,
+	}
+}
+
+func (g *typeInfoX) Struct(d model.Struct) typeInfo {
+	name := identifier(d.TypeName)
+
+	return typeInfo{
+		Name:        &name,
+		NameHint:    name,
+		TypeExpr:    func() *jen.Statement { return jen.Id(name) },
+		TypeKind:    reflect.Struct,
+		UseOptional: true,
 	}
 }

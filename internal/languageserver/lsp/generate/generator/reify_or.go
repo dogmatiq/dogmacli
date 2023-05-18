@@ -1,29 +1,34 @@
 package generator
 
 import (
+	"reflect"
+	"strconv"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
 func (g *reifyType) Or(t model.Or) {
+	documentation(
+		g.File,
+		model.Documentation{},
+		"Generated from an LSP 'or' type.",
+	)
 	g.File.
 		Type().
 		Id(g.Name).
 		StructFunc(func(grp *jen.Group) {
-			name := rune('A')
+			for i, m := range t.Types {
+				g.pushNestedScope(strconv.Itoa(i))
 
-			for _, m := range t.Types {
 				info := g.typeInfo(m)
-
-				if info.HasGoType {
+				if info.TypeKind != reflect.Invalid {
 					grp.
-						Id(string(name)).
-						Id("Optional").Types(
-						g.typeExpr(m),
-					)
+						Id(info.NameHint).
+						Add(info.TypeExpr())
 				}
 
-				name++
+				g.popNestedScope()
 			}
 		})
 }

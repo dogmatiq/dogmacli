@@ -5,6 +5,11 @@ import (
 )
 
 func (g *reifyType) And(t model.And) {
+	documentation(
+		g.File,
+		model.Documentation{},
+		"Generated from an LSP 'and' type.",
+	)
 	g.emitStruct(
 		g.Name,
 		t.Types,

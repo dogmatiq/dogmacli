@@ -5,6 +5,11 @@ import (
 )
 
 func (g *reifyType) StructLit(t model.StructLit) {
+	documentation(
+		g.File,
+		model.Documentation{},
+		"Generated from an LSP 'literal' type.",
+	)
 	g.emitStruct(
 		g.Name,
 		nil, // embedded

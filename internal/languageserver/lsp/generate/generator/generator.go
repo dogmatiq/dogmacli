@@ -64,3 +64,21 @@ func (g *Generator) emitBanner(s string) {
 		Comment(line).
 		Line()
 }
+
+func (g *Generator) pushScope(n string) {
+	g.scopes = append(g.scopes, []string{n})
+}
+
+func (g *Generator) popScope() {
+	g.scopes = g.scopes[:len(g.scopes)-1]
+}
+
+func (g *Generator) pushNestedScope(n string) {
+	names := &g.scopes[len(g.scopes)-1]
+	*names = append(*names, n)
+}
+
+func (g *Generator) popNestedScope() {
+	names := &g.scopes[len(g.scopes)-1]
+	*names = (*names)[:len(*names)-1]
+}

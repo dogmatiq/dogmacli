@@ -1,6 +1,7 @@
 package generator
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
@@ -12,13 +13,14 @@ import (
 func documentation(
 	code interface{ Comment(string) *jen.Statement },
 	docs model.Documentation,
+	format string,
+	args ...any,
 ) {
-	text := strings.TrimSpace(docs.Text)
+	text := docs.Text + "\n\n" + fmt.Sprintf(format, args...)
+	text = strings.TrimSpace(text)
 
-	if text != "" {
-		for _, line := range strings.Split(text, "\n") {
-			code.Comment(line)
-		}
+	for _, line := range strings.Split(text, "\n") {
+		code.Comment(line)
 	}
 
 	if docs.DeprecationMessage != "" {

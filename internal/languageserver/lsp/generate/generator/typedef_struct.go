@@ -1,14 +1,22 @@
 package generator
 
 import (
+	"reflect"
+
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
 func (g *typeDef) Struct(d model.Struct) {
-	documentation(g.File, d.Documentation)
+	documentation(
+		g.File,
+		d.Documentation,
+		"Generated from the LSP '%s' structure.",
+		d.TypeName,
+	)
+
 	g.emitStruct(
-		identifier(d.TypeName),
+		*g.typeInfoForDef(d).Name,
 		d.Embedded,
 		d.Properties,
 	)
@@ -33,7 +41,8 @@ func (g *Generator) emitStructType(
 		Id(name).
 		StructFunc(func(grp *jen.Group) {
 			for _, t := range embedded {
-				grp.Add(g.typeExpr(t))
+				info := g.typeInfo(t)
+				grp.Id(*info.Name)
 			}
 
 			if len(embedded) > 0 && len(properties) > 0 {
@@ -45,13 +54,13 @@ func (g *Generator) emitStructType(
 
 				info := g.typeInfo(p.Type)
 
-				if info.HasGoType {
-					expr := g.typeExpr(p.Type)
-					if p.Optional && !info.IsNativelyOptional {
+				if info.TypeKind != reflect.Invalid {
+					expr := info.TypeExpr()
+					if p.Optional && info.UseOptional {
 						expr = jen.Id("Optional").Types(expr)
 					}
 
-					documentation(grp, p.Documentation)
+					documentation(grp, p.Documentation, "")
 
 					grp.
 						Id(identifier(p.Name)).
@@ -149,12 +158,14 @@ func (g *Generator) emitStructMarshalMethods(
 		).
 		BlockFunc(func(grp *jen.Group) {
 			for _, t := range embedded {
+				info := g.typeInfo(t)
+
 				grp.
 					If(
 						jen.
 							Err().
 							Op(":=").
-							Id("x").Op(".").Add(g.typeExpr(t)).
+							Id("x").Op(".").Id(*info.Name).
 							Dot("marshalProperties").
 							Call(
 								jen.Id("w"),
@@ -171,7 +182,7 @@ func (g *Generator) emitStructMarshalMethods(
 				info := g.typeInfo(p.Type)
 
 				fn := "marshalProperty"
-				if p.Optional && !info.IsNativelyOptional {
+				if p.Optional && info.UseOptional {
 					fn = "marshalOptionalProperty"
 				}
 

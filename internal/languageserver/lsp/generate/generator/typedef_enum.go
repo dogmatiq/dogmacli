@@ -9,7 +9,13 @@ import (
 )
 
 func (g *typeDef) Enum(d model.Enum) {
-	documentation(g.File, d.Documentation)
+	documentation(
+		g.File,
+		d.Documentation,
+		"Generated from the LSP '%s' enumeration.",
+		d.TypeName,
+	)
+
 	g.emitEnumType(d)
 
 	g.File.Line()
@@ -22,21 +28,26 @@ func (g *typeDef) Enum(d model.Enum) {
 }
 
 func (g *Generator) emitEnumType(d model.Enum) {
+	info := g.typeInfoForDef(d)
+	underlying := g.typeInfo(d.Type)
+
 	g.File.
 		Type().
-		Id(identifier(d.TypeName)).
-		Add(g.typeExpr(d.Type))
+		Add(info.TypeExpr()).
+		Add(underlying.TypeExpr())
 }
 
 func (g *Generator) emitEnumConstants(d model.Enum) {
+	info := g.typeInfoForDef(d)
+
 	g.File.
 		Const().
 		DefsFunc(func(grp *jen.Group) {
 			for _, m := range d.Members {
-				documentation(grp, m.Documentation)
+				documentation(grp, m.Documentation, "")
 				grp.
-					Id(identifier(d.TypeName, m.Name)).
-					Id(identifier(d.TypeName)).
+					Id(identifier(*info.Name, m.Name)).
+					Add(info.TypeExpr()).
 					Op("=").
 					Lit(m.Value)
 			}
@@ -44,10 +55,12 @@ func (g *Generator) emitEnumConstants(d model.Enum) {
 }
 
 func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
+	info := g.typeInfoForDef(d)
+
 	g.File.
 		Func().
 		Params(
-			jen.Id("x").Op("*").Id(identifier(d.TypeName)),
+			jen.Id("x").Op("*").Add(info.TypeExpr()),
 		).
 		Id("UnmarshalJSON").
 		Params(
@@ -67,11 +80,11 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 							jen.Id("data"),
 							jen.
 								Parens(
-									jen.
-										Op("*").
-										Add(g.typeExpr(d.Type)),
+									jen.Op("*").Add(info.TypeExpr()),
 								).
-								Call(jen.Id("x")),
+								Call(
+									jen.Id("x"),
+								),
 						),
 					jen.Err().Op("!=").Nil(),
 				).
@@ -81,7 +94,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 							Errorf(
 								fmt.Sprintf(
 									"%s: %%w",
-									identifier(d.TypeName),
+									*info.Name,
 								),
 								jen.Err(),
 							),
@@ -94,7 +107,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 				BlockFunc(func(grp *jen.Group) {
 					for _, m := range d.Members {
 						grp.Case(
-							jen.Id(identifier(d.TypeName, m.Name)),
+							jen.Id(identifier(*info.Name, m.Name)),
 						)
 					}
 
@@ -106,7 +119,7 @@ func (g *Generator) emitEnumUnmarshalMethod(d model.Enum) {
 									Errorf(
 										fmt.Sprintf(
 											"%s: %%v is not a member of the enum",
-											identifier(d.TypeName),
+											*info.Name,
 										),
 										jen.Id("x"),
 									),

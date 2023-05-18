@@ -1,7 +1,6 @@
 package generator
 
 import (
-	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
@@ -33,36 +32,18 @@ func (g *Generator) emitReifiedTypes() {
 	}
 }
 
-func (g *Generator) pushScope(n string) {
-	g.scopes = append(g.scopes, []string{n})
+func (g *Generator) nameFromScope() string {
+	return identifier(g.scopes[len(g.scopes)-1]...)
 }
 
-func (g *Generator) popScope() {
-	g.scopes = g.scopes[:len(g.scopes)-1]
-}
-
-func (g *Generator) pushNestedScope(n string) {
-	names := &g.scopes[len(g.scopes)-1]
-	*names = append(*names, n)
-}
-
-func (g *Generator) popNestedScope() {
-	names := &g.scopes[len(g.scopes)-1]
-	*names = (*names)[:len(*names)-1]
-}
-
-func (g *Generator) reify(t model.Type) *jen.Statement {
-	name := identifier(g.scopes[len(g.scopes)-1]...)
-
+func (g *Generator) reifyType(name string, t model.Type) string {
 	if g.unreified == nil {
 		g.unreified = map[string]model.Type{}
 	}
-
 	if _, ok := g.reified[name]; !ok {
 		g.unreified[name] = t
 	}
-
-	return jen.Id(name)
+	return name
 }
 
 type reifyType struct {
