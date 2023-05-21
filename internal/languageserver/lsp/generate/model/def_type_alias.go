@@ -6,12 +6,14 @@ import (
 
 // Alias describes a named type alias.
 type Alias struct {
-	typeDef
+	typeDefNode
 
-	Type Type
+	UnderlyingType Type
 }
 
 func (b *builder) buildAlias(in lowlevel.Alias, out *Alias) {
-	out.Documentation = in.Documentation
-	out.Type = b.buildType(in.Type)
+	out.name = in.Name
+	out.docs = in.Documentation
+
+	out.UnderlyingType = b.buildType(in.Type)
 }

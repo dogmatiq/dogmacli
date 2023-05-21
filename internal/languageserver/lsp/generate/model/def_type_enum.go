@@ -8,11 +8,11 @@ import (
 
 // Enum describes a named enumeration type.
 type Enum struct {
-	typeDef
+	typeDefNode
 
-	Type    Type
-	Lax     bool
-	Members []*EnumMember
+	UnderlyingType Type
+	Members        []*EnumMember
+	Strict         bool
 }
 
 // EnumMember describes a value within an enumeration.
@@ -24,26 +24,25 @@ type EnumMember struct {
 	Value         any
 }
 
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (n *EnumMember) AcceptVisitor(v Visitor) {
-	v.VisitEnumMember(n)
-}
-
 func (b *builder) buildEnum(in lowlevel.Enum, out *Enum) {
-	out.Documentation = in.Documentation
-	out.Type = b.buildType(in.Type)
-	out.Lax = in.SupportsCustomValues
+	out.name = in.Name
+	out.docs = in.Documentation
+
+	out.UnderlyingType = b.buildType(in.Type)
 
 	for _, m := range in.Members {
-		out.Members = append(
-			out.Members,
-			build(b, func(n *EnumMember) {
-				n.Name = m.Name
-				n.Documentation = m.Documentation
-				n.Value = normalizeEnumValue(m.Value)
-			}),
-		)
+		out.Members = append(out.Members, b.buildEnumMember(m))
 	}
+
+	out.Strict = !in.SupportsCustomValues
+}
+
+func (b *builder) buildEnumMember(in lowlevel.EnumMember) *EnumMember {
+	return build(b, func(out *EnumMember) {
+		out.Name = in.Name
+		out.Documentation = in.Documentation
+		out.Value = normalizeEnumValue(in.Value)
+	})
 }
 
 func normalizeEnumValue(v any) any {

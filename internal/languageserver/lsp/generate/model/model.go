@@ -8,72 +8,45 @@ import (
 type Model struct {
 	node
 
-	Version  string
-	Methods  []Method
-	TypeDefs []TypeDef
+	Version string
+	Defs    map[string]Def
+	Types   []Type
 }
 
-// Root returns the root node of the meta-model.
-func Root() *Model {
-	b := &builder{
-		aliases: map[string]*Alias{},
-		structs: map[string]*Struct{},
-		enums:   map[string]*Enum{},
-	}
-
-	return b.buildModel(lowlevel.Root())
+// Get returns the root node of the meta-model.
+func Get() *Model {
+	b := &builder{}
+	return b.build(lowlevel.Get())
 }
 
-func (b *builder) buildModel(in lowlevel.Model) *Model {
-	out := &Model{
+func (b *builder) build(in lowlevel.Model) *Model {
+	b.model = &Model{
 		Version: in.MetaData.Version,
+		Defs:    map[string]Def{},
+	}
+	b.parent = b.model
+
+	// Pre-construct pointers to the all of the Def instances so that they may
+	// be referenced before they have been fully populated.
+	for _, def := range in.Aliases {
+		buildDef(b, def.Name, def, b.buildAlias)
+	}
+	for _, def := range in.Enums {
+		buildDef(b, def.Name, def, b.buildEnum)
+	}
+	for _, def := range in.Structs {
+		buildDef(b, def.Name, def, b.buildStruct)
+	}
+	for _, def := range in.Requests {
+		buildDef(b, def.Method, def, b.buildCall)
+	}
+	for _, def := range in.Notifications {
+		buildDef(b, def.Method, def, b.buildNotification)
 	}
 
-	// Pre-construct pointers to the all of the TypeDef instances so that they
-	// may be referenced before they have been fully populated.
-	for _, a := range in.Aliases {
-		n := &Alias{}
-		n.name = a.Name
-		n.setParent(out)
-
-		b.aliases[a.Name] = n
-		out.TypeDefs = append(out.TypeDefs, n)
-	}
-	for _, e := range in.Enums {
-		n := &Enum{}
-		n.name = e.Name
-		n.setParent(out)
-
-		b.enums[e.Name] = n
-		out.TypeDefs = append(out.TypeDefs, n)
-	}
-	for _, s := range in.Structs {
-		n := &Struct{}
-		n.name = s.Name
-		n.setParent(out)
-
-		b.structs[s.Name] = n
-		out.TypeDefs = append(out.TypeDefs, n)
+	for _, fn := range b.resolvers {
+		fn()
 	}
 
-	// Populate the methods.
-	for _, m := range in.Requests {
-		out.Methods = append(out.Methods, b.buildCall(m))
-	}
-	for _, m := range in.Notifications {
-		out.Methods = append(out.Methods, b.buildNotification(m))
-	}
-
-	// Populate the TypeDef implementations.
-	for _, d := range in.Aliases {
-		b.buildAlias(d, b.aliases[d.Name])
-	}
-	for _, d := range in.Enums {
-		b.buildEnum(d, b.enums[d.Name])
-	}
-	for _, d := range in.Structs {
-		b.buildStruct(d, b.structs[d.Name])
-	}
-
-	return out
+	return b.model
 }

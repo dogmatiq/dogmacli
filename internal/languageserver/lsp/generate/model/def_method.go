@@ -1,29 +1,26 @@
 package model
 
-// Method is a node that describes a JSON-RPC method.
-type Method interface {
-	Node
+// MethodDef describes a JSON-RPC method.
+type MethodDef interface {
+	Def
 
-	MethodName() string
 	Direction() MethodDirection
+}
+
+// methodDefNode provides implementation common to all types that implement
+// MethodDef.
+type methodDefNode struct {
+	defNode
+
+	dir MethodDirection
+}
+
+func (m *methodDefNode) Direction() MethodDirection {
+	return m.dir
 }
 
 // MethodDirection indicates the direction that a JSON-RPC request is sent.
 type MethodDirection int
-
-type method struct {
-	node
-	name string
-	dir  MethodDirection
-}
-
-func (m *method) MethodName() string {
-	return m.name
-}
-
-func (m *method) Direction() MethodDirection {
-	return m.dir
-}
 
 const (
 	// HandledByLanguageServer indicates that a JSON-RPC method request is sent

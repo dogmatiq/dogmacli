@@ -9,8 +9,8 @@ import (
 //go:embed metamodel-3.17.0.json
 var data []byte
 
-// Root returns the root node of the meta-model.
-func Root() Model {
+// Get returns the root node of the meta-model.
+func Get() Model {
 	d := json.NewDecoder(bytes.NewReader(data))
 	d.DisallowUnknownFields()
 

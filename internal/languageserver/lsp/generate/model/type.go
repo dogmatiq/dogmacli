@@ -4,92 +4,139 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/internal/lowlevel"
 )
 
-// Type is an interface for a type.
+// Type describes the type of some value.
 type Type interface {
 	Node
-	isType()
+
+	IsAnonymous() bool
 }
 
-type typ struct{ node }
+// typeNode provides implementation common to all types that implement Type.
+type typeNode struct {
+	node
+	anon bool
+}
 
-func (typ) isType() {}
+func (n *typeNode) IsAnonymous() bool {
+	return n.anon
+}
+
+// TypeVisitor is an interface for type specific logic.
+type TypeVisitor interface {
+	VisitBool(*Bool)
+	VisitDecimal(*Decimal)
+	VisitString(*String)
+	VisitInteger(*Integer)
+	VisitUInteger(*UInteger)
+	VisitDocumentURI(*DocumentURI)
+	VisitURI(*URI)
+	VisitNull(*Null)
+	VisitReference(*Reference)
+	VisitArray(*Array)
+	VisitMap(*Map)
+	VisitAnd(*And)
+	VisitOr(*Or)
+	VisitTuple(*Tuple)
+	VisitStructLit(*StructLit)
+	VisitStringLit(*StringLit)
+}
+
+// VisitType dispatches to the appropriate method on the given visitor based on
+// the concrete type of t.
+func VisitType(t Type, v TypeVisitor) {
+	type satisfy struct{ NodeVisitor }
+	type visitor struct {
+		// embed a NodeVisitor to satisfy the other methods of NodeVisitor. They
+		// will panic if called.
+		satisfy
+		TypeVisitor
+	}
+
+	t.acceptVisitor(visitor{TypeVisitor: v})
+}
 
 type (
 	// Bool is the "bool" base type.
-	Bool struct{ typ }
+	Bool struct{ typeNode }
 
 	// Decimal is the "decimal" base type.
-	Decimal struct{ typ }
+	Decimal struct{ typeNode }
 
 	// String is the "string" base type.
-	String struct{ typ }
+	String struct{ typeNode }
 
 	// Integer is the "integer" base type.
-	Integer struct{ typ }
+	Integer struct{ typeNode }
 
 	// UInteger is the "uinteger" base type.
-	UInteger struct{ typ }
+	UInteger struct{ typeNode }
 
 	// DocumentURI is the "DocumentUri" base type.
-	DocumentURI struct{ typ }
+	DocumentURI struct{ typeNode }
 
 	// URI is the "URI" base type.
-	URI struct{ typ }
+	URI struct{ typeNode }
 
 	// Null is the "null" base type.
-	Null struct{ typ }
+	Null struct{ typeNode }
 
 	// Reference is a reference to a named type.
 	Reference struct {
-		typ
+		typeNode
 		Target TypeDef
 	}
 
 	// StructLit is a literal (anonymous) struct.
 	StructLit struct {
-		typ
+		typeNode
 		Documentation Documentation
 		Properties    []*Property
 	}
 
 	// StringLit is a string that must have a specific value.
 	StringLit struct {
-		typ
+		typeNode
 		Value string
 	}
 
 	// Array is an array of values of the same type.
 	Array struct {
-		typ
-		Element Type
+		typeNode
+		ElementType Type
 	}
 
 	// Map is a map of keys of one type to values of another type.
 	Map struct {
-		typ
-		Key, Value Type
+		typeNode
+		KeyType, ValueType Type
 	}
 
 	// And is the intersection of multiple types.
 	And struct {
-		typ
+		typeNode
 		Types []Type
 	}
 
 	// Or is the union of multiple types.
 	Or struct {
-		typ
+		typeNode
 		Types []Type
 	}
 
 	// Tuple is an n-tuple of other types.
 	Tuple struct {
-		typ
+		typeNode
 		Types []Type
 	}
 )
 
-func (b *builder) buildType(in lowlevel.Type) Type {
+func (b *builder) buildType(in lowlevel.Type) (out Type) {
+	defer func() {
+		if out != nil {
+			b.model.Types = append(b.model.Types, out)
+		}
+	}()
+
 	switch in.Kind {
 	case "":
 		return nil
@@ -119,137 +166,95 @@ func (b *builder) buildType(in lowlevel.Type) Type {
 func (b *builder) buildBaseType(in lowlevel.Type) Type {
 	switch lowlevel.BaseType(in.Name) {
 	case lowlevel.Boolean:
-		return build(b, func(n *Bool) {})
+		return build(b, func(*Bool) {})
 	case lowlevel.Decimal:
-		return build(b, func(n *Decimal) {})
+		return build(b, func(*Decimal) {})
 	case lowlevel.String:
-		return build(b, func(n *String) {})
+		return build(b, func(*String) {})
 	case lowlevel.Integer:
-		return build(b, func(n *Integer) {})
+		return build(b, func(*Integer) {})
 	case lowlevel.UInteger:
-		return build(b, func(n *UInteger) {})
+		return build(b, func(*UInteger) {})
 	case lowlevel.DocumentURI:
-		return build(b, func(n *DocumentURI) {})
+		return build(b, func(*DocumentURI) {})
 	case lowlevel.URI:
-		return build(b, func(n *URI) {})
+		return build(b, func(*URI) {})
 	case lowlevel.Null:
-		return build(b, func(n *Null) {})
+		return build(b, func(*Null) {})
 	default:
 		panic("unrecognized base type: " + in.Name)
 	}
 }
 
 func (b *builder) buildReferenceType(in lowlevel.Type) Type {
-	return build(b, func(n *Reference) {
-		if d, ok := b.aliases[in.Name]; ok {
-			n.Target = d
-		}
-		if d, ok := b.enums[in.Name]; ok {
-			n.Target = d
-		}
-		if d, ok := b.structs[in.Name]; ok {
-			n.Target = d
-		}
-		if n.Target == nil {
-			panic("unrecognized type: " + in.Name)
-		}
+	return build(b, func(out *Reference) {
+		out.Target = b.model.Defs[in.Name].(TypeDef)
 	})
 }
 
 func (b *builder) buildStructLitType(in lowlevel.Type) Type {
-	return build(b, func(n *StructLit) {
-		n.Documentation = in.StructLit.Documentation
-		n.Properties = b.buildProperties(in.StructLit.Properties)
+	return build(b, func(out *StructLit) {
+		out.anon = true
+
+		out.Documentation = in.StructLit.Documentation
+
+		for _, p := range in.StructLit.Properties {
+			out.Properties = append(out.Properties, b.buildProperty(p))
+		}
 	})
 }
 
 func (b *builder) buildStringLitType(in lowlevel.Type) Type {
-	return build(b, func(n *StringLit) {
-		n.Value = in.StringLit
+	return build(b, func(out *StringLit) {
+		out.anon = true
+
+		out.Value = in.StringLit
 	})
 }
 
 func (b *builder) buildArrayType(in lowlevel.Type) Type {
-	return build(b, func(n *Array) {
-		n.Element = b.buildType(*in.ArrayElement)
+	return build(b, func(out *Array) {
+		out.anon = true
+
+		out.ElementType = b.buildType(*in.ArrayElement)
 	})
 }
 
 func (b *builder) buildMapType(in lowlevel.Type) Type {
-	return build(b, func(n *Map) {
-		n.Key = b.buildType(*in.MapKey)
-		n.Value = b.buildType(*in.MapValue)
+	return build(b, func(out *Map) {
+		out.anon = true
+
+		out.KeyType = b.buildType(*in.MapKey)
+		out.ValueType = b.buildType(*in.MapValue)
 	})
 }
 
 func (b *builder) buildAndType(in lowlevel.Type) Type {
-	return build(b, func(n *And) {
+	return build(b, func(out *And) {
+		out.anon = true
+
 		for _, t := range in.Types {
-			n.Types = append(n.Types, b.buildType(t))
+			out.Types = append(out.Types, b.buildType(t))
 		}
 	})
 }
 
 func (b *builder) buildOrType(in lowlevel.Type) Type {
-	return build(b, func(n *Or) {
+	return build(b, func(out *Or) {
+		out.anon = true
+
 		for _, t := range in.Types {
-			n.Types = append(n.Types, b.buildType(t))
+			out.Types = append(out.Types, b.buildType(t))
 		}
 	})
 }
 
 func (b *builder) buildTupleType(in lowlevel.Type) Type {
-	return build(b, func(n *Tuple) {
+	return build(b, func(out *Tuple) {
+		out.anon = true
+
 		for _, t := range in.Types {
-			n.Types = append(n.Types, b.buildType(t))
+			out.Types = append(out.Types, b.buildType(t))
 		}
 	})
 }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Bool) AcceptVisitor(v Visitor) { v.VisitBool(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Decimal) AcceptVisitor(v Visitor) { v.VisitDecimal(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *String) AcceptVisitor(v Visitor) { v.VisitString(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Integer) AcceptVisitor(v Visitor) { v.VisitInteger(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *UInteger) AcceptVisitor(v Visitor) { v.VisitUInteger(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *DocumentURI) AcceptVisitor(v Visitor) { v.VisitDocumentURI(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *URI) AcceptVisitor(v Visitor) { v.VisitURI(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Null) AcceptVisitor(v Visitor) { v.VisitNull(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Reference) AcceptVisitor(v Visitor) { v.VisitReference(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *StructLit) AcceptVisitor(v Visitor) { v.VisitStructLit(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *StringLit) AcceptVisitor(v Visitor) { v.VisitStringLit(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Array) AcceptVisitor(v Visitor) { v.VisitArray(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Map) AcceptVisitor(v Visitor) { v.VisitMap(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *And) AcceptVisitor(v Visitor) { v.VisitAnd(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Or) AcceptVisitor(v Visitor) { v.VisitOr(t) }
-
-// AcceptVisitor dispatches to the appropriate method on the given visitor.
-func (t *Tuple) AcceptVisitor(v Visitor) { v.VisitTuple(t) }

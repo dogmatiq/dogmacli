@@ -3,30 +3,53 @@ package model
 import "reflect"
 
 type builder struct {
-	stack []Node
-
-	aliases map[string]*Alias
-	enums   map[string]*Enum
-	structs map[string]*Struct
+	model     *Model
+	parent    Node
+	resolvers []func()
 }
 
-func build[T Node](
+func build[Out Node](
 	b *builder,
-	fn func(n T),
-) T {
-	var node T
-	node = reflect.New(
-		reflect.TypeOf(node).Elem(),
+	fn func(Out),
+) Out {
+	out := newNode[Out]()
+
+	p := b.parent
+	out.setParent(p)
+
+	b.parent = out
+	fn(out)
+	b.parent = p
+
+	return out
+}
+
+func buildDef[In any, Out Def](
+	b *builder,
+	name string,
+	in In,
+	fn func(In, Out),
+) {
+	out := newNode[Out]()
+
+	b.model.Defs[name] = out
+
+	b.resolvers = append(
+		b.resolvers,
+		func() {
+			p := b.parent
+			out.setParent(p)
+
+			b.parent = out
+			fn(in, out)
+			b.parent = p
+		},
+	)
+}
+
+func newNode[T Node]() T {
+	var zero T
+	return reflect.New(
+		reflect.TypeOf(zero).Elem(),
 	).Interface().(T)
-
-	if len(b.stack) > 0 {
-		p := b.stack[len(b.stack)-1]
-		node.setParent(p)
-	}
-
-	b.stack = append(b.stack, node)
-	fn(node)
-	b.stack = b.stack[:len(b.stack)-1]
-
-	return node
 }
