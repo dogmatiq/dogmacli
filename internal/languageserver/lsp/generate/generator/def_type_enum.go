@@ -48,6 +48,5 @@ func (g *generator) VisitEnumMember(n *model.EnumMember) {
 		Id(name).
 		Id(enum).
 		Op("=").
-		Lit(n.Value).
-		Line()
+		Lit(n.Value)
 }

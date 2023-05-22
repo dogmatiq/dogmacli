@@ -20,9 +20,7 @@ func documentation(
 
 	if s := strings.TrimSpace(docs.Text); s != "" {
 		text += "\n\n"
-		text += "Documentation from the LSP specification:"
-		text += "\n\n"
-		text += "  " + strings.ReplaceAll(s, "\n", "\n  ")
+		text += s
 	}
 
 	if s := strings.TrimSpace(docs.DeprecationMessage); s != "" {

@@ -10,14 +10,31 @@ import (
 
 // nameOf returns an identifier for the element described the given node.
 func nameOf(n model.Node, suffix ...string) string {
+	name, ok := tryNameOf(n, suffix...)
+	if ok {
+		return name
+	}
+
+	panic(fmt.Sprintf("%T has no Go identity", n))
+}
+
+func tryNameOf(n model.Node, suffix ...string) (string, bool) {
+	// Any anonumous type that is directly referenced by an alias definition
+	// inherits the name of that alias.
+	if p, ok := n.Parent().(*model.Alias); ok {
+		if p.UnderlyingType.IsAnonymous() {
+			return tryNameOf(p)
+		}
+	}
+
 	var v namer
 	model.VisitNode(n, &v)
 
 	if v.N == "" {
-		panic(fmt.Sprintf("%T has no Go identity", n))
+		return "", false
 	}
 
-	return v.N + strings.Join(suffix, "")
+	return v.N + strings.Join(suffix, ""), true
 }
 
 type namer struct {
@@ -34,7 +51,7 @@ func (v *namer) VisitInteger(n *model.Integer)           { v.N = "Int" }
 func (v *namer) VisitUInteger(n *model.UInteger)         { v.N = "UInt" }
 func (v *namer) VisitDocumentURI(n *model.DocumentURI)   { v.N = "DocumentURI" }
 func (v *namer) VisitURI(n *model.URI)                   { v.N = "URI" }
-func (v *namer) VisitNull(n *model.Null)                 { v.N = "null" } // TODO: remove
+func (v *namer) VisitNull(n *model.Null)                 {}
 func (v *namer) VisitReference(n *model.Reference)       { v.N = nameOf(n.Target) }
 func (v *namer) VisitArray(n *model.Array)               { v.N = nameOf(n.ElementType, "Array") }
 func (v *namer) VisitMap(n *model.Map)                   { v.N = nameOf(n.ValueType, "Map") }
@@ -42,21 +59,12 @@ func (v *namer) VisitAnd(n *model.And)                   { v.N = scopeOf(n) }
 func (v *namer) VisitOr(n *model.Or)                     { v.N = scopeOf(n) }
 func (v *namer) VisitTuple(n *model.Tuple)               { v.N = scopeOf(n) }
 func (v *namer) VisitStructLit(n *model.StructLit)       { v.N = scopeOf(n) }
-func (v *namer) VisitStringLit(n *model.StringLit)       { v.N = unexported(n.Value) + "Lit" } // TODO: remove
+func (v *namer) VisitStringLit(n *model.StringLit)       {}
+func (v *namer) VisitAlias(n *model.Alias)               { v.N = ident(n.Name()) }
 func (v *namer) VisitEnum(n *model.Enum)                 { v.N = ident(n.Name()) }
 func (v *namer) VisitEnumMember(n *model.EnumMember)     { v.N = ident(n.Name) + nameOf(n.Parent()) }
 func (v *namer) VisitStruct(n *model.Struct)             { v.N = ident(n.Name()) }
 func (v *namer) VisitProperty(n *model.Property)         { v.N = ident(n.Name) }
-
-func (v *namer) VisitAlias(n *model.Alias) {
-	if n.UnderlyingType.IsAnonymous() {
-		// If the alias refers to an anonymous type, it's not _really_ an alias,
-		// so we just declare the anonymous type.
-		v.N = nameOf(n.UnderlyingType)
-	} else {
-		v.N = ident(n.Name())
-	}
-}
 
 // scopeOf returns an identifier for the "scopeOf" that n is within. It is used
 // to give anonymous types a name based on where they are defined.

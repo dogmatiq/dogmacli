@@ -4,80 +4,345 @@ package lsp
 
 import "net/url"
 
-// AnnotatedTextEdit is a structure.
-type AnnotatedTextEdit struct{}
+// AnnotatedTextEdit is a named structure definition.
+//
+// A special text edit with an additional change annotation.
+//
+// @since 3.16.0.
+type AnnotatedTextEdit struct {
+	TextEdit
 
-// ApplyWorkspaceEditParams is a structure.
-type ApplyWorkspaceEditParams struct{}
+	// The actual identifier of the change annotation
+	AnnotationID ChangeAnnotationIdentifier
+}
 
-// ApplyWorkspaceEditResult is a structure.
-type ApplyWorkspaceEditResult struct{}
+// ApplyWorkspaceEditParams is a named structure definition.
+//
+// The parameters passed via an apply workspace edit request.
+type ApplyWorkspaceEditParams struct {
+	// An optional label of the workspace edit. This label is
+	// presented in the user interface for example on an undo
+	// stack to undo the workspace edit.
+	Label Optional[String]
+	// The edits to apply.
+	Edit WorkspaceEdit
+}
 
-// BaseSymbolInformation is a structure.
-type BaseSymbolInformation struct{}
+// ApplyWorkspaceEditResult is a named structure definition.
+//
+// The result returned from the apply workspace edit request.
+//
+// @since 3.17 renamed from ApplyWorkspaceEditResponse
+type ApplyWorkspaceEditResult struct {
+	// Indicates whether the edit was applied or not.
+	Applied Bool
+	// An optional textual description for why the edit was not applied.
+	// This may be used by the server for diagnostic logging or to provide
+	// a suitable error for a request that triggered the edit.
+	FailureReason Optional[String]
+	// Depending on the client's failure handling strategy `failedChange` might
+	// contain the index of the change that failed. This property is only available
+	// if the client signals a `failureHandlingStrategy` in its client capabilities.
+	FailedChange Optional[UInt]
+}
+
+// BaseSymbolInformation is a named structure definition.
+//
+// A base for all symbol information.
+type BaseSymbolInformation struct {
+	// The name of this symbol.
+	Name String
+	// The kind of this symbol.
+	Kind SymbolKind
+	// Tags for this symbol.
+	//
+	// @since 3.16.0
+	Tags Optional[SymbolTagArray]
+	// The name of the symbol containing this symbol. This information is for
+	// user interface purposes (e.g. to render a qualifier in the user interface
+	// if necessary). It can't be used to re-infer a hierarchy for the document
+	// symbols.
+	ContainerName Optional[String]
+}
 
 // Bool is the LSP boolean type.
 type Bool bool
 
-// CallHierarchyClientCapabilities is a structure.
-type CallHierarchyClientCapabilities struct{}
+// CallHierarchyClientCapabilities is a named structure definition.
+//
+// @since 3.16.0
+type CallHierarchyClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+}
 
-// CallHierarchyIncomingCall is a structure.
-type CallHierarchyIncomingCall struct{}
+// CallHierarchyIncomingCall is a named structure definition.
+//
+// Represents an incoming call, e.g. a caller of a method or constructor.
+//
+// @since 3.16.0
+type CallHierarchyIncomingCall struct {
+	// The item that makes the call.
+	From CallHierarchyItem
+	// The ranges at which the calls appear. This is relative to the caller
+	// denoted by {@link CallHierarchyIncomingCall.from `this.from`}.
+	FromRanges RangeArray
+}
 
 // CallHierarchyIncomingCallArray is an array of CallHierarchyIncomingCall elements.
 type CallHierarchyIncomingCallArray []CallHierarchyIncomingCall
 
-// CallHierarchyIncomingCallsParams is a structure.
-type CallHierarchyIncomingCallsParams struct{}
+// CallHierarchyIncomingCallsParams is a named structure definition.
+//
+// The parameter of a `callHierarchy/incomingCalls` request.
+//
+// @since 3.16.0
+type CallHierarchyIncomingCallsParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// CallHierarchyItem is a structure.
-type CallHierarchyItem struct{}
+	Item CallHierarchyItem
+}
+
+// CallHierarchyItem is a named structure definition.
+//
+// Represents programming constructs like functions or constructors in the context
+// of call hierarchy.
+//
+// @since 3.16.0
+type CallHierarchyItem struct {
+	// The name of this item.
+	Name String
+	// The kind of this item.
+	Kind SymbolKind
+	// Tags for this item.
+	Tags Optional[SymbolTagArray]
+	// More detail for this item, e.g. the signature of a function.
+	Detail Optional[String]
+	// The resource identifier of this item.
+	URI DocumentURI
+	// The range enclosing this symbol not including leading/trailing whitespace but everything else, e.g. comments and code.
+	Range Range
+	// The range that should be selected and revealed when this symbol is being picked, e.g. the name of a function.
+	// Must be contained by the {@link CallHierarchyItem.range `range`}.
+	SelectionRange Range
+	// A data entry field that is preserved between a call hierarchy prepare and
+	// incoming calls or outgoing calls requests.
+	Data Optional[LSPAny]
+}
 
 // CallHierarchyItemArray is an array of CallHierarchyItem elements.
 type CallHierarchyItemArray []CallHierarchyItem
 
-// CallHierarchyOptions is a structure.
-type CallHierarchyOptions struct{}
+// CallHierarchyOptions is a named structure definition.
+//
+// Call hierarchy options used during static registration.
+//
+// @since 3.16.0
+type CallHierarchyOptions struct {
+	WorkDoneProgressOptions
+}
 
-// CallHierarchyOutgoingCall is a structure.
-type CallHierarchyOutgoingCall struct{}
+// CallHierarchyOutgoingCall is a named structure definition.
+//
+// Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
+//
+// @since 3.16.0
+type CallHierarchyOutgoingCall struct {
+	// The item that is called.
+	To CallHierarchyItem
+	// The range at which this item is called. This is the range relative to the caller, e.g the item
+	// passed to {@link CallHierarchyItemProvider.provideCallHierarchyOutgoingCalls `provideCallHierarchyOutgoingCalls`}
+	// and not {@link CallHierarchyOutgoingCall.to `this.to`}.
+	FromRanges RangeArray
+}
 
 // CallHierarchyOutgoingCallArray is an array of CallHierarchyOutgoingCall elements.
 type CallHierarchyOutgoingCallArray []CallHierarchyOutgoingCall
 
-// CallHierarchyOutgoingCallsParams is a structure.
-type CallHierarchyOutgoingCallsParams struct{}
+// CallHierarchyOutgoingCallsParams is a named structure definition.
+//
+// The parameter of a `callHierarchy/outgoingCalls` request.
+//
+// @since 3.16.0
+type CallHierarchyOutgoingCallsParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// CallHierarchyPrepareParams is a structure.
-type CallHierarchyPrepareParams struct{}
+	Item CallHierarchyItem
+}
 
-// CallHierarchyRegistrationOptions is a structure.
-type CallHierarchyRegistrationOptions struct{}
+// CallHierarchyPrepareParams is a named structure definition.
+//
+// The parameter of a `textDocument/prepareCallHierarchy` request.
+//
+// @since 3.16.0
+type CallHierarchyPrepareParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+}
 
-// CancelParams is a structure.
-type CancelParams struct{}
+// CallHierarchyRegistrationOptions is a named structure definition.
+//
+// Call hierarchy options used during static or dynamic registration.
+//
+// @since 3.16.0
+type CallHierarchyRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	CallHierarchyOptions
+	StaticRegistrationOptions
+}
+
+// CancelParams is a named structure definition.
+type CancelParams struct {
+	// The request id to cancel.
+	ID CancelParamsID
+}
 
 // CancelParamsID is a union of <TODO>.
 type CancelParamsID interface{}
 
-// ChangeAnnotation is a structure.
-type ChangeAnnotation struct{}
+// ChangeAnnotation is a named structure definition.
+//
+// Additional information that describes document changes.
+//
+// @since 3.16.0
+type ChangeAnnotation struct {
+	// A human-readable string describing the actual change. The string
+	// is rendered prominent in the user interface.
+	Label String
+	// A flag which indicates that user confirmation is needed
+	// before applying the change.
+	NeedsConfirmation Optional[Bool]
+	// A human-readable string which is rendered less prominent in
+	// the user interface.
+	Description Optional[String]
+}
 
 // ChangeAnnotationIdentifier is an alias for String.
-type ChangeAnnotationIdentifier = String
+//
+// An identifier to refer to a change annotation stored with a workspace edit.
+type ChangeAnnotationIdentifier String
 
 // ChangeAnnotationMap is an array of ChangeAnnotationIdentifier to ChangeAnnotation.
 type ChangeAnnotationMap map[ChangeAnnotationIdentifier]ChangeAnnotation
 
-// ClientCapabilities is a structure.
-type ClientCapabilities struct{}
+// ClientCapabilities is a named structure definition.
+//
+// Defines the capabilities provided by the client.
+type ClientCapabilities struct {
+	// Workspace specific client capabilities.
+	Workspace Optional[WorkspaceClientCapabilities]
+	// Text document specific client capabilities.
+	TextDocument Optional[TextDocumentClientCapabilities]
+	// Capabilities specific to the notebook document support.
+	//
+	// @since 3.17.0
+	NotebookDocument Optional[NotebookDocumentClientCapabilities]
+	// Window specific client capabilities.
+	Window Optional[WindowClientCapabilities]
+	// General client capabilities.
+	//
+	// @since 3.16.0
+	General Optional[GeneralClientCapabilities]
+	// Experimental client capabilities.
+	Experimental Optional[LSPAny]
+}
 
-// CodeAction is a structure.
-type CodeAction struct{}
+// CodeAction is a named structure definition.
+//
+// A code action represents a change that can be performed in code, e.g. to fix a problem or
+// to refactor code.
+//
+// A CodeAction must set either `edit` and/or a `command`. If both are supplied, the `edit` is applied first, then the `command` is executed.
+type CodeAction struct {
+	// A short, human-readable, title for this code action.
+	Title String
+	// The kind of the code action.
+	//
+	// Used to filter code actions.
+	Kind Optional[CodeActionKind]
+	// The diagnostics that this code action resolves.
+	Diagnostics Optional[DiagnosticArray]
+	// Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
+	// by keybindings.
+	//
+	// A quick fix should be marked preferred if it properly addresses the underlying error.
+	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
+	//
+	// @since 3.15.0
+	IsPreferred Optional[Bool]
+	// Marks that the code action cannot currently be applied.
+	//
+	// Clients should follow the following guidelines regarding disabled code actions:
+	//
+	//   - Disabled code actions are not shown in automatic [lightbulbs](https://code.visualstudio.com/docs/editor/editingevolved#_code-action)
+	//     code action menus.
+	//
+	//   - Disabled actions are shown as faded out in the code action menu when the user requests a more specific type
+	//     of code action, such as refactorings.
+	//
+	//   - If the user has a [keybinding](https://code.visualstudio.com/docs/editor/refactoring#_keybindings-for-code-actions)
+	//     that auto applies a code action and only disabled code actions are returned, the client should show the user an
+	//     error message with `reason` in the editor.
+	//
+	// @since 3.16.0
+	Disabled Optional[CodeActionDisabled]
+	// The workspace edit this code action performs.
+	Edit Optional[WorkspaceEdit]
+	// A command this code action executes. If a code action
+	// provides an edit and a command, first the edit is
+	// executed and then the command.
+	Command Optional[Command]
+	// A data entry field that is preserved on a code action between
+	// a `textDocument/codeAction` and a `codeAction/resolve` request.
+	//
+	// @since 3.16.0
+	Data Optional[LSPAny]
+}
 
-// CodeActionClientCapabilities is a structure.
-type CodeActionClientCapabilities struct{}
+// CodeActionClientCapabilities is a named structure definition.
+//
+// The Client Capabilities of a {@link CodeActionRequest}.
+type CodeActionClientCapabilities struct {
+	// Whether code action supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// The client support code action literals of type `CodeAction` as a valid
+	// response of the `textDocument/codeAction` request. If the property is not
+	// set the request can only return `Command` literals.
+	//
+	// @since 3.8.0
+	CodeActionLiteralSupport Optional[CodeActionClientCapabilitiesCodeActionLiteralSupport]
+	// Whether code action supports the `isPreferred` property.
+	//
+	// @since 3.15.0
+	IsPreferredSupport Optional[Bool]
+	// Whether code action supports the `disabled` property.
+	//
+	// @since 3.16.0
+	DisabledSupport Optional[Bool]
+	// Whether code action supports the `data` property which is
+	// preserved between a `textDocument/codeAction` and a
+	// `codeAction/resolve` request.
+	//
+	// @since 3.16.0
+	DataSupport Optional[Bool]
+	// Whether the client supports resolving additional code action
+	// properties via a separate `codeAction/resolve` request.
+	//
+	// @since 3.16.0
+	ResolveSupport Optional[CodeActionClientCapabilitiesResolveSupport]
+	// Whether the client honors the change annotations in
+	// text edits and resource operations returned via the
+	// `CodeAction#edit` property by for example presenting
+	// the workspace edit in the user interface and asking
+	// for confirmation.
+	//
+	// @since 3.16.0
+	HonorsChangeAnnotations Optional[Bool]
+}
 
 // CodeActionClientCapabilitiesCodeActionLiteralSupport is a literal structure.
 type CodeActionClientCapabilitiesCodeActionLiteralSupport struct{}
@@ -88,202 +353,354 @@ type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct{}
 // CodeActionClientCapabilitiesResolveSupport is a literal structure.
 type CodeActionClientCapabilitiesResolveSupport struct{}
 
-// CodeActionContext is a structure.
-type CodeActionContext struct{}
+// CodeActionContext is a named structure definition.
+//
+// Contains additional diagnostic information about the context in which
+// a {@link CodeActionProvider.provideCodeActions code action} is run.
+type CodeActionContext struct {
+	// An array of diagnostics known on the client side overlapping the range provided to the
+	// `textDocument/codeAction` request. They are provided so that the server knows which
+	// errors are currently presented to the user for the given range. There is no guarantee
+	// that these accurately reflect the error state of the resource. The primary parameter
+	// to compute code actions is the provided range.
+	Diagnostics DiagnosticArray
+	// Requested kind of actions to return.
+	//
+	// Actions not of this kind are filtered out by the client before being shown. So servers
+	// can omit computing them.
+	Only Optional[CodeActionKindArray]
+	// The reason why code actions were requested.
+	//
+	// @since 3.17.0
+	TriggerKind Optional[CodeActionTriggerKind]
+}
 
 // CodeActionDisabled is a literal structure.
 type CodeActionDisabled struct{}
 
 // CodeActionKind is an enumeration of String values.
 //
-// Documentation from the LSP specification:
-//
-//	A set of predefined code action kinds
+// A set of predefined code action kinds
 type CodeActionKind String
 
 const (
 	// EmptyCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Empty kind.
+	// Empty kind.
 	EmptyCodeActionKind CodeActionKind = ""
-
 	// QuickFixCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Base kind for quickfix actions: 'quickfix'
+	// Base kind for quickfix actions: 'quickfix'
 	QuickFixCodeActionKind CodeActionKind = "quickfix"
-
 	// RefactorCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Base kind for refactoring actions: 'refactor'
+	// Base kind for refactoring actions: 'refactor'
 	RefactorCodeActionKind CodeActionKind = "refactor"
-
 	// RefactorExtractCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Base kind for refactoring extraction actions: 'refactor.extract'
 	//
-	//	Base kind for refactoring extraction actions: 'refactor.extract'
+	// Example extract actions:
 	//
-	//	Example extract actions:
-	//
-	//	- Extract method
-	//	- Extract function
-	//	- Extract variable
-	//	- Extract interface from class
-	//	- ...
+	// - Extract method
+	// - Extract function
+	// - Extract variable
+	// - Extract interface from class
+	// - ...
 	RefactorExtractCodeActionKind CodeActionKind = "refactor.extract"
-
 	// RefactorInlineCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Base kind for refactoring inline actions: 'refactor.inline'
 	//
-	//	Base kind for refactoring inline actions: 'refactor.inline'
+	// Example inline actions:
 	//
-	//	Example inline actions:
-	//
-	//	- Inline function
-	//	- Inline variable
-	//	- Inline constant
-	//	- ...
+	// - Inline function
+	// - Inline variable
+	// - Inline constant
+	// - ...
 	RefactorInlineCodeActionKind CodeActionKind = "refactor.inline"
-
 	// RefactorRewriteCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Base kind for refactoring rewrite actions: 'refactor.rewrite'
 	//
-	//	Base kind for refactoring rewrite actions: 'refactor.rewrite'
+	// Example rewrite actions:
 	//
-	//	Example rewrite actions:
-	//
-	//	- Convert JavaScript function to class
-	//	- Add or remove parameter
-	//	- Encapsulate field
-	//	- Make method static
-	//	- Move method to base class
-	//	- ...
+	// - Convert JavaScript function to class
+	// - Add or remove parameter
+	// - Encapsulate field
+	// - Make method static
+	// - Move method to base class
+	// - ...
 	RefactorRewriteCodeActionKind CodeActionKind = "refactor.rewrite"
-
 	// SourceCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Base kind for source actions: `source`
 	//
-	//	Base kind for source actions: `source`
-	//
-	//	Source code actions apply to the entire file.
+	// Source code actions apply to the entire file.
 	SourceCodeActionKind CodeActionKind = "source"
-
 	// SourceOrganizeImportsCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Base kind for an organize imports source action: `source.organizeImports`
+	// Base kind for an organize imports source action: `source.organizeImports`
 	SourceOrganizeImportsCodeActionKind CodeActionKind = "source.organizeImports"
-
 	// SourceFixAllCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Base kind for auto-fix source actions: `source.fixAll`.
 	//
-	//	Base kind for auto-fix source actions: `source.fixAll`.
+	// Fix all actions automatically fix errors that have a clear fix that do not require user input.
+	// They should not suppress errors or perform unsafe fixes such as generating new types or classes.
 	//
-	//	Fix all actions automatically fix errors that have a clear fix that do not require user input.
-	//	They should not suppress errors or perform unsafe fixes such as generating new types or classes.
-	//
-	//	@since 3.15.0
+	// @since 3.15.0
 	SourceFixAllCodeActionKind CodeActionKind = "source.fixAll"
 )
 
 // CodeActionKindArray is an array of CodeActionKind elements.
 type CodeActionKindArray []CodeActionKind
 
-// CodeActionOptions is a structure.
-type CodeActionOptions struct{}
+// CodeActionOptions is a named structure definition.
+//
+// Provider options for a {@link CodeActionRequest}.
+type CodeActionOptions struct {
+	WorkDoneProgressOptions
 
-// CodeActionParams is a structure.
-type CodeActionParams struct{}
+	// CodeActionKinds that this server may return.
+	//
+	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
+	// may list out every specific kind they provide.
+	CodeActionKinds Optional[CodeActionKindArray]
+	// The server provides support to resolve additional
+	// information for a code action.
+	//
+	// @since 3.16.0
+	ResolveProvider Optional[Bool]
+}
 
-// CodeActionRegistrationOptions is a structure.
-type CodeActionRegistrationOptions struct{}
+// CodeActionParams is a named structure definition.
+//
+// The parameters of a {@link CodeActionRequest}.
+type CodeActionParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
+
+	// The document in which the command was invoked.
+	TextDocument TextDocumentIdentifier
+	// The range for which the command was invoked.
+	Range Range
+	// Context carrying additional information.
+	Context CodeActionContext
+}
+
+// CodeActionRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link CodeActionRequest}.
+type CodeActionRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	CodeActionOptions
+}
 
 // CodeActionTriggerKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// The reason why code actions were requested.
 //
-//	The reason why code actions were requested.
-//
-//	@since 3.17.0
+// @since 3.17.0
 type CodeActionTriggerKind UInt
 
 const (
 	// InvokedCodeActionTriggerKind is a member of the CodeActionTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Code actions were explicitly requested by the user or by an extension.
+	// Code actions were explicitly requested by the user or by an extension.
 	InvokedCodeActionTriggerKind CodeActionTriggerKind = 1
-
 	// AutomaticCodeActionTriggerKind is a member of the CodeActionTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Code actions were requested automatically.
 	//
-	//	Code actions were requested automatically.
-	//
-	//	This typically happens when current selection in a file changes, but can
-	//	also be triggered when file content changes.
+	// This typically happens when current selection in a file changes, but can
+	// also be triggered when file content changes.
 	AutomaticCodeActionTriggerKind CodeActionTriggerKind = 2
 )
 
-// CodeDescription is a structure.
-type CodeDescription struct{}
+// CodeDescription is a named structure definition.
+//
+// Structure to capture a description for an error code.
+//
+// @since 3.16.0
+type CodeDescription struct {
+	// An URI to open with more information about the diagnostic error.
+	Href URI
+}
 
-// CodeLens is a structure.
-type CodeLens struct{}
+// CodeLens is a named structure definition.
+//
+// A code lens represents a {@link Command command} that should be shown along with
+// source text, like the number of references, a way to run tests, etc.
+//
+// A code lens is _unresolved_ when no command is associated to it. For performance
+// reasons the creation of a code lens and resolving should be done in two stages.
+type CodeLens struct {
+	// The range in which this code lens is valid. Should only span a single line.
+	Range Range
+	// The command this code lens represents.
+	Command Optional[Command]
+	// A data entry field that is preserved on a code lens item between
+	// a {@link CodeLensRequest} and a [CodeLensResolveRequest]
+	// (#CodeLensResolveRequest)
+	Data Optional[LSPAny]
+}
 
 // CodeLensArray is an array of CodeLens elements.
 type CodeLensArray []CodeLens
 
-// CodeLensClientCapabilities is a structure.
-type CodeLensClientCapabilities struct{}
+// CodeLensClientCapabilities is a named structure definition.
+//
+// The client capabilities  of a {@link CodeLensRequest}.
+type CodeLensClientCapabilities struct {
+	// Whether code lens supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
-// CodeLensOptions is a structure.
-type CodeLensOptions struct{}
+// CodeLensOptions is a named structure definition.
+//
+// Code Lens provider options of a {@link CodeLensRequest}.
+type CodeLensOptions struct {
+	WorkDoneProgressOptions
 
-// CodeLensParams is a structure.
-type CodeLensParams struct{}
+	// Code lens has a resolve provider as well.
+	ResolveProvider Optional[Bool]
+}
 
-// CodeLensRegistrationOptions is a structure.
-type CodeLensRegistrationOptions struct{}
+// CodeLensParams is a named structure definition.
+//
+// The parameters of a {@link CodeLensRequest}.
+type CodeLensParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// CodeLensWorkspaceClientCapabilities is a structure.
-type CodeLensWorkspaceClientCapabilities struct{}
+	// The document to request code lens for.
+	TextDocument TextDocumentIdentifier
+}
 
-// Color is a structure.
-type Color struct{}
+// CodeLensRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link CodeLensRequest}.
+type CodeLensRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	CodeLensOptions
+}
 
-// ColorInformation is a structure.
-type ColorInformation struct{}
+// CodeLensWorkspaceClientCapabilities is a named structure definition.
+//
+// @since 3.16.0
+type CodeLensWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from the
+	// server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// code lenses currently shown. It should be used with absolute care and is
+	// useful for situation where a server for example detect a project wide
+	// change that requires such a calculation.
+	RefreshSupport Optional[Bool]
+}
+
+// Color is a named structure definition.
+//
+// Represents a color in RGBA space.
+type Color struct {
+	// The red component of this color in the range [0-1].
+	Red Decimal
+	// The green component of this color in the range [0-1].
+	Green Decimal
+	// The blue component of this color in the range [0-1].
+	Blue Decimal
+	// The alpha component of this color in the range [0-1].
+	Alpha Decimal
+}
+
+// ColorInformation is a named structure definition.
+//
+// Represents a color range from a document.
+type ColorInformation struct {
+	// The range in the document where this color appears.
+	Range Range
+	// The actual color value for this color range.
+	Color Color
+}
 
 // ColorInformationArray is an array of ColorInformation elements.
 type ColorInformationArray []ColorInformation
 
-// ColorPresentation is a structure.
-type ColorPresentation struct{}
+// ColorPresentation is a named structure definition.
+type ColorPresentation struct {
+	// The label of this color presentation. It will be shown on the color
+	// picker header. By default this is also the text that is inserted when selecting
+	// this color presentation.
+	Label String
+	// An {@link TextEdit edit} which is applied to a document when selecting
+	// this presentation for the color.  When `falsy` the {@link ColorPresentation.label label}
+	// is used.
+	TextEdit Optional[TextEdit]
+	// An optional array of additional {@link TextEdit text edits} that are applied when
+	// selecting this color presentation. Edits must not overlap with the main {@link ColorPresentation.textEdit edit} nor with themselves.
+	AdditionalTextEdits Optional[TextEditArray]
+}
 
 // ColorPresentationArray is an array of ColorPresentation elements.
 type ColorPresentationArray []ColorPresentation
 
-// ColorPresentationParams is a structure.
-type ColorPresentationParams struct{}
+// ColorPresentationParams is a named structure definition.
+//
+// Parameters for a {@link ColorPresentationRequest}.
+type ColorPresentationParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// Command is a structure.
-type Command struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The color to request presentations for.
+	Color Color
+	// The range where the color would be inserted. Serves as a context.
+	Range Range
+}
 
-// CompletionClientCapabilities is a structure.
-type CompletionClientCapabilities struct{}
+// Command is a named structure definition.
+//
+// Represents a reference to a command. Provides a title which
+// will be used to represent a command in the UI and, optionally,
+// an array of arguments which will be passed to the command handler
+// function when invoked.
+type Command struct {
+	// Title of the command, like `save`.
+	Title String
+	// The identifier of the actual command handler.
+	Command String
+	// Arguments that the command handler should be
+	// invoked with.
+	Arguments Optional[LSPAnyArray]
+}
+
+// CompletionClientCapabilities is a named structure definition.
+//
+// Completion client capabilities
+type CompletionClientCapabilities struct {
+	// Whether completion supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// The client supports the following `CompletionItem` specific
+	// capabilities.
+	CompletionItem     Optional[CompletionClientCapabilitiesCompletionItem]
+	CompletionItemKind Optional[CompletionClientCapabilitiesCompletionItemKind]
+	// Defines how the client handles whitespace and indentation
+	// when accepting a completion item that uses multi line
+	// text in either `insertText` or `textEdit`.
+	//
+	// @since 3.17.0
+	InsertTextMode Optional[InsertTextMode]
+	// The client supports to send additional context information for a
+	// `textDocument/completion` request.
+	ContextSupport Optional[Bool]
+	// The client supports the following `CompletionList` specific
+	// capabilities.
+	//
+	// @since 3.17.0
+	CompletionList Optional[CompletionClientCapabilitiesCompletionList]
+}
 
 // CompletionClientCapabilitiesCompletionItem is a literal structure.
 type CompletionClientCapabilitiesCompletionItem struct{}
@@ -303,11 +720,142 @@ type CompletionClientCapabilitiesCompletionItemTagSupport struct{}
 // CompletionClientCapabilitiesCompletionList is a literal structure.
 type CompletionClientCapabilitiesCompletionList struct{}
 
-// CompletionContext is a structure.
-type CompletionContext struct{}
+// CompletionContext is a named structure definition.
+//
+// Contains additional information about the context in which a completion request is triggered.
+type CompletionContext struct {
+	// How the completion was triggered.
+	TriggerKind CompletionTriggerKind
+	// The trigger character (a single character) that has trigger code complete.
+	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
+	TriggerCharacter Optional[String]
+}
 
-// CompletionItem is a structure.
-type CompletionItem struct{}
+// CompletionItem is a named structure definition.
+//
+// A completion item represents a text snippet that is
+// proposed to complete text that is being typed.
+type CompletionItem struct {
+	// The label of this completion item.
+	//
+	// The label property is also by default the text that
+	// is inserted when selecting this completion.
+	//
+	// If label details are provided the label itself should
+	// be an unqualified name of the completion item.
+	Label String
+	// Additional details for the label
+	//
+	// @since 3.17.0
+	LabelDetails Optional[CompletionItemLabelDetails]
+	// The kind of this completion item. Based of the kind
+	// an icon is chosen by the editor.
+	Kind Optional[CompletionItemKind]
+	// Tags for this completion item.
+	//
+	// @since 3.15.0
+	Tags Optional[CompletionItemTagArray]
+	// A human-readable string with additional information
+	// about this item, like type or symbol information.
+	Detail Optional[String]
+	// A human-readable string that represents a doc-comment.
+	Documentation Optional[CompletionItemDocumentation]
+	// Indicates if this item is deprecated.
+	// @deprecated Use `tags` instead.
+	//
+	// Deprecated: Use `tags` instead.
+	Deprecated Optional[Bool]
+	// Select this item when showing.
+	//
+	// *Note* that only one completion item can be selected and that the
+	// tool / client decides which item that is. The rule is that the *first*
+	// item of those that match best is selected.
+	Preselect Optional[Bool]
+	// A string that should be used when comparing this item
+	// with other items. When `falsy` the {@link CompletionItem.label label}
+	// is used.
+	SortText Optional[String]
+	// A string that should be used when filtering a set of
+	// completion items. When `falsy` the {@link CompletionItem.label label}
+	// is used.
+	FilterText Optional[String]
+	// A string that should be inserted into a document when selecting
+	// this completion. When `falsy` the {@link CompletionItem.label label}
+	// is used.
+	//
+	// The `insertText` is subject to interpretation by the client side.
+	// Some tools might not take the string literally. For example
+	// VS Code when code complete is requested in this example
+	// `con<cursor position>` and a completion item with an `insertText` of
+	// `console` is provided it will only insert `sole`. Therefore it is
+	// recommended to use `textEdit` instead since it avoids additional client
+	// side interpretation.
+	InsertText Optional[String]
+	// The format of the insert text. The format applies to both the
+	// `insertText` property and the `newText` property of a provided
+	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
+	//
+	// Please note that the insertTextFormat doesn't apply to
+	// `additionalTextEdits`.
+	InsertTextFormat Optional[InsertTextFormat]
+	// How whitespace and indentation is handled during completion
+	// item insertion. If not provided the clients default value depends on
+	// the `textDocument.completion.insertTextMode` client capability.
+	//
+	// @since 3.16.0
+	InsertTextMode Optional[InsertTextMode]
+	// An {@link TextEdit edit} which is applied to a document when selecting
+	// this completion. When an edit is provided the value of
+	// {@link CompletionItem.insertText insertText} is ignored.
+	//
+	// Most editors support two different operations when accepting a completion
+	// item. One is to insert a completion text and the other is to replace an
+	// existing text with a completion text. Since this can usually not be
+	// predetermined by a server it can report both ranges. Clients need to
+	// signal support for `InsertReplaceEdits` via the
+	// `textDocument.completion.insertReplaceSupport` client capability
+	// property.
+	//
+	// *Note 1:* The text edit's range as well as both ranges from an insert
+	// replace edit must be a [single line] and they must contain the position
+	// at which completion has been requested.
+	// *Note 2:* If an `InsertReplaceEdit` is returned the edit's insert range
+	// must be a prefix of the edit's replace range, that means it must be
+	// contained and starting at the same position.
+	//
+	// @since 3.16.0 additional type `InsertReplaceEdit`
+	TextEdit Optional[CompletionItemTextEdit]
+	// The edit text used if the completion item is part of a CompletionList and
+	// CompletionList defines an item default for the text edit range.
+	//
+	// Clients will only honor this property if they opt into completion list
+	// item defaults using the capability `completionList.itemDefaults`.
+	//
+	// If not provided and a list's default range is provided the label
+	// property is used as a text.
+	//
+	// @since 3.17.0
+	TextEditText Optional[String]
+	// An optional array of additional {@link TextEdit text edits} that are applied when
+	// selecting this completion. Edits must not overlap (including the same insert position)
+	// with the main {@link CompletionItem.textEdit edit} nor with themselves.
+	//
+	// Additional text edits should be used to change text unrelated to the current cursor position
+	// (for example adding an import statement at the top of the file if the completion item will
+	// insert an unqualified type).
+	AdditionalTextEdits Optional[TextEditArray]
+	// An optional set of characters that when pressed while this completion is active will accept it first and
+	// then type that character. *Note* that all commit characters should have `length=1` and that superfluous
+	// characters will be ignored.
+	CommitCharacters Optional[StringArray]
+	// An optional {@link Command command} that is executed *after* inserting this completion. *Note* that
+	// additional modifications to the current document should be described with the
+	// {@link CompletionItem.additionalTextEdits additionalTextEdits}-property.
+	Command Optional[Command]
+	// A data entry field that is preserved on a completion item between a
+	// {@link CompletionRequest} and a {@link CompletionResolveRequest}.
+	Data Optional[LSPAny]
+}
 
 // CompletionItemArray is an array of CompletionItem elements.
 type CompletionItemArray []CompletionItem
@@ -317,84 +865,58 @@ type CompletionItemDocumentation interface{}
 
 // CompletionItemKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	The kind of a completion entry.
+// The kind of a completion entry.
 type CompletionItemKind UInt
 
 const (
 	// TextCompletionItemKind is a member of the CompletionItemKind enumeration.
 	TextCompletionItemKind CompletionItemKind = 1
-
 	// MethodCompletionItemKind is a member of the CompletionItemKind enumeration.
 	MethodCompletionItemKind CompletionItemKind = 2
-
 	// FunctionCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FunctionCompletionItemKind CompletionItemKind = 3
-
 	// ConstructorCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ConstructorCompletionItemKind CompletionItemKind = 4
-
 	// FieldCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FieldCompletionItemKind CompletionItemKind = 5
-
 	// VariableCompletionItemKind is a member of the CompletionItemKind enumeration.
 	VariableCompletionItemKind CompletionItemKind = 6
-
 	// ClassCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ClassCompletionItemKind CompletionItemKind = 7
-
 	// InterfaceCompletionItemKind is a member of the CompletionItemKind enumeration.
 	InterfaceCompletionItemKind CompletionItemKind = 8
-
 	// ModuleCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ModuleCompletionItemKind CompletionItemKind = 9
-
 	// PropertyCompletionItemKind is a member of the CompletionItemKind enumeration.
 	PropertyCompletionItemKind CompletionItemKind = 10
-
 	// UnitCompletionItemKind is a member of the CompletionItemKind enumeration.
 	UnitCompletionItemKind CompletionItemKind = 11
-
 	// ValueCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ValueCompletionItemKind CompletionItemKind = 12
-
 	// EnumCompletionItemKind is a member of the CompletionItemKind enumeration.
 	EnumCompletionItemKind CompletionItemKind = 13
-
 	// KeywordCompletionItemKind is a member of the CompletionItemKind enumeration.
 	KeywordCompletionItemKind CompletionItemKind = 14
-
 	// SnippetCompletionItemKind is a member of the CompletionItemKind enumeration.
 	SnippetCompletionItemKind CompletionItemKind = 15
-
 	// ColorCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ColorCompletionItemKind CompletionItemKind = 16
-
 	// FileCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FileCompletionItemKind CompletionItemKind = 17
-
 	// ReferenceCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ReferenceCompletionItemKind CompletionItemKind = 18
-
 	// FolderCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FolderCompletionItemKind CompletionItemKind = 19
-
 	// EnumMemberCompletionItemKind is a member of the CompletionItemKind enumeration.
 	EnumMemberCompletionItemKind CompletionItemKind = 20
-
 	// ConstantCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ConstantCompletionItemKind CompletionItemKind = 21
-
 	// StructCompletionItemKind is a member of the CompletionItemKind enumeration.
 	StructCompletionItemKind CompletionItemKind = 22
-
 	// EventCompletionItemKind is a member of the CompletionItemKind enumeration.
 	EventCompletionItemKind CompletionItemKind = 23
-
 	// OperatorCompletionItemKind is a member of the CompletionItemKind enumeration.
 	OperatorCompletionItemKind CompletionItemKind = 24
-
 	// TypeParameterCompletionItemKind is a member of the CompletionItemKind enumeration.
 	TypeParameterCompletionItemKind CompletionItemKind = 25
 )
@@ -402,25 +924,32 @@ const (
 // CompletionItemKindArray is an array of CompletionItemKind elements.
 type CompletionItemKindArray []CompletionItemKind
 
-// CompletionItemLabelDetails is a structure.
-type CompletionItemLabelDetails struct{}
+// CompletionItemLabelDetails is a named structure definition.
+//
+// Additional details for a completion item label.
+//
+// @since 3.17.0
+type CompletionItemLabelDetails struct {
+	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
+	// without any spacing. Should be used for function signatures and type annotations.
+	Detail Optional[String]
+	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
+	// for fully qualified names and file paths.
+	Description Optional[String]
+}
 
 // CompletionItemTag is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// Completion item tags are extra annotations that tweak the rendering of a completion
+// item.
 //
-//	Completion item tags are extra annotations that tweak the rendering of a completion
-//	item.
-//
-//	@since 3.15.0
+// @since 3.15.0
 type CompletionItemTag UInt
 
 const (
 	// DeprecatedCompletionItemTag is a member of the CompletionItemTag enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Render a completion as obsolete, usually using a strike-out.
+	// Render a completion as obsolete, usually using a strike-out.
 	DeprecatedCompletionItemTag CompletionItemTag = 1
 )
 
@@ -430,8 +959,33 @@ type CompletionItemTagArray []CompletionItemTag
 // CompletionItemTextEdit is a union of <TODO>.
 type CompletionItemTextEdit interface{}
 
-// CompletionList is a structure.
-type CompletionList struct{}
+// CompletionList is a named structure definition.
+//
+// Represents a collection of {@link CompletionItem completion items} to be presented
+// in the editor.
+type CompletionList struct {
+	// This list it not complete. Further typing results in recomputing this list.
+	//
+	// Recomputed lists have all their items replaced (not appended) in the
+	// incomplete completion sessions.
+	IsIncomplete Bool
+	// In many cases the items of an actual completion result share the same
+	// value for properties like `commitCharacters` or the range of a text
+	// edit. A completion list can therefore define item defaults which will
+	// be used if a completion item itself doesn't specify the value.
+	//
+	// If a completion list specifies a default value and a completion item
+	// also specifies a corresponding value the one from the item is used.
+	//
+	// Servers are only allowed to return default values if the client
+	// signals support for this via the `completionList.itemDefaults`
+	// capability.
+	//
+	// @since 3.17.0
+	ItemDefaults Optional[CompletionListItemDefaults]
+	// The completion items.
+	Items CompletionItemArray
+}
 
 // CompletionListItemDefaults is a literal structure.
 type CompletionListItemDefaults struct{}
@@ -442,67 +996,136 @@ type CompletionListItemDefaultsEditRange interface{}
 // CompletionListItemDefaultsEditRangeOption2 is a literal structure.
 type CompletionListItemDefaultsEditRangeOption2 struct{}
 
-// CompletionOptions is a structure.
-type CompletionOptions struct{}
+// CompletionOptions is a named structure definition.
+//
+// Completion options.
+type CompletionOptions struct {
+	WorkDoneProgressOptions
+
+	// Most tools trigger completion request automatically without explicitly requesting
+	// it using a keyboard shortcut (e.g. Ctrl+Space). Typically they do so when the user
+	// starts to type an identifier. For example if the user types `c` in a JavaScript file
+	// code complete will automatically pop up present `console` besides others as a
+	// completion item. Characters that make up identifiers don't need to be listed here.
+	//
+	// If code complete should automatically be trigger on characters not being valid inside
+	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
+	TriggerCharacters Optional[StringArray]
+	// The list of all possible characters that commit a completion. This field can be used
+	// if clients don't support individual commit characters per completion item. See
+	// `ClientCapabilities.textDocument.completion.completionItem.commitCharactersSupport`
+	//
+	// If a server provides both `allCommitCharacters` and commit characters on an individual
+	// completion item the ones on the completion item win.
+	//
+	// @since 3.2.0
+	AllCommitCharacters Optional[StringArray]
+	// The server provides support to resolve additional
+	// information for a completion item.
+	ResolveProvider Optional[Bool]
+	// The server supports the following `CompletionItem` specific
+	// capabilities.
+	//
+	// @since 3.17.0
+	CompletionItem Optional[CompletionOptionsCompletionItem]
+}
 
 // CompletionOptionsCompletionItem is a literal structure.
 type CompletionOptionsCompletionItem struct{}
 
-// CompletionParams is a structure.
-type CompletionParams struct{}
+// CompletionParams is a named structure definition.
+//
+// Completion parameters
+type CompletionParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
 
-// CompletionRegistrationOptions is a structure.
-type CompletionRegistrationOptions struct{}
+	// The completion context. This is only available it the client specifies
+	// to send this using the client capability `textDocument.completion.contextSupport === true`
+	Context Optional[CompletionContext]
+}
+
+// CompletionRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link CompletionRequest}.
+type CompletionRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	CompletionOptions
+}
 
 // CompletionTriggerKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	How a completion was triggered
+// How a completion was triggered
 type CompletionTriggerKind UInt
 
 const (
 	// InvokedCompletionTriggerKind is a member of the CompletionTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Completion was triggered by typing an identifier (24x7 code
-	//	complete), manual invocation (e.g Ctrl+Space) or via API.
+	// Completion was triggered by typing an identifier (24x7 code
+	// complete), manual invocation (e.g Ctrl+Space) or via API.
 	InvokedCompletionTriggerKind CompletionTriggerKind = 1
-
 	// TriggerCharacterCompletionTriggerKind is a member of the CompletionTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Completion was triggered by a trigger character specified by
-	//	the `triggerCharacters` properties of the `CompletionRegistrationOptions`.
+	// Completion was triggered by a trigger character specified by
+	// the `triggerCharacters` properties of the `CompletionRegistrationOptions`.
 	TriggerCharacterCompletionTriggerKind CompletionTriggerKind = 2
-
 	// TriggerForIncompleteCompletionsCompletionTriggerKind is a member of the CompletionTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Completion was re-triggered as current completion list is incomplete
+	// Completion was re-triggered as current completion list is incomplete
 	TriggerForIncompleteCompletionsCompletionTriggerKind CompletionTriggerKind = 3
 )
 
-// ConfigurationItem is a structure.
-type ConfigurationItem struct{}
+// ConfigurationItem is a named structure definition.
+type ConfigurationItem struct {
+	// The scope to get the configuration section for.
+	ScopeURI Optional[String]
+	// The configuration section asked for.
+	Section Optional[String]
+}
 
 // ConfigurationItemArray is an array of ConfigurationItem elements.
 type ConfigurationItemArray []ConfigurationItem
 
-// ConfigurationParams is a structure.
-type ConfigurationParams struct{}
+// ConfigurationParams is a named structure definition.
+//
+// The parameters of a configuration request.
+type ConfigurationParams struct {
+	Items ConfigurationItemArray
+}
 
-// CreateFile is a structure.
-type CreateFile struct{}
+// CreateFile is a named structure definition.
+//
+// Create file operation.
+type CreateFile struct {
+	ResourceOperation
 
-// CreateFileOptions is a structure.
-type CreateFileOptions struct{}
+	// The resource to create.
+	URI DocumentURI
+	// Additional options
+	Options Optional[CreateFileOptions]
+}
 
-// CreateFilesParams is a structure.
-type CreateFilesParams struct{}
+// CreateFileOptions is a named structure definition.
+//
+// Options to create a file.
+type CreateFileOptions struct {
+	// Overwrite existing file. Overwrite wins over `ignoreIfExists`
+	Overwrite Optional[Bool]
+	// Ignore if exists.
+	IgnoreIfExists Optional[Bool]
+}
+
+// CreateFilesParams is a named structure definition.
+//
+// The parameters sent in notifications/requests for user-initiated creation of
+// files.
+//
+// @since 3.16.0
+type CreateFilesParams struct {
+	// An array of all files/folders created in this operation.
+	Files FileCreateArray
+}
 
 // Decimal is the LSP decimal type.
 type Decimal float64
@@ -510,249 +1133,562 @@ type Decimal float64
 // Declaration is a union of <TODO>.
 type Declaration interface{}
 
-// DeclarationClientCapabilities is a structure.
-type DeclarationClientCapabilities struct{}
+// DeclarationClientCapabilities is a named structure definition.
+//
+// @since 3.14.0
+type DeclarationClientCapabilities struct {
+	// Whether declaration supports dynamic registration. If this is set to `true`
+	// the client supports the new `DeclarationRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+	// The client supports additional metadata in the form of declaration links.
+	LinkSupport Optional[Bool]
+}
 
 // DeclarationLink is an alias for LocationLink.
-type DeclarationLink = LocationLink
+//
+// Information about where a symbol is declared.
+//
+// Provides additional metadata over normal {@link Location location} declarations, including the range of
+// the declaring symbol.
+//
+// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
+// by the client.
+type DeclarationLink LocationLink
 
 // DeclarationLinkArray is an array of DeclarationLink elements.
 type DeclarationLinkArray []DeclarationLink
 
-// DeclarationOptions is a structure.
-type DeclarationOptions struct{}
+// DeclarationOptions is a named structure definition.
+type DeclarationOptions struct {
+	WorkDoneProgressOptions
+}
 
-// DeclarationParams is a structure.
-type DeclarationParams struct{}
+// DeclarationParams is a named structure definition.
+type DeclarationParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
+}
 
-// DeclarationRegistrationOptions is a structure.
-type DeclarationRegistrationOptions struct{}
+// DeclarationRegistrationOptions is a named structure definition.
+type DeclarationRegistrationOptions struct {
+	DeclarationOptions
+	TextDocumentRegistrationOptions
+	StaticRegistrationOptions
+}
 
 // Definition is a union of <TODO>.
 type Definition interface{}
 
-// DefinitionClientCapabilities is a structure.
-type DefinitionClientCapabilities struct{}
+// DefinitionClientCapabilities is a named structure definition.
+//
+// Client Capabilities for a {@link DefinitionRequest}.
+type DefinitionClientCapabilities struct {
+	// Whether definition supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// The client supports additional metadata in the form of definition links.
+	//
+	// @since 3.14.0
+	LinkSupport Optional[Bool]
+}
 
 // DefinitionLink is an alias for LocationLink.
-type DefinitionLink = LocationLink
+//
+// Information about where a symbol is defined.
+//
+// Provides additional metadata over normal {@link Location location} definitions, including the range of
+// the defining symbol
+type DefinitionLink LocationLink
 
 // DefinitionLinkArray is an array of DefinitionLink elements.
 type DefinitionLinkArray []DefinitionLink
 
-// DefinitionOptions is a structure.
-type DefinitionOptions struct{}
+// DefinitionOptions is a named structure definition.
+//
+// Server Capabilities for a {@link DefinitionRequest}.
+type DefinitionOptions struct {
+	WorkDoneProgressOptions
+}
 
-// DefinitionParams is a structure.
-type DefinitionParams struct{}
+// DefinitionParams is a named structure definition.
+//
+// Parameters for a {@link DefinitionRequest}.
+type DefinitionParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
+}
 
-// DefinitionRegistrationOptions is a structure.
-type DefinitionRegistrationOptions struct{}
+// DefinitionRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link DefinitionRequest}.
+type DefinitionRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DefinitionOptions
+}
 
-// DeleteFile is a structure.
-type DeleteFile struct{}
+// DeleteFile is a named structure definition.
+//
+// Delete file operation
+type DeleteFile struct {
+	ResourceOperation
 
-// DeleteFileOptions is a structure.
-type DeleteFileOptions struct{}
+	// The file to delete.
+	URI DocumentURI
+	// Delete options.
+	Options Optional[DeleteFileOptions]
+}
 
-// DeleteFilesParams is a structure.
-type DeleteFilesParams struct{}
+// DeleteFileOptions is a named structure definition.
+//
+// Delete file options
+type DeleteFileOptions struct {
+	// Delete the content recursively if a folder is denoted.
+	Recursive Optional[Bool]
+	// Ignore the operation if the file doesn't exist.
+	IgnoreIfNotExists Optional[Bool]
+}
 
-// Diagnostic is a structure.
-type Diagnostic struct{}
+// DeleteFilesParams is a named structure definition.
+//
+// The parameters sent in notifications/requests for user-initiated deletes of
+// files.
+//
+// @since 3.16.0
+type DeleteFilesParams struct {
+	// An array of all files/folders deleted in this operation.
+	Files FileDeleteArray
+}
+
+// Diagnostic is a named structure definition.
+//
+// Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
+// are only valid in the scope of a resource.
+type Diagnostic struct {
+	// The range at which the message applies
+	Range Range
+	// The diagnostic's severity. Can be omitted. If omitted it is up to the
+	// client to interpret diagnostics as error, warning, info or hint.
+	Severity Optional[DiagnosticSeverity]
+	// The diagnostic's code, which usually appear in the user interface.
+	Code Optional[DiagnosticCode]
+	// An optional property to describe the error code.
+	// Requires the code field (above) to be present/not null.
+	//
+	// @since 3.16.0
+	CodeDescription Optional[CodeDescription]
+	// A human-readable string describing the source of this
+	// diagnostic, e.g. 'typescript' or 'super lint'. It usually
+	// appears in the user interface.
+	Source Optional[String]
+	// The diagnostic's message. It usually appears in the user interface
+	Message String
+	// Additional metadata about the diagnostic.
+	//
+	// @since 3.15.0
+	Tags Optional[DiagnosticTagArray]
+	// An array of related diagnostic information, e.g. when symbol-names within
+	// a scope collide all definitions can be marked via this property.
+	RelatedInformation Optional[DiagnosticRelatedInformationArray]
+	// A data entry field that is preserved between a `textDocument/publishDiagnostics`
+	// notification and `textDocument/codeAction` request.
+	//
+	// @since 3.16.0
+	Data Optional[LSPAny]
+}
 
 // DiagnosticArray is an array of Diagnostic elements.
 type DiagnosticArray []Diagnostic
 
-// DiagnosticClientCapabilities is a structure.
-type DiagnosticClientCapabilities struct{}
+// DiagnosticClientCapabilities is a named structure definition.
+//
+// Client capabilities specific to diagnostic pull requests.
+//
+// @since 3.17.0
+type DiagnosticClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+	// Whether the clients supports related documents for document diagnostic pulls.
+	RelatedDocumentSupport Optional[Bool]
+}
 
 // DiagnosticCode is a union of <TODO>.
 type DiagnosticCode interface{}
 
-// DiagnosticOptions is a structure.
-type DiagnosticOptions struct{}
+// DiagnosticOptions is a named structure definition.
+//
+// Diagnostic options.
+//
+// @since 3.17.0
+type DiagnosticOptions struct {
+	WorkDoneProgressOptions
 
-// DiagnosticRegistrationOptions is a structure.
-type DiagnosticRegistrationOptions struct{}
+	// An optional identifier under which the diagnostics are
+	// managed by the client.
+	Identifier Optional[String]
+	// Whether the language has inter file dependencies meaning that
+	// editing code in one file can result in a different diagnostic
+	// set in another file. Inter file dependencies are common for
+	// most programming languages and typically uncommon for linters.
+	InterFileDependencies Bool
+	// The server provides support for workspace diagnostics as well.
+	WorkspaceDiagnostics Bool
+}
 
-// DiagnosticRelatedInformation is a structure.
-type DiagnosticRelatedInformation struct{}
+// DiagnosticRegistrationOptions is a named structure definition.
+//
+// Diagnostic registration options.
+//
+// @since 3.17.0
+type DiagnosticRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DiagnosticOptions
+	StaticRegistrationOptions
+}
+
+// DiagnosticRelatedInformation is a named structure definition.
+//
+// Represents a related message and source code location for a diagnostic. This should be
+// used to point to code locations that cause or related to a diagnostics, e.g when duplicating
+// a symbol in a scope.
+type DiagnosticRelatedInformation struct {
+	// The location of this related diagnostic information.
+	Location Location
+	// The message of this related diagnostic information.
+	Message String
+}
 
 // DiagnosticRelatedInformationArray is an array of DiagnosticRelatedInformation elements.
 type DiagnosticRelatedInformationArray []DiagnosticRelatedInformation
 
-// DiagnosticServerCancellationData is a structure.
-type DiagnosticServerCancellationData struct{}
+// DiagnosticServerCancellationData is a named structure definition.
+//
+// Cancellation data returned from a diagnostic request.
+//
+// @since 3.17.0
+type DiagnosticServerCancellationData struct {
+	RetriggerRequest Bool
+}
 
 // DiagnosticSeverity is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	The diagnostic's severity.
+// The diagnostic's severity.
 type DiagnosticSeverity UInt
 
 const (
 	// ErrorDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Reports an error.
+	// Reports an error.
 	ErrorDiagnosticSeverity DiagnosticSeverity = 1
-
 	// WarningDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Reports a warning.
+	// Reports a warning.
 	WarningDiagnosticSeverity DiagnosticSeverity = 2
-
 	// InformationDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Reports an information.
+	// Reports an information.
 	InformationDiagnosticSeverity DiagnosticSeverity = 3
-
 	// HintDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Reports a hint.
+	// Reports a hint.
 	HintDiagnosticSeverity DiagnosticSeverity = 4
 )
 
 // DiagnosticTag is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// The diagnostic tags.
 //
-//	The diagnostic tags.
-//
-//	@since 3.15.0
+// @since 3.15.0
 type DiagnosticTag UInt
 
 const (
 	// UnnecessaryDiagnosticTag is a member of the DiagnosticTag enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Unused or unnecessary code.
 	//
-	//	Unused or unnecessary code.
-	//
-	//	Clients are allowed to render diagnostics with this tag faded out instead of having
-	//	an error squiggle.
+	// Clients are allowed to render diagnostics with this tag faded out instead of having
+	// an error squiggle.
 	UnnecessaryDiagnosticTag DiagnosticTag = 1
-
 	// DeprecatedDiagnosticTag is a member of the DiagnosticTag enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Deprecated or obsolete code.
 	//
-	//	Deprecated or obsolete code.
-	//
-	//	Clients are allowed to rendered diagnostics with this tag strike through.
+	// Clients are allowed to rendered diagnostics with this tag strike through.
 	DeprecatedDiagnosticTag DiagnosticTag = 2
 )
 
 // DiagnosticTagArray is an array of DiagnosticTag elements.
 type DiagnosticTagArray []DiagnosticTag
 
-// DiagnosticWorkspaceClientCapabilities is a structure.
-type DiagnosticWorkspaceClientCapabilities struct{}
+// DiagnosticWorkspaceClientCapabilities is a named structure definition.
+//
+// Workspace client capabilities specific to diagnostic pull requests.
+//
+// @since 3.17.0
+type DiagnosticWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from
+	// the server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// pulled diagnostics currently shown. It should be used with absolute care and
+	// is useful for situation where a server for example detects a project wide
+	// change that requires such a calculation.
+	RefreshSupport Optional[Bool]
+}
 
-// DidChangeConfigurationClientCapabilities is a structure.
-type DidChangeConfigurationClientCapabilities struct{}
+// DidChangeConfigurationClientCapabilities is a named structure definition.
+type DidChangeConfigurationClientCapabilities struct {
+	// Did change configuration notification supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
-// DidChangeConfigurationParams is a structure.
-type DidChangeConfigurationParams struct{}
+// DidChangeConfigurationParams is a named structure definition.
+//
+// The parameters of a change configuration notification.
+type DidChangeConfigurationParams struct {
+	// The actual changed settings
+	Settings LSPAny
+}
 
-// DidChangeConfigurationRegistrationOptions is a structure.
-type DidChangeConfigurationRegistrationOptions struct{}
+// DidChangeConfigurationRegistrationOptions is a named structure definition.
+type DidChangeConfigurationRegistrationOptions struct {
+	Section Optional[DidChangeConfigurationRegistrationOptionsSection]
+}
 
 // DidChangeConfigurationRegistrationOptionsSection is a union of <TODO>.
 type DidChangeConfigurationRegistrationOptionsSection interface{}
 
-// DidChangeNotebookDocumentParams is a structure.
-type DidChangeNotebookDocumentParams struct{}
+// DidChangeNotebookDocumentParams is a named structure definition.
+//
+// The params sent in a change notebook document notification.
+//
+// @since 3.17.0
+type DidChangeNotebookDocumentParams struct {
+	// The notebook document that did change. The version number points
+	// to the version after all provided changes have been applied. If
+	// only the text document content of a cell changes the notebook version
+	// doesn't necessarily have to change.
+	NotebookDocument VersionedNotebookDocumentIdentifier
+	// The actual changes to the notebook document.
+	//
+	// The changes describe single state changes to the notebook document.
+	// So if there are two changes c1 (at array index 0) and c2 (at array
+	// index 1) for a notebook in state S then c1 moves the notebook from
+	// S to S' and c2 from S' to S”. So c1 is computed on the state S and
+	// c2 is computed on the state S'.
+	//
+	// To mirror the content of a notebook using change events use the following approach:
+	//   - start with the same initial content
+	//   - apply the 'notebookDocument/didChange' notifications in the order you receive them.
+	//   - apply the `NotebookChangeEvent`s in a single notification in the order
+	//     you receive them.
+	Change NotebookDocumentChangeEvent
+}
 
-// DidChangeTextDocumentParams is a structure.
-type DidChangeTextDocumentParams struct{}
+// DidChangeTextDocumentParams is a named structure definition.
+//
+// The change text document notification's parameters.
+type DidChangeTextDocumentParams struct {
+	// The document that did change. The version number points
+	// to the version after all provided content changes have
+	// been applied.
+	TextDocument VersionedTextDocumentIdentifier
+	// The actual content changes. The content changes describe single state changes
+	// to the document. So if there are two content changes c1 (at array index 0) and
+	// c2 (at array index 1) for a document in state S then c1 moves the document from
+	// S to S' and c2 from S' to S”. So c1 is computed on the state S and c2 is computed
+	// on the state S'.
+	//
+	// To mirror the content of a document using change events use the following approach:
+	//   - start with the same initial content
+	//   - apply the 'textDocument/didChange' notifications in the order you receive them.
+	//   - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
+	//     you receive them.
+	ContentChanges TextDocumentContentChangeEventArray
+}
 
-// DidChangeWatchedFilesClientCapabilities is a structure.
-type DidChangeWatchedFilesClientCapabilities struct{}
+// DidChangeWatchedFilesClientCapabilities is a named structure definition.
+type DidChangeWatchedFilesClientCapabilities struct {
+	// Did change watched files notification supports dynamic registration. Please note
+	// that the current protocol doesn't support static configuration for file changes
+	// from the server side.
+	DynamicRegistration Optional[Bool]
+	// Whether the client has support for {@link  RelativePattern relative pattern}
+	// or not.
+	//
+	// @since 3.17.0
+	RelativePatternSupport Optional[Bool]
+}
 
-// DidChangeWatchedFilesParams is a structure.
-type DidChangeWatchedFilesParams struct{}
+// DidChangeWatchedFilesParams is a named structure definition.
+//
+// The watched files change notification's parameters.
+type DidChangeWatchedFilesParams struct {
+	// The actual file events.
+	Changes FileEventArray
+}
 
-// DidChangeWatchedFilesRegistrationOptions is a structure.
-type DidChangeWatchedFilesRegistrationOptions struct{}
+// DidChangeWatchedFilesRegistrationOptions is a named structure definition.
+//
+// Describe options to be used when registered for text document change events.
+type DidChangeWatchedFilesRegistrationOptions struct {
+	// The watchers to register.
+	Watchers FileSystemWatcherArray
+}
 
-// DidChangeWorkspaceFoldersParams is a structure.
-type DidChangeWorkspaceFoldersParams struct{}
+// DidChangeWorkspaceFoldersParams is a named structure definition.
+//
+// The parameters of a `workspace/didChangeWorkspaceFolders` notification.
+type DidChangeWorkspaceFoldersParams struct {
+	// The actual workspace folder change event.
+	Event WorkspaceFoldersChangeEvent
+}
 
-// DidCloseNotebookDocumentParams is a structure.
-type DidCloseNotebookDocumentParams struct{}
+// DidCloseNotebookDocumentParams is a named structure definition.
+//
+// The params sent in a close notebook document notification.
+//
+// @since 3.17.0
+type DidCloseNotebookDocumentParams struct {
+	// The notebook document that got closed.
+	NotebookDocument NotebookDocumentIdentifier
+	// The text documents that represent the content
+	// of a notebook cell that got closed.
+	CellTextDocuments TextDocumentIdentifierArray
+}
 
-// DidCloseTextDocumentParams is a structure.
-type DidCloseTextDocumentParams struct{}
+// DidCloseTextDocumentParams is a named structure definition.
+//
+// The parameters sent in a close text document notification
+type DidCloseTextDocumentParams struct {
+	// The document that was closed.
+	TextDocument TextDocumentIdentifier
+}
 
-// DidOpenNotebookDocumentParams is a structure.
-type DidOpenNotebookDocumentParams struct{}
+// DidOpenNotebookDocumentParams is a named structure definition.
+//
+// The params sent in an open notebook document notification.
+//
+// @since 3.17.0
+type DidOpenNotebookDocumentParams struct {
+	// The notebook document that got opened.
+	NotebookDocument NotebookDocument
+	// The text documents that represent the content
+	// of a notebook cell.
+	CellTextDocuments TextDocumentItemArray
+}
 
-// DidOpenTextDocumentParams is a structure.
-type DidOpenTextDocumentParams struct{}
+// DidOpenTextDocumentParams is a named structure definition.
+//
+// The parameters sent in an open text document notification
+type DidOpenTextDocumentParams struct {
+	// The document that was opened.
+	TextDocument TextDocumentItem
+}
 
-// DidSaveNotebookDocumentParams is a structure.
-type DidSaveNotebookDocumentParams struct{}
+// DidSaveNotebookDocumentParams is a named structure definition.
+//
+// The params sent in a save notebook document notification.
+//
+// @since 3.17.0
+type DidSaveNotebookDocumentParams struct {
+	// The notebook document that got saved.
+	NotebookDocument NotebookDocumentIdentifier
+}
 
-// DidSaveTextDocumentParams is a structure.
-type DidSaveTextDocumentParams struct{}
+// DidSaveTextDocumentParams is a named structure definition.
+//
+// The parameters sent in a save text document notification
+type DidSaveTextDocumentParams struct {
+	// The document that was saved.
+	TextDocument TextDocumentIdentifier
+	// Optional the content when saved. Depends on the includeText value
+	// when the save notification was requested.
+	Text Optional[String]
+}
 
-// DocumentColorClientCapabilities is a structure.
-type DocumentColorClientCapabilities struct{}
+// DocumentColorClientCapabilities is a named structure definition.
+type DocumentColorClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `DocumentColorRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+}
 
-// DocumentColorOptions is a structure.
-type DocumentColorOptions struct{}
+// DocumentColorOptions is a named structure definition.
+type DocumentColorOptions struct {
+	WorkDoneProgressOptions
+}
 
-// DocumentColorParams is a structure.
-type DocumentColorParams struct{}
+// DocumentColorParams is a named structure definition.
+//
+// Parameters for a {@link DocumentColorRequest}.
+type DocumentColorParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// DocumentColorRegistrationOptions is a structure.
-type DocumentColorRegistrationOptions struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+}
 
-// DocumentDiagnosticParams is a structure.
-type DocumentDiagnosticParams struct{}
+// DocumentColorRegistrationOptions is a named structure definition.
+type DocumentColorRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DocumentColorOptions
+	StaticRegistrationOptions
+}
+
+// DocumentDiagnosticParams is a named structure definition.
+//
+// Parameters of the document diagnostic request.
+//
+// @since 3.17.0
+type DocumentDiagnosticParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
+
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The additional identifier  provided during registration.
+	Identifier Optional[String]
+	// The result id of a previous response if provided.
+	PreviousResultID Optional[String]
+}
 
 // DocumentDiagnosticReport is a union of <TODO>.
 type DocumentDiagnosticReport interface{}
 
 // DocumentDiagnosticReportKind is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// The document diagnostic report kinds.
 //
-//	The document diagnostic report kinds.
-//
-//	@since 3.17.0
+// @since 3.17.0
 type DocumentDiagnosticReportKind String
 
 const (
 	// FullDocumentDiagnosticReportKind is a member of the DocumentDiagnosticReportKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	A diagnostic report with a full
-	//	set of problems.
+	// A diagnostic report with a full
+	// set of problems.
 	FullDocumentDiagnosticReportKind DocumentDiagnosticReportKind = "full"
-
 	// UnchangedDocumentDiagnosticReportKind is a member of the DocumentDiagnosticReportKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	A report indicating that the last
-	//	returned report is still accurate.
+	// A report indicating that the last
+	// returned report is still accurate.
 	UnchangedDocumentDiagnosticReportKind DocumentDiagnosticReportKind = "unchanged"
 )
 
-// DocumentDiagnosticReportPartialResult is a structure.
-type DocumentDiagnosticReportPartialResult struct{}
+// DocumentDiagnosticReportPartialResult is a named structure definition.
+//
+// A partial result for a document diagnostic report.
+//
+// @since 3.17.0
+type DocumentDiagnosticReportPartialResult struct {
+	RelatedDocuments DocumentDiagnosticReportPartialResultRelatedDocumentsMap
+}
 
 // DocumentDiagnosticReportPartialResultRelatedDocuments is a union of <TODO>.
 type DocumentDiagnosticReportPartialResultRelatedDocuments interface{}
@@ -763,119 +1699,320 @@ type DocumentDiagnosticReportPartialResultRelatedDocumentsMap map[DocumentURI]Do
 // DocumentFilter is a union of <TODO>.
 type DocumentFilter interface{}
 
-// DocumentFilterArray is an array of DocumentFilter elements.
-type DocumentFilterArray []DocumentFilter
+// DocumentFormattingClientCapabilities is a named structure definition.
+//
+// Client capabilities of a {@link DocumentFormattingRequest}.
+type DocumentFormattingClientCapabilities struct {
+	// Whether formatting supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
-// DocumentFormattingClientCapabilities is a structure.
-type DocumentFormattingClientCapabilities struct{}
+// DocumentFormattingOptions is a named structure definition.
+//
+// Provider options for a {@link DocumentFormattingRequest}.
+type DocumentFormattingOptions struct {
+	WorkDoneProgressOptions
+}
 
-// DocumentFormattingOptions is a structure.
-type DocumentFormattingOptions struct{}
+// DocumentFormattingParams is a named structure definition.
+//
+// The parameters of a {@link DocumentFormattingRequest}.
+type DocumentFormattingParams struct {
+	WorkDoneProgressParams
 
-// DocumentFormattingParams is a structure.
-type DocumentFormattingParams struct{}
+	// The document to format.
+	TextDocument TextDocumentIdentifier
+	// The format options.
+	Options FormattingOptions
+}
 
-// DocumentFormattingRegistrationOptions is a structure.
-type DocumentFormattingRegistrationOptions struct{}
+// DocumentFormattingRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link DocumentFormattingRequest}.
+type DocumentFormattingRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DocumentFormattingOptions
+}
 
-// DocumentHighlight is a structure.
-type DocumentHighlight struct{}
+// DocumentHighlight is a named structure definition.
+//
+// A document highlight is a range inside a text document which deserves
+// special attention. Usually a document highlight is visualized by changing
+// the background color of its range.
+type DocumentHighlight struct {
+	// The range this highlight applies to.
+	Range Range
+	// The highlight kind, default is {@link DocumentHighlightKind.Text text}.
+	Kind Optional[DocumentHighlightKind]
+}
 
 // DocumentHighlightArray is an array of DocumentHighlight elements.
 type DocumentHighlightArray []DocumentHighlight
 
-// DocumentHighlightClientCapabilities is a structure.
-type DocumentHighlightClientCapabilities struct{}
+// DocumentHighlightClientCapabilities is a named structure definition.
+//
+// Client Capabilities for a {@link DocumentHighlightRequest}.
+type DocumentHighlightClientCapabilities struct {
+	// Whether document highlight supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
 // DocumentHighlightKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	A document highlight kind.
+// A document highlight kind.
 type DocumentHighlightKind UInt
 
 const (
 	// TextDocumentHighlightKind is a member of the DocumentHighlightKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	A textual occurrence.
+	// A textual occurrence.
 	TextDocumentHighlightKind DocumentHighlightKind = 1
-
 	// ReadDocumentHighlightKind is a member of the DocumentHighlightKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Read-access of a symbol, like reading a variable.
+	// Read-access of a symbol, like reading a variable.
 	ReadDocumentHighlightKind DocumentHighlightKind = 2
-
 	// WriteDocumentHighlightKind is a member of the DocumentHighlightKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Write-access of a symbol, like writing to a variable.
+	// Write-access of a symbol, like writing to a variable.
 	WriteDocumentHighlightKind DocumentHighlightKind = 3
 )
 
-// DocumentHighlightOptions is a structure.
-type DocumentHighlightOptions struct{}
+// DocumentHighlightOptions is a named structure definition.
+//
+// Provider options for a {@link DocumentHighlightRequest}.
+type DocumentHighlightOptions struct {
+	WorkDoneProgressOptions
+}
 
-// DocumentHighlightParams is a structure.
-type DocumentHighlightParams struct{}
+// DocumentHighlightParams is a named structure definition.
+//
+// Parameters for a {@link DocumentHighlightRequest}.
+type DocumentHighlightParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
+}
 
-// DocumentHighlightRegistrationOptions is a structure.
-type DocumentHighlightRegistrationOptions struct{}
+// DocumentHighlightRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link DocumentHighlightRequest}.
+type DocumentHighlightRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DocumentHighlightOptions
+}
 
-// DocumentLink is a structure.
-type DocumentLink struct{}
+// DocumentLink is a named structure definition.
+//
+// A document link is a range in a text document that links to an internal or external resource, like another
+// text document or a web site.
+type DocumentLink struct {
+	// The range this link applies to.
+	Range Range
+	// The uri this link points to. If missing a resolve request is sent later.
+	Target Optional[URI]
+	// The tooltip text when you hover over this link.
+	//
+	// If a tooltip is provided, is will be displayed in a string that includes instructions on how to
+	// trigger the link, such as `{0} (ctrl + click)`. The specific instructions vary depending on OS,
+	// user settings, and localization.
+	//
+	// @since 3.15.0
+	Tooltip Optional[String]
+	// A data entry field that is preserved on a document link between a
+	// DocumentLinkRequest and a DocumentLinkResolveRequest.
+	Data Optional[LSPAny]
+}
 
 // DocumentLinkArray is an array of DocumentLink elements.
 type DocumentLinkArray []DocumentLink
 
-// DocumentLinkClientCapabilities is a structure.
-type DocumentLinkClientCapabilities struct{}
+// DocumentLinkClientCapabilities is a named structure definition.
+//
+// The client capabilities of a {@link DocumentLinkRequest}.
+type DocumentLinkClientCapabilities struct {
+	// Whether document link supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// Whether the client supports the `tooltip` property on `DocumentLink`.
+	//
+	// @since 3.15.0
+	TooltipSupport Optional[Bool]
+}
 
-// DocumentLinkOptions is a structure.
-type DocumentLinkOptions struct{}
+// DocumentLinkOptions is a named structure definition.
+//
+// Provider options for a {@link DocumentLinkRequest}.
+type DocumentLinkOptions struct {
+	WorkDoneProgressOptions
 
-// DocumentLinkParams is a structure.
-type DocumentLinkParams struct{}
+	// Document links have a resolve provider as well.
+	ResolveProvider Optional[Bool]
+}
 
-// DocumentLinkRegistrationOptions is a structure.
-type DocumentLinkRegistrationOptions struct{}
+// DocumentLinkParams is a named structure definition.
+//
+// The parameters of a {@link DocumentLinkRequest}.
+type DocumentLinkParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// DocumentOnTypeFormattingClientCapabilities is a structure.
-type DocumentOnTypeFormattingClientCapabilities struct{}
+	// The document to provide document links for.
+	TextDocument TextDocumentIdentifier
+}
 
-// DocumentOnTypeFormattingOptions is a structure.
-type DocumentOnTypeFormattingOptions struct{}
+// DocumentLinkRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link DocumentLinkRequest}.
+type DocumentLinkRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DocumentLinkOptions
+}
 
-// DocumentOnTypeFormattingParams is a structure.
-type DocumentOnTypeFormattingParams struct{}
+// DocumentOnTypeFormattingClientCapabilities is a named structure definition.
+//
+// Client capabilities of a {@link DocumentOnTypeFormattingRequest}.
+type DocumentOnTypeFormattingClientCapabilities struct {
+	// Whether on type formatting supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
-// DocumentOnTypeFormattingRegistrationOptions is a structure.
-type DocumentOnTypeFormattingRegistrationOptions struct{}
+// DocumentOnTypeFormattingOptions is a named structure definition.
+//
+// Provider options for a {@link DocumentOnTypeFormattingRequest}.
+type DocumentOnTypeFormattingOptions struct {
+	// A character on which formatting should be triggered, like `{`.
+	FirstTriggerCharacter String
+	// More trigger characters.
+	MoreTriggerCharacter Optional[StringArray]
+}
 
-// DocumentRangeFormattingClientCapabilities is a structure.
-type DocumentRangeFormattingClientCapabilities struct{}
+// DocumentOnTypeFormattingParams is a named structure definition.
+//
+// The parameters of a {@link DocumentOnTypeFormattingRequest}.
+type DocumentOnTypeFormattingParams struct {
+	// The document to format.
+	TextDocument TextDocumentIdentifier
+	// The position around which the on type formatting should happen.
+	// This is not necessarily the exact position where the character denoted
+	// by the property `ch` got typed.
+	Position Position
+	// The character that has been typed that triggered the formatting
+	// on type request. That is not necessarily the last character that
+	// got inserted into the document since the client could auto insert
+	// characters as well (e.g. like automatic brace completion).
+	Ch String
+	// The formatting options.
+	Options FormattingOptions
+}
 
-// DocumentRangeFormattingOptions is a structure.
-type DocumentRangeFormattingOptions struct{}
+// DocumentOnTypeFormattingRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link DocumentOnTypeFormattingRequest}.
+type DocumentOnTypeFormattingRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DocumentOnTypeFormattingOptions
+}
 
-// DocumentRangeFormattingParams is a structure.
-type DocumentRangeFormattingParams struct{}
+// DocumentRangeFormattingClientCapabilities is a named structure definition.
+//
+// Client capabilities of a {@link DocumentRangeFormattingRequest}.
+type DocumentRangeFormattingClientCapabilities struct {
+	// Whether range formatting supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
-// DocumentRangeFormattingRegistrationOptions is a structure.
-type DocumentRangeFormattingRegistrationOptions struct{}
+// DocumentRangeFormattingOptions is a named structure definition.
+//
+// Provider options for a {@link DocumentRangeFormattingRequest}.
+type DocumentRangeFormattingOptions struct {
+	WorkDoneProgressOptions
+}
 
-// DocumentSymbol is a structure.
-type DocumentSymbol struct{}
+// DocumentRangeFormattingParams is a named structure definition.
+//
+// The parameters of a {@link DocumentRangeFormattingRequest}.
+type DocumentRangeFormattingParams struct {
+	WorkDoneProgressParams
+
+	// The document to format.
+	TextDocument TextDocumentIdentifier
+	// The range to format
+	Range Range
+	// The format options
+	Options FormattingOptions
+}
+
+// DocumentRangeFormattingRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link DocumentRangeFormattingRequest}.
+type DocumentRangeFormattingRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DocumentRangeFormattingOptions
+}
+
+// DocumentSelector is an array of DocumentFilter elements.
+type DocumentSelector []DocumentFilter
+
+// DocumentSymbol is a named structure definition.
+//
+// Represents programming constructs like variables, classes, interfaces etc.
+// that appear in a document. Document symbols can be hierarchical and they
+// have two ranges: one that encloses its definition and one that points to
+// its most interesting range, e.g. the range of an identifier.
+type DocumentSymbol struct {
+	// The name of this symbol. Will be displayed in the user interface and therefore must not be
+	// an empty string or a string only consisting of white spaces.
+	Name String
+	// More detail for this symbol, e.g the signature of a function.
+	Detail Optional[String]
+	// The kind of this symbol.
+	Kind SymbolKind
+	// Tags for this document symbol.
+	//
+	// @since 3.16.0
+	Tags Optional[SymbolTagArray]
+	// Indicates if this symbol is deprecated.
+	//
+	// @deprecated Use tags instead
+	//
+	// Deprecated: Use tags instead
+	Deprecated Optional[Bool]
+	// The range enclosing this symbol not including leading/trailing whitespace but everything else
+	// like comments. This information is typically used to determine if the clients cursor is
+	// inside the symbol to reveal in the symbol in the UI.
+	Range Range
+	// The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
+	// Must be contained by the `range`.
+	SelectionRange Range
+	// Children of this symbol, e.g. properties of a class.
+	Children Optional[DocumentSymbolArray]
+}
 
 // DocumentSymbolArray is an array of DocumentSymbol elements.
 type DocumentSymbolArray []DocumentSymbol
 
-// DocumentSymbolClientCapabilities is a structure.
-type DocumentSymbolClientCapabilities struct{}
+// DocumentSymbolClientCapabilities is a named structure definition.
+//
+// Client Capabilities for a {@link DocumentSymbolRequest}.
+type DocumentSymbolClientCapabilities struct {
+	// Whether document symbol supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// Specific capabilities for the `SymbolKind` in the
+	// `textDocument/documentSymbol` request.
+	SymbolKind Optional[DocumentSymbolClientCapabilitiesSymbolKind]
+	// The client supports hierarchical document symbols.
+	HierarchicalDocumentSymbolSupport Optional[Bool]
+	// The client supports tags on `SymbolInformation`. Tags are supported on
+	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// @since 3.16.0
+	TagSupport Optional[DocumentSymbolClientCapabilitiesTagSupport]
+	// The client supports an additional label presented in the UI when
+	// registering a document symbol provider.
+	//
+	// @since 3.16.0
+	LabelSupport Optional[Bool]
+}
 
 // DocumentSymbolClientCapabilitiesSymbolKind is a literal structure.
 type DocumentSymbolClientCapabilitiesSymbolKind struct{}
@@ -883,67 +2020,113 @@ type DocumentSymbolClientCapabilitiesSymbolKind struct{}
 // DocumentSymbolClientCapabilitiesTagSupport is a literal structure.
 type DocumentSymbolClientCapabilitiesTagSupport struct{}
 
-// DocumentSymbolOptions is a structure.
-type DocumentSymbolOptions struct{}
+// DocumentSymbolOptions is a named structure definition.
+//
+// Provider options for a {@link DocumentSymbolRequest}.
+type DocumentSymbolOptions struct {
+	WorkDoneProgressOptions
 
-// DocumentSymbolParams is a structure.
-type DocumentSymbolParams struct{}
+	// A human-readable string that is shown when multiple outlines trees
+	// are shown for the same document.
+	//
+	// @since 3.16.0
+	Label Optional[String]
+}
 
-// DocumentSymbolRegistrationOptions is a structure.
-type DocumentSymbolRegistrationOptions struct{}
+// DocumentSymbolParams is a named structure definition.
+//
+// Parameters for a {@link DocumentSymbolRequest}.
+type DocumentSymbolParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
+
+	// The text document.
+	TextDocument TextDocumentIdentifier
+}
+
+// DocumentSymbolRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link DocumentSymbolRequest}.
+type DocumentSymbolRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	DocumentSymbolOptions
+}
 
 // DocumentURI is the URI of a document.
 type DocumentURI url.URL
 
 // ErrorCodes is an enumeration of Int values.
 //
-// Documentation from the LSP specification:
-//
-//	Predefined error codes.
+// Predefined error codes.
 type ErrorCodes Int
 
 const (
 	// ParseErrorErrorCodes is a member of the ErrorCodes enumeration.
 	ParseErrorErrorCodes ErrorCodes = -32700
-
 	// InvalidRequestErrorCodes is a member of the ErrorCodes enumeration.
 	InvalidRequestErrorCodes ErrorCodes = -32600
-
 	// MethodNotFoundErrorCodes is a member of the ErrorCodes enumeration.
 	MethodNotFoundErrorCodes ErrorCodes = -32601
-
 	// InvalidParamsErrorCodes is a member of the ErrorCodes enumeration.
 	InvalidParamsErrorCodes ErrorCodes = -32602
-
 	// InternalErrorErrorCodes is a member of the ErrorCodes enumeration.
 	InternalErrorErrorCodes ErrorCodes = -32603
-
 	// ServerNotInitializedErrorCodes is a member of the ErrorCodes enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Error code indicating that a server received a notification or
-	//	request before the server has received the `initialize` request.
+	// Error code indicating that a server received a notification or
+	// request before the server has received the `initialize` request.
 	ServerNotInitializedErrorCodes ErrorCodes = -32002
-
 	// UnknownErrorCodeErrorCodes is a member of the ErrorCodes enumeration.
 	UnknownErrorCodeErrorCodes ErrorCodes = -32001
 )
 
-// ExecuteCommandClientCapabilities is a structure.
-type ExecuteCommandClientCapabilities struct{}
+// ExecuteCommandClientCapabilities is a named structure definition.
+//
+// The client capabilities of a {@link ExecuteCommandRequest}.
+type ExecuteCommandClientCapabilities struct {
+	// Execute command supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
-// ExecuteCommandOptions is a structure.
-type ExecuteCommandOptions struct{}
+// ExecuteCommandOptions is a named structure definition.
+//
+// The server capabilities of a {@link ExecuteCommandRequest}.
+type ExecuteCommandOptions struct {
+	WorkDoneProgressOptions
 
-// ExecuteCommandParams is a structure.
-type ExecuteCommandParams struct{}
+	// The commands to be executed on the server
+	Commands StringArray
+}
 
-// ExecuteCommandRegistrationOptions is a structure.
-type ExecuteCommandRegistrationOptions struct{}
+// ExecuteCommandParams is a named structure definition.
+//
+// The parameters of a {@link ExecuteCommandRequest}.
+type ExecuteCommandParams struct {
+	WorkDoneProgressParams
 
-// ExecutionSummary is a structure.
-type ExecutionSummary struct{}
+	// The identifier of the actual command handler.
+	Command String
+	// Arguments that the command should be invoked with.
+	Arguments Optional[LSPAnyArray]
+}
+
+// ExecuteCommandRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link ExecuteCommandRequest}.
+type ExecuteCommandRegistrationOptions struct {
+	ExecuteCommandOptions
+}
+
+// ExecutionSummary is a named structure definition.
+type ExecutionSummary struct {
+	// A strict monotonically increasing value
+	// indicating the execution order of a cell
+	// inside a notebook.
+	ExecutionOrder UInt
+	// Whether the execution was successful or
+	// not if known by the client.
+	Success Optional[Bool]
+}
 
 // FailureHandlingKind is an enumeration of String values.
 type FailureHandlingKind String
@@ -951,153 +2134,293 @@ type FailureHandlingKind String
 const (
 	// AbortFailureHandlingKind is a member of the FailureHandlingKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Applying the workspace change is simply aborted if one of the changes provided
-	//	fails. All operations executed before the failing operation stay executed.
+	// Applying the workspace change is simply aborted if one of the changes provided
+	// fails. All operations executed before the failing operation stay executed.
 	AbortFailureHandlingKind FailureHandlingKind = "abort"
-
 	// TransactionalFailureHandlingKind is a member of the FailureHandlingKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	All operations are executed transactional. That means they either all
-	//	succeed or no changes at all are applied to the workspace.
+	// All operations are executed transactional. That means they either all
+	// succeed or no changes at all are applied to the workspace.
 	TransactionalFailureHandlingKind FailureHandlingKind = "transactional"
-
 	// TextOnlyTransactionalFailureHandlingKind is a member of the FailureHandlingKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	If the workspace edit contains only textual file changes they are executed transactional.
-	//	If resource changes (create, rename or delete file) are part of the change the failure
-	//	handling strategy is abort.
+	// If the workspace edit contains only textual file changes they are executed transactional.
+	// If resource changes (create, rename or delete file) are part of the change the failure
+	// handling strategy is abort.
 	TextOnlyTransactionalFailureHandlingKind FailureHandlingKind = "textOnlyTransactional"
-
 	// UndoFailureHandlingKind is a member of the FailureHandlingKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The client tries to undo the operations already executed. But there is no
-	//	guarantee that this is succeeding.
+	// The client tries to undo the operations already executed. But there is no
+	// guarantee that this is succeeding.
 	UndoFailureHandlingKind FailureHandlingKind = "undo"
 )
 
 // FileChangeType is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	The file event type
+// The file event type
 type FileChangeType UInt
 
 const (
 	// CreatedFileChangeType is a member of the FileChangeType enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The file got created.
+	// The file got created.
 	CreatedFileChangeType FileChangeType = 1
-
 	// ChangedFileChangeType is a member of the FileChangeType enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The file got changed.
+	// The file got changed.
 	ChangedFileChangeType FileChangeType = 2
-
 	// DeletedFileChangeType is a member of the FileChangeType enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The file got deleted.
+	// The file got deleted.
 	DeletedFileChangeType FileChangeType = 3
 )
 
-// FileCreate is a structure.
-type FileCreate struct{}
+// FileCreate is a named structure definition.
+//
+// Represents information on a file/folder create.
+//
+// @since 3.16.0
+type FileCreate struct {
+	// A file:// URI for the location of the file/folder being created.
+	URI String
+}
 
 // FileCreateArray is an array of FileCreate elements.
 type FileCreateArray []FileCreate
 
-// FileDelete is a structure.
-type FileDelete struct{}
+// FileDelete is a named structure definition.
+//
+// Represents information on a file/folder delete.
+//
+// @since 3.16.0
+type FileDelete struct {
+	// A file:// URI for the location of the file/folder being deleted.
+	URI String
+}
 
 // FileDeleteArray is an array of FileDelete elements.
 type FileDeleteArray []FileDelete
 
-// FileEvent is a structure.
-type FileEvent struct{}
+// FileEvent is a named structure definition.
+//
+// An event describing a file change.
+type FileEvent struct {
+	// The file's uri.
+	URI DocumentURI
+	// The change type.
+	Type FileChangeType
+}
 
 // FileEventArray is an array of FileEvent elements.
 type FileEventArray []FileEvent
 
-// FileOperationClientCapabilities is a structure.
-type FileOperationClientCapabilities struct{}
+// FileOperationClientCapabilities is a named structure definition.
+//
+// Capabilities relating to events from file operations by the user in the client.
+//
+// These events do not come from the file system, they come from user operations
+// like renaming a file in the UI.
+//
+// @since 3.16.0
+type FileOperationClientCapabilities struct {
+	// Whether the client supports dynamic registration for file requests/notifications.
+	DynamicRegistration Optional[Bool]
+	// The client has support for sending didCreateFiles notifications.
+	DidCreate Optional[Bool]
+	// The client has support for sending willCreateFiles requests.
+	WillCreate Optional[Bool]
+	// The client has support for sending didRenameFiles notifications.
+	DidRename Optional[Bool]
+	// The client has support for sending willRenameFiles requests.
+	WillRename Optional[Bool]
+	// The client has support for sending didDeleteFiles notifications.
+	DidDelete Optional[Bool]
+	// The client has support for sending willDeleteFiles requests.
+	WillDelete Optional[Bool]
+}
 
-// FileOperationFilter is a structure.
-type FileOperationFilter struct{}
+// FileOperationFilter is a named structure definition.
+//
+// A filter to describe in which file operation requests or notifications
+// the server is interested in receiving.
+//
+// @since 3.16.0
+type FileOperationFilter struct {
+	// A Uri scheme like `file` or `untitled`.
+	Scheme Optional[String]
+	// The actual file operation pattern.
+	Pattern FileOperationPattern
+}
 
 // FileOperationFilterArray is an array of FileOperationFilter elements.
 type FileOperationFilterArray []FileOperationFilter
 
-// FileOperationOptions is a structure.
-type FileOperationOptions struct{}
+// FileOperationOptions is a named structure definition.
+//
+// Options for notifications/requests for user operations on files.
+//
+// @since 3.16.0
+type FileOperationOptions struct {
+	// The server is interested in receiving didCreateFiles notifications.
+	DidCreate Optional[FileOperationRegistrationOptions]
+	// The server is interested in receiving willCreateFiles requests.
+	WillCreate Optional[FileOperationRegistrationOptions]
+	// The server is interested in receiving didRenameFiles notifications.
+	DidRename Optional[FileOperationRegistrationOptions]
+	// The server is interested in receiving willRenameFiles requests.
+	WillRename Optional[FileOperationRegistrationOptions]
+	// The server is interested in receiving didDeleteFiles file notifications.
+	DidDelete Optional[FileOperationRegistrationOptions]
+	// The server is interested in receiving willDeleteFiles file requests.
+	WillDelete Optional[FileOperationRegistrationOptions]
+}
 
-// FileOperationPattern is a structure.
-type FileOperationPattern struct{}
+// FileOperationPattern is a named structure definition.
+//
+// A pattern to describe in which file operation requests or notifications
+// the server is interested in receiving.
+//
+// @since 3.16.0
+type FileOperationPattern struct {
+	// The glob pattern to match. Glob patterns can have the following syntax:
+	// - `*` to match one or more characters in a path segment
+	// - `?` to match on one character in a path segment
+	// - `**` to match any number of path segments, including none
+	// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
+	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
+	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
+	Glob String
+	// Whether to match files or folders with this pattern.
+	//
+	// Matches both if undefined.
+	Matches Optional[FileOperationPatternKind]
+	// Additional options used during matching.
+	Options Optional[FileOperationPatternOptions]
+}
 
 // FileOperationPatternKind is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// A pattern kind describing if a glob pattern matches a file a folder or
+// both.
 //
-//	A pattern kind describing if a glob pattern matches a file a folder or
-//	both.
-//
-//	@since 3.16.0
+// @since 3.16.0
 type FileOperationPatternKind String
 
 const (
 	// FileFileOperationPatternKind is a member of the FileOperationPatternKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The pattern matches a file only.
+	// The pattern matches a file only.
 	FileFileOperationPatternKind FileOperationPatternKind = "file"
-
 	// FolderFileOperationPatternKind is a member of the FileOperationPatternKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The pattern matches a folder only.
+	// The pattern matches a folder only.
 	FolderFileOperationPatternKind FileOperationPatternKind = "folder"
 )
 
-// FileOperationPatternOptions is a structure.
-type FileOperationPatternOptions struct{}
+// FileOperationPatternOptions is a named structure definition.
+//
+// Matching options for the file operation pattern.
+//
+// @since 3.16.0
+type FileOperationPatternOptions struct {
+	// The pattern should be matched ignoring casing.
+	IgnoreCase Optional[Bool]
+}
 
-// FileOperationRegistrationOptions is a structure.
-type FileOperationRegistrationOptions struct{}
+// FileOperationRegistrationOptions is a named structure definition.
+//
+// The options to register for file operations.
+//
+// @since 3.16.0
+type FileOperationRegistrationOptions struct {
+	// The actual filters.
+	Filters FileOperationFilterArray
+}
 
-// FileRename is a structure.
-type FileRename struct{}
+// FileRename is a named structure definition.
+//
+// Represents information on a file/folder rename.
+//
+// @since 3.16.0
+type FileRename struct {
+	// A file:// URI for the original location of the file/folder being renamed.
+	OldURI String
+	// A file:// URI for the new location of the file/folder being renamed.
+	NewURI String
+}
 
 // FileRenameArray is an array of FileRename elements.
 type FileRenameArray []FileRename
 
-// FileSystemWatcher is a structure.
-type FileSystemWatcher struct{}
+// FileSystemWatcher is a named structure definition.
+type FileSystemWatcher struct {
+	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
+	//
+	// @since 3.17.0 support for relative patterns.
+	GlobPattern GlobPattern
+	// The kind of events of interest. If omitted it defaults
+	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
+	// which is 7.
+	Kind Optional[WatchKind]
+}
 
 // FileSystemWatcherArray is an array of FileSystemWatcher elements.
 type FileSystemWatcherArray []FileSystemWatcher
 
-// FoldingRange is a structure.
-type FoldingRange struct{}
+// FoldingRange is a named structure definition.
+//
+// Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
+// than the number of lines in the document. Clients are free to ignore invalid ranges.
+type FoldingRange struct {
+	// The zero-based start line of the range to fold. The folded area starts after the line's last character.
+	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
+	StartLine UInt
+	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
+	StartCharacter Optional[UInt]
+	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
+	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
+	EndLine UInt
+	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
+	EndCharacter Optional[UInt]
+	// Describes the kind of the folding range such as `comment' or 'region'. The kind
+	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
+	// See {@link FoldingRangeKind} for an enumeration of standardized kinds.
+	Kind Optional[FoldingRangeKind]
+	// The text that the client should show when the specified range is
+	// collapsed. If not defined or not supported by the client, a default
+	// will be chosen by the client.
+	//
+	// @since 3.17.0
+	CollapsedText Optional[String]
+}
 
 // FoldingRangeArray is an array of FoldingRange elements.
 type FoldingRangeArray []FoldingRange
 
-// FoldingRangeClientCapabilities is a structure.
-type FoldingRangeClientCapabilities struct{}
+// FoldingRangeClientCapabilities is a named structure definition.
+type FoldingRangeClientCapabilities struct {
+	// Whether implementation supports dynamic registration for folding range
+	// providers. If this is set to `true` the client supports the new
+	// `FoldingRangeRegistrationOptions` return value for the corresponding
+	// server capability as well.
+	DynamicRegistration Optional[Bool]
+	// The maximum number of folding ranges that the client prefers to receive
+	// per document. The value serves as a hint, servers are free to follow the
+	// limit.
+	RangeLimit Optional[UInt]
+	// If set, the client signals that it only supports folding complete lines.
+	// If set, client will ignore specified `startCharacter` and `endCharacter`
+	// properties in a FoldingRange.
+	LineFoldingOnly Optional[Bool]
+	// Specific options for the folding range kind.
+	//
+	// @since 3.17.0
+	FoldingRangeKind Optional[FoldingRangeClientCapabilitiesFoldingRangeKind]
+	// Specific options for the folding range.
+	//
+	// @since 3.17.0
+	FoldingRange Optional[FoldingRangeClientCapabilitiesFoldingRange]
+}
 
 // FoldingRangeClientCapabilitiesFoldingRange is a literal structure.
 type FoldingRangeClientCapabilitiesFoldingRange struct{}
@@ -1107,54 +2430,127 @@ type FoldingRangeClientCapabilitiesFoldingRangeKind struct{}
 
 // FoldingRangeKind is an enumeration of String values.
 //
-// Documentation from the LSP specification:
-//
-//	A set of predefined range kinds.
+// A set of predefined range kinds.
 type FoldingRangeKind String
 
 const (
 	// CommentFoldingRangeKind is a member of the FoldingRangeKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Folding range for a comment
+	// Folding range for a comment
 	CommentFoldingRangeKind FoldingRangeKind = "comment"
-
 	// ImportsFoldingRangeKind is a member of the FoldingRangeKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Folding range for an import or include
+	// Folding range for an import or include
 	ImportsFoldingRangeKind FoldingRangeKind = "imports"
-
 	// RegionFoldingRangeKind is a member of the FoldingRangeKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Folding range for a region (e.g. `#region`)
+	// Folding range for a region (e.g. `#region`)
 	RegionFoldingRangeKind FoldingRangeKind = "region"
 )
 
 // FoldingRangeKindArray is an array of FoldingRangeKind elements.
 type FoldingRangeKindArray []FoldingRangeKind
 
-// FoldingRangeOptions is a structure.
-type FoldingRangeOptions struct{}
+// FoldingRangeOptions is a named structure definition.
+type FoldingRangeOptions struct {
+	WorkDoneProgressOptions
+}
 
-// FoldingRangeParams is a structure.
-type FoldingRangeParams struct{}
+// FoldingRangeParams is a named structure definition.
+//
+// Parameters for a {@link FoldingRangeRequest}.
+type FoldingRangeParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// FoldingRangeRegistrationOptions is a structure.
-type FoldingRangeRegistrationOptions struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+}
 
-// FormattingOptions is a structure.
-type FormattingOptions struct{}
+// FoldingRangeRegistrationOptions is a named structure definition.
+type FoldingRangeRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	FoldingRangeOptions
+	StaticRegistrationOptions
+}
 
-// FullDocumentDiagnosticReport is a structure.
-type FullDocumentDiagnosticReport struct{}
+// FormattingOptions is a named structure definition.
+//
+// Value-object describing what options formatting should use.
+type FormattingOptions struct {
+	// Size of a tab in spaces.
+	TabSize UInt
+	// Prefer spaces over tabs.
+	InsertSpaces Bool
+	// Trim trailing whitespace on a line.
+	//
+	// @since 3.15.0
+	TrimTrailingWhitespace Optional[Bool]
+	// Insert a newline character at the end of the file if one does not exist.
+	//
+	// @since 3.15.0
+	InsertFinalNewline Optional[Bool]
+	// Trim all newlines after the final newline at the end of the file.
+	//
+	// @since 3.15.0
+	TrimFinalNewlines Optional[Bool]
+}
 
-// GeneralClientCapabilities is a structure.
-type GeneralClientCapabilities struct{}
+// FullDocumentDiagnosticReport is a named structure definition.
+//
+// A diagnostic report with a full set of problems.
+//
+// @since 3.17.0
+type FullDocumentDiagnosticReport struct {
+	// An optional result id. If provided it will
+	// be sent on the next diagnostic request for the
+	// same document.
+	ResultID Optional[String]
+	// The actual items.
+	Items DiagnosticArray
+}
+
+// GeneralClientCapabilities is a named structure definition.
+//
+// General client capabilities.
+//
+// @since 3.16.0
+type GeneralClientCapabilities struct {
+	// Client capability that signals how the client
+	// handles stale requests (e.g. a request
+	// for which the client will not process the response
+	// anymore since the information is outdated).
+	//
+	// @since 3.17.0
+	StaleRequestSupport Optional[GeneralClientCapabilitiesStaleRequestSupport]
+	// Client capabilities specific to regular expressions.
+	//
+	// @since 3.16.0
+	RegularExpressions Optional[RegularExpressionsClientCapabilities]
+	// Client capabilities specific to the client's markdown parser.
+	//
+	// @since 3.16.0
+	Markdown Optional[MarkdownClientCapabilities]
+	// The position encodings supported by the client. Client and server
+	// have to agree on the same position encoding to ensure that offsets
+	// (e.g. character position in a line) are interpreted the same on both
+	// sides.
+	//
+	// To keep the protocol backwards compatible the following applies: if
+	// the value 'utf-16' is missing from the array of position encodings
+	// servers can assume that the client supports UTF-16. UTF-16 is
+	// therefore a mandatory encoding.
+	//
+	// If omitted it defaults to ['utf-16'].
+	//
+	// Implementation considerations: since the conversion from one encoding
+	// into another requires the content of the file / line the conversion
+	// is best done where the file is read which is usually on the server
+	// side.
+	//
+	// @since 3.17.0
+	PositionEncodings Optional[PositionEncodingKindArray]
+}
 
 // GeneralClientCapabilitiesStaleRequestSupport is a literal structure.
 type GeneralClientCapabilitiesStaleRequestSupport struct{}
@@ -1162,41 +2558,102 @@ type GeneralClientCapabilitiesStaleRequestSupport struct{}
 // GlobPattern is a union of <TODO>.
 type GlobPattern interface{}
 
-// Hover is a structure.
-type Hover struct{}
+// Hover is a named structure definition.
+//
+// The result of a hover request.
+type Hover struct {
+	// The hover's content
+	Contents HoverContents
+	// An optional range inside the text document that is used to
+	// visualize the hover, e.g. by changing the background color.
+	Range Optional[Range]
+}
 
-// HoverClientCapabilities is a structure.
-type HoverClientCapabilities struct{}
+// HoverClientCapabilities is a named structure definition.
+type HoverClientCapabilities struct {
+	// Whether hover supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// Client supports the following content formats for the content
+	// property. The order describes the preferred format of the client.
+	ContentFormat Optional[MarkupKindArray]
+}
 
 // HoverContents is a union of <TODO>.
 type HoverContents interface{}
 
-// HoverOptions is a structure.
-type HoverOptions struct{}
+// HoverOptions is a named structure definition.
+//
+// Hover options.
+type HoverOptions struct {
+	WorkDoneProgressOptions
+}
 
-// HoverParams is a structure.
-type HoverParams struct{}
+// HoverParams is a named structure definition.
+//
+// Parameters for a {@link HoverRequest}.
+type HoverParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+}
 
-// HoverRegistrationOptions is a structure.
-type HoverRegistrationOptions struct{}
+// HoverRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link HoverRequest}.
+type HoverRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	HoverOptions
+}
 
-// ImplementationClientCapabilities is a structure.
-type ImplementationClientCapabilities struct{}
+// ImplementationClientCapabilities is a named structure definition.
+//
+// @since 3.6.0
+type ImplementationClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `ImplementationRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+	// The client supports additional metadata in the form of definition links.
+	//
+	// @since 3.14.0
+	LinkSupport Optional[Bool]
+}
 
-// ImplementationOptions is a structure.
-type ImplementationOptions struct{}
+// ImplementationOptions is a named structure definition.
+type ImplementationOptions struct {
+	WorkDoneProgressOptions
+}
 
-// ImplementationParams is a structure.
-type ImplementationParams struct{}
+// ImplementationParams is a named structure definition.
+type ImplementationParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
+}
 
-// ImplementationRegistrationOptions is a structure.
-type ImplementationRegistrationOptions struct{}
+// ImplementationRegistrationOptions is a named structure definition.
+type ImplementationRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	ImplementationOptions
+	StaticRegistrationOptions
+}
 
-// InitializeError is a structure.
-type InitializeError struct{}
+// InitializeError is a named structure definition.
+//
+// The data type of the ResponseError if the
+// initialize request fails.
+type InitializeError struct {
+	// Indicates whether the client execute the following retry logic:
+	// (1) show the message provided by the ResponseError to the user
+	// (2) user selects retry or cancel
+	// (3) if user selected retry the initialize method is sent again.
+	Retry Bool
+}
 
-// InitializeParams is a structure.
-type InitializeParams struct{}
+// InitializeParams is a named structure definition.
+type InitializeParams struct {
+	initializeParams
+	WorkspaceFoldersInitializeParams
+}
 
 // InitializeParamsClientInfo is a literal structure.
 type InitializeParamsClientInfo struct{}
@@ -1210,57 +2667,136 @@ type InitializeParamsRootPath interface{}
 // InitializeParamsRootURI is a union of <TODO>.
 type InitializeParamsRootURI interface{}
 
-// InitializeResult is a structure.
-type InitializeResult struct{}
+// InitializeResult is a named structure definition.
+//
+// The result returned from an initialize request.
+type InitializeResult struct {
+	// The capabilities the language server provides.
+	Capabilities ServerCapabilities
+	// Information about the server.
+	//
+	// @since 3.15.0
+	ServerInfo Optional[InitializeResultServerInfo]
+}
 
 // InitializeResultServerInfo is a literal structure.
 type InitializeResultServerInfo struct{}
 
-// InitializedParams is a structure.
+// InitializedParams is a named structure definition.
 type InitializedParams struct{}
 
-// InlayHint is a structure.
-type InlayHint struct{}
+// InlayHint is a named structure definition.
+//
+// Inlay hint information.
+//
+// @since 3.17.0
+type InlayHint struct {
+	// The position of this hint.
+	Position Position
+	// The label of this hint. A human readable string or an array of
+	// InlayHintLabelPart label parts.
+	//
+	// *Note* that neither the string nor the label part can be empty.
+	Label InlayHintLabel
+	// The kind of this hint. Can be omitted in which case the client
+	// should fall back to a reasonable default.
+	Kind Optional[InlayHintKind]
+	// Optional text edits that are performed when accepting this inlay hint.
+	//
+	// *Note* that edits are expected to change the document so that the inlay
+	// hint (or its nearest variant) is now part of the document and the inlay
+	// hint itself is now obsolete.
+	TextEdits Optional[TextEditArray]
+	// The tooltip text when you hover over this item.
+	Tooltip Optional[InlayHintTooltip]
+	// Render padding before the hint.
+	//
+	// Note: Padding should use the editor's background color, not the
+	// background color of the hint itself. That means padding can be used
+	// to visually align/separate an inlay hint.
+	PaddingLeft Optional[Bool]
+	// Render padding after the hint.
+	//
+	// Note: Padding should use the editor's background color, not the
+	// background color of the hint itself. That means padding can be used
+	// to visually align/separate an inlay hint.
+	PaddingRight Optional[Bool]
+	// A data entry field that is preserved on an inlay hint between
+	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
+	Data Optional[LSPAny]
+}
 
 // InlayHintArray is an array of InlayHint elements.
 type InlayHintArray []InlayHint
 
-// InlayHintClientCapabilities is a structure.
-type InlayHintClientCapabilities struct{}
+// InlayHintClientCapabilities is a named structure definition.
+//
+// Inlay hint client capabilities.
+//
+// @since 3.17.0
+type InlayHintClientCapabilities struct {
+	// Whether inlay hints support dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// Indicates which properties a client can resolve lazily on an inlay
+	// hint.
+	ResolveSupport Optional[InlayHintClientCapabilitiesResolveSupport]
+}
 
 // InlayHintClientCapabilitiesResolveSupport is a literal structure.
 type InlayHintClientCapabilitiesResolveSupport struct{}
 
 // InlayHintKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// Inlay hint kinds.
 //
-//	Inlay hint kinds.
-//
-//	@since 3.17.0
+// @since 3.17.0
 type InlayHintKind UInt
 
 const (
 	// TypeInlayHintKind is a member of the InlayHintKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	An inlay hint that for a type annotation.
+	// An inlay hint that for a type annotation.
 	TypeInlayHintKind InlayHintKind = 1
-
 	// ParameterInlayHintKind is a member of the InlayHintKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	An inlay hint that is for a parameter.
+	// An inlay hint that is for a parameter.
 	ParameterInlayHintKind InlayHintKind = 2
 )
 
 // InlayHintLabel is a union of <TODO>.
 type InlayHintLabel interface{}
 
-// InlayHintLabelPart is a structure.
-type InlayHintLabelPart struct{}
+// InlayHintLabelPart is a named structure definition.
+//
+// An inlay hint label part allows for interactive and composite labels
+// of inlay hints.
+//
+// @since 3.17.0
+type InlayHintLabelPart struct {
+	// The value of this label part.
+	Value String
+	// The tooltip text when you hover over this label part. Depending on
+	// the client capability `inlayHint.resolveSupport` clients might resolve
+	// this property late using the resolve request.
+	Tooltip Optional[InlayHintLabelPartTooltip]
+	// An optional source code location that represents this
+	// label part.
+	//
+	// The editor will use this location for the hover and for code navigation
+	// features: This part will become a clickable link that resolves to the
+	// definition of the symbol at the given location (not necessarily the
+	// location itself), it shows the hover that shows at the given location,
+	// and it shows a context menu with further code navigation commands.
+	//
+	// Depending on the client capability `inlayHint.resolveSupport` clients
+	// might resolve this property late using the resolve request.
+	Location Optional[Location]
+	// An optional command for this label part.
+	//
+	// Depending on the client capability `inlayHint.resolveSupport` clients
+	// might resolve this property late using the resolve request.
+	Command Optional[Command]
+}
 
 // InlayHintLabelPartArray is an array of InlayHintLabelPart elements.
 type InlayHintLabelPartArray []InlayHintLabelPart
@@ -1268,20 +2804,62 @@ type InlayHintLabelPartArray []InlayHintLabelPart
 // InlayHintLabelPartTooltip is a union of <TODO>.
 type InlayHintLabelPartTooltip interface{}
 
-// InlayHintOptions is a structure.
-type InlayHintOptions struct{}
+// InlayHintOptions is a named structure definition.
+//
+// Inlay hint options used during static registration.
+//
+// @since 3.17.0
+type InlayHintOptions struct {
+	WorkDoneProgressOptions
 
-// InlayHintParams is a structure.
-type InlayHintParams struct{}
+	// The server provides support to resolve additional
+	// information for an inlay hint item.
+	ResolveProvider Optional[Bool]
+}
 
-// InlayHintRegistrationOptions is a structure.
-type InlayHintRegistrationOptions struct{}
+// InlayHintParams is a named structure definition.
+//
+// A parameter literal used in inlay hint requests.
+//
+// @since 3.17.0
+type InlayHintParams struct {
+	WorkDoneProgressParams
+
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The document range for which inlay hints should be computed.
+	Range Range
+}
+
+// InlayHintRegistrationOptions is a named structure definition.
+//
+// Inlay hint options used during static or dynamic registration.
+//
+// @since 3.17.0
+type InlayHintRegistrationOptions struct {
+	InlayHintOptions
+	TextDocumentRegistrationOptions
+	StaticRegistrationOptions
+}
 
 // InlayHintTooltip is a union of <TODO>.
 type InlayHintTooltip interface{}
 
-// InlayHintWorkspaceClientCapabilities is a structure.
-type InlayHintWorkspaceClientCapabilities struct{}
+// InlayHintWorkspaceClientCapabilities is a named structure definition.
+//
+// Client workspace capabilities specific to inlay hints.
+//
+// @since 3.17.0
+type InlayHintWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from
+	// the server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// inlay hints currently shown. It should be used with absolute care and
+	// is useful for situation where a server for example detects a project wide
+	// change that requires such a calculation.
+	RefreshSupport Optional[Bool]
+}
 
 // InlineValue is a union of <TODO>.
 type InlineValue interface{}
@@ -1289,100 +2867,188 @@ type InlineValue interface{}
 // InlineValueArray is an array of InlineValue elements.
 type InlineValueArray []InlineValue
 
-// InlineValueClientCapabilities is a structure.
-type InlineValueClientCapabilities struct{}
+// InlineValueClientCapabilities is a named structure definition.
+//
+// Client capabilities specific to inline values.
+//
+// @since 3.17.0
+type InlineValueClientCapabilities struct {
+	// Whether implementation supports dynamic registration for inline value providers.
+	DynamicRegistration Optional[Bool]
+}
 
-// InlineValueContext is a structure.
-type InlineValueContext struct{}
+// InlineValueContext is a named structure definition.
+//
+// @since 3.17.0
+type InlineValueContext struct {
+	// The stack frame (as a DAP Id) where the execution has stopped.
+	FrameID Int
+	// The document range where execution has stopped.
+	// Typically the end position of the range denotes the line where the inline values are shown.
+	StoppedLocation Range
+}
 
-// InlineValueEvaluatableExpression is a structure.
-type InlineValueEvaluatableExpression struct{}
+// InlineValueEvaluatableExpression is a named structure definition.
+//
+// Provide an inline value through an expression evaluation.
+// If only a range is specified, the expression will be extracted from the underlying document.
+// An optional expression can be used to override the extracted expression.
+//
+// @since 3.17.0
+type InlineValueEvaluatableExpression struct {
+	// The document range for which the inline value applies.
+	// The range is used to extract the evaluatable expression from the underlying document.
+	Range Range
+	// If specified the expression overrides the extracted expression.
+	Expression Optional[String]
+}
 
-// InlineValueOptions is a structure.
-type InlineValueOptions struct{}
+// InlineValueOptions is a named structure definition.
+//
+// Inline value options used during static registration.
+//
+// @since 3.17.0
+type InlineValueOptions struct {
+	WorkDoneProgressOptions
+}
 
-// InlineValueParams is a structure.
-type InlineValueParams struct{}
+// InlineValueParams is a named structure definition.
+//
+// A parameter literal used in inline value requests.
+//
+// @since 3.17.0
+type InlineValueParams struct {
+	WorkDoneProgressParams
 
-// InlineValueRegistrationOptions is a structure.
-type InlineValueRegistrationOptions struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The document range for which inline values should be computed.
+	Range Range
+	// Additional information about the context in which inline values were
+	// requested.
+	Context InlineValueContext
+}
 
-// InlineValueText is a structure.
-type InlineValueText struct{}
+// InlineValueRegistrationOptions is a named structure definition.
+//
+// Inline value options used during static or dynamic registration.
+//
+// @since 3.17.0
+type InlineValueRegistrationOptions struct {
+	InlineValueOptions
+	TextDocumentRegistrationOptions
+	StaticRegistrationOptions
+}
 
-// InlineValueVariableLookup is a structure.
-type InlineValueVariableLookup struct{}
+// InlineValueText is a named structure definition.
+//
+// Provide inline value as text.
+//
+// @since 3.17.0
+type InlineValueText struct {
+	// The document range for which the inline value applies.
+	Range Range
+	// The text of the inline value.
+	Text String
+}
 
-// InlineValueWorkspaceClientCapabilities is a structure.
-type InlineValueWorkspaceClientCapabilities struct{}
+// InlineValueVariableLookup is a named structure definition.
+//
+// Provide inline value through a variable lookup.
+// If only a range is specified, the variable name will be extracted from the underlying document.
+// An optional variable name can be used to override the extracted name.
+//
+// @since 3.17.0
+type InlineValueVariableLookup struct {
+	// The document range for which the inline value applies.
+	// The range is used to extract the variable name from the underlying document.
+	Range Range
+	// If specified the name of the variable to look up.
+	VariableName Optional[String]
+	// How to perform the lookup.
+	CaseSensitiveLookup Bool
+}
 
-// InsertReplaceEdit is a structure.
-type InsertReplaceEdit struct{}
+// InlineValueWorkspaceClientCapabilities is a named structure definition.
+//
+// Client workspace capabilities specific to inline values.
+//
+// @since 3.17.0
+type InlineValueWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from the
+	// server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// inline values currently shown. It should be used with absolute care and is
+	// useful for situation where a server for example detects a project wide
+	// change that requires such a calculation.
+	RefreshSupport Optional[Bool]
+}
+
+// InsertReplaceEdit is a named structure definition.
+//
+// A special text edit to provide an insert and a replace operation.
+//
+// @since 3.16.0
+type InsertReplaceEdit struct {
+	// The string to be inserted.
+	NewText String
+	// The range if the insert is requested
+	Insert Range
+	// The range if the replace is requested.
+	Replace Range
+}
 
 // InsertTextFormat is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	Defines whether the insert text in a completion item should be interpreted as
-//	plain text or a snippet.
+// Defines whether the insert text in a completion item should be interpreted as
+// plain text or a snippet.
 type InsertTextFormat UInt
 
 const (
 	// PlainTextInsertTextFormat is a member of the InsertTextFormat enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The primary text to be inserted is treated as a plain string.
+	// The primary text to be inserted is treated as a plain string.
 	PlainTextInsertTextFormat InsertTextFormat = 1
-
 	// SnippetInsertTextFormat is a member of the InsertTextFormat enumeration.
 	//
-	// Documentation from the LSP specification:
+	// The primary text to be inserted is treated as a snippet.
 	//
-	//	The primary text to be inserted is treated as a snippet.
+	// A snippet can define tab stops and placeholders with `$1`, `$2`
+	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
+	// the end of the snippet. Placeholders with equal identifiers are linked,
+	// that is typing in one will update others too.
 	//
-	//	A snippet can define tab stops and placeholders with `$1`, `$2`
-	//	and `${3:foo}`. `$0` defines the final tab stop, it defaults to
-	//	the end of the snippet. Placeholders with equal identifiers are linked,
-	//	that is typing in one will update others too.
-	//
-	//	See also: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#snippet_syntax
+	// See also: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#snippet_syntax
 	SnippetInsertTextFormat InsertTextFormat = 2
 )
 
 // InsertTextMode is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// How whitespace and indentation is handled during completion
+// item insertion.
 //
-//	How whitespace and indentation is handled during completion
-//	item insertion.
-//
-//	@since 3.16.0
+// @since 3.16.0
 type InsertTextMode UInt
 
 const (
 	// AsIsInsertTextMode is a member of the InsertTextMode enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The insertion or replace strings is taken as it is. If the
-	//	value is multi line the lines below the cursor will be
-	//	inserted using the indentation defined in the string value.
-	//	The client will not apply any kind of adjustments to the
-	//	string.
+	// The insertion or replace strings is taken as it is. If the
+	// value is multi line the lines below the cursor will be
+	// inserted using the indentation defined in the string value.
+	// The client will not apply any kind of adjustments to the
+	// string.
 	AsIsInsertTextMode InsertTextMode = 1
-
 	// AdjustIndentationInsertTextMode is a member of the InsertTextMode enumeration.
 	//
-	// Documentation from the LSP specification:
+	// The editor adjusts leading whitespace of new lines so that
+	// they match the indentation up to the cursor of the line for
+	// which the item is accepted.
 	//
-	//	The editor adjusts leading whitespace of new lines so that
-	//	they match the indentation up to the cursor of the line for
-	//	which the item is accepted.
-	//
-	//	Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
-	//	multi line completion item is indented using 2 tabs and all
-	//	following lines inserted will be indented using 2 tabs as well.
+	// Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
+	// multi line completion item is indented using 2 tabs and all
+	// following lines inserted will be indented using 2 tabs as well.
 	AdjustIndentationInsertTextMode InsertTextMode = 2
 )
 
@@ -1398,8 +3064,8 @@ type LSPAny interface{}
 // LSPAnyArray is an array of LSPAny elements.
 type LSPAnyArray []LSPAny
 
-// LSPAnyMap is an array of String to LSPAny.
-type LSPAnyMap map[String]LSPAny
+// LSPArray is an array of LSPAny elements.
+type LSPArray []LSPAny
 
 // LSPErrorCodes is an enumeration of Int values.
 type LSPErrorCodes Int
@@ -1407,82 +3073,152 @@ type LSPErrorCodes Int
 const (
 	// RequestFailedLSPErrorCodes is a member of the LSPErrorCodes enumeration.
 	//
-	// Documentation from the LSP specification:
+	// A request failed but it was syntactically correct, e.g the
+	// method name was known and the parameters were valid. The error
+	// message should contain human readable information about why
+	// the request failed.
 	//
-	//	A request failed but it was syntactically correct, e.g the
-	//	method name was known and the parameters were valid. The error
-	//	message should contain human readable information about why
-	//	the request failed.
-	//
-	//	@since 3.17.0
+	// @since 3.17.0
 	RequestFailedLSPErrorCodes LSPErrorCodes = -32803
-
 	// ServerCancelledLSPErrorCodes is a member of the LSPErrorCodes enumeration.
 	//
-	// Documentation from the LSP specification:
+	// The server cancelled the request. This error code should
+	// only be used for requests that explicitly support being
+	// server cancellable.
 	//
-	//	The server cancelled the request. This error code should
-	//	only be used for requests that explicitly support being
-	//	server cancellable.
-	//
-	//	@since 3.17.0
+	// @since 3.17.0
 	ServerCancelledLSPErrorCodes LSPErrorCodes = -32802
-
 	// ContentModifiedLSPErrorCodes is a member of the LSPErrorCodes enumeration.
 	//
-	// Documentation from the LSP specification:
+	// The server detected that the content of a document got
+	// modified outside normal conditions. A server should
+	// NOT send this error code if it detects a content change
+	// in it unprocessed messages. The result even computed
+	// on an older state might still be useful for the client.
 	//
-	//	The server detected that the content of a document got
-	//	modified outside normal conditions. A server should
-	//	NOT send this error code if it detects a content change
-	//	in it unprocessed messages. The result even computed
-	//	on an older state might still be useful for the client.
-	//
-	//	If a client decides that a result is not of any use anymore
-	//	the client should cancel the request.
+	// If a client decides that a result is not of any use anymore
+	// the client should cancel the request.
 	ContentModifiedLSPErrorCodes LSPErrorCodes = -32801
-
 	// RequestCancelledLSPErrorCodes is a member of the LSPErrorCodes enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The client has canceled a request and a server as detected
-	//	the cancel.
+	// The client has canceled a request and a server as detected
+	// the cancel.
 	RequestCancelledLSPErrorCodes LSPErrorCodes = -32800
 )
 
-// LinkedEditingRangeClientCapabilities is a structure.
-type LinkedEditingRangeClientCapabilities struct{}
+// LSPObject is an array of String to LSPAny.
+type LSPObject map[String]LSPAny
 
-// LinkedEditingRangeOptions is a structure.
-type LinkedEditingRangeOptions struct{}
+// LinkedEditingRangeClientCapabilities is a named structure definition.
+//
+// Client capabilities for the linked editing range request.
+//
+// @since 3.16.0
+type LinkedEditingRangeClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+}
 
-// LinkedEditingRangeParams is a structure.
-type LinkedEditingRangeParams struct{}
+// LinkedEditingRangeOptions is a named structure definition.
+type LinkedEditingRangeOptions struct {
+	WorkDoneProgressOptions
+}
 
-// LinkedEditingRangeRegistrationOptions is a structure.
-type LinkedEditingRangeRegistrationOptions struct{}
+// LinkedEditingRangeParams is a named structure definition.
+type LinkedEditingRangeParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+}
 
-// LinkedEditingRanges is a structure.
-type LinkedEditingRanges struct{}
+// LinkedEditingRangeRegistrationOptions is a named structure definition.
+type LinkedEditingRangeRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	LinkedEditingRangeOptions
+	StaticRegistrationOptions
+}
 
-// Location is a structure.
-type Location struct{}
+// LinkedEditingRanges is a named structure definition.
+//
+// The result of a linked editing range request.
+//
+// @since 3.16.0
+type LinkedEditingRanges struct {
+	// A list of ranges that can be edited together. The ranges must have
+	// identical length and contain identical text content. The ranges cannot overlap.
+	Ranges RangeArray
+	// An optional word pattern (regular expression) that describes valid contents for
+	// the given ranges. If no pattern is provided, the client configuration's word
+	// pattern will be used.
+	WordPattern Optional[String]
+}
+
+// Location is a named structure definition.
+//
+// Represents a location inside a resource, such as a line
+// inside a text file.
+type Location struct {
+	URI   DocumentURI
+	Range Range
+}
 
 // LocationArray is an array of Location elements.
 type LocationArray []Location
 
-// LocationLink is a structure.
-type LocationLink struct{}
+// LocationLink is a named structure definition.
+//
+// Represents the connection of two locations. Provides additional metadata over normal {@link Location locations},
+// including an origin range.
+type LocationLink struct {
+	// Span of the origin of this link.
+	//
+	// Used as the underlined span for mouse interaction. Defaults to the word range at
+	// the definition position.
+	OriginSelectionRange Optional[Range]
+	// The target resource identifier of this link.
+	TargetURI DocumentURI
+	// The full target range of this link. If the target for example is a symbol then target range is the
+	// range enclosing this symbol not including leading/trailing whitespace but everything else
+	// like comments. This information is typically used to highlight the range in the editor.
+	TargetRange Range
+	// The range that should be selected and revealed when this link is being followed, e.g the name of a function.
+	// Must be contained by the `targetRange`. See also `DocumentSymbol#range`
+	TargetSelectionRange Range
+}
 
-// LogMessageParams is a structure.
-type LogMessageParams struct{}
+// LogMessageParams is a named structure definition.
+//
+// The log message parameters.
+type LogMessageParams struct {
+	// The message type. See {@link MessageType}
+	Type MessageType
+	// The actual message.
+	Message String
+}
 
-// LogTraceParams is a structure.
-type LogTraceParams struct{}
+// LogTraceParams is a named structure definition.
+type LogTraceParams struct {
+	Message String
+	Verbose Optional[String]
+}
 
-// MarkdownClientCapabilities is a structure.
-type MarkdownClientCapabilities struct{}
+// MarkdownClientCapabilities is a named structure definition.
+//
+// Client capabilities specific to the used markdown parser.
+//
+// @since 3.16.0
+type MarkdownClientCapabilities struct {
+	// The name of the parser.
+	Parser String
+	// The version of the parser.
+	Version Optional[String]
+	// A list of HTML tags that the client allows / supports in
+	// Markdown.
+	//
+	// @since 3.17.0
+	AllowedTags Optional[StringArray]
+}
 
 // MarkedString is a union of <TODO>.
 type MarkedString interface{}
@@ -1493,178 +3229,285 @@ type MarkedStringArray []MarkedString
 // MarkedStringOption2 is a literal structure.
 type MarkedStringOption2 struct{}
 
-// MarkupContent is a structure.
-type MarkupContent struct{}
+// MarkupContent is a named structure definition.
+//
+// A `MarkupContent` literal represents a string value which content is interpreted base on its
+// kind flag. Currently the protocol supports `plaintext` and `markdown` as markup kinds.
+//
+// If the kind is `markdown` then the value can contain fenced code blocks like in GitHub issues.
+// See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
+//
+// Here is an example how such a string can be constructed using JavaScript / TypeScript:
+// ```ts
+//
+//	let markdown: MarkdownContent = {
+//	 kind: MarkupKind.Markdown,
+//	 value: [
+//	   '# Header',
+//	   'Some text',
+//	   '```typescript',
+//	   'someCode();',
+//	   '```'
+//	 ].join('\n')
+//	};
+//
+// ```
+//
+// *Please Note* that clients might sanitize the return markdown. A client could decide to
+// remove HTML from the markdown to avoid script execution.
+type MarkupContent struct {
+	// The type of the Markup
+	Kind MarkupKind
+	// The content itself
+	Value String
+}
 
 // MarkupKind is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// Describes the content type that a client supports in various
+// result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
 //
-//	Describes the content type that a client supports in various
-//	result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
-//
-//	Please note that `MarkupKinds` must not start with a `$`. This kinds
-//	are reserved for internal usage.
+// Please note that `MarkupKinds` must not start with a `$`. This kinds
+// are reserved for internal usage.
 type MarkupKind String
 
 const (
 	// PlainTextMarkupKind is a member of the MarkupKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Plain text is supported as a content format
+	// Plain text is supported as a content format
 	PlainTextMarkupKind MarkupKind = "plaintext"
-
 	// MarkdownMarkupKind is a member of the MarkupKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Markdown is supported as a content format
+	// Markdown is supported as a content format
 	MarkdownMarkupKind MarkupKind = "markdown"
 )
 
 // MarkupKindArray is an array of MarkupKind elements.
 type MarkupKindArray []MarkupKind
 
-// MessageActionItem is a structure.
-type MessageActionItem struct{}
+// MessageActionItem is a named structure definition.
+type MessageActionItem struct {
+	// A short title like 'Retry', 'Open Log' etc.
+	Title String
+}
 
 // MessageActionItemArray is an array of MessageActionItem elements.
 type MessageActionItemArray []MessageActionItem
 
 // MessageType is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	The message type
+// The message type
 type MessageType UInt
 
 const (
 	// ErrorMessageType is a member of the MessageType enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	An error message.
+	// An error message.
 	ErrorMessageType MessageType = 1
-
 	// WarningMessageType is a member of the MessageType enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	A warning message.
+	// A warning message.
 	WarningMessageType MessageType = 2
-
 	// InfoMessageType is a member of the MessageType enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	An information message.
+	// An information message.
 	InfoMessageType MessageType = 3
-
 	// LogMessageType is a member of the MessageType enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	A log message.
+	// A log message.
 	LogMessageType MessageType = 4
 )
 
-// Moniker is a structure.
-type Moniker struct{}
+// Moniker is a named structure definition.
+//
+// Moniker definition to match LSIF 0.5 moniker definition.
+//
+// @since 3.16.0
+type Moniker struct {
+	// The scheme of the moniker. For example tsc or .Net
+	Scheme String
+	// The identifier of the moniker. The value is opaque in LSIF however
+	// schema owners are allowed to define the structure if they want.
+	Identifier String
+	// The scope in which the moniker is unique
+	Unique UniquenessLevel
+	// The moniker kind if known.
+	Kind Optional[MonikerKind]
+}
 
 // MonikerArray is an array of Moniker elements.
 type MonikerArray []Moniker
 
-// MonikerClientCapabilities is a structure.
-type MonikerClientCapabilities struct{}
+// MonikerClientCapabilities is a named structure definition.
+//
+// Client capabilities specific to the moniker request.
+//
+// @since 3.16.0
+type MonikerClientCapabilities struct {
+	// Whether moniker supports dynamic registration. If this is set to `true`
+	// the client supports the new `MonikerRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+}
 
 // MonikerKind is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// The moniker kind.
 //
-//	The moniker kind.
-//
-//	@since 3.16.0
+// @since 3.16.0
 type MonikerKind String
 
 const (
 	// ImportMonikerKind is a member of the MonikerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker represent a symbol that is imported into a project
+	// The moniker represent a symbol that is imported into a project
 	ImportMonikerKind MonikerKind = "import"
-
 	// ExportMonikerKind is a member of the MonikerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker represents a symbol that is exported from a project
+	// The moniker represents a symbol that is exported from a project
 	ExportMonikerKind MonikerKind = "export"
-
 	// LocalMonikerKind is a member of the MonikerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker represents a symbol that is local to a project (e.g. a local
-	//	variable of a function, a class not visible outside the project, ...)
+	// The moniker represents a symbol that is local to a project (e.g. a local
+	// variable of a function, a class not visible outside the project, ...)
 	LocalMonikerKind MonikerKind = "local"
 )
 
-// MonikerOptions is a structure.
-type MonikerOptions struct{}
+// MonikerOptions is a named structure definition.
+type MonikerOptions struct {
+	WorkDoneProgressOptions
+}
 
-// MonikerParams is a structure.
-type MonikerParams struct{}
+// MonikerParams is a named structure definition.
+type MonikerParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
+}
 
-// MonikerRegistrationOptions is a structure.
-type MonikerRegistrationOptions struct{}
+// MonikerRegistrationOptions is a named structure definition.
+type MonikerRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	MonikerOptions
+}
 
-// NotebookCell is a structure.
-type NotebookCell struct{}
+// NotebookCell is a named structure definition.
+//
+// A notebook cell.
+//
+// A cell's document URI must be unique across ALL notebook
+// cells and can therefore be used to uniquely identify a
+// notebook cell or the cell's text document.
+//
+// @since 3.17.0
+type NotebookCell struct {
+	// The cell's kind
+	Kind NotebookCellKind
+	// The URI of the cell's text document
+	// content.
+	Document DocumentURI
+	// Additional metadata stored with the cell.
+	//
+	// Note: should always be an object literal (e.g. LSPObject)
+	Metadata Optional[LSPObject]
+	// Additional execution summary information
+	// if supported by the client.
+	ExecutionSummary Optional[ExecutionSummary]
+}
 
 // NotebookCellArray is an array of NotebookCell elements.
 type NotebookCellArray []NotebookCell
 
-// NotebookCellArrayChange is a structure.
-type NotebookCellArrayChange struct{}
+// NotebookCellArrayChange is a named structure definition.
+//
+// A change describing how to move a `NotebookCell`
+// array from state S to S'.
+//
+// @since 3.17.0
+type NotebookCellArrayChange struct {
+	// The start oftest of the cell that changed.
+	Start UInt
+	// The deleted cells
+	DeleteCount UInt
+	// The new cells, if any
+	Cells Optional[NotebookCellArray]
+}
 
 // NotebookCellKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// A notebook cell kind.
 //
-//	A notebook cell kind.
-//
-//	@since 3.17.0
+// @since 3.17.0
 type NotebookCellKind UInt
 
 const (
 	// MarkupNotebookCellKind is a member of the NotebookCellKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	A markup-cell is formatted source that is used for display.
+	// A markup-cell is formatted source that is used for display.
 	MarkupNotebookCellKind NotebookCellKind = 1
-
 	// CodeNotebookCellKind is a member of the NotebookCellKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	A code-cell is source code.
+	// A code-cell is source code.
 	CodeNotebookCellKind NotebookCellKind = 2
 )
 
-// NotebookCellTextDocumentFilter is a structure.
-type NotebookCellTextDocumentFilter struct{}
+// NotebookCellTextDocumentFilter is a named structure definition.
+//
+// A notebook cell text document filter denotes a cell text
+// document by different properties.
+//
+// @since 3.17.0
+type NotebookCellTextDocumentFilter struct {
+	// A filter that matches against the notebook
+	// containing the notebook cell. If a string
+	// value is provided it matches against the
+	// notebook type. '*' matches every notebook.
+	Notebook NotebookCellTextDocumentFilterNotebook
+	// A language id like `python`.
+	//
+	// Will be matched against the language id of the
+	// notebook cell document. '*' matches every language.
+	Language Optional[String]
+}
 
 // NotebookCellTextDocumentFilterNotebook is a union of <TODO>.
 type NotebookCellTextDocumentFilterNotebook interface{}
 
-// NotebookDocument is a structure.
-type NotebookDocument struct{}
+// NotebookDocument is a named structure definition.
+//
+// A notebook document.
+//
+// @since 3.17.0
+type NotebookDocument struct {
+	// The notebook document's uri.
+	URI URI
+	// The type of the notebook.
+	NotebookType String
+	// The version number of this document (it will increase after each
+	// change, including undo/redo).
+	Version Int
+	// Additional metadata stored with the notebook
+	// document.
+	//
+	// Note: should always be an object literal (e.g. LSPObject)
+	Metadata Optional[LSPObject]
+	// The cells of a notebook.
+	Cells NotebookCellArray
+}
 
-// NotebookDocumentChangeEvent is a structure.
-type NotebookDocumentChangeEvent struct{}
+// NotebookDocumentChangeEvent is a named structure definition.
+//
+// A change event for a notebook document.
+//
+// @since 3.17.0
+type NotebookDocumentChangeEvent struct {
+	// The changed meta data if any.
+	//
+	// Note: should always be an object literal (e.g. LSPObject)
+	Metadata Optional[LSPObject]
+	// Changes to cells
+	Cells Optional[NotebookDocumentChangeEventCells]
+}
 
 // NotebookDocumentChangeEventCells is a literal structure.
 type NotebookDocumentChangeEventCells struct{}
@@ -1678,8 +3521,17 @@ type NotebookDocumentChangeEventCellsTextContent struct{}
 // NotebookDocumentChangeEventCellsTextContentArray is an array of NotebookDocumentChangeEventCellsTextContent elements.
 type NotebookDocumentChangeEventCellsTextContentArray []NotebookDocumentChangeEventCellsTextContent
 
-// NotebookDocumentClientCapabilities is a structure.
-type NotebookDocumentClientCapabilities struct{}
+// NotebookDocumentClientCapabilities is a named structure definition.
+//
+// Capabilities specific to the notebook document support.
+//
+// @since 3.17.0
+type NotebookDocumentClientCapabilities struct {
+	// Capabilities specific to notebook document synchronization
+	//
+	// @since 3.17.0
+	Synchronization NotebookDocumentSyncClientCapabilities
+}
 
 // NotebookDocumentFilter is a union of <TODO>.
 type NotebookDocumentFilter interface{}
@@ -1693,14 +3545,53 @@ type NotebookDocumentFilterOption2 struct{}
 // NotebookDocumentFilterOption3 is a literal structure.
 type NotebookDocumentFilterOption3 struct{}
 
-// NotebookDocumentIdentifier is a structure.
-type NotebookDocumentIdentifier struct{}
+// NotebookDocumentIdentifier is a named structure definition.
+//
+// A literal to identify a notebook document in the client.
+//
+// @since 3.17.0
+type NotebookDocumentIdentifier struct {
+	// The notebook document's uri.
+	URI URI
+}
 
-// NotebookDocumentSyncClientCapabilities is a structure.
-type NotebookDocumentSyncClientCapabilities struct{}
+// NotebookDocumentSyncClientCapabilities is a named structure definition.
+//
+// Notebook specific client capabilities.
+//
+// @since 3.17.0
+type NotebookDocumentSyncClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is
+	// set to `true` the client supports the new
+	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+	// The client supports sending execution summary data per cell.
+	ExecutionSummarySupport Optional[Bool]
+}
 
-// NotebookDocumentSyncOptions is a structure.
-type NotebookDocumentSyncOptions struct{}
+// NotebookDocumentSyncOptions is a named structure definition.
+//
+// Options specific to a notebook plus its cells
+// to be synced to the server.
+//
+// If a selector provides a notebook document
+// filter but no cell selector all cells of a
+// matching notebook document will be synced.
+//
+// If a selector provides no notebook document
+// filter but only a cell selector all notebook
+// document that contain at least one matching
+// cell will be synced.
+//
+// @since 3.17.0
+type NotebookDocumentSyncOptions struct {
+	// The notebooks to be synced
+	NotebookSelector NotebookDocumentSyncOptionsNotebookSelectorArray
+	// Whether save notification should be forwarded to
+	// the server. Will only be honored if mode === `notebook`.
+	Save Optional[Bool]
+}
 
 // NotebookDocumentSyncOptionsNotebookSelector is a union of <TODO>.
 type NotebookDocumentSyncOptionsNotebookSelector interface{}
@@ -1732,17 +3623,51 @@ type NotebookDocumentSyncOptionsNotebookSelectorOption2CellsArray []NotebookDocu
 // NotebookDocumentSyncOptionsNotebookSelectorOption2Notebook is a union of <TODO>.
 type NotebookDocumentSyncOptionsNotebookSelectorOption2Notebook interface{}
 
-// NotebookDocumentSyncRegistrationOptions is a structure.
-type NotebookDocumentSyncRegistrationOptions struct{}
+// NotebookDocumentSyncRegistrationOptions is a named structure definition.
+//
+// Registration options specific to a notebook.
+//
+// @since 3.17.0
+type NotebookDocumentSyncRegistrationOptions struct {
+	NotebookDocumentSyncOptions
+	StaticRegistrationOptions
+}
 
-// OptionalVersionedTextDocumentIdentifier is a structure.
-type OptionalVersionedTextDocumentIdentifier struct{}
+// OptionalVersionedTextDocumentIdentifier is a named structure definition.
+//
+// A text document identifier to optionally denote a specific version of a text document.
+type OptionalVersionedTextDocumentIdentifier struct {
+	TextDocumentIdentifier
+
+	// The version number of this document. If a versioned text document identifier
+	// is sent from the server to the client and the file is not open in the editor
+	// (the server has not received an open notification before) the server can send
+	// `null` to indicate that the version is unknown and the content on disk is the
+	// truth (as specified with document content ownership).
+	Version OptionalVersionedTextDocumentIdentifierVersion
+}
 
 // OptionalVersionedTextDocumentIdentifierVersion is a union of <TODO>.
 type OptionalVersionedTextDocumentIdentifierVersion interface{}
 
-// ParameterInformation is a structure.
-type ParameterInformation struct{}
+// ParameterInformation is a named structure definition.
+//
+// Represents a parameter of a callable-signature. A parameter can
+// have a label and a doc-comment.
+type ParameterInformation struct {
+	// The label of this parameter information.
+	//
+	// Either a string or an inclusive start and exclusive end offsets within its containing
+	// signature label. (see SignatureInformation.label). The offsets are based on a UTF-16
+	// string representation as `Position` and `Range` does.
+	//
+	// *Note*: a label of type string should be a substring of its containing signature label.
+	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
+	Label ParameterInformationLabel
+	// The human-readable doc-comment of this parameter. Will be shown
+	// in the UI but can be omitted.
+	Documentation Optional[ParameterInformationDocumentation]
+}
 
 // ParameterInformationArray is an array of ParameterInformation elements.
 type ParameterInformationArray []ParameterInformation
@@ -1762,62 +3687,111 @@ type PartialResult interface{}
 // PartialResultArray is an array of PartialResult elements.
 type PartialResultArray []PartialResult
 
-// PartialResultParams is a structure.
-type PartialResultParams struct{}
+// PartialResultParams is a named structure definition.
+type PartialResultParams struct {
+	// An optional token that a server can use to report partial results (e.g. streaming) to
+	// the client.
+	PartialResultToken Optional[ProgressToken]
+}
 
 // Pattern is an alias for String.
-type Pattern = String
+//
+// The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
+// - `*` to match one or more characters in a path segment
+// - `?` to match on one character in a path segment
+// - `**` to match any number of path segments, including none
+// - `{}` to group conditions (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
+// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
+// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
+//
+// @since 3.17.0
+type Pattern String
 
-// Position is a structure.
-type Position struct{}
+// Position is a named structure definition.
+//
+// Position in a text document expressed as zero-based line and character
+// offset. Prior to 3.17 the offsets were always based on a UTF-16 string
+// representation. So a string of the form `a𐐀b` the character offset of the
+// character `a` is 0, the character offset of `𐐀` is 1 and the character
+// offset of b is 3 since `𐐀` is represented using two code units in UTF-16.
+// Since 3.17 clients and servers can agree on a different string encoding
+// representation (e.g. UTF-8). The client announces it's supported encoding
+// via the client capability [`general.positionEncodings`](#clientCapabilities).
+// The value is an array of position encodings the client supports, with
+// decreasing preference (e.g. the encoding at index `0` is the most preferred
+// one). To stay backwards compatible the only mandatory encoding is UTF-16
+// represented via the string `utf-16`. The server can pick one of the
+// encodings offered by the client and signals that encoding back to the
+// client via the initialize result's property
+// [`capabilities.positionEncoding`](#serverCapabilities). If the string value
+// `utf-16` is missing from the client's capability `general.positionEncodings`
+// servers can safely assume that the client supports UTF-16. If the server
+// omits the position encoding in its initialize result the encoding defaults
+// to the string value `utf-16`. Implementation considerations: since the
+// conversion from one encoding into another requires the content of the
+// file / line the conversion is best done where the file is read which is
+// usually on the server side.
+//
+// Positions are line end character agnostic. So you can not specify a position
+// that denotes `\r|\n` or `\n|` where `|` represents the character offset.
+//
+// @since 3.17.0 - support for negotiated position encoding.
+type Position struct {
+	// Line position in a document (zero-based).
+	//
+	// If a line number is greater than the number of lines in a document, it defaults back to the number of lines in the document.
+	// If a line number is negative, it defaults to 0.
+	Line UInt
+	// Character offset on a line in a document (zero-based).
+	//
+	// The meaning of this offset is determined by the negotiated
+	// `PositionEncodingKind`.
+	//
+	// If the character value is greater than the line length it defaults back to the
+	// line length.
+	Character UInt
+}
 
 // PositionArray is an array of Position elements.
 type PositionArray []Position
 
 // PositionEncodingKind is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// A set of predefined position encoding kinds.
 //
-//	A set of predefined position encoding kinds.
-//
-//	@since 3.17.0
+// @since 3.17.0
 type PositionEncodingKind String
 
 const (
 	// UTF8PositionEncodingKind is a member of the PositionEncodingKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Character offsets count UTF-8 code units (e.g. bytes).
+	// Character offsets count UTF-8 code units (e.g. bytes).
 	UTF8PositionEncodingKind PositionEncodingKind = "utf-8"
-
 	// UTF16PositionEncodingKind is a member of the PositionEncodingKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Character offsets count UTF-16 code units.
 	//
-	//	Character offsets count UTF-16 code units.
-	//
-	//	This is the default and must always be supported
-	//	by servers
+	// This is the default and must always be supported
+	// by servers
 	UTF16PositionEncodingKind PositionEncodingKind = "utf-16"
-
 	// UTF32PositionEncodingKind is a member of the PositionEncodingKind enumeration.
 	//
-	// Documentation from the LSP specification:
+	// Character offsets count UTF-32 code units.
 	//
-	//	Character offsets count UTF-32 code units.
-	//
-	//	Implementation note: these are the same as Unicode codepoints,
-	//	so this `PositionEncodingKind` may also be used for an
-	//	encoding-agnostic representation of character offsets.
+	// Implementation note: these are the same as Unicode codepoints,
+	// so this `PositionEncodingKind` may also be used for an
+	// encoding-agnostic representation of character offsets.
 	UTF32PositionEncodingKind PositionEncodingKind = "utf-32"
 )
 
 // PositionEncodingKindArray is an array of PositionEncodingKind elements.
 type PositionEncodingKindArray []PositionEncodingKind
 
-// PrepareRenameParams is a structure.
-type PrepareRenameParams struct{}
+// PrepareRenameParams is a named structure definition.
+type PrepareRenameParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+}
 
 // PrepareRenameResult is a union of <TODO>.
 type PrepareRenameResult interface{}
@@ -1834,57 +3808,163 @@ type PrepareSupportDefaultBehavior UInt
 const (
 	// IdentifierPrepareSupportDefaultBehavior is a member of the PrepareSupportDefaultBehavior enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The client's default behavior is to select the identifier
-	//	according the to language's syntax rule.
+	// The client's default behavior is to select the identifier
+	// according the to language's syntax rule.
 	IdentifierPrepareSupportDefaultBehavior PrepareSupportDefaultBehavior = 1
 )
 
 // PreviousResultIDArray is an array of PreviousResultID elements.
 type PreviousResultIDArray []PreviousResultID
 
-// PreviousResultID is a structure.
-type PreviousResultID struct{}
+// PreviousResultID is a named structure definition.
+//
+// A previous result id in a workspace pull request.
+//
+// @since 3.17.0
+type PreviousResultID struct {
+	// The URI for which the client knowns a
+	// result id.
+	URI DocumentURI
+	// The value of the previous result id.
+	Value String
+}
 
-// ProgressParams is a structure.
-type ProgressParams struct{}
+// ProgressParams is a named structure definition.
+type ProgressParams struct {
+	// The progress token provided by the client or server.
+	Token ProgressToken
+	// The progress data.
+	Value LSPAny
+}
 
 // ProgressToken is a union of <TODO>.
 type ProgressToken interface{}
 
-// PublishDiagnosticsClientCapabilities is a structure.
-type PublishDiagnosticsClientCapabilities struct{}
+// PublishDiagnosticsClientCapabilities is a named structure definition.
+//
+// The publish diagnostic client capabilities.
+type PublishDiagnosticsClientCapabilities struct {
+	// Whether the clients accepts diagnostics with related information.
+	RelatedInformation Optional[Bool]
+	// Client supports the tag property to provide meta data about a diagnostic.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// @since 3.15.0
+	TagSupport Optional[PublishDiagnosticsClientCapabilitiesTagSupport]
+	// Whether the client interprets the version property of the
+	// `textDocument/publishDiagnostics` notification's parameter.
+	//
+	// @since 3.15.0
+	VersionSupport Optional[Bool]
+	// Client supports a codeDescription property
+	//
+	// @since 3.16.0
+	CodeDescriptionSupport Optional[Bool]
+	// Whether code action supports the `data` property which is
+	// preserved between a `textDocument/publishDiagnostics` and
+	// `textDocument/codeAction` request.
+	//
+	// @since 3.16.0
+	DataSupport Optional[Bool]
+}
 
 // PublishDiagnosticsClientCapabilitiesTagSupport is a literal structure.
 type PublishDiagnosticsClientCapabilitiesTagSupport struct{}
 
-// PublishDiagnosticsParams is a structure.
-type PublishDiagnosticsParams struct{}
+// PublishDiagnosticsParams is a named structure definition.
+//
+// The publish diagnostic notification's parameters.
+type PublishDiagnosticsParams struct {
+	// The URI for which diagnostic information is reported.
+	URI DocumentURI
+	// Optional the version number of the document the diagnostics are published for.
+	//
+	// @since 3.15.0
+	Version Optional[Int]
+	// An array of diagnostic information items.
+	Diagnostics DiagnosticArray
+}
 
-// Range is a structure.
-type Range struct{}
+// Range is a named structure definition.
+//
+// A range in a text document expressed as (zero-based) start and end positions.
+//
+// If you want to specify a range that contains a line including the line ending
+// character(s) then use an end position denoting the start of the next line.
+// For example:
+// ```ts
+//
+//	{
+//	    start: { line: 5, character: 23 }
+//	    end : { line 6, character : 0 }
+//	}
+//
+// ```
+type Range struct {
+	// The range's start position.
+	Start Position
+	// The range's end position.
+	End Position
+}
 
 // RangeArray is an array of Range elements.
 type RangeArray []Range
 
-// ReferenceClientCapabilities is a structure.
-type ReferenceClientCapabilities struct{}
+// ReferenceClientCapabilities is a named structure definition.
+//
+// Client Capabilities for a {@link ReferencesRequest}.
+type ReferenceClientCapabilities struct {
+	// Whether references supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+}
 
-// ReferenceContext is a structure.
-type ReferenceContext struct{}
+// ReferenceContext is a named structure definition.
+//
+// Value-object that contains additional information when
+// requesting references.
+type ReferenceContext struct {
+	// Include the declaration of the current symbol.
+	IncludeDeclaration Bool
+}
 
-// ReferenceOptions is a structure.
-type ReferenceOptions struct{}
+// ReferenceOptions is a named structure definition.
+//
+// Reference options.
+type ReferenceOptions struct {
+	WorkDoneProgressOptions
+}
 
-// ReferenceParams is a structure.
-type ReferenceParams struct{}
+// ReferenceParams is a named structure definition.
+//
+// Parameters for a {@link ReferencesRequest}.
+type ReferenceParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
 
-// ReferenceRegistrationOptions is a structure.
-type ReferenceRegistrationOptions struct{}
+	Context ReferenceContext
+}
 
-// Registration is a structure.
-type Registration struct{}
+// ReferenceRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link ReferencesRequest}.
+type ReferenceRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	ReferenceOptions
+}
+
+// Registration is a named structure definition.
+//
+// General parameters to to register for an notification or to register a provider.
+type Registration struct {
+	// The id used to register the request. The id can be used to deregister
+	// the request again.
+	ID String
+	// The method / capability to register for.
+	Method String
+	// Options necessary for the registration.
+	RegisterOptions Optional[LSPAny]
+}
 
 // RegistrationArray is an array of Registration elements.
 type RegistrationArray []Registration
@@ -1892,14 +3972,40 @@ type RegistrationArray []Registration
 // RegistrationOptions is the intersection of several types.
 type RegistrationOptions struct{}
 
-// RegistrationParams is a structure.
-type RegistrationParams struct{}
+// RegistrationParams is a named structure definition.
+type RegistrationParams struct {
+	Registrations RegistrationArray
+}
 
-// RegularExpressionsClientCapabilities is a structure.
-type RegularExpressionsClientCapabilities struct{}
+// RegularExpressionsClientCapabilities is a named structure definition.
+//
+// Client capabilities specific to regular expressions.
+//
+// @since 3.16.0
+type RegularExpressionsClientCapabilities struct {
+	// The engine's name.
+	Engine String
+	// The engine's version.
+	Version Optional[String]
+}
 
-// RelatedFullDocumentDiagnosticReport is a structure.
-type RelatedFullDocumentDiagnosticReport struct{}
+// RelatedFullDocumentDiagnosticReport is a named structure definition.
+//
+// A full diagnostic report with a set of related documents.
+//
+// @since 3.17.0
+type RelatedFullDocumentDiagnosticReport struct {
+	FullDocumentDiagnosticReport
+
+	// Diagnostics of related documents. This information is useful
+	// in programming languages where code in a file A can generate
+	// diagnostics in a file B which A depends on. An example of
+	// such a language is C/C++ where marco definitions in a file
+	// a.cpp and result in errors in a header file b.hpp.
+	//
+	// @since 3.17.0
+	RelatedDocuments Optional[RelatedFullDocumentDiagnosticReportRelatedDocumentsMap]
+}
 
 // RelatedFullDocumentDiagnosticReportRelatedDocuments is a union of <TODO>.
 type RelatedFullDocumentDiagnosticReportRelatedDocuments interface{}
@@ -1907,8 +4013,23 @@ type RelatedFullDocumentDiagnosticReportRelatedDocuments interface{}
 // RelatedFullDocumentDiagnosticReportRelatedDocumentsMap is an array of DocumentURI to RelatedFullDocumentDiagnosticReportRelatedDocuments.
 type RelatedFullDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedFullDocumentDiagnosticReportRelatedDocuments
 
-// RelatedUnchangedDocumentDiagnosticReport is a structure.
-type RelatedUnchangedDocumentDiagnosticReport struct{}
+// RelatedUnchangedDocumentDiagnosticReport is a named structure definition.
+//
+// An unchanged diagnostic report with a set of related documents.
+//
+// @since 3.17.0
+type RelatedUnchangedDocumentDiagnosticReport struct {
+	UnchangedDocumentDiagnosticReport
+
+	// Diagnostics of related documents. This information is useful
+	// in programming languages where code in a file A can generate
+	// diagnostics in a file B which A depends on. An example of
+	// such a language is C/C++ where marco definitions in a file
+	// a.cpp and result in errors in a header file b.hpp.
+	//
+	// @since 3.17.0
+	RelatedDocuments Optional[RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap]
+}
 
 // RelatedUnchangedDocumentDiagnosticReportRelatedDocuments is a union of <TODO>.
 type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments interface{}
@@ -1916,35 +4037,133 @@ type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments interface{}
 // RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap is an array of DocumentURI to RelatedUnchangedDocumentDiagnosticReportRelatedDocuments.
 type RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedUnchangedDocumentDiagnosticReportRelatedDocuments
 
-// RelativePattern is a structure.
-type RelativePattern struct{}
+// RelativePattern is a named structure definition.
+//
+// A relative pattern is a helper to construct glob patterns that are matched
+// relatively to a base URI. The common value for a `baseUri` is a workspace
+// folder root, but it can be another absolute URI as well.
+//
+// @since 3.17.0
+type RelativePattern struct {
+	// A workspace folder or a base URI to which this pattern will be matched
+	// against relatively.
+	BaseURI RelativePatternBaseURI
+	// The actual glob pattern;
+	Pattern Pattern
+}
 
 // RelativePatternBaseURI is a union of <TODO>.
 type RelativePatternBaseURI interface{}
 
-// RenameClientCapabilities is a structure.
-type RenameClientCapabilities struct{}
+// RenameClientCapabilities is a named structure definition.
+type RenameClientCapabilities struct {
+	// Whether rename supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// Client supports testing for validity of rename operations
+	// before execution.
+	//
+	// @since 3.12.0
+	PrepareSupport Optional[Bool]
+	// Client supports the default behavior result.
+	//
+	// The value indicates the default behavior used by the
+	// client.
+	//
+	// @since 3.16.0
+	PrepareSupportDefaultBehavior Optional[PrepareSupportDefaultBehavior]
+	// Whether the client honors the change annotations in
+	// text edits and resource operations returned via the
+	// rename request's workspace edit by for example presenting
+	// the workspace edit in the user interface and asking
+	// for confirmation.
+	//
+	// @since 3.16.0
+	HonorsChangeAnnotations Optional[Bool]
+}
 
-// RenameFile is a structure.
-type RenameFile struct{}
+// RenameFile is a named structure definition.
+//
+// Rename file operation
+type RenameFile struct {
+	ResourceOperation
 
-// RenameFileOptions is a structure.
-type RenameFileOptions struct{}
+	// The old (existing) location.
+	OldURI DocumentURI
+	// The new location.
+	NewURI DocumentURI
+	// Rename options.
+	Options Optional[RenameFileOptions]
+}
 
-// RenameFilesParams is a structure.
-type RenameFilesParams struct{}
+// RenameFileOptions is a named structure definition.
+//
+// Rename file options
+type RenameFileOptions struct {
+	// Overwrite target if existing. Overwrite wins over `ignoreIfExists`
+	Overwrite Optional[Bool]
+	// Ignores if target exists.
+	IgnoreIfExists Optional[Bool]
+}
 
-// RenameOptions is a structure.
-type RenameOptions struct{}
+// RenameFilesParams is a named structure definition.
+//
+// The parameters sent in notifications/requests for user-initiated renames of
+// files.
+//
+// @since 3.16.0
+type RenameFilesParams struct {
+	// An array of all files/folders renamed in this operation. When a folder is renamed, only
+	// the folder will be included, and not its children.
+	Files FileRenameArray
+}
 
-// RenameParams is a structure.
-type RenameParams struct{}
+// RenameOptions is a named structure definition.
+//
+// Provider options for a {@link RenameRequest}.
+type RenameOptions struct {
+	WorkDoneProgressOptions
 
-// RenameRegistrationOptions is a structure.
-type RenameRegistrationOptions struct{}
+	// Renames should be checked and tested before being executed.
+	//
+	// @since version 3.12.0
+	PrepareProvider Optional[Bool]
+}
 
-// ResourceOperation is a structure.
-type ResourceOperation struct{}
+// RenameParams is a named structure definition.
+//
+// The parameters of a {@link RenameRequest}.
+type RenameParams struct {
+	WorkDoneProgressParams
+
+	// The document to rename.
+	TextDocument TextDocumentIdentifier
+	// The position at which this request was sent.
+	Position Position
+	// The new name of the symbol. If the given name is not valid the
+	// request must return a {@link ResponseError} with an
+	// appropriate message set.
+	NewName String
+}
+
+// RenameRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link RenameRequest}.
+type RenameRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	RenameOptions
+}
+
+// ResourceOperation is a named structure definition.
+//
+// A generic resource operation.
+type ResourceOperation struct {
+	// The resource operation kind.
+	Kind String
+	// An optional annotation identifier describing the operation.
+	//
+	// @since 3.16.0
+	AnnotationID Optional[ChangeAnnotationIdentifier]
+}
 
 // ResourceOperationKind is an enumeration of String values.
 type ResourceOperationKind String
@@ -1952,23 +4171,15 @@ type ResourceOperationKind String
 const (
 	// CreateResourceOperationKind is a member of the ResourceOperationKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Supports creating new files and folders.
+	// Supports creating new files and folders.
 	CreateResourceOperationKind ResourceOperationKind = "create"
-
 	// RenameResourceOperationKind is a member of the ResourceOperationKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Supports renaming existing files and folders.
+	// Supports renaming existing files and folders.
 	RenameResourceOperationKind ResourceOperationKind = "rename"
-
 	// DeleteResourceOperationKind is a member of the ResourceOperationKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Supports deleting existing files and folders.
+	// Supports deleting existing files and folders.
 	DeleteResourceOperationKind ResourceOperationKind = "delete"
 )
 
@@ -1984,166 +4195,215 @@ type ResultOption1 interface{}
 // ResultOption1Array is an array of ResultOption1 elements.
 type ResultOption1Array []ResultOption1
 
-// SaveOptions is a structure.
-type SaveOptions struct{}
+// SaveOptions is a named structure definition.
+//
+// Save options.
+type SaveOptions struct {
+	// The client is supposed to include the content on save.
+	IncludeText Optional[Bool]
+}
 
-// SelectionRange is a structure.
-type SelectionRange struct{}
+// SelectionRange is a named structure definition.
+//
+// A selection range represents a part of a selection hierarchy. A selection range
+// may have a parent selection range that contains it.
+type SelectionRange struct {
+	// The {@link Range range} of this selection range.
+	Range Range
+	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
+	Parent Optional[SelectionRange]
+}
 
 // SelectionRangeArray is an array of SelectionRange elements.
 type SelectionRangeArray []SelectionRange
 
-// SelectionRangeClientCapabilities is a structure.
-type SelectionRangeClientCapabilities struct{}
+// SelectionRangeClientCapabilities is a named structure definition.
+type SelectionRangeClientCapabilities struct {
+	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
+	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
+	// capability as well.
+	DynamicRegistration Optional[Bool]
+}
 
-// SelectionRangeOptions is a structure.
-type SelectionRangeOptions struct{}
+// SelectionRangeOptions is a named structure definition.
+type SelectionRangeOptions struct {
+	WorkDoneProgressOptions
+}
 
-// SelectionRangeParams is a structure.
-type SelectionRangeParams struct{}
+// SelectionRangeParams is a named structure definition.
+//
+// A parameter literal used in selection range requests.
+type SelectionRangeParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// SelectionRangeRegistrationOptions is a structure.
-type SelectionRangeRegistrationOptions struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The positions inside the text document.
+	Positions PositionArray
+}
+
+// SelectionRangeRegistrationOptions is a named structure definition.
+type SelectionRangeRegistrationOptions struct {
+	SelectionRangeOptions
+	TextDocumentRegistrationOptions
+	StaticRegistrationOptions
+}
 
 // SemanticTokenModifiers is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// A set of predefined token modifiers. This set is not fixed
+// an clients can specify additional token types via the
+// corresponding client capabilities.
 //
-//	A set of predefined token modifiers. This set is not fixed
-//	an clients can specify additional token types via the
-//	corresponding client capabilities.
-//
-//	@since 3.16.0
+// @since 3.16.0
 type SemanticTokenModifiers String
 
 const (
 	// DeclarationSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DeclarationSemanticTokenModifiers SemanticTokenModifiers = "declaration"
-
 	// DefinitionSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DefinitionSemanticTokenModifiers SemanticTokenModifiers = "definition"
-
 	// ReadonlySemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	ReadonlySemanticTokenModifiers SemanticTokenModifiers = "readonly"
-
 	// StaticSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	StaticSemanticTokenModifiers SemanticTokenModifiers = "static"
-
 	// DeprecatedSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DeprecatedSemanticTokenModifiers SemanticTokenModifiers = "deprecated"
-
 	// AbstractSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	AbstractSemanticTokenModifiers SemanticTokenModifiers = "abstract"
-
 	// AsyncSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	AsyncSemanticTokenModifiers SemanticTokenModifiers = "async"
-
 	// ModificationSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	ModificationSemanticTokenModifiers SemanticTokenModifiers = "modification"
-
 	// DocumentationSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DocumentationSemanticTokenModifiers SemanticTokenModifiers = "documentation"
-
 	// DefaultLibrarySemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DefaultLibrarySemanticTokenModifiers SemanticTokenModifiers = "defaultLibrary"
 )
 
 // SemanticTokenTypes is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// A set of predefined token types. This set is not fixed
+// an clients can specify additional token types via the
+// corresponding client capabilities.
 //
-//	A set of predefined token types. This set is not fixed
-//	an clients can specify additional token types via the
-//	corresponding client capabilities.
-//
-//	@since 3.16.0
+// @since 3.16.0
 type SemanticTokenTypes String
 
 const (
 	// NamespaceSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	NamespaceSemanticTokenTypes SemanticTokenTypes = "namespace"
-
 	// TypeSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Represents a generic type. Acts as a fallback for types which can't be mapped to
-	//	a specific type like class or enum.
+	// Represents a generic type. Acts as a fallback for types which can't be mapped to
+	// a specific type like class or enum.
 	TypeSemanticTokenTypes SemanticTokenTypes = "type"
-
 	// ClassSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	ClassSemanticTokenTypes SemanticTokenTypes = "class"
-
 	// EnumSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	EnumSemanticTokenTypes SemanticTokenTypes = "enum"
-
 	// InterfaceSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	InterfaceSemanticTokenTypes SemanticTokenTypes = "interface"
-
 	// StructSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	StructSemanticTokenTypes SemanticTokenTypes = "struct"
-
 	// TypeParameterSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	TypeParameterSemanticTokenTypes SemanticTokenTypes = "typeParameter"
-
 	// ParameterSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	ParameterSemanticTokenTypes SemanticTokenTypes = "parameter"
-
 	// VariableSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	VariableSemanticTokenTypes SemanticTokenTypes = "variable"
-
 	// PropertySemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	PropertySemanticTokenTypes SemanticTokenTypes = "property"
-
 	// EnumMemberSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	EnumMemberSemanticTokenTypes SemanticTokenTypes = "enumMember"
-
 	// EventSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	EventSemanticTokenTypes SemanticTokenTypes = "event"
-
 	// FunctionSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	FunctionSemanticTokenTypes SemanticTokenTypes = "function"
-
 	// MethodSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	MethodSemanticTokenTypes SemanticTokenTypes = "method"
-
 	// MacroSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	MacroSemanticTokenTypes SemanticTokenTypes = "macro"
-
 	// KeywordSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	KeywordSemanticTokenTypes SemanticTokenTypes = "keyword"
-
 	// ModifierSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	ModifierSemanticTokenTypes SemanticTokenTypes = "modifier"
-
 	// CommentSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	CommentSemanticTokenTypes SemanticTokenTypes = "comment"
-
 	// StringSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	StringSemanticTokenTypes SemanticTokenTypes = "string"
-
 	// NumberSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	NumberSemanticTokenTypes SemanticTokenTypes = "number"
-
 	// RegexpSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	RegexpSemanticTokenTypes SemanticTokenTypes = "regexp"
-
 	// OperatorSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	OperatorSemanticTokenTypes SemanticTokenTypes = "operator"
-
 	// DecoratorSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	@since 3.17.0
+	// @since 3.17.0
 	DecoratorSemanticTokenTypes SemanticTokenTypes = "decorator"
 )
 
-// SemanticTokens is a structure.
-type SemanticTokens struct{}
+// SemanticTokens is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokens struct {
+	// An optional result id. If provided and clients support delta updating
+	// the client will include the result id in the next semantic token request.
+	// A server can then instead of computing all semantic tokens again simply
+	// send a delta.
+	ResultID Optional[String]
+	// The actual tokens.
+	Data UIntArray
+}
 
-// SemanticTokensClientCapabilities is a structure.
-type SemanticTokensClientCapabilities struct{}
+// SemanticTokensClientCapabilities is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+	// Which requests the client supports and might send to the server
+	// depending on the server's capability. Please note that clients might not
+	// show semantic tokens or degrade some of the user experience if a range
+	// or full request is advertised by the client but not provided by the
+	// server. If for example the client capability `requests.full` and
+	// `request.range` are both set to true but the server only provides a
+	// range provider the client might not render a minimap correctly or might
+	// even decide to not show any semantic tokens at all.
+	Requests SemanticTokensClientCapabilitiesRequests
+	// The token types that the client supports.
+	TokenTypes StringArray
+	// The token modifiers that the client supports.
+	TokenModifiers StringArray
+	// The token formats the clients supports.
+	Formats TokenFormatArray
+	// Whether the client supports tokens that can overlap each other.
+	OverlappingTokenSupport Optional[Bool]
+	// Whether the client supports tokens that can span multiple lines.
+	MultilineTokenSupport Optional[Bool]
+	// Whether the client allows the server to actively cancel a
+	// semantic token request, e.g. supports returning
+	// LSPErrorCodes.ServerCancelled. If a server does the client
+	// needs to retrigger the request.
+	//
+	// @since 3.17.0
+	ServerCancelSupport Optional[Bool]
+	// Whether the client uses semantic tokens to augment existing
+	// syntax tokens. If set to `true` client side created syntax
+	// tokens and semantic tokens are both used for colorization. If
+	// set to `false` the client only uses the returned semantic tokens
+	// for colorization.
+	//
+	// If the value is `undefined` then the client behavior is not
+	// specified.
+	//
+	// @since 3.17.0
+	AugmentsSyntaxTokens Optional[Bool]
+}
 
 // SemanticTokensClientCapabilitiesRequests is a literal structure.
 type SemanticTokensClientCapabilitiesRequests struct{}
@@ -2160,26 +4420,75 @@ type SemanticTokensClientCapabilitiesRequestsRange interface{}
 // SemanticTokensClientCapabilitiesRequestsRangeOption2 is a literal structure.
 type SemanticTokensClientCapabilitiesRequestsRangeOption2 struct{}
 
-// SemanticTokensDelta is a structure.
-type SemanticTokensDelta struct{}
+// SemanticTokensDelta is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensDelta struct {
+	ResultID Optional[String]
+	// The semantic token edits to transform a previous result into a new result.
+	Edits SemanticTokensEditArray
+}
 
-// SemanticTokensDeltaParams is a structure.
-type SemanticTokensDeltaParams struct{}
+// SemanticTokensDeltaParams is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensDeltaParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// SemanticTokensDeltaPartialResult is a structure.
-type SemanticTokensDeltaPartialResult struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The result id of a previous response. The result Id can either point to a full response
+	// or a delta response depending on what was received last.
+	PreviousResultID String
+}
 
-// SemanticTokensEdit is a structure.
-type SemanticTokensEdit struct{}
+// SemanticTokensDeltaPartialResult is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensDeltaPartialResult struct {
+	Edits SemanticTokensEditArray
+}
+
+// SemanticTokensEdit is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensEdit struct {
+	// The start offset of the edit.
+	Start UInt
+	// The count of elements to remove.
+	DeleteCount UInt
+	// The elements to insert.
+	Data Optional[UIntArray]
+}
 
 // SemanticTokensEditArray is an array of SemanticTokensEdit elements.
 type SemanticTokensEditArray []SemanticTokensEdit
 
-// SemanticTokensLegend is a structure.
-type SemanticTokensLegend struct{}
+// SemanticTokensLegend is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensLegend struct {
+	// The token types a server uses.
+	TokenTypes StringArray
+	// The token modifiers a server uses.
+	TokenModifiers StringArray
+}
 
-// SemanticTokensOptions is a structure.
-type SemanticTokensOptions struct{}
+// SemanticTokensOptions is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensOptions struct {
+	WorkDoneProgressOptions
+
+	// The legend used by the server
+	Legend SemanticTokensLegend
+	// Server supports providing semantic tokens for a specific range
+	// of a document.
+	Range Optional[SemanticTokensOptionsRange]
+	// Server supports providing semantic tokens for a full document.
+	Full Optional[SemanticTokensOptionsFull]
+}
 
 // SemanticTokensOptionsFull is a union of <TODO>.
 type SemanticTokensOptionsFull interface{}
@@ -2193,23 +4502,168 @@ type SemanticTokensOptionsRange interface{}
 // SemanticTokensOptionsRangeOption2 is a literal structure.
 type SemanticTokensOptionsRangeOption2 struct{}
 
-// SemanticTokensParams is a structure.
-type SemanticTokensParams struct{}
+// SemanticTokensParams is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// SemanticTokensPartialResult is a structure.
-type SemanticTokensPartialResult struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+}
 
-// SemanticTokensRangeParams is a structure.
-type SemanticTokensRangeParams struct{}
+// SemanticTokensPartialResult is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensPartialResult struct {
+	Data UIntArray
+}
 
-// SemanticTokensRegistrationOptions is a structure.
-type SemanticTokensRegistrationOptions struct{}
+// SemanticTokensRangeParams is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensRangeParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// SemanticTokensWorkspaceClientCapabilities is a structure.
-type SemanticTokensWorkspaceClientCapabilities struct{}
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The range the semantic tokens are requested for.
+	Range Range
+}
 
-// ServerCapabilities is a structure.
-type ServerCapabilities struct{}
+// SemanticTokensRegistrationOptions is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	SemanticTokensOptions
+	StaticRegistrationOptions
+}
+
+// SemanticTokensWorkspaceClientCapabilities is a named structure definition.
+//
+// @since 3.16.0
+type SemanticTokensWorkspaceClientCapabilities struct {
+	// Whether the client implementation supports a refresh request sent from
+	// the server to the client.
+	//
+	// Note that this event is global and will force the client to refresh all
+	// semantic tokens currently shown. It should be used with absolute care
+	// and is useful for situation where a server for example detects a project
+	// wide change that requires such a calculation.
+	RefreshSupport Optional[Bool]
+}
+
+// ServerCapabilities is a named structure definition.
+//
+// Defines the capabilities provided by a language
+// server.
+type ServerCapabilities struct {
+	// The position encoding the server picked from the encodings offered
+	// by the client via the client capability `general.positionEncodings`.
+	//
+	// If the client didn't provide any position encodings the only valid
+	// value that a server can return is 'utf-16'.
+	//
+	// If omitted it defaults to 'utf-16'.
+	//
+	// @since 3.17.0
+	PositionEncoding Optional[PositionEncodingKind]
+	// Defines how text documents are synced. Is either a detailed structure
+	// defining each notification or for backwards compatibility the
+	// TextDocumentSyncKind number.
+	TextDocumentSync Optional[ServerCapabilitiesTextDocumentSync]
+	// Defines how notebook documents are synced.
+	//
+	// @since 3.17.0
+	NotebookDocumentSync Optional[ServerCapabilitiesNotebookDocumentSync]
+	// The server provides completion support.
+	CompletionProvider Optional[CompletionOptions]
+	// The server provides hover support.
+	HoverProvider Optional[ServerCapabilitiesHoverProvider]
+	// The server provides signature help support.
+	SignatureHelpProvider Optional[SignatureHelpOptions]
+	// The server provides Goto Declaration support.
+	DeclarationProvider Optional[ServerCapabilitiesDeclarationProvider]
+	// The server provides goto definition support.
+	DefinitionProvider Optional[ServerCapabilitiesDefinitionProvider]
+	// The server provides Goto Type Definition support.
+	TypeDefinitionProvider Optional[ServerCapabilitiesTypeDefinitionProvider]
+	// The server provides Goto Implementation support.
+	ImplementationProvider Optional[ServerCapabilitiesImplementationProvider]
+	// The server provides find references support.
+	ReferencesProvider Optional[ServerCapabilitiesReferencesProvider]
+	// The server provides document highlight support.
+	DocumentHighlightProvider Optional[ServerCapabilitiesDocumentHighlightProvider]
+	// The server provides document symbol support.
+	DocumentSymbolProvider Optional[ServerCapabilitiesDocumentSymbolProvider]
+	// The server provides code actions. CodeActionOptions may only be
+	// specified if the client states that it supports
+	// `codeActionLiteralSupport` in its initial `initialize` request.
+	CodeActionProvider Optional[ServerCapabilitiesCodeActionProvider]
+	// The server provides code lens.
+	CodeLensProvider Optional[CodeLensOptions]
+	// The server provides document link support.
+	DocumentLinkProvider Optional[DocumentLinkOptions]
+	// The server provides color provider support.
+	ColorProvider Optional[ServerCapabilitiesColorProvider]
+	// The server provides workspace symbol support.
+	WorkspaceSymbolProvider Optional[ServerCapabilitiesWorkspaceSymbolProvider]
+	// The server provides document formatting.
+	DocumentFormattingProvider Optional[ServerCapabilitiesDocumentFormattingProvider]
+	// The server provides document range formatting.
+	DocumentRangeFormattingProvider Optional[ServerCapabilitiesDocumentRangeFormattingProvider]
+	// The server provides document formatting on typing.
+	DocumentOnTypeFormattingProvider Optional[DocumentOnTypeFormattingOptions]
+	// The server provides rename support. RenameOptions may only be
+	// specified if the client states that it supports
+	// `prepareSupport` in its initial `initialize` request.
+	RenameProvider Optional[ServerCapabilitiesRenameProvider]
+	// The server provides folding provider support.
+	FoldingRangeProvider Optional[ServerCapabilitiesFoldingRangeProvider]
+	// The server provides selection range support.
+	SelectionRangeProvider Optional[ServerCapabilitiesSelectionRangeProvider]
+	// The server provides execute command support.
+	ExecuteCommandProvider Optional[ExecuteCommandOptions]
+	// The server provides call hierarchy support.
+	//
+	// @since 3.16.0
+	CallHierarchyProvider Optional[ServerCapabilitiesCallHierarchyProvider]
+	// The server provides linked editing range support.
+	//
+	// @since 3.16.0
+	LinkedEditingRangeProvider Optional[ServerCapabilitiesLinkedEditingRangeProvider]
+	// The server provides semantic tokens support.
+	//
+	// @since 3.16.0
+	SemanticTokensProvider Optional[ServerCapabilitiesSemanticTokensProvider]
+	// The server provides moniker support.
+	//
+	// @since 3.16.0
+	MonikerProvider Optional[ServerCapabilitiesMonikerProvider]
+	// The server provides type hierarchy support.
+	//
+	// @since 3.17.0
+	TypeHierarchyProvider Optional[ServerCapabilitiesTypeHierarchyProvider]
+	// The server provides inline values.
+	//
+	// @since 3.17.0
+	InlineValueProvider Optional[ServerCapabilitiesInlineValueProvider]
+	// The server provides inlay hints.
+	//
+	// @since 3.17.0
+	InlayHintProvider Optional[ServerCapabilitiesInlayHintProvider]
+	// The server has support for pull model diagnostics.
+	//
+	// @since 3.17.0
+	DiagnosticProvider Optional[ServerCapabilitiesDiagnosticProvider]
+	// Workspace specific server capabilities.
+	Workspace Optional[ServerCapabilitiesWorkspace]
+	// Experimental server capabilities.
+	Experimental Optional[LSPAny]
+}
 
 // ServerCapabilitiesCallHierarchyProvider is a union of <TODO>.
 type ServerCapabilitiesCallHierarchyProvider interface{}
@@ -2292,35 +4746,132 @@ type ServerCapabilitiesWorkspace struct{}
 // ServerCapabilitiesWorkspaceSymbolProvider is a union of <TODO>.
 type ServerCapabilitiesWorkspaceSymbolProvider interface{}
 
-// SetTraceParams is a structure.
-type SetTraceParams struct{}
+// SetTraceParams is a named structure definition.
+type SetTraceParams struct {
+	Value TraceValues
+}
 
-// ShowDocumentClientCapabilities is a structure.
-type ShowDocumentClientCapabilities struct{}
+// ShowDocumentClientCapabilities is a named structure definition.
+//
+// Client capabilities for the showDocument request.
+//
+// @since 3.16.0
+type ShowDocumentClientCapabilities struct {
+	// The client has support for the showDocument
+	// request.
+	Support Bool
+}
 
-// ShowDocumentParams is a structure.
-type ShowDocumentParams struct{}
+// ShowDocumentParams is a named structure definition.
+//
+// Params to show a resource in the UI.
+//
+// @since 3.16.0
+type ShowDocumentParams struct {
+	// The uri to show.
+	URI URI
+	// Indicates to show the resource in an external program.
+	// To show, for example, `https://code.visualstudio.com/`
+	// in the default WEB browser set `external` to `true`.
+	External Optional[Bool]
+	// An optional property to indicate whether the editor
+	// showing the document should take focus or not.
+	// Clients might ignore this property if an external
+	// program is started.
+	TakeFocus Optional[Bool]
+	// An optional selection range if the document is a text
+	// document. Clients might ignore the property if an
+	// external program is started or the file is not a text
+	// file.
+	Selection Optional[Range]
+}
 
-// ShowDocumentResult is a structure.
-type ShowDocumentResult struct{}
+// ShowDocumentResult is a named structure definition.
+//
+// The result of a showDocument request.
+//
+// @since 3.16.0
+type ShowDocumentResult struct {
+	// A boolean indicating if the show was successful.
+	Success Bool
+}
 
-// ShowMessageParams is a structure.
-type ShowMessageParams struct{}
+// ShowMessageParams is a named structure definition.
+//
+// The parameters of a notification message.
+type ShowMessageParams struct {
+	// The message type. See {@link MessageType}
+	Type MessageType
+	// The actual message.
+	Message String
+}
 
-// ShowMessageRequestClientCapabilities is a structure.
-type ShowMessageRequestClientCapabilities struct{}
+// ShowMessageRequestClientCapabilities is a named structure definition.
+//
+// Show message request client capabilities
+type ShowMessageRequestClientCapabilities struct {
+	// Capabilities specific to the `MessageActionItem` type.
+	MessageActionItem Optional[ShowMessageRequestClientCapabilitiesMessageActionItem]
+}
 
 // ShowMessageRequestClientCapabilitiesMessageActionItem is a literal structure.
 type ShowMessageRequestClientCapabilitiesMessageActionItem struct{}
 
-// ShowMessageRequestParams is a structure.
-type ShowMessageRequestParams struct{}
+// ShowMessageRequestParams is a named structure definition.
+type ShowMessageRequestParams struct {
+	// The message type. See {@link MessageType}
+	Type MessageType
+	// The actual message.
+	Message String
+	// The message action items to present.
+	Actions Optional[MessageActionItemArray]
+}
 
-// SignatureHelp is a structure.
-type SignatureHelp struct{}
+// SignatureHelp is a named structure definition.
+//
+// Signature help represents the signature of something
+// callable. There can be multiple signature but only one
+// active and only one active parameter.
+type SignatureHelp struct {
+	// One or more signatures.
+	Signatures SignatureInformationArray
+	// The active signature. If omitted or the value lies outside the
+	// range of `signatures` the value defaults to zero or is ignored if
+	// the `SignatureHelp` has no signatures.
+	//
+	// Whenever possible implementors should make an active decision about
+	// the active signature and shouldn't rely on a default value.
+	//
+	// In future version of the protocol this property might become
+	// mandatory to better express this.
+	ActiveSignature Optional[UInt]
+	// The active parameter of the active signature. If omitted or the value
+	// lies outside the range of `signatures[activeSignature].parameters`
+	// defaults to 0 if the active signature has parameters. If
+	// the active signature has no parameters it is ignored.
+	// In future version of the protocol this property might become
+	// mandatory to better express the active parameter if the
+	// active signature does have any.
+	ActiveParameter Optional[UInt]
+}
 
-// SignatureHelpClientCapabilities is a structure.
-type SignatureHelpClientCapabilities struct{}
+// SignatureHelpClientCapabilities is a named structure definition.
+//
+// Client Capabilities for a {@link SignatureHelpRequest}.
+type SignatureHelpClientCapabilities struct {
+	// Whether signature help supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// The client supports the following `SignatureInformation`
+	// specific properties.
+	SignatureInformation Optional[SignatureHelpClientCapabilitiesSignatureInformation]
+	// The client supports to send additional context information for a
+	// `textDocument/signatureHelp` request. A client that opts into
+	// contextSupport will also support the `retriggerCharacters` on
+	// `SignatureHelpOptions`.
+	//
+	// @since 3.15.0
+	ContextSupport Optional[Bool]
+}
 
 // SignatureHelpClientCapabilitiesSignatureInformation is a literal structure.
 type SignatureHelpClientCapabilitiesSignatureInformation struct{}
@@ -2328,52 +4879,112 @@ type SignatureHelpClientCapabilitiesSignatureInformation struct{}
 // SignatureHelpClientCapabilitiesSignatureInformationParameterInformation is a literal structure.
 type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct{}
 
-// SignatureHelpContext is a structure.
-type SignatureHelpContext struct{}
+// SignatureHelpContext is a named structure definition.
+//
+// Additional information about the context in which a signature help request was triggered.
+//
+// @since 3.15.0
+type SignatureHelpContext struct {
+	// Action that caused signature help to be triggered.
+	TriggerKind SignatureHelpTriggerKind
+	// Character that caused signature help to be triggered.
+	//
+	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
+	TriggerCharacter Optional[String]
+	// `true` if signature help was already showing when it was triggered.
+	//
+	// Retriggers occurs when the signature help is already active and can be caused by actions such as
+	// typing a trigger character, a cursor move, or document content changes.
+	IsRetrigger Bool
+	// The currently active `SignatureHelp`.
+	//
+	// The `activeSignatureHelp` has its `SignatureHelp.activeSignature` field updated based on
+	// the user navigating through available signatures.
+	ActiveSignatureHelp Optional[SignatureHelp]
+}
 
-// SignatureHelpOptions is a structure.
-type SignatureHelpOptions struct{}
+// SignatureHelpOptions is a named structure definition.
+//
+// Server Capabilities for a {@link SignatureHelpRequest}.
+type SignatureHelpOptions struct {
+	WorkDoneProgressOptions
 
-// SignatureHelpParams is a structure.
-type SignatureHelpParams struct{}
+	// List of characters that trigger signature help automatically.
+	TriggerCharacters Optional[StringArray]
+	// List of characters that re-trigger signature help.
+	//
+	// These trigger characters are only active when signature help is already showing. All trigger characters
+	// are also counted as re-trigger characters.
+	//
+	// @since 3.15.0
+	RetriggerCharacters Optional[StringArray]
+}
 
-// SignatureHelpRegistrationOptions is a structure.
-type SignatureHelpRegistrationOptions struct{}
+// SignatureHelpParams is a named structure definition.
+//
+// Parameters for a {@link SignatureHelpRequest}.
+type SignatureHelpParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+
+	// The signature help context. This is only available if the client specifies
+	// to send this using the client capability `textDocument.signatureHelp.contextSupport === true`
+	//
+	// @since 3.15.0
+	Context Optional[SignatureHelpContext]
+}
+
+// SignatureHelpRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link SignatureHelpRequest}.
+type SignatureHelpRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	SignatureHelpOptions
+}
 
 // SignatureHelpTriggerKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// How a signature help was triggered.
 //
-//	How a signature help was triggered.
-//
-//	@since 3.15.0
+// @since 3.15.0
 type SignatureHelpTriggerKind UInt
 
 const (
 	// InvokedSignatureHelpTriggerKind is a member of the SignatureHelpTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Signature help was invoked manually by the user or by a command.
+	// Signature help was invoked manually by the user or by a command.
 	InvokedSignatureHelpTriggerKind SignatureHelpTriggerKind = 1
-
 	// TriggerCharacterSignatureHelpTriggerKind is a member of the SignatureHelpTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Signature help was triggered by a trigger character.
+	// Signature help was triggered by a trigger character.
 	TriggerCharacterSignatureHelpTriggerKind SignatureHelpTriggerKind = 2
-
 	// ContentChangeSignatureHelpTriggerKind is a member of the SignatureHelpTriggerKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Signature help was triggered by the cursor moving or by the document content changing.
+	// Signature help was triggered by the cursor moving or by the document content changing.
 	ContentChangeSignatureHelpTriggerKind SignatureHelpTriggerKind = 3
 )
 
-// SignatureInformation is a structure.
-type SignatureInformation struct{}
+// SignatureInformation is a named structure definition.
+//
+// Represents the signature of something callable. A signature
+// can have a label, like a function-name, a doc-comment, and
+// a set of parameters.
+type SignatureInformation struct {
+	// The label of this signature. Will be shown in
+	// the UI.
+	Label String
+	// The human-readable doc-comment of this signature. Will be shown
+	// in the UI but can be omitted.
+	Documentation Optional[SignatureInformationDocumentation]
+	// The parameters of this signature.
+	Parameters Optional[ParameterInformationArray]
+	// The index of the active parameter.
+	//
+	// If provided, this is used in place of `SignatureHelp.activeParameter`.
+	//
+	// @since 3.16.0
+	ActiveParameter Optional[UInt]
+}
 
 // SignatureInformationArray is an array of SignatureInformation elements.
 type SignatureInformationArray []SignatureInformation
@@ -2381,8 +4992,15 @@ type SignatureInformationArray []SignatureInformation
 // SignatureInformationDocumentation is a union of <TODO>.
 type SignatureInformationDocumentation interface{}
 
-// StaticRegistrationOptions is a structure.
-type StaticRegistrationOptions struct{}
+// StaticRegistrationOptions is a named structure definition.
+//
+// Static registration options to be returned in the initialize
+// request.
+type StaticRegistrationOptions struct {
+	// The id used to register the request. The id can be used to deregister
+	// the request again. See also Registration#id.
+	ID Optional[String]
+}
 
 // String is the LSP string type.
 type String string
@@ -2390,95 +5008,90 @@ type String string
 // StringArray is an array of String elements.
 type StringArray []String
 
-// SymbolInformation is a structure.
-type SymbolInformation struct{}
+// SymbolInformation is a named structure definition.
+//
+// Represents information about programming constructs like variables, classes,
+// interfaces etc.
+type SymbolInformation struct {
+	BaseSymbolInformation
+
+	// Indicates if this symbol is deprecated.
+	//
+	// @deprecated Use tags instead
+	//
+	// Deprecated: Use tags instead
+	Deprecated Optional[Bool]
+	// The location of this symbol. The location's range is used by a tool
+	// to reveal the location in the editor. If the symbol is selected in the
+	// tool the range's start information is used to position the cursor. So
+	// the range usually spans more than the actual symbol's name and does
+	// normally include things like visibility modifiers.
+	//
+	// The range doesn't have to denote a node range in the sense of an abstract
+	// syntax tree. It can therefore not be used to re-construct a hierarchy of
+	// the symbols.
+	Location Location
+}
 
 // SymbolInformationArray is an array of SymbolInformation elements.
 type SymbolInformationArray []SymbolInformation
 
 // SymbolKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	A symbol kind.
+// A symbol kind.
 type SymbolKind UInt
 
 const (
 	// FileSymbolKind is a member of the SymbolKind enumeration.
 	FileSymbolKind SymbolKind = 1
-
 	// ModuleSymbolKind is a member of the SymbolKind enumeration.
 	ModuleSymbolKind SymbolKind = 2
-
 	// NamespaceSymbolKind is a member of the SymbolKind enumeration.
 	NamespaceSymbolKind SymbolKind = 3
-
 	// PackageSymbolKind is a member of the SymbolKind enumeration.
 	PackageSymbolKind SymbolKind = 4
-
 	// ClassSymbolKind is a member of the SymbolKind enumeration.
 	ClassSymbolKind SymbolKind = 5
-
 	// MethodSymbolKind is a member of the SymbolKind enumeration.
 	MethodSymbolKind SymbolKind = 6
-
 	// PropertySymbolKind is a member of the SymbolKind enumeration.
 	PropertySymbolKind SymbolKind = 7
-
 	// FieldSymbolKind is a member of the SymbolKind enumeration.
 	FieldSymbolKind SymbolKind = 8
-
 	// ConstructorSymbolKind is a member of the SymbolKind enumeration.
 	ConstructorSymbolKind SymbolKind = 9
-
 	// EnumSymbolKind is a member of the SymbolKind enumeration.
 	EnumSymbolKind SymbolKind = 10
-
 	// InterfaceSymbolKind is a member of the SymbolKind enumeration.
 	InterfaceSymbolKind SymbolKind = 11
-
 	// FunctionSymbolKind is a member of the SymbolKind enumeration.
 	FunctionSymbolKind SymbolKind = 12
-
 	// VariableSymbolKind is a member of the SymbolKind enumeration.
 	VariableSymbolKind SymbolKind = 13
-
 	// ConstantSymbolKind is a member of the SymbolKind enumeration.
 	ConstantSymbolKind SymbolKind = 14
-
 	// StringSymbolKind is a member of the SymbolKind enumeration.
 	StringSymbolKind SymbolKind = 15
-
 	// NumberSymbolKind is a member of the SymbolKind enumeration.
 	NumberSymbolKind SymbolKind = 16
-
 	// BooleanSymbolKind is a member of the SymbolKind enumeration.
 	BooleanSymbolKind SymbolKind = 17
-
 	// ArraySymbolKind is a member of the SymbolKind enumeration.
 	ArraySymbolKind SymbolKind = 18
-
 	// ObjectSymbolKind is a member of the SymbolKind enumeration.
 	ObjectSymbolKind SymbolKind = 19
-
 	// KeySymbolKind is a member of the SymbolKind enumeration.
 	KeySymbolKind SymbolKind = 20
-
 	// NullSymbolKind is a member of the SymbolKind enumeration.
 	NullSymbolKind SymbolKind = 21
-
 	// EnumMemberSymbolKind is a member of the SymbolKind enumeration.
 	EnumMemberSymbolKind SymbolKind = 22
-
 	// StructSymbolKind is a member of the SymbolKind enumeration.
 	StructSymbolKind SymbolKind = 23
-
 	// EventSymbolKind is a member of the SymbolKind enumeration.
 	EventSymbolKind SymbolKind = 24
-
 	// OperatorSymbolKind is a member of the SymbolKind enumeration.
 	OperatorSymbolKind SymbolKind = 25
-
 	// TypeParameterSymbolKind is a member of the SymbolKind enumeration.
 	TypeParameterSymbolKind SymbolKind = 26
 )
@@ -2488,30 +5101,125 @@ type SymbolKindArray []SymbolKind
 
 // SymbolTag is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
+// Symbol tags are extra annotations that tweak the rendering of a symbol.
 //
-//	Symbol tags are extra annotations that tweak the rendering of a symbol.
-//
-//	@since 3.16
+// @since 3.16
 type SymbolTag UInt
 
 const (
 	// DeprecatedSymbolTag is a member of the SymbolTag enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Render a symbol as obsolete, usually using a strike-out.
+	// Render a symbol as obsolete, usually using a strike-out.
 	DeprecatedSymbolTag SymbolTag = 1
 )
 
 // SymbolTagArray is an array of SymbolTag elements.
 type SymbolTagArray []SymbolTag
 
-// TextDocumentChangeRegistrationOptions is a structure.
-type TextDocumentChangeRegistrationOptions struct{}
+// TextDocumentChangeRegistrationOptions is a named structure definition.
+//
+// Describe options to be used when registered for text document change events.
+type TextDocumentChangeRegistrationOptions struct {
+	TextDocumentRegistrationOptions
 
-// TextDocumentClientCapabilities is a structure.
-type TextDocumentClientCapabilities struct{}
+	// How documents are synced to the server.
+	SyncKind TextDocumentSyncKind
+}
+
+// TextDocumentClientCapabilities is a named structure definition.
+//
+// Text document specific client capabilities.
+type TextDocumentClientCapabilities struct {
+	// Defines which synchronization capabilities the client supports.
+	Synchronization Optional[TextDocumentSyncClientCapabilities]
+	// Capabilities specific to the `textDocument/completion` request.
+	Completion Optional[CompletionClientCapabilities]
+	// Capabilities specific to the `textDocument/hover` request.
+	Hover Optional[HoverClientCapabilities]
+	// Capabilities specific to the `textDocument/signatureHelp` request.
+	SignatureHelp Optional[SignatureHelpClientCapabilities]
+	// Capabilities specific to the `textDocument/declaration` request.
+	//
+	// @since 3.14.0
+	Declaration Optional[DeclarationClientCapabilities]
+	// Capabilities specific to the `textDocument/definition` request.
+	Definition Optional[DefinitionClientCapabilities]
+	// Capabilities specific to the `textDocument/typeDefinition` request.
+	//
+	// @since 3.6.0
+	TypeDefinition Optional[TypeDefinitionClientCapabilities]
+	// Capabilities specific to the `textDocument/implementation` request.
+	//
+	// @since 3.6.0
+	Implementation Optional[ImplementationClientCapabilities]
+	// Capabilities specific to the `textDocument/references` request.
+	References Optional[ReferenceClientCapabilities]
+	// Capabilities specific to the `textDocument/documentHighlight` request.
+	DocumentHighlight Optional[DocumentHighlightClientCapabilities]
+	// Capabilities specific to the `textDocument/documentSymbol` request.
+	DocumentSymbol Optional[DocumentSymbolClientCapabilities]
+	// Capabilities specific to the `textDocument/codeAction` request.
+	CodeAction Optional[CodeActionClientCapabilities]
+	// Capabilities specific to the `textDocument/codeLens` request.
+	CodeLens Optional[CodeLensClientCapabilities]
+	// Capabilities specific to the `textDocument/documentLink` request.
+	DocumentLink Optional[DocumentLinkClientCapabilities]
+	// Capabilities specific to the `textDocument/documentColor` and the
+	// `textDocument/colorPresentation` request.
+	//
+	// @since 3.6.0
+	ColorProvider Optional[DocumentColorClientCapabilities]
+	// Capabilities specific to the `textDocument/formatting` request.
+	Formatting Optional[DocumentFormattingClientCapabilities]
+	// Capabilities specific to the `textDocument/rangeFormatting` request.
+	RangeFormatting Optional[DocumentRangeFormattingClientCapabilities]
+	// Capabilities specific to the `textDocument/onTypeFormatting` request.
+	OnTypeFormatting Optional[DocumentOnTypeFormattingClientCapabilities]
+	// Capabilities specific to the `textDocument/rename` request.
+	Rename Optional[RenameClientCapabilities]
+	// Capabilities specific to the `textDocument/foldingRange` request.
+	//
+	// @since 3.10.0
+	FoldingRange Optional[FoldingRangeClientCapabilities]
+	// Capabilities specific to the `textDocument/selectionRange` request.
+	//
+	// @since 3.15.0
+	SelectionRange Optional[SelectionRangeClientCapabilities]
+	// Capabilities specific to the `textDocument/publishDiagnostics` notification.
+	PublishDiagnostics Optional[PublishDiagnosticsClientCapabilities]
+	// Capabilities specific to the various call hierarchy requests.
+	//
+	// @since 3.16.0
+	CallHierarchy Optional[CallHierarchyClientCapabilities]
+	// Capabilities specific to the various semantic token request.
+	//
+	// @since 3.16.0
+	SemanticTokens Optional[SemanticTokensClientCapabilities]
+	// Capabilities specific to the `textDocument/linkedEditingRange` request.
+	//
+	// @since 3.16.0
+	LinkedEditingRange Optional[LinkedEditingRangeClientCapabilities]
+	// Client capabilities specific to the `textDocument/moniker` request.
+	//
+	// @since 3.16.0
+	Moniker Optional[MonikerClientCapabilities]
+	// Capabilities specific to the various type hierarchy requests.
+	//
+	// @since 3.17.0
+	TypeHierarchy Optional[TypeHierarchyClientCapabilities]
+	// Capabilities specific to the `textDocument/inlineValue` request.
+	//
+	// @since 3.17.0
+	InlineValue Optional[InlineValueClientCapabilities]
+	// Capabilities specific to the `textDocument/inlayHint` request.
+	//
+	// @since 3.17.0
+	InlayHint Optional[InlayHintClientCapabilities]
+	// Capabilities specific to the diagnostic pull model.
+	//
+	// @since 3.17.0
+	Diagnostic Optional[DiagnosticClientCapabilities]
+}
 
 // TextDocumentContentChangeEvent is a union of <TODO>.
 type TextDocumentContentChangeEvent interface{}
@@ -2525,8 +5233,21 @@ type TextDocumentContentChangeEventOption1 struct{}
 // TextDocumentContentChangeEventOption2 is a literal structure.
 type TextDocumentContentChangeEventOption2 struct{}
 
-// TextDocumentEdit is a structure.
-type TextDocumentEdit struct{}
+// TextDocumentEdit is a named structure definition.
+//
+// Describes textual changes on a text document. A TextDocumentEdit describes all changes
+// on a document version Si and after they are applied move the document to version Si+1.
+// So the creator of a TextDocumentEdit doesn't need to sort the array of edits or do any
+// kind of ordering. However the edits must be non overlapping.
+type TextDocumentEdit struct {
+	// The text document to change.
+	TextDocument OptionalVersionedTextDocumentIdentifier
+	// The edits to be applied.
+	//
+	// @since 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
+	// client capability.
+	Edits TextDocumentEditEditsArray
+}
 
 // TextDocumentEditEdits is a union of <TODO>.
 type TextDocumentEditEdits interface{}
@@ -2546,106 +5267,159 @@ type TextDocumentFilterOption2 struct{}
 // TextDocumentFilterOption3 is a literal structure.
 type TextDocumentFilterOption3 struct{}
 
-// TextDocumentIdentifier is a structure.
-type TextDocumentIdentifier struct{}
+// TextDocumentIdentifier is a named structure definition.
+//
+// A literal to identify a text document in the client.
+type TextDocumentIdentifier struct {
+	// The text document's uri.
+	URI DocumentURI
+}
 
 // TextDocumentIdentifierArray is an array of TextDocumentIdentifier elements.
 type TextDocumentIdentifierArray []TextDocumentIdentifier
 
-// TextDocumentItem is a structure.
-type TextDocumentItem struct{}
+// TextDocumentItem is a named structure definition.
+//
+// An item to transfer a text document from the client to the
+// server.
+type TextDocumentItem struct {
+	// The text document's uri.
+	URI DocumentURI
+	// The text document's language identifier.
+	LanguageID String
+	// The version number of this document (it will increase after each
+	// change, including undo/redo).
+	Version Int
+	// The content of the opened text document.
+	Text String
+}
 
 // TextDocumentItemArray is an array of TextDocumentItem elements.
 type TextDocumentItemArray []TextDocumentItem
 
-// TextDocumentPositionParams is a structure.
-type TextDocumentPositionParams struct{}
+// TextDocumentPositionParams is a named structure definition.
+//
+// A parameter literal used in requests to pass a text document and a position inside that
+// document.
+type TextDocumentPositionParams struct {
+	// The text document.
+	TextDocument TextDocumentIdentifier
+	// The position inside the text document.
+	Position Position
+}
 
-// TextDocumentRegistrationOptions is a structure.
-type TextDocumentRegistrationOptions struct{}
+// TextDocumentRegistrationOptions is a named structure definition.
+//
+// General text document registration options.
+type TextDocumentRegistrationOptions struct {
+	// A document selector to identify the scope of the registration. If set to null
+	// the document selector provided on the client side will be used.
+	DocumentSelector TextDocumentRegistrationOptionsDocumentSelector
+}
 
 // TextDocumentRegistrationOptionsDocumentSelector is a union of <TODO>.
 type TextDocumentRegistrationOptionsDocumentSelector interface{}
 
 // TextDocumentSaveReason is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	Represents reasons why a text document is saved.
+// Represents reasons why a text document is saved.
 type TextDocumentSaveReason UInt
 
 const (
 	// ManualTextDocumentSaveReason is a member of the TextDocumentSaveReason enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Manually triggered, e.g. by the user pressing save, by starting debugging,
-	//	or by an API call.
+	// Manually triggered, e.g. by the user pressing save, by starting debugging,
+	// or by an API call.
 	ManualTextDocumentSaveReason TextDocumentSaveReason = 1
-
 	// AfterDelayTextDocumentSaveReason is a member of the TextDocumentSaveReason enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Automatic after a delay.
+	// Automatic after a delay.
 	AfterDelayTextDocumentSaveReason TextDocumentSaveReason = 2
-
 	// FocusOutTextDocumentSaveReason is a member of the TextDocumentSaveReason enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	When the editor lost focus.
+	// When the editor lost focus.
 	FocusOutTextDocumentSaveReason TextDocumentSaveReason = 3
 )
 
-// TextDocumentSaveRegistrationOptions is a structure.
-type TextDocumentSaveRegistrationOptions struct{}
+// TextDocumentSaveRegistrationOptions is a named structure definition.
+//
+// Save registration options.
+type TextDocumentSaveRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	SaveOptions
+}
 
-// TextDocumentSyncClientCapabilities is a structure.
-type TextDocumentSyncClientCapabilities struct{}
+// TextDocumentSyncClientCapabilities is a named structure definition.
+type TextDocumentSyncClientCapabilities struct {
+	// Whether text document synchronization supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// The client supports sending will save notifications.
+	WillSave Optional[Bool]
+	// The client supports sending a will save request and
+	// waits for a response providing text edits which will
+	// be applied to the document before it is saved.
+	WillSaveWaitUntil Optional[Bool]
+	// The client supports did save notifications.
+	DidSave Optional[Bool]
+}
 
 // TextDocumentSyncKind is an enumeration of UInt values.
 //
-// Documentation from the LSP specification:
-//
-//	Defines how the host (editor) should sync
-//	document changes to the language server.
+// Defines how the host (editor) should sync
+// document changes to the language server.
 type TextDocumentSyncKind UInt
 
 const (
 	// NoneTextDocumentSyncKind is a member of the TextDocumentSyncKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Documents should not be synced at all.
+	// Documents should not be synced at all.
 	NoneTextDocumentSyncKind TextDocumentSyncKind = 0
-
 	// FullTextDocumentSyncKind is a member of the TextDocumentSyncKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Documents are synced by always sending the full content
-	//	of the document.
+	// Documents are synced by always sending the full content
+	// of the document.
 	FullTextDocumentSyncKind TextDocumentSyncKind = 1
-
 	// IncrementalTextDocumentSyncKind is a member of the TextDocumentSyncKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Documents are synced by sending the full content on open.
-	//	After that only incremental updates to the document are
-	//	send.
+	// Documents are synced by sending the full content on open.
+	// After that only incremental updates to the document are
+	// send.
 	IncrementalTextDocumentSyncKind TextDocumentSyncKind = 2
 )
 
-// TextDocumentSyncOptions is a structure.
-type TextDocumentSyncOptions struct{}
+// TextDocumentSyncOptions is a named structure definition.
+type TextDocumentSyncOptions struct {
+	// Open and close notifications are sent to the server. If omitted open close notification should not
+	// be sent.
+	OpenClose Optional[Bool]
+	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
+	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
+	Change Optional[TextDocumentSyncKind]
+	// If present will save notifications are sent to the server. If omitted the notification should not be
+	// sent.
+	WillSave Optional[Bool]
+	// If present will save wait until requests are sent to the server. If omitted the request should not be
+	// sent.
+	WillSaveWaitUntil Optional[Bool]
+	// If present save notifications are sent to the server. If omitted the notification should not be
+	// sent.
+	Save Optional[TextDocumentSyncOptionsSave]
+}
 
 // TextDocumentSyncOptionsSave is a union of <TODO>.
 type TextDocumentSyncOptionsSave interface{}
 
-// TextEdit is a structure.
-type TextEdit struct{}
+// TextEdit is a named structure definition.
+//
+// A text edit applicable to a text document.
+type TextEdit struct {
+	// The range of the text document to be manipulated. To insert
+	// text into a document create a range where start === end.
+	Range Range
+	// The string to be inserted. For delete operations use an
+	// empty string.
+	NewText String
+}
 
 // TextEditArray is an array of TextEdit elements.
 type TextEditArray []TextEdit
@@ -2670,61 +5444,145 @@ type TraceValues String
 const (
 	// OffTraceValues is a member of the TraceValues enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Turn tracing off.
+	// Turn tracing off.
 	OffTraceValues TraceValues = "off"
-
 	// MessagesTraceValues is a member of the TraceValues enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Trace messages only.
+	// Trace messages only.
 	MessagesTraceValues TraceValues = "messages"
-
 	// VerboseTraceValues is a member of the TraceValues enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Verbose message tracing.
+	// Verbose message tracing.
 	VerboseTraceValues TraceValues = "verbose"
 )
 
-// TypeDefinitionClientCapabilities is a structure.
-type TypeDefinitionClientCapabilities struct{}
+// TypeDefinitionClientCapabilities is a named structure definition.
+//
+// Since 3.6.0
+type TypeDefinitionClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `TypeDefinitionRegistrationOptions` return value
+	// for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+	// The client supports additional metadata in the form of definition links.
+	//
+	// Since 3.14.0
+	LinkSupport Optional[Bool]
+}
 
-// TypeDefinitionOptions is a structure.
-type TypeDefinitionOptions struct{}
+// TypeDefinitionOptions is a named structure definition.
+type TypeDefinitionOptions struct {
+	WorkDoneProgressOptions
+}
 
-// TypeDefinitionParams is a structure.
-type TypeDefinitionParams struct{}
+// TypeDefinitionParams is a named structure definition.
+type TypeDefinitionParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+	PartialResultParams
+}
 
-// TypeDefinitionRegistrationOptions is a structure.
-type TypeDefinitionRegistrationOptions struct{}
+// TypeDefinitionRegistrationOptions is a named structure definition.
+type TypeDefinitionRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	TypeDefinitionOptions
+	StaticRegistrationOptions
+}
 
-// TypeHierarchyClientCapabilities is a structure.
-type TypeHierarchyClientCapabilities struct{}
+// TypeHierarchyClientCapabilities is a named structure definition.
+//
+// @since 3.17.0
+type TypeHierarchyClientCapabilities struct {
+	// Whether implementation supports dynamic registration. If this is set to `true`
+	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
+	// return value for the corresponding server capability as well.
+	DynamicRegistration Optional[Bool]
+}
 
-// TypeHierarchyItem is a structure.
-type TypeHierarchyItem struct{}
+// TypeHierarchyItem is a named structure definition.
+//
+// @since 3.17.0
+type TypeHierarchyItem struct {
+	// The name of this item.
+	Name String
+	// The kind of this item.
+	Kind SymbolKind
+	// Tags for this item.
+	Tags Optional[SymbolTagArray]
+	// More detail for this item, e.g. the signature of a function.
+	Detail Optional[String]
+	// The resource identifier of this item.
+	URI DocumentURI
+	// The range enclosing this symbol not including leading/trailing whitespace
+	// but everything else, e.g. comments and code.
+	Range Range
+	// The range that should be selected and revealed when this symbol is being
+	// picked, e.g. the name of a function. Must be contained by the
+	// {@link TypeHierarchyItem.range `range`}.
+	SelectionRange Range
+	// A data entry field that is preserved between a type hierarchy prepare and
+	// supertypes or subtypes requests. It could also be used to identify the
+	// type hierarchy in the server, helping improve the performance on
+	// resolving supertypes and subtypes.
+	Data Optional[LSPAny]
+}
 
 // TypeHierarchyItemArray is an array of TypeHierarchyItem elements.
 type TypeHierarchyItemArray []TypeHierarchyItem
 
-// TypeHierarchyOptions is a structure.
-type TypeHierarchyOptions struct{}
+// TypeHierarchyOptions is a named structure definition.
+//
+// Type hierarchy options used during static registration.
+//
+// @since 3.17.0
+type TypeHierarchyOptions struct {
+	WorkDoneProgressOptions
+}
 
-// TypeHierarchyPrepareParams is a structure.
-type TypeHierarchyPrepareParams struct{}
+// TypeHierarchyPrepareParams is a named structure definition.
+//
+// The parameter of a `textDocument/prepareTypeHierarchy` request.
+//
+// @since 3.17.0
+type TypeHierarchyPrepareParams struct {
+	TextDocumentPositionParams
+	WorkDoneProgressParams
+}
 
-// TypeHierarchyRegistrationOptions is a structure.
-type TypeHierarchyRegistrationOptions struct{}
+// TypeHierarchyRegistrationOptions is a named structure definition.
+//
+// Type hierarchy options used during static or dynamic registration.
+//
+// @since 3.17.0
+type TypeHierarchyRegistrationOptions struct {
+	TextDocumentRegistrationOptions
+	TypeHierarchyOptions
+	StaticRegistrationOptions
+}
 
-// TypeHierarchySubtypesParams is a structure.
-type TypeHierarchySubtypesParams struct{}
+// TypeHierarchySubtypesParams is a named structure definition.
+//
+// The parameter of a `typeHierarchy/subtypes` request.
+//
+// @since 3.17.0
+type TypeHierarchySubtypesParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// TypeHierarchySupertypesParams is a structure.
-type TypeHierarchySupertypesParams struct{}
+	Item TypeHierarchyItem
+}
+
+// TypeHierarchySupertypesParams is a named structure definition.
+//
+// The parameter of a `typeHierarchy/supertypes` request.
+//
+// @since 3.17.0
+type TypeHierarchySupertypesParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
+
+	Item TypeHierarchyItem
+}
 
 // UInt is the LSP unsigned integer type.
 type UInt uint32
@@ -2735,69 +5593,88 @@ type UIntArray []UInt
 // URI is the URI of some non-document resource.
 type URI url.URL
 
-// UnchangedDocumentDiagnosticReport is a structure.
-type UnchangedDocumentDiagnosticReport struct{}
+// UnchangedDocumentDiagnosticReport is a named structure definition.
+//
+// A diagnostic report indicating that the last returned
+// report is still accurate.
+//
+// @since 3.17.0
+type UnchangedDocumentDiagnosticReport struct {
+	// A result id which will be sent on the next
+	// diagnostic request for the same document.
+	ResultID String
+}
 
 // UniquenessLevel is an enumeration of String values.
 //
-// Documentation from the LSP specification:
+// Moniker uniqueness level to define scope of the moniker.
 //
-//	Moniker uniqueness level to define scope of the moniker.
-//
-//	@since 3.16.0
+// @since 3.16.0
 type UniquenessLevel String
 
 const (
 	// DocumentUniquenessLevel is a member of the UniquenessLevel enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker is only unique inside a document
+	// The moniker is only unique inside a document
 	DocumentUniquenessLevel UniquenessLevel = "document"
-
 	// ProjectUniquenessLevel is a member of the UniquenessLevel enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker is unique inside a project for which a dump got created
+	// The moniker is unique inside a project for which a dump got created
 	ProjectUniquenessLevel UniquenessLevel = "project"
-
 	// GroupUniquenessLevel is a member of the UniquenessLevel enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker is unique inside the group to which a project belongs
+	// The moniker is unique inside the group to which a project belongs
 	GroupUniquenessLevel UniquenessLevel = "group"
-
 	// SchemeUniquenessLevel is a member of the UniquenessLevel enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker is unique inside the moniker scheme.
+	// The moniker is unique inside the moniker scheme.
 	SchemeUniquenessLevel UniquenessLevel = "scheme"
-
 	// GlobalUniquenessLevel is a member of the UniquenessLevel enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	The moniker is globally unique
+	// The moniker is globally unique
 	GlobalUniquenessLevel UniquenessLevel = "global"
 )
 
-// Unregistration is a structure.
-type Unregistration struct{}
+// Unregistration is a named structure definition.
+//
+// General parameters to unregister a request or notification.
+type Unregistration struct {
+	// The id used to unregister the request or notification. Usually an id
+	// provided during the register request.
+	ID String
+	// The method to unregister for.
+	Method String
+}
 
 // UnregistrationArray is an array of Unregistration elements.
 type UnregistrationArray []Unregistration
 
-// UnregistrationParams is a structure.
-type UnregistrationParams struct{}
+// UnregistrationParams is a named structure definition.
+type UnregistrationParams struct {
+	Unregisterations UnregistrationArray
+}
 
-// VersionedNotebookDocumentIdentifier is a structure.
-type VersionedNotebookDocumentIdentifier struct{}
+// VersionedNotebookDocumentIdentifier is a named structure definition.
+//
+// A versioned notebook document identifier.
+//
+// @since 3.17.0
+type VersionedNotebookDocumentIdentifier struct {
+	// The version number of this notebook document.
+	Version Int
+	// The notebook document's uri.
+	URI URI
+}
 
-// VersionedTextDocumentIdentifier is a structure.
-type VersionedTextDocumentIdentifier struct{}
+// VersionedTextDocumentIdentifier is a named structure definition.
+//
+// A text document identifier to denote a specific version of a text document.
+type VersionedTextDocumentIdentifier struct {
+	TextDocumentIdentifier
+
+	// The version number of this document.
+	Version Int
+}
 
 // WatchKind is an enumeration of UInt values.
 type WatchKind UInt
@@ -2805,64 +5682,218 @@ type WatchKind UInt
 const (
 	// CreateWatchKind is a member of the WatchKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Interested in create events.
+	// Interested in create events.
 	CreateWatchKind WatchKind = 1
-
 	// ChangeWatchKind is a member of the WatchKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Interested in change events
+	// Interested in change events
 	ChangeWatchKind WatchKind = 2
-
 	// DeleteWatchKind is a member of the WatchKind enumeration.
 	//
-	// Documentation from the LSP specification:
-	//
-	//	Interested in delete events
+	// Interested in delete events
 	DeleteWatchKind WatchKind = 4
 )
 
-// WillSaveTextDocumentParams is a structure.
-type WillSaveTextDocumentParams struct{}
+// WillSaveTextDocumentParams is a named structure definition.
+//
+// The parameters sent in a will save text document notification.
+type WillSaveTextDocumentParams struct {
+	// The document that will be saved.
+	TextDocument TextDocumentIdentifier
+	// The 'TextDocumentSaveReason'.
+	Reason TextDocumentSaveReason
+}
 
-// WindowClientCapabilities is a structure.
-type WindowClientCapabilities struct{}
+// WindowClientCapabilities is a named structure definition.
+type WindowClientCapabilities struct {
+	// It indicates whether the client supports server initiated
+	// progress using the `window/workDoneProgress/create` request.
+	//
+	// The capability also controls Whether client supports handling
+	// of progress notifications. If set servers are allowed to report a
+	// `workDoneProgress` property in the request specific server
+	// capabilities.
+	//
+	// @since 3.15.0
+	WorkDoneProgress Optional[Bool]
+	// Capabilities specific to the showMessage request.
+	//
+	// @since 3.16.0
+	ShowMessage Optional[ShowMessageRequestClientCapabilities]
+	// Capabilities specific to the showDocument request.
+	//
+	// @since 3.16.0
+	ShowDocument Optional[ShowDocumentClientCapabilities]
+}
 
-// WorkDoneProgressBegin is a structure.
-type WorkDoneProgressBegin struct{}
+// WorkDoneProgressBegin is a named structure definition.
+type WorkDoneProgressBegin struct {
+	// Mandatory title of the progress operation. Used to briefly inform about
+	// the kind of operation being performed.
+	//
+	// Examples: "Indexing" or "Linking dependencies".
+	Title String
+	// Controls if a cancel button should show to allow the user to cancel the
+	// long running operation. Clients that don't support cancellation are allowed
+	// to ignore the setting.
+	Cancellable Optional[Bool]
+	// Optional, more detailed associated progress message. Contains
+	// complementary information to the `title`.
+	//
+	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
+	// If unset, the previous progress message (if any) is still valid.
+	Message Optional[String]
+	// Optional progress percentage to display (value 100 is considered 100%).
+	// If not provided infinite progress is assumed and clients are allowed
+	// to ignore the `percentage` value in subsequent in report notifications.
+	//
+	// The value should be steadily rising. Clients are free to ignore values
+	// that are not following this rule. The value range is [0, 100].
+	Percentage Optional[UInt]
+}
 
-// WorkDoneProgressCancelParams is a structure.
-type WorkDoneProgressCancelParams struct{}
+// WorkDoneProgressCancelParams is a named structure definition.
+type WorkDoneProgressCancelParams struct {
+	// The token to be used to report progress.
+	Token ProgressToken
+}
 
-// WorkDoneProgressCreateParams is a structure.
-type WorkDoneProgressCreateParams struct{}
+// WorkDoneProgressCreateParams is a named structure definition.
+type WorkDoneProgressCreateParams struct {
+	// The token to be used to report progress.
+	Token ProgressToken
+}
 
-// WorkDoneProgressEnd is a structure.
-type WorkDoneProgressEnd struct{}
+// WorkDoneProgressEnd is a named structure definition.
+type WorkDoneProgressEnd struct {
+	// Optional, a final message indicating to for example indicate the outcome
+	// of the operation.
+	Message Optional[String]
+}
 
-// WorkDoneProgressOptions is a structure.
-type WorkDoneProgressOptions struct{}
+// WorkDoneProgressOptions is a named structure definition.
+type WorkDoneProgressOptions struct {
+	WorkDoneProgress Optional[Bool]
+}
 
-// WorkDoneProgressParams is a structure.
-type WorkDoneProgressParams struct{}
+// WorkDoneProgressParams is a named structure definition.
+type WorkDoneProgressParams struct {
+	// An optional token that a server can use to report work done progress.
+	WorkDoneToken Optional[ProgressToken]
+}
 
-// WorkDoneProgressReport is a structure.
-type WorkDoneProgressReport struct{}
+// WorkDoneProgressReport is a named structure definition.
+type WorkDoneProgressReport struct {
+	// Controls enablement state of a cancel button.
+	//
+	// Clients that don't support cancellation or don't support controlling the button's
+	// enablement state are allowed to ignore the property.
+	Cancellable Optional[Bool]
+	// Optional, more detailed associated progress message. Contains
+	// complementary information to the `title`.
+	//
+	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
+	// If unset, the previous progress message (if any) is still valid.
+	Message Optional[String]
+	// Optional progress percentage to display (value 100 is considered 100%).
+	// If not provided infinite progress is assumed and clients are allowed
+	// to ignore the `percentage` value in subsequent in report notifications.
+	//
+	// The value should be steadily rising. Clients are free to ignore values
+	// that are not following this rule. The value range is [0, 100]
+	Percentage Optional[UInt]
+}
 
-// WorkspaceClientCapabilities is a structure.
-type WorkspaceClientCapabilities struct{}
+// WorkspaceClientCapabilities is a named structure definition.
+//
+// Workspace specific client capabilities.
+type WorkspaceClientCapabilities struct {
+	// The client supports applying batch edits
+	// to the workspace by supporting the request
+	// 'workspace/applyEdit'
+	ApplyEdit Optional[Bool]
+	// Capabilities specific to `WorkspaceEdit`s.
+	WorkspaceEdit Optional[WorkspaceEditClientCapabilities]
+	// Capabilities specific to the `workspace/didChangeConfiguration` notification.
+	DidChangeConfiguration Optional[DidChangeConfigurationClientCapabilities]
+	// Capabilities specific to the `workspace/didChangeWatchedFiles` notification.
+	DidChangeWatchedFiles Optional[DidChangeWatchedFilesClientCapabilities]
+	// Capabilities specific to the `workspace/symbol` request.
+	Symbol Optional[WorkspaceSymbolClientCapabilities]
+	// Capabilities specific to the `workspace/executeCommand` request.
+	ExecuteCommand Optional[ExecuteCommandClientCapabilities]
+	// The client has support for workspace folders.
+	//
+	// @since 3.6.0
+	WorkspaceFolders Optional[Bool]
+	// The client supports `workspace/configuration` requests.
+	//
+	// @since 3.6.0
+	Configuration Optional[Bool]
+	// Capabilities specific to the semantic token requests scoped to the
+	// workspace.
+	//
+	// @since 3.16.0.
+	SemanticTokens Optional[SemanticTokensWorkspaceClientCapabilities]
+	// Capabilities specific to the code lens requests scoped to the
+	// workspace.
+	//
+	// @since 3.16.0.
+	CodeLens Optional[CodeLensWorkspaceClientCapabilities]
+	// The client has support for file notifications/requests for user operations on files.
+	//
+	// Since 3.16.0
+	FileOperations Optional[FileOperationClientCapabilities]
+	// Capabilities specific to the inline values requests scoped to the
+	// workspace.
+	//
+	// @since 3.17.0.
+	InlineValue Optional[InlineValueWorkspaceClientCapabilities]
+	// Capabilities specific to the inlay hint requests scoped to the
+	// workspace.
+	//
+	// @since 3.17.0.
+	InlayHint Optional[InlayHintWorkspaceClientCapabilities]
+	// Capabilities specific to the diagnostic requests scoped to the
+	// workspace.
+	//
+	// @since 3.17.0.
+	Diagnostics Optional[DiagnosticWorkspaceClientCapabilities]
+}
 
-// WorkspaceDiagnosticParams is a structure.
-type WorkspaceDiagnosticParams struct{}
+// WorkspaceDiagnosticParams is a named structure definition.
+//
+// Parameters of the workspace diagnostic request.
+//
+// @since 3.17.0
+type WorkspaceDiagnosticParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// WorkspaceDiagnosticReport is a structure.
-type WorkspaceDiagnosticReport struct{}
+	// The additional identifier provided during registration.
+	Identifier Optional[String]
+	// The currently known diagnostic reports with their
+	// previous result ids.
+	PreviousResultIDs PreviousResultIDArray
+}
 
-// WorkspaceDiagnosticReportPartialResult is a structure.
-type WorkspaceDiagnosticReportPartialResult struct{}
+// WorkspaceDiagnosticReport is a named structure definition.
+//
+// A workspace diagnostic report.
+//
+// @since 3.17.0
+type WorkspaceDiagnosticReport struct {
+	Items WorkspaceDocumentDiagnosticReportArray
+}
+
+// WorkspaceDiagnosticReportPartialResult is a named structure definition.
+//
+// A partial result for a workspace diagnostic report.
+//
+// @since 3.17.0
+type WorkspaceDiagnosticReportPartialResult struct {
+	Items WorkspaceDocumentDiagnosticReportArray
+}
 
 // WorkspaceDocumentDiagnosticReport is a union of <TODO>.
 type WorkspaceDocumentDiagnosticReport interface{}
@@ -2870,11 +5901,71 @@ type WorkspaceDocumentDiagnosticReport interface{}
 // WorkspaceDocumentDiagnosticReportArray is an array of WorkspaceDocumentDiagnosticReport elements.
 type WorkspaceDocumentDiagnosticReportArray []WorkspaceDocumentDiagnosticReport
 
-// WorkspaceEdit is a structure.
-type WorkspaceEdit struct{}
+// WorkspaceEdit is a named structure definition.
+//
+// A workspace edit represents changes to many resources managed in the workspace. The edit
+// should either provide `changes` or `documentChanges`. If documentChanges are present
+// they are preferred over `changes` if the client can handle versioned document edits.
+//
+// Since version 3.13.0 a workspace edit can contain resource operations as well. If resource
+// operations are present clients need to execute the operations in the order in which they
+// are provided. So a workspace edit for example can consist of the following two changes:
+// (1) a create file a.txt and (2) a text document edit which insert text into file a.txt.
+//
+// An invalid sequence (e.g. (1) delete file a.txt and (2) insert text into file a.txt) will
+// cause failure of the operation. How the client recovers from the failure is described by
+// the client capability: `workspace.workspaceEdit.failureHandling`
+type WorkspaceEdit struct {
+	// Holds changes to existing resources.
+	Changes Optional[TextEditArrayMap]
+	// Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
+	// are either an array of `TextDocumentEdit`s to express changes to n different text documents
+	// where each text document edit addresses a specific version of a text document. Or it can contain
+	// above `TextDocumentEdit`s mixed with create, rename and delete file / folder operations.
+	//
+	// Whether a client supports versioned document edits is expressed via
+	// `workspace.workspaceEdit.documentChanges` client capability.
+	//
+	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
+	// only plain `TextEdit`s using the `changes` property are supported.
+	DocumentChanges Optional[WorkspaceEditDocumentChangesArray]
+	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
+	// delete file / folder operations.
+	//
+	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
+	//
+	// @since 3.16.0
+	ChangeAnnotations Optional[ChangeAnnotationMap]
+}
 
-// WorkspaceEditClientCapabilities is a structure.
-type WorkspaceEditClientCapabilities struct{}
+// WorkspaceEditClientCapabilities is a named structure definition.
+type WorkspaceEditClientCapabilities struct {
+	// The client supports versioned document changes in `WorkspaceEdit`s
+	DocumentChanges Optional[Bool]
+	// The resource operations the client supports. Clients should at least
+	// support 'create', 'rename' and 'delete' files and folders.
+	//
+	// @since 3.13.0
+	ResourceOperations Optional[ResourceOperationKindArray]
+	// The failure handling strategy of a client if applying the workspace edit
+	// fails.
+	//
+	// @since 3.13.0
+	FailureHandling Optional[FailureHandlingKind]
+	// Whether the client normalizes line endings to the client specific
+	// setting.
+	// If set to `true` the client will normalize line ending characters
+	// in a workspace edit to the client-specified new line
+	// character.
+	//
+	// @since 3.16.0
+	NormalizesLineEndings Optional[Bool]
+	// Whether the client in general supports change annotations on text edits,
+	// create file, rename file and delete file changes.
+	//
+	// @since 3.16.0
+	ChangeAnnotationSupport Optional[WorkspaceEditClientCapabilitiesChangeAnnotationSupport]
+}
 
 // WorkspaceEditClientCapabilitiesChangeAnnotationSupport is a literal structure.
 type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct{}
@@ -2885,41 +5976,124 @@ type WorkspaceEditDocumentChanges interface{}
 // WorkspaceEditDocumentChangesArray is an array of WorkspaceEditDocumentChanges elements.
 type WorkspaceEditDocumentChangesArray []WorkspaceEditDocumentChanges
 
-// WorkspaceFolder is a structure.
-type WorkspaceFolder struct{}
+// WorkspaceFolder is a named structure definition.
+//
+// A workspace folder inside a client.
+type WorkspaceFolder struct {
+	// The associated URI for this workspace folder.
+	URI URI
+	// The name of the workspace folder. Used to refer to this
+	// workspace folder in the user interface.
+	Name String
+}
 
 // WorkspaceFolderArray is an array of WorkspaceFolder elements.
 type WorkspaceFolderArray []WorkspaceFolder
 
-// WorkspaceFoldersChangeEvent is a structure.
-type WorkspaceFoldersChangeEvent struct{}
+// WorkspaceFoldersChangeEvent is a named structure definition.
+//
+// The workspace folder change event.
+type WorkspaceFoldersChangeEvent struct {
+	// The array of added workspace folders
+	Added WorkspaceFolderArray
+	// The array of the removed workspace folders
+	Removed WorkspaceFolderArray
+}
 
-// WorkspaceFoldersInitializeParams is a structure.
-type WorkspaceFoldersInitializeParams struct{}
+// WorkspaceFoldersInitializeParams is a named structure definition.
+type WorkspaceFoldersInitializeParams struct {
+	// The workspace folders configured in the client when the server starts.
+	//
+	// This property is only available if the client supports workspace folders.
+	// It can be `null` if the client supports workspace folders but none are
+	// configured.
+	//
+	// @since 3.6.0
+	WorkspaceFolders Optional[WorkspaceFoldersInitializeParamsWorkspaceFolders]
+}
 
 // WorkspaceFoldersInitializeParamsWorkspaceFolders is a union of <TODO>.
 type WorkspaceFoldersInitializeParamsWorkspaceFolders interface{}
 
-// WorkspaceFoldersServerCapabilities is a structure.
-type WorkspaceFoldersServerCapabilities struct{}
+// WorkspaceFoldersServerCapabilities is a named structure definition.
+type WorkspaceFoldersServerCapabilities struct {
+	// The server has support for workspace folders
+	Supported Optional[Bool]
+	// Whether the server wants to receive workspace folder
+	// change notifications.
+	//
+	// If a string is provided the string is treated as an ID
+	// under which the notification is registered on the client
+	// side. The ID can be used to unregister for these events
+	// using the `client/unregisterCapability` request.
+	ChangeNotifications Optional[WorkspaceFoldersServerCapabilitiesChangeNotifications]
+}
 
 // WorkspaceFoldersServerCapabilitiesChangeNotifications is a union of <TODO>.
 type WorkspaceFoldersServerCapabilitiesChangeNotifications interface{}
 
-// WorkspaceFullDocumentDiagnosticReport is a structure.
-type WorkspaceFullDocumentDiagnosticReport struct{}
+// WorkspaceFullDocumentDiagnosticReport is a named structure definition.
+//
+// A full document diagnostic report for a workspace diagnostic result.
+//
+// @since 3.17.0
+type WorkspaceFullDocumentDiagnosticReport struct {
+	FullDocumentDiagnosticReport
+
+	// The URI for which diagnostic information is reported.
+	URI DocumentURI
+	// The version number for which the diagnostics are reported.
+	// If the document is not marked as open `null` can be provided.
+	Version WorkspaceFullDocumentDiagnosticReportVersion
+}
 
 // WorkspaceFullDocumentDiagnosticReportVersion is a union of <TODO>.
 type WorkspaceFullDocumentDiagnosticReportVersion interface{}
 
-// WorkspaceSymbol is a structure.
-type WorkspaceSymbol struct{}
+// WorkspaceSymbol is a named structure definition.
+//
+// A special workspace symbol that supports locations without a range.
+//
+// See also SymbolInformation.
+//
+// @since 3.17.0
+type WorkspaceSymbol struct {
+	BaseSymbolInformation
+
+	// The location of the symbol. Whether a server is allowed to
+	// return a location without a range depends on the client
+	// capability `workspace.symbol.resolveSupport`.
+	//
+	// See SymbolInformation#location for more details.
+	Location WorkspaceSymbolLocation
+	// A data entry field that is preserved on a workspace symbol between a
+	// workspace symbol request and a workspace symbol resolve request.
+	Data Optional[LSPAny]
+}
 
 // WorkspaceSymbolArray is an array of WorkspaceSymbol elements.
 type WorkspaceSymbolArray []WorkspaceSymbol
 
-// WorkspaceSymbolClientCapabilities is a structure.
-type WorkspaceSymbolClientCapabilities struct{}
+// WorkspaceSymbolClientCapabilities is a named structure definition.
+//
+// Client capabilities for a {@link WorkspaceSymbolRequest}.
+type WorkspaceSymbolClientCapabilities struct {
+	// Symbol request supports dynamic registration.
+	DynamicRegistration Optional[Bool]
+	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
+	SymbolKind Optional[WorkspaceSymbolClientCapabilitiesSymbolKind]
+	// The client supports tags on `SymbolInformation`.
+	// Clients supporting tags have to handle unknown tags gracefully.
+	//
+	// @since 3.16.0
+	TagSupport Optional[WorkspaceSymbolClientCapabilitiesTagSupport]
+	// The client support partial workspace symbols. The client will send the
+	// request `workspaceSymbol/resolve` to the server to resolve additional
+	// properties.
+	//
+	// @since 3.17.0
+	ResolveSupport Optional[WorkspaceSymbolClientCapabilitiesResolveSupport]
+}
 
 // WorkspaceSymbolClientCapabilitiesResolveSupport is a literal structure.
 type WorkspaceSymbolClientCapabilitiesResolveSupport struct{}
@@ -2936,20 +6110,100 @@ type WorkspaceSymbolLocation interface{}
 // WorkspaceSymbolLocationOption2 is a literal structure.
 type WorkspaceSymbolLocationOption2 struct{}
 
-// WorkspaceSymbolOptions is a structure.
-type WorkspaceSymbolOptions struct{}
+// WorkspaceSymbolOptions is a named structure definition.
+//
+// Server capabilities for a {@link WorkspaceSymbolRequest}.
+type WorkspaceSymbolOptions struct {
+	WorkDoneProgressOptions
 
-// WorkspaceSymbolParams is a structure.
-type WorkspaceSymbolParams struct{}
+	// The server provides support to resolve additional
+	// information for a workspace symbol.
+	//
+	// @since 3.17.0
+	ResolveProvider Optional[Bool]
+}
 
-// WorkspaceSymbolRegistrationOptions is a structure.
-type WorkspaceSymbolRegistrationOptions struct{}
+// WorkspaceSymbolParams is a named structure definition.
+//
+// The parameters of a {@link WorkspaceSymbolRequest}.
+type WorkspaceSymbolParams struct {
+	WorkDoneProgressParams
+	PartialResultParams
 
-// WorkspaceUnchangedDocumentDiagnosticReport is a structure.
-type WorkspaceUnchangedDocumentDiagnosticReport struct{}
+	// A query string to filter symbols by. Clients may send an empty
+	// string here to request all symbols.
+	Query String
+}
+
+// WorkspaceSymbolRegistrationOptions is a named structure definition.
+//
+// Registration options for a {@link WorkspaceSymbolRequest}.
+type WorkspaceSymbolRegistrationOptions struct {
+	WorkspaceSymbolOptions
+}
+
+// WorkspaceUnchangedDocumentDiagnosticReport is a named structure definition.
+//
+// An unchanged document diagnostic report for a workspace diagnostic result.
+//
+// @since 3.17.0
+type WorkspaceUnchangedDocumentDiagnosticReport struct {
+	UnchangedDocumentDiagnosticReport
+
+	// The URI for which diagnostic information is reported.
+	URI DocumentURI
+	// The version number for which the diagnostics are reported.
+	// If the document is not marked as open `null` can be provided.
+	Version WorkspaceUnchangedDocumentDiagnosticReportVersion
+}
 
 // WorkspaceUnchangedDocumentDiagnosticReportVersion is a union of <TODO>.
 type WorkspaceUnchangedDocumentDiagnosticReportVersion interface{}
 
-// initializeParams is a structure.
-type initializeParams struct{}
+// initializeParams is a named structure definition.
+//
+// The initialize parameters
+type initializeParams struct {
+	WorkDoneProgressParams
+
+	// The process Id of the parent process that started
+	// the server.
+	//
+	// Is `null` if the process has not been started by another process.
+	// If the parent process is not alive then the server should exit.
+	ProcessID InitializeParamsProcessID
+	// Information about the client
+	//
+	// @since 3.15.0
+	ClientInfo Optional[InitializeParamsClientInfo]
+	// The locale the client is currently showing the user interface
+	// in. This must not necessarily be the locale of the operating
+	// system.
+	//
+	// Uses IETF language tags as the value's syntax
+	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
+	//
+	// @since 3.16.0
+	Locale Optional[String]
+	// The rootPath of the workspace. Is null
+	// if no folder is open.
+	//
+	// @deprecated in favour of rootUri.
+	//
+	// Deprecated: in favour of rootUri.
+	RootPath Optional[InitializeParamsRootPath]
+	// The rootUri of the workspace. Is null if no
+	// folder is open. If both `rootPath` and `rootUri` are set
+	// `rootUri` wins.
+	//
+	// @deprecated in favour of workspaceFolders.
+	//
+	// Deprecated: in favour of workspaceFolders.
+	RootURI InitializeParamsRootURI
+	// The capabilities provided by the client (editor or tool)
+	Capabilities ClientCapabilities
+	// User provided initialization options.
+	InitializationOptions Optional[LSPAny]
+	// The initial trace setting. If omitted trace is disabled ('off').
+	Trace Optional[TraceValues]
+}

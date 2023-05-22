@@ -23,6 +23,9 @@ type generator struct {
 	*jen.Group
 }
 
+// withGroup returns a function that can be passed to jen's XXXFunc() methods
+// which, when invoked calls fn() with g.Group set to the provided by the
+// XXXFunc() method.
 func (g *generator) withGroup(
 	fn func(),
 ) func(*jen.Group) {
@@ -37,8 +40,12 @@ func (g *generator) withGroup(
 func (g *generator) VisitModel(n *model.Model) {
 	types := map[string]model.Type{}
 	for _, t := range n.Types {
-		if _, ok := t.(*model.Reference); !ok {
-			types[nameOf(t)] = t
+		if _, ok := t.(*model.Reference); ok {
+			continue
+		}
+
+		if name, ok := tryNameOf(t); ok {
+			types[name] = t
 		}
 	}
 
@@ -136,33 +143,3 @@ func (g *generator) VisitStructLit(n *model.StructLit) {
 }
 
 func (g *generator) VisitStringLit(n *model.StringLit) {}
-
-func (g *generator) VisitAlias(n *model.Alias) {
-	if n.UnderlyingType.IsAnonymous() {
-		return
-	}
-
-	name := nameOf(n)
-	underlying := nameOf(n.UnderlyingType)
-
-	g.
-		Commentf("%s is an alias for %s.", name, underlying).
-		Line().
-		Type().
-		Id(name).
-		Op("=").
-		Id(underlying)
-}
-
-func (g *generator) VisitStruct(n *model.Struct) {
-	name := nameOf(n)
-
-	g.
-		Commentf("%s is a structure.", name).
-		Line().
-		Type().
-		Id(name).
-		Struct()
-}
-
-func (g *generator) VisitProperty(n *model.Property) {}
