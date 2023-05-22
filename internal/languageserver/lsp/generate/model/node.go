@@ -4,9 +4,10 @@ import "github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model/
 
 // Node is an interface for all nodes within the meta-model.
 type Node interface {
-	// Parent returns the node's parent, if any.
-	Parent() (Node, bool)
+	HasParent() bool
+	Parent() Node
 	setParent(Node)
+
 	acceptVisitor(NodeVisitor)
 }
 
@@ -14,8 +15,15 @@ type node struct {
 	parent Node
 }
 
-func (n *node) Parent() (Node, bool) {
-	return n.parent, n.parent != nil
+func (n *node) HasParent() bool {
+	return n.parent != nil
+}
+
+func (n *node) Parent() Node {
+	if n.parent == nil {
+		panic("root has no parent")
+	}
+	return n.parent
 }
 
 func (n *node) setParent(p Node) {

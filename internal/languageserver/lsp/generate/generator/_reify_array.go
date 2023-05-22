@@ -11,7 +11,7 @@ func (g *reifyType) Array(t *model.Array) {
 		"Generated from an LSP 'array' type.",
 	)
 
-	e := g.typeInfo(t.Element)
+	e := g.typeInfo(t.ElementType)
 
 	g.File.
 		Type().

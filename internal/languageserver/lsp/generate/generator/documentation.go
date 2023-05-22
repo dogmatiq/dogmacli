@@ -16,15 +16,22 @@ func documentation(
 	format string,
 	args ...any,
 ) {
-	text := docs.Text + "\n\n" + fmt.Sprintf(format, args...)
-	text = strings.TrimSpace(text)
+	text := fmt.Sprintf(format, args...)
 
-	for _, line := range strings.Split(text, "\n") {
-		code.Comment(line)
+	if s := strings.TrimSpace(docs.Text); s != "" {
+		text += "\n\n"
+		text += "Documentation from the LSP specification:"
+		text += "\n\n"
+		text += "  " + strings.ReplaceAll(s, "\n", "\n  ")
 	}
 
-	if docs.DeprecationMessage != "" {
-		code.Comment("")
-		code.Comment("Deprecated: " + docs.DeprecationMessage)
+	if s := strings.TrimSpace(docs.DeprecationMessage); s != "" {
+		text += "\n\n"
+		text += "Deprecated: " + s
+	}
+
+	text = strings.TrimSpace(text)
+	for _, line := range strings.Split(text, "\n") {
+		code.Comment("  " + line)
 	}
 }

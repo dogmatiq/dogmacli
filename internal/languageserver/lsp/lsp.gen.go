@@ -2,19821 +2,2954 @@
 
 package lsp
 
-import (
-	"bytes"
-	"context"
-	"encoding/json"
-	"fmt"
-)
+import "net/url"
 
-/////////////////////////
-/// AnnotatedTextEdit ///
-/////////////////////////
+// AnnotatedTextEdit is a structure.
+type AnnotatedTextEdit struct{}
 
-// A special text edit with an additional change annotation.
+// ApplyWorkspaceEditParams is a structure.
+type ApplyWorkspaceEditParams struct{}
+
+// ApplyWorkspaceEditResult is a structure.
+type ApplyWorkspaceEditResult struct{}
+
+// BaseSymbolInformation is a structure.
+type BaseSymbolInformation struct{}
+
+// Bool is the LSP boolean type.
+type Bool bool
+
+// CallHierarchyClientCapabilities is a structure.
+type CallHierarchyClientCapabilities struct{}
+
+// CallHierarchyIncomingCall is a structure.
+type CallHierarchyIncomingCall struct{}
+
+// CallHierarchyIncomingCallArray is an array of CallHierarchyIncomingCall elements.
+type CallHierarchyIncomingCallArray []CallHierarchyIncomingCall
+
+// CallHierarchyIncomingCallsParams is a structure.
+type CallHierarchyIncomingCallsParams struct{}
+
+// CallHierarchyItem is a structure.
+type CallHierarchyItem struct{}
+
+// CallHierarchyItemArray is an array of CallHierarchyItem elements.
+type CallHierarchyItemArray []CallHierarchyItem
+
+// CallHierarchyOptions is a structure.
+type CallHierarchyOptions struct{}
+
+// CallHierarchyOutgoingCall is a structure.
+type CallHierarchyOutgoingCall struct{}
+
+// CallHierarchyOutgoingCallArray is an array of CallHierarchyOutgoingCall elements.
+type CallHierarchyOutgoingCallArray []CallHierarchyOutgoingCall
+
+// CallHierarchyOutgoingCallsParams is a structure.
+type CallHierarchyOutgoingCallsParams struct{}
+
+// CallHierarchyPrepareParams is a structure.
+type CallHierarchyPrepareParams struct{}
+
+// CallHierarchyRegistrationOptions is a structure.
+type CallHierarchyRegistrationOptions struct{}
+
+// CancelParams is a structure.
+type CancelParams struct{}
+
+// CancelParamsID is a union of <TODO>.
+type CancelParamsID interface{}
+
+// ChangeAnnotation is a structure.
+type ChangeAnnotation struct{}
+
+// ChangeAnnotationIdentifier is an alias for String.
+type ChangeAnnotationIdentifier = String
+
+// ChangeAnnotationMap is an array of ChangeAnnotationIdentifier to ChangeAnnotation.
+type ChangeAnnotationMap map[ChangeAnnotationIdentifier]ChangeAnnotation
+
+// ClientCapabilities is a structure.
+type ClientCapabilities struct{}
+
+// CodeAction is a structure.
+type CodeAction struct{}
+
+// CodeActionClientCapabilities is a structure.
+type CodeActionClientCapabilities struct{}
+
+// CodeActionClientCapabilitiesCodeActionLiteralSupport is a literal structure.
+type CodeActionClientCapabilitiesCodeActionLiteralSupport struct{}
+
+// CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind is a literal structure.
+type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct{}
+
+// CodeActionClientCapabilitiesResolveSupport is a literal structure.
+type CodeActionClientCapabilitiesResolveSupport struct{}
+
+// CodeActionContext is a structure.
+type CodeActionContext struct{}
+
+// CodeActionDisabled is a literal structure.
+type CodeActionDisabled struct{}
+
+// CodeActionKind is an enumeration of String values.
 //
-// @since 3.16.0.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'AnnotatedTextEdit' structure.
-type AnnotatedTextEdit struct {
-	TextEdit
-
-	// The actual identifier of the change annotation
-	AnnotationID ChangeAnnotationIdentifier
-}
-
-func (x AnnotatedTextEdit) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x AnnotatedTextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextEdit.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "annotationId", x.AnnotationID); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// ApplyWorkspaceEditParams ///
-////////////////////////////////
-
-// The parameters passed via an apply workspace edit request.
-//
-// Generated from the LSP 'ApplyWorkspaceEditParams' structure.
-type ApplyWorkspaceEditParams struct {
-	// An optional label of the workspace edit. This label is
-	// presented in the user interface for example on an undo
-	// stack to undo the workspace edit.
-	Label String
-
-	// The edits to apply.
-	Edit WorkspaceEdit
-}
-
-func (x ApplyWorkspaceEditParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ApplyWorkspaceEditParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "edit", x.Edit); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// ApplyWorkspaceEditResult ///
-////////////////////////////////
-
-// The result returned from the apply workspace edit request.
-//
-// @since 3.17 renamed from ApplyWorkspaceEditResponse
-//
-// Generated from the LSP 'ApplyWorkspaceEditResult' structure.
-type ApplyWorkspaceEditResult struct {
-	// Indicates whether the edit was applied or not.
-	Applied Bool
-
-	// An optional textual description for why the edit was not applied.
-	// This may be used by the server for diagnostic logging or to provide
-	// a suitable error for a request that triggered the edit.
-	FailureReason String
-
-	// Depending on the client's failure handling strategy `failedChange` might
-	// contain the index of the change that failed. This property is only available
-	// if the client signals a `failureHandlingStrategy` in its client capabilities.
-	FailedChange Optional[UInteger]
-}
-
-func (x ApplyWorkspaceEditResult) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ApplyWorkspaceEditResult) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "applied", x.Applied); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "failureReason", x.FailureReason); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "failedChange", x.FailedChange); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// BaseSymbolInformation ///
-/////////////////////////////
-
-// A base for all symbol information.
-//
-// Generated from the LSP 'BaseSymbolInformation' structure.
-type BaseSymbolInformation struct {
-	// The name of this symbol.
-	Name String
-
-	// The kind of this symbol.
-	Kind SymbolKind
-
-	// Tags for this symbol.
-	//
-	// @since 3.16.0
-	Tags SymbolTagArray
-
-	// The name of the symbol containing this symbol. This information is for
-	// user interface purposes (e.g. to render a qualifier in the user interface
-	// if necessary). It can't be used to re-infer a hierarchy for the document
-	// symbols.
-	ContainerName String
-}
-
-func (x BaseSymbolInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x BaseSymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "name", x.Name); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "containerName", x.ContainerName); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type SymbolTagArray []SymbolTag
-
-///////////////////////////////////////
-/// CallHierarchyClientCapabilities ///
-///////////////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyClientCapabilities' structure.
-type CallHierarchyClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration Bool
-}
-
-func (x CallHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// CallHierarchyIncomingCall ///
-/////////////////////////////////
-
-// Represents an incoming call, e.g. a caller of a method or constructor.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyIncomingCall' structure.
-type CallHierarchyIncomingCall struct {
-	// The item that makes the call.
-	From CallHierarchyItem
-
-	// The ranges at which the calls appear. This is relative to the caller
-	// denoted by {@link CallHierarchyIncomingCall.from `this.from`}.
-	FromRanges RangeArray
-}
-
-func (x CallHierarchyIncomingCall) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyIncomingCall) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "from", x.From); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "fromRanges", x.FromRanges); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type RangeArray []Range
-
-////////////////////////////////////////
-/// CallHierarchyIncomingCallsParams ///
-////////////////////////////////////////
-
-// The parameter of a `callHierarchy/incomingCalls` request.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyIncomingCallsParams' structure.
-type CallHierarchyIncomingCallsParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	Item CallHierarchyItem
-}
-
-func (x CallHierarchyIncomingCallsParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyIncomingCallsParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "item", x.Item); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// CallHierarchyItem ///
-/////////////////////////
-
-// Represents programming constructs like functions or constructors in the context
-// of call hierarchy.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyItem' structure.
-type CallHierarchyItem struct {
-	// The name of this item.
-	Name String
-
-	// The kind of this item.
-	Kind SymbolKind
-
-	// Tags for this item.
-	Tags SymbolTagArray
-
-	// More detail for this item, e.g. the signature of a function.
-	Detail String
-
-	// The resource identifier of this item.
-	URI *DocumentURI
-
-	// The range enclosing this symbol not including leading/trailing whitespace but everything else, e.g. comments and code.
-	Range Range
-
-	// The range that should be selected and revealed when this symbol is being picked, e.g. the name of a function.
-	// Must be contained by the {@link CallHierarchyItem.range `range`}.
-	SelectionRange Range
-
-	// A data entry field that is preserved between a call hierarchy prepare and
-	// incoming calls or outgoing calls requests.
-	Data LSPAny
-}
-
-func (x CallHierarchyItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "name", x.Name); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// CallHierarchyOptions ///
-////////////////////////////
-
-// Call hierarchy options used during static registration.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyOptions' structure.
-type CallHierarchyOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x CallHierarchyOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// CallHierarchyOutgoingCall ///
-/////////////////////////////////
-
-// Represents an outgoing call, e.g. calling a getter from a method or a method from a constructor etc.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyOutgoingCall' structure.
-type CallHierarchyOutgoingCall struct {
-	// The item that is called.
-	To CallHierarchyItem
-
-	// The range at which this item is called. This is the range relative to the caller, e.g the item
-	// passed to {@link CallHierarchyItemProvider.provideCallHierarchyOutgoingCalls `provideCallHierarchyOutgoingCalls`}
-	// and not {@link CallHierarchyOutgoingCall.to `this.to`}.
-	FromRanges RangeArray
-}
-
-func (x CallHierarchyOutgoingCall) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyOutgoingCall) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "to", x.To); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "fromRanges", x.FromRanges); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// CallHierarchyOutgoingCallsParams ///
-////////////////////////////////////////
-
-// The parameter of a `callHierarchy/outgoingCalls` request.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyOutgoingCallsParams' structure.
-type CallHierarchyOutgoingCallsParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	Item CallHierarchyItem
-}
-
-func (x CallHierarchyOutgoingCallsParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyOutgoingCallsParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "item", x.Item); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// CallHierarchyPrepareParams ///
-//////////////////////////////////
-
-// The parameter of a `textDocument/prepareCallHierarchy` request.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyPrepareParams' structure.
-type CallHierarchyPrepareParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-}
-
-func (x CallHierarchyPrepareParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// CallHierarchyRegistrationOptions ///
-////////////////////////////////////////
-
-// Call hierarchy options used during static or dynamic registration.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CallHierarchyRegistrationOptions' structure.
-type CallHierarchyRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CallHierarchyOptions
-	StaticRegistrationOptions
-}
-
-func (x CallHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CallHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.CallHierarchyOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// CancelParams ///
-////////////////////
-
-// Generated from the LSP 'CancelParams' structure.
-type CancelParams struct {
-	// The request id to cancel.
-	ID CancelParamsID
-}
-
-func (x CancelParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "id", x.ID); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type CancelParamsID interface {
-	isCancelParamsID()
-}
-
-func (Integer) isCancelParamsID() {}
-func (String) isCancelParamsID()  {}
-
-////////////////////////
-/// ChangeAnnotation ///
-////////////////////////
-
-// Additional information that describes document changes.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'ChangeAnnotation' structure.
-type ChangeAnnotation struct {
-	// A human-readable string describing the actual change. The string
-	// is rendered prominent in the user interface.
-	Label String
-
-	// A flag which indicates that user confirmation is needed
-	// before applying the change.
-	NeedsConfirmation Bool
-
-	// A human-readable string which is rendered less prominent in
-	// the user interface.
-	Description String
-}
-
-func (x ChangeAnnotation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ChangeAnnotation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "needsConfirmation", x.NeedsConfirmation); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "description", x.Description); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// ChangeAnnotationIdentifier ///
-//////////////////////////////////
-
-// An identifier to refer to a change annotation stored with a workspace edit.
-//
-// Generated from the LSP 'ChangeAnnotationIdentifier' type alias.
-type ChangeAnnotationIdentifier String
-
-//////////////////////////
-/// ClientCapabilities ///
-//////////////////////////
-
-// Defines the capabilities provided by the client.
-//
-// Generated from the LSP 'ClientCapabilities' structure.
-type ClientCapabilities struct {
-	// Workspace specific client capabilities.
-	Workspace Optional[WorkspaceClientCapabilities]
-
-	// Text document specific client capabilities.
-	TextDocument Optional[TextDocumentClientCapabilities]
-
-	// Capabilities specific to the notebook document support.
-	//
-	// @since 3.17.0
-	NotebookDocument Optional[NotebookDocumentClientCapabilities]
-
-	// Window specific client capabilities.
-	Window Optional[WindowClientCapabilities]
-
-	// General client capabilities.
-	//
-	// @since 3.16.0
-	General Optional[GeneralClientCapabilities]
-
-	// Experimental client capabilities.
-	Experimental LSPAny
-}
-
-func (x ClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "workspace", x.Workspace); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "window", x.Window); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "general", x.General); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "experimental", x.Experimental); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// CodeAction ///
-//////////////////
-
-// A code action represents a change that can be performed in code, e.g. to fix a problem or
-// to refactor code.
-//
-// A CodeAction must set either `edit` and/or a `command`. If both are supplied, the `edit` is applied first, then the `command` is executed.
-//
-// Generated from the LSP 'CodeAction' structure.
-type CodeAction struct {
-	// A short, human-readable, title for this code action.
-	Title String
-
-	// The kind of the code action.
-	//
-	// Used to filter code actions.
-	Kind Optional[CodeActionKind]
-
-	// The diagnostics that this code action resolves.
-	Diagnostics DiagnosticArray
-
-	// Marks this as a preferred action. Preferred actions are used by the `auto fix` command and can be targeted
-	// by keybindings.
-	//
-	// A quick fix should be marked preferred if it properly addresses the underlying error.
-	// A refactoring should be marked preferred if it is the most reasonable choice of actions to take.
-	//
-	// @since 3.15.0
-	IsPreferred Bool
-
-	// Marks that the code action cannot currently be applied.
-	//
-	// Clients should follow the following guidelines regarding disabled code actions:
-	//
-	//   - Disabled code actions are not shown in automatic [lightbulbs](https://code.visualstudio.com/docs/editor/editingevolved#_code-action)
-	//     code action menus.
-	//
-	//   - Disabled actions are shown as faded out in the code action menu when the user requests a more specific type
-	//     of code action, such as refactorings.
-	//
-	//   - If the user has a [keybinding](https://code.visualstudio.com/docs/editor/refactoring#_keybindings-for-code-actions)
-	//     that auto applies a code action and only disabled code actions are returned, the client should show the user an
-	//     error message with `reason` in the editor.
-	//
-	// @since 3.16.0
-	Disabled Optional[CodeActionDisabled]
-
-	// The workspace edit this code action performs.
-	Edit Optional[WorkspaceEdit]
-
-	// A command this code action executes. If a code action
-	// provides an edit and a command, first the edit is
-	// executed and then the command.
-	Command Optional[Command]
-
-	// A data entry field that is preserved on a code action between
-	// a `textDocument/codeAction` and a `codeAction/resolve` request.
-	//
-	// @since 3.16.0
-	Data LSPAny
-}
-
-func (x CodeAction) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeAction) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "title", x.Title); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "isPreferred", x.IsPreferred); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "disabled", x.Disabled); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "edit", x.Edit); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type CodeActionDisabled struct {
-	// Human readable description of why the code action is currently disabled.
-	//
-	// This is displayed in the code actions UI.
-	Reason String
-}
-
-func (x CodeActionDisabled) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionDisabled) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "reason", x.Reason); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type DiagnosticArray []Diagnostic
-
-////////////////////////////////////
-/// CodeActionClientCapabilities ///
-////////////////////////////////////
-
-// The Client Capabilities of a {@link CodeActionRequest}.
-//
-// Generated from the LSP 'CodeActionClientCapabilities' structure.
-type CodeActionClientCapabilities struct {
-	// Whether code action supports dynamic registration.
-	DynamicRegistration Bool
-
-	// The client support code action literals of type `CodeAction` as a valid
-	// response of the `textDocument/codeAction` request. If the property is not
-	// set the request can only return `Command` literals.
-	//
-	// @since 3.8.0
-	CodeActionLiteralSupport Optional[CodeActionClientCapabilitiesCodeActionLiteralSupport]
-
-	// Whether code action supports the `isPreferred` property.
-	//
-	// @since 3.15.0
-	IsPreferredSupport Bool
-
-	// Whether code action supports the `disabled` property.
-	//
-	// @since 3.16.0
-	DisabledSupport Bool
-
-	// Whether code action supports the `data` property which is
-	// preserved between a `textDocument/codeAction` and a
-	// `codeAction/resolve` request.
-	//
-	// @since 3.16.0
-	DataSupport Bool
-
-	// Whether the client supports resolving additional code action
-	// properties via a separate `codeAction/resolve` request.
-	//
-	// @since 3.16.0
-	ResolveSupport Optional[CodeActionClientCapabilitiesResolveSupport]
-
-	// Whether the client honors the change annotations in
-	// text edits and resource operations returned via the
-	// `CodeAction#edit` property by for example presenting
-	// the workspace edit in the user interface and asking
-	// for confirmation.
-	//
-	// @since 3.16.0
-	HonorsChangeAnnotations Bool
-}
-
-func (x CodeActionClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "codeActionLiteralSupport", x.CodeActionLiteralSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "isPreferredSupport", x.IsPreferredSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "disabledSupport", x.DisabledSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "dataSupport", x.DataSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "honorsChangeAnnotations", x.HonorsChangeAnnotations); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
-	// The code action kind is support with the following value
-	// set.
-	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind
-}
-
-func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "codeActionKind", x.CodeActionKind); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
-	// The code action kind values the client supports. When this
-	// property exists the client also guarantees that it will
-	// handle values outside its set gracefully and falls back
-	// to a default value when unknown.
-	ValueSet CodeActionKindArray
-}
-
-func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type CodeActionKindArray []CodeActionKind
-
-// Generated from an LSP 'literal' type.
-type CodeActionClientCapabilitiesResolveSupport struct {
-	// The properties that a client can resolve lazily.
-	Properties StringArray
-}
-
-func (x CodeActionClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type StringArray []String
-
-/////////////////////////
-/// CodeActionContext ///
-/////////////////////////
-
-// Contains additional diagnostic information about the context in which
-// a {@link CodeActionProvider.provideCodeActions code action} is run.
-//
-// Generated from the LSP 'CodeActionContext' structure.
-type CodeActionContext struct {
-	// An array of diagnostics known on the client side overlapping the range provided to the
-	// `textDocument/codeAction` request. They are provided so that the server knows which
-	// errors are currently presented to the user for the given range. There is no guarantee
-	// that these accurately reflect the error state of the resource. The primary parameter
-	// to compute code actions is the provided range.
-	Diagnostics DiagnosticArray
-
-	// Requested kind of actions to return.
-	//
-	// Actions not of this kind are filtered out by the client before being shown. So servers
-	// can omit computing them.
-	Only CodeActionKindArray
-
-	// The reason why code actions were requested.
-	//
-	// @since 3.17.0
-	TriggerKind Optional[CodeActionTriggerKind]
-}
-
-func (x CodeActionContext) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionContext) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "only", x.Only); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "triggerKind", x.TriggerKind); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////
-/// CodeActionKind ///
-//////////////////////
-
-// A set of predefined code action kinds
-//
-// Generated from the LSP 'CodeActionKind' enumeration.
+//	A set of predefined code action kinds
 type CodeActionKind String
 
 const (
-	// Empty kind.
+	// EmptyCodeActionKind is a member of the CodeActionKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Empty kind.
 	EmptyCodeActionKind CodeActionKind = ""
-	// Base kind for quickfix actions: 'quickfix'
+
+	// QuickFixCodeActionKind is a member of the CodeActionKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Base kind for quickfix actions: 'quickfix'
 	QuickFixCodeActionKind CodeActionKind = "quickfix"
-	// Base kind for refactoring actions: 'refactor'
+
+	// RefactorCodeActionKind is a member of the CodeActionKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Base kind for refactoring actions: 'refactor'
 	RefactorCodeActionKind CodeActionKind = "refactor"
-	// Base kind for refactoring extraction actions: 'refactor.extract'
+
+	// RefactorExtractCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Example extract actions:
+	// Documentation from the LSP specification:
 	//
-	// - Extract method
-	// - Extract function
-	// - Extract variable
-	// - Extract interface from class
-	// - ...
+	//	Base kind for refactoring extraction actions: 'refactor.extract'
+	//
+	//	Example extract actions:
+	//
+	//	- Extract method
+	//	- Extract function
+	//	- Extract variable
+	//	- Extract interface from class
+	//	- ...
 	RefactorExtractCodeActionKind CodeActionKind = "refactor.extract"
-	// Base kind for refactoring inline actions: 'refactor.inline'
+
+	// RefactorInlineCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Example inline actions:
+	// Documentation from the LSP specification:
 	//
-	// - Inline function
-	// - Inline variable
-	// - Inline constant
-	// - ...
+	//	Base kind for refactoring inline actions: 'refactor.inline'
+	//
+	//	Example inline actions:
+	//
+	//	- Inline function
+	//	- Inline variable
+	//	- Inline constant
+	//	- ...
 	RefactorInlineCodeActionKind CodeActionKind = "refactor.inline"
-	// Base kind for refactoring rewrite actions: 'refactor.rewrite'
+
+	// RefactorRewriteCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Example rewrite actions:
+	// Documentation from the LSP specification:
 	//
-	// - Convert JavaScript function to class
-	// - Add or remove parameter
-	// - Encapsulate field
-	// - Make method static
-	// - Move method to base class
-	// - ...
+	//	Base kind for refactoring rewrite actions: 'refactor.rewrite'
+	//
+	//	Example rewrite actions:
+	//
+	//	- Convert JavaScript function to class
+	//	- Add or remove parameter
+	//	- Encapsulate field
+	//	- Make method static
+	//	- Move method to base class
+	//	- ...
 	RefactorRewriteCodeActionKind CodeActionKind = "refactor.rewrite"
-	// Base kind for source actions: `source`
+
+	// SourceCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Source code actions apply to the entire file.
+	// Documentation from the LSP specification:
+	//
+	//	Base kind for source actions: `source`
+	//
+	//	Source code actions apply to the entire file.
 	SourceCodeActionKind CodeActionKind = "source"
-	// Base kind for an organize imports source action: `source.organizeImports`
+
+	// SourceOrganizeImportsCodeActionKind is a member of the CodeActionKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Base kind for an organize imports source action: `source.organizeImports`
 	SourceOrganizeImportsCodeActionKind CodeActionKind = "source.organizeImports"
-	// Base kind for auto-fix source actions: `source.fixAll`.
+
+	// SourceFixAllCodeActionKind is a member of the CodeActionKind enumeration.
 	//
-	// Fix all actions automatically fix errors that have a clear fix that do not require user input.
-	// They should not suppress errors or perform unsafe fixes such as generating new types or classes.
+	// Documentation from the LSP specification:
 	//
-	// @since 3.15.0
+	//	Base kind for auto-fix source actions: `source.fixAll`.
+	//
+	//	Fix all actions automatically fix errors that have a clear fix that do not require user input.
+	//	They should not suppress errors or perform unsafe fixes such as generating new types or classes.
+	//
+	//	@since 3.15.0
 	SourceFixAllCodeActionKind CodeActionKind = "source.fixAll"
 )
 
-/////////////////////////
-/// CodeActionOptions ///
-/////////////////////////
+// CodeActionKindArray is an array of CodeActionKind elements.
+type CodeActionKindArray []CodeActionKind
 
-// Provider options for a {@link CodeActionRequest}.
+// CodeActionOptions is a structure.
+type CodeActionOptions struct{}
+
+// CodeActionParams is a structure.
+type CodeActionParams struct{}
+
+// CodeActionRegistrationOptions is a structure.
+type CodeActionRegistrationOptions struct{}
+
+// CodeActionTriggerKind is an enumeration of UInt values.
 //
-// Generated from the LSP 'CodeActionOptions' structure.
-type CodeActionOptions struct {
-	WorkDoneProgressOptions
-
-	// CodeActionKinds that this server may return.
-	//
-	// The list of kinds may be generic, such as `CodeActionKind.Refactor`, or the server
-	// may list out every specific kind they provide.
-	CodeActionKinds CodeActionKindArray
-
-	// The server provides support to resolve additional
-	// information for a code action.
-	//
-	// @since 3.16.0
-	ResolveProvider Bool
-}
-
-func (x CodeActionOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "codeActionKinds", x.CodeActionKinds); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// CodeActionParams ///
-////////////////////////
-
-// The parameters of a {@link CodeActionRequest}.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'CodeActionParams' structure.
-type CodeActionParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The document in which the command was invoked.
-	TextDocument TextDocumentIdentifier
-
-	// The range for which the command was invoked.
-	Range Range
-
-	// Context carrying additional information.
-	Context CodeActionContext
-}
-
-func (x CodeActionParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "context", x.Context); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// CodeActionRegistrationOptions ///
-/////////////////////////////////////
-
-// Registration options for a {@link CodeActionRequest}.
+//	The reason why code actions were requested.
 //
-// Generated from the LSP 'CodeActionRegistrationOptions' structure.
-type CodeActionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CodeActionOptions
-}
-
-func (x CodeActionRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeActionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.CodeActionOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// CodeActionTriggerKind ///
-/////////////////////////////
-
-// The reason why code actions were requested.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'CodeActionTriggerKind' enumeration.
-type CodeActionTriggerKind UInteger
+//	@since 3.17.0
+type CodeActionTriggerKind UInt
 
 const (
-	// Code actions were explicitly requested by the user or by an extension.
-	InvokedCodeActionTriggerKind CodeActionTriggerKind = 1
-	// Code actions were requested automatically.
+	// InvokedCodeActionTriggerKind is a member of the CodeActionTriggerKind enumeration.
 	//
-	// This typically happens when current selection in a file changes, but can
-	// also be triggered when file content changes.
+	// Documentation from the LSP specification:
+	//
+	//	Code actions were explicitly requested by the user or by an extension.
+	InvokedCodeActionTriggerKind CodeActionTriggerKind = 1
+
+	// AutomaticCodeActionTriggerKind is a member of the CodeActionTriggerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Code actions were requested automatically.
+	//
+	//	This typically happens when current selection in a file changes, but can
+	//	also be triggered when file content changes.
 	AutomaticCodeActionTriggerKind CodeActionTriggerKind = 2
 )
 
-func (x *CodeActionTriggerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*CodeActionTriggerKind)(x)); err != nil {
-		return fmt.Errorf("CodeActionTriggerKind: %w", err)
-	}
+// CodeDescription is a structure.
+type CodeDescription struct{}
 
-	switch *x {
-	case InvokedCodeActionTriggerKind:
-	case AutomaticCodeActionTriggerKind:
-	default:
-		return fmt.Errorf("CodeActionTriggerKind: %v is not a member of the enum", x)
-	}
+// CodeLens is a structure.
+type CodeLens struct{}
 
-	return nil
-}
+// CodeLensArray is an array of CodeLens elements.
+type CodeLensArray []CodeLens
 
-///////////////////////
-/// CodeDescription ///
-///////////////////////
+// CodeLensClientCapabilities is a structure.
+type CodeLensClientCapabilities struct{}
 
-// Structure to capture a description for an error code.
+// CodeLensOptions is a structure.
+type CodeLensOptions struct{}
+
+// CodeLensParams is a structure.
+type CodeLensParams struct{}
+
+// CodeLensRegistrationOptions is a structure.
+type CodeLensRegistrationOptions struct{}
+
+// CodeLensWorkspaceClientCapabilities is a structure.
+type CodeLensWorkspaceClientCapabilities struct{}
+
+// Color is a structure.
+type Color struct{}
+
+// ColorInformation is a structure.
+type ColorInformation struct{}
+
+// ColorInformationArray is an array of ColorInformation elements.
+type ColorInformationArray []ColorInformation
+
+// ColorPresentation is a structure.
+type ColorPresentation struct{}
+
+// ColorPresentationArray is an array of ColorPresentation elements.
+type ColorPresentationArray []ColorPresentation
+
+// ColorPresentationParams is a structure.
+type ColorPresentationParams struct{}
+
+// Command is a structure.
+type Command struct{}
+
+// CompletionClientCapabilities is a structure.
+type CompletionClientCapabilities struct{}
+
+// CompletionClientCapabilitiesCompletionItem is a literal structure.
+type CompletionClientCapabilitiesCompletionItem struct{}
+
+// CompletionClientCapabilitiesCompletionItemInsertTextModeSupport is a literal structure.
+type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct{}
+
+// CompletionClientCapabilitiesCompletionItemKind is a literal structure.
+type CompletionClientCapabilitiesCompletionItemKind struct{}
+
+// CompletionClientCapabilitiesCompletionItemResolveSupport is a literal structure.
+type CompletionClientCapabilitiesCompletionItemResolveSupport struct{}
+
+// CompletionClientCapabilitiesCompletionItemTagSupport is a literal structure.
+type CompletionClientCapabilitiesCompletionItemTagSupport struct{}
+
+// CompletionClientCapabilitiesCompletionList is a literal structure.
+type CompletionClientCapabilitiesCompletionList struct{}
+
+// CompletionContext is a structure.
+type CompletionContext struct{}
+
+// CompletionItem is a structure.
+type CompletionItem struct{}
+
+// CompletionItemArray is an array of CompletionItem elements.
+type CompletionItemArray []CompletionItem
+
+// CompletionItemDocumentation is a union of <TODO>.
+type CompletionItemDocumentation interface{}
+
+// CompletionItemKind is an enumeration of UInt values.
 //
-// @since 3.16.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'CodeDescription' structure.
-type CodeDescription struct {
-	// An URI to open with more information about the diagnostic error.
-	Href *URI
-}
-
-func (x CodeDescription) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeDescription) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "href", x.Href); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////
-/// CodeLens ///
-////////////////
-
-// A code lens represents a {@link Command command} that should be shown along with
-// source text, like the number of references, a way to run tests, etc.
-//
-// A code lens is _unresolved_ when no command is associated to it. For performance
-// reasons the creation of a code lens and resolving should be done in two stages.
-//
-// Generated from the LSP 'CodeLens' structure.
-type CodeLens struct {
-	// The range in which this code lens is valid. Should only span a single line.
-	Range Range
-
-	// The command this code lens represents.
-	Command Optional[Command]
-
-	// A data entry field that is preserved on a code lens item between
-	// a {@link CodeLensRequest} and a [CodeLensResolveRequest]
-	// (#CodeLensResolveRequest)
-	Data LSPAny
-}
-
-func (x CodeLens) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeLens) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// CodeLensClientCapabilities ///
-//////////////////////////////////
-
-// The client capabilities  of a {@link CodeLensRequest}.
-//
-// Generated from the LSP 'CodeLensClientCapabilities' structure.
-type CodeLensClientCapabilities struct {
-	// Whether code lens supports dynamic registration.
-	DynamicRegistration Bool
-}
-
-func (x CodeLensClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeLensClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// CodeLensOptions ///
-///////////////////////
-
-// Code Lens provider options of a {@link CodeLensRequest}.
-//
-// Generated from the LSP 'CodeLensOptions' structure.
-type CodeLensOptions struct {
-	WorkDoneProgressOptions
-
-	// Code lens has a resolve provider as well.
-	ResolveProvider Bool
-}
-
-func (x CodeLensOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeLensOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////
-/// CodeLensParams ///
-//////////////////////
-
-// The parameters of a {@link CodeLensRequest}.
-//
-// Generated from the LSP 'CodeLensParams' structure.
-type CodeLensParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The document to request code lens for.
-	TextDocument TextDocumentIdentifier
-}
-
-func (x CodeLensParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeLensParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// CodeLensRegistrationOptions ///
-///////////////////////////////////
-
-// Registration options for a {@link CodeLensRequest}.
-//
-// Generated from the LSP 'CodeLensRegistrationOptions' structure.
-type CodeLensRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CodeLensOptions
-}
-
-func (x CodeLensRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeLensRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.CodeLensOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////////
-/// CodeLensWorkspaceClientCapabilities ///
-///////////////////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'CodeLensWorkspaceClientCapabilities' structure.
-type CodeLensWorkspaceClientCapabilities struct {
-	// Whether the client implementation supports a refresh request sent from the
-	// server to the client.
-	//
-	// Note that this event is global and will force the client to refresh all
-	// code lenses currently shown. It should be used with absolute care and is
-	// useful for situation where a server for example detect a project wide
-	// change that requires such a calculation.
-	RefreshSupport Bool
-}
-
-func (x CodeLensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CodeLensWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////
-/// Color ///
-/////////////
-
-// Represents a color in RGBA space.
-//
-// Generated from the LSP 'Color' structure.
-type Color struct {
-	// The red component of this color in the range [0-1].
-	Red Decimal
-
-	// The green component of this color in the range [0-1].
-	Green Decimal
-
-	// The blue component of this color in the range [0-1].
-	Blue Decimal
-
-	// The alpha component of this color in the range [0-1].
-	Alpha Decimal
-}
-
-func (x Color) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Color) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "red", x.Red); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "green", x.Green); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "blue", x.Blue); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "alpha", x.Alpha); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// ColorInformation ///
-////////////////////////
-
-// Represents a color range from a document.
-//
-// Generated from the LSP 'ColorInformation' structure.
-type ColorInformation struct {
-	// The range in the document where this color appears.
-	Range Range
-
-	// The actual color value for this color range.
-	Color Color
-}
-
-func (x ColorInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ColorInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "color", x.Color); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// ColorPresentation ///
-/////////////////////////
-
-// Generated from the LSP 'ColorPresentation' structure.
-type ColorPresentation struct {
-	// The label of this color presentation. It will be shown on the color
-	// picker header. By default this is also the text that is inserted when selecting
-	// this color presentation.
-	Label String
-
-	// An {@link TextEdit edit} which is applied to a document when selecting
-	// this presentation for the color.  When `falsy` the {@link ColorPresentation.label label}
-	// is used.
-	TextEdit Optional[TextEdit]
-
-	// An optional array of additional {@link TextEdit text edits} that are applied when
-	// selecting this color presentation. Edits must not overlap with the main {@link ColorPresentation.textEdit edit} nor with themselves.
-	AdditionalTextEdits TextEditArray
-}
-
-func (x ColorPresentation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ColorPresentation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "textEdit", x.TextEdit); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "additionalTextEdits", x.AdditionalTextEdits); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type TextEditArray []TextEdit
-
-///////////////////////////////
-/// ColorPresentationParams ///
-///////////////////////////////
-
-// Parameters for a {@link ColorPresentationRequest}.
-//
-// Generated from the LSP 'ColorPresentationParams' structure.
-type ColorPresentationParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The color to request presentations for.
-	Color Color
-
-	// The range where the color would be inserted. Serves as a context.
-	Range Range
-}
-
-func (x ColorPresentationParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ColorPresentationParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "color", x.Color); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////
-/// Command ///
-///////////////
-
-// Represents a reference to a command. Provides a title which
-// will be used to represent a command in the UI and, optionally,
-// an array of arguments which will be passed to the command handler
-// function when invoked.
-//
-// Generated from the LSP 'Command' structure.
-type Command struct {
-	// Title of the command, like `save`.
-	Title String
-
-	// The identifier of the actual command handler.
-	Command String
-
-	// Arguments that the command handler should be
-	// invoked with.
-	Arguments LSPAnyArray
-}
-
-func (x Command) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Command) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "title", x.Title); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "command", x.Command); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "arguments", x.Arguments); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type LSPAnyArray []LSPAny
-
-////////////////////////////////////
-/// CompletionClientCapabilities ///
-////////////////////////////////////
-
-// Completion client capabilities
-//
-// Generated from the LSP 'CompletionClientCapabilities' structure.
-type CompletionClientCapabilities struct {
-	// Whether completion supports dynamic registration.
-	DynamicRegistration Bool
-
-	// The client supports the following `CompletionItem` specific
-	// capabilities.
-	CompletionItem Optional[CompletionClientCapabilitiesCompletionItem]
-
-	CompletionItemKind Optional[CompletionClientCapabilitiesCompletionItemKind]
-
-	// Defines how the client handles whitespace and indentation
-	// when accepting a completion item that uses multi line
-	// text in either `insertText` or `textEdit`.
-	//
-	// @since 3.17.0
-	InsertTextMode Optional[InsertTextMode]
-
-	// The client supports to send additional context information for a
-	// `textDocument/completion` request.
-	ContextSupport Bool
-
-	// The client supports the following `CompletionList` specific
-	// capabilities.
-	//
-	// @since 3.17.0
-	CompletionList Optional[CompletionClientCapabilitiesCompletionList]
-}
-
-func (x CompletionClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "completionItem", x.CompletionItem); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "completionItemKind", x.CompletionItemKind); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "insertTextMode", x.InsertTextMode); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "contextSupport", x.ContextSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "completionList", x.CompletionList); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type CompletionClientCapabilitiesCompletionItem struct {
-	// Client supports snippets as insert text.
-	//
-	// A snippet can define tab stops and placeholders with `$1`, `$2`
-	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
-	// the end of the snippet. Placeholders with equal identifiers are linked,
-	// that is typing in one will update others too.
-	SnippetSupport Bool
-
-	// Client supports commit characters on a completion item.
-	CommitCharactersSupport Bool
-
-	// Client supports the following content formats for the documentation
-	// property. The order describes the preferred format of the client.
-	DocumentationFormat MarkupKindArray
-
-	// Client supports the deprecated property on a completion item.
-	DeprecatedSupport Bool
-
-	// Client supports the preselect property on a completion item.
-	PreselectSupport Bool
-
-	// Client supports the tag property on a completion item. Clients supporting
-	// tags have to handle unknown tags gracefully. Clients especially need to
-	// preserve unknown tags when sending a completion item back to the server in
-	// a resolve call.
-	//
-	// @since 3.15.0
-	TagSupport Optional[CompletionClientCapabilitiesCompletionItemTagSupport]
-
-	// Client support insert replace edit to control different behavior if a
-	// completion item is inserted in the text or should replace text.
-	//
-	// @since 3.16.0
-	InsertReplaceSupport Bool
-
-	// Indicates which properties a client can resolve lazily on a completion
-	// item. Before version 3.16.0 only the predefined properties `documentation`
-	// and `details` could be resolved lazily.
-	//
-	// @since 3.16.0
-	ResolveSupport Optional[CompletionClientCapabilitiesCompletionItemResolveSupport]
-
-	// The client supports the `insertTextMode` property on
-	// a completion item to override the whitespace handling mode
-	// as defined by the client (see `insertTextMode`).
-	//
-	// @since 3.16.0
-	InsertTextModeSupport Optional[CompletionClientCapabilitiesCompletionItemInsertTextModeSupport]
-
-	// The client has support for completion item label
-	// details (see also `CompletionItemLabelDetails`).
-	//
-	// @since 3.17.0
-	LabelDetailsSupport Bool
-}
-
-func (x CompletionClientCapabilitiesCompletionItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionClientCapabilitiesCompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "snippetSupport", x.SnippetSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "commitCharactersSupport", x.CommitCharactersSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentationFormat", x.DocumentationFormat); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "deprecatedSupport", x.DeprecatedSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "preselectSupport", x.PreselectSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "insertReplaceSupport", x.InsertReplaceSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "insertTextModeSupport", x.InsertTextModeSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "labelDetailsSupport", x.LabelDetailsSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
-	ValueSet InsertTextModeArray
-}
-
-func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type InsertTextModeArray []InsertTextMode
-
-// Generated from an LSP 'literal' type.
-type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
-	// The properties that a client can resolve lazily.
-	Properties StringArray
-}
-
-func (x CompletionClientCapabilitiesCompletionItemResolveSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionClientCapabilitiesCompletionItemResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type CompletionClientCapabilitiesCompletionItemTagSupport struct {
-	// The tags supported by the client.
-	ValueSet CompletionItemTagArray
-}
-
-func (x CompletionClientCapabilitiesCompletionItemTagSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionClientCapabilitiesCompletionItemTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type CompletionItemTagArray []CompletionItemTag
-
-// Generated from an LSP 'array' type.
-type MarkupKindArray []MarkupKind
-
-// Generated from an LSP 'literal' type.
-type CompletionClientCapabilitiesCompletionItemKind struct {
-	// The completion item kind values the client supports. When this
-	// property exists the client also guarantees that it will
-	// handle values outside its set gracefully and falls back
-	// to a default value when unknown.
-	//
-	// If this property is not present the client only supports
-	// the completion items kinds from `Text` to `Reference` as defined in
-	// the initial version of the protocol.
-	ValueSet CompletionItemKindArray
-}
-
-func (x CompletionClientCapabilitiesCompletionItemKind) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionClientCapabilitiesCompletionItemKind) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type CompletionItemKindArray []CompletionItemKind
-
-// Generated from an LSP 'literal' type.
-type CompletionClientCapabilitiesCompletionList struct {
-	// The client supports the following itemDefaults on
-	// a completion list.
-	//
-	// The value lists the supported property names of the
-	// `CompletionList.itemDefaults` object. If omitted
-	// no properties are supported.
-	//
-	// @since 3.17.0
-	ItemDefaults StringArray
-}
-
-func (x CompletionClientCapabilitiesCompletionList) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionClientCapabilitiesCompletionList) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "itemDefaults", x.ItemDefaults); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// CompletionContext ///
-/////////////////////////
-
-// Contains additional information about the context in which a completion request is triggered.
-//
-// Generated from the LSP 'CompletionContext' structure.
-type CompletionContext struct {
-	// How the completion was triggered.
-	TriggerKind CompletionTriggerKind
-
-	// The trigger character (a single character) that has trigger code complete.
-	// Is undefined if `triggerKind !== CompletionTriggerKind.TriggerCharacter`
-	TriggerCharacter String
-}
-
-func (x CompletionContext) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionContext) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "triggerKind", x.TriggerKind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "triggerCharacter", x.TriggerCharacter); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////
-/// CompletionItem ///
-//////////////////////
-
-// A completion item represents a text snippet that is
-// proposed to complete text that is being typed.
-//
-// Generated from the LSP 'CompletionItem' structure.
-type CompletionItem struct {
-	// The label of this completion item.
-	//
-	// The label property is also by default the text that
-	// is inserted when selecting this completion.
-	//
-	// If label details are provided the label itself should
-	// be an unqualified name of the completion item.
-	Label String
-
-	// Additional details for the label
-	//
-	// @since 3.17.0
-	LabelDetails Optional[CompletionItemLabelDetails]
-
-	// The kind of this completion item. Based of the kind
-	// an icon is chosen by the editor.
-	Kind Optional[CompletionItemKind]
-
-	// Tags for this completion item.
-	//
-	// @since 3.15.0
-	Tags CompletionItemTagArray
-
-	// A human-readable string with additional information
-	// about this item, like type or symbol information.
-	Detail String
-
-	// A human-readable string that represents a doc-comment.
-	Documentation CompletionItemDocumentation
-
-	// Indicates if this item is deprecated.
-	// @deprecated Use `tags` instead.
-	//
-	// Deprecated: Use `tags` instead.
-	Deprecated Bool
-
-	// Select this item when showing.
-	//
-	// *Note* that only one completion item can be selected and that the
-	// tool / client decides which item that is. The rule is that the *first*
-	// item of those that match best is selected.
-	Preselect Bool
-
-	// A string that should be used when comparing this item
-	// with other items. When `falsy` the {@link CompletionItem.label label}
-	// is used.
-	SortText String
-
-	// A string that should be used when filtering a set of
-	// completion items. When `falsy` the {@link CompletionItem.label label}
-	// is used.
-	FilterText String
-
-	// A string that should be inserted into a document when selecting
-	// this completion. When `falsy` the {@link CompletionItem.label label}
-	// is used.
-	//
-	// The `insertText` is subject to interpretation by the client side.
-	// Some tools might not take the string literally. For example
-	// VS Code when code complete is requested in this example
-	// `con<cursor position>` and a completion item with an `insertText` of
-	// `console` is provided it will only insert `sole`. Therefore it is
-	// recommended to use `textEdit` instead since it avoids additional client
-	// side interpretation.
-	InsertText String
-
-	// The format of the insert text. The format applies to both the
-	// `insertText` property and the `newText` property of a provided
-	// `textEdit`. If omitted defaults to `InsertTextFormat.PlainText`.
-	//
-	// Please note that the insertTextFormat doesn't apply to
-	// `additionalTextEdits`.
-	InsertTextFormat Optional[InsertTextFormat]
-
-	// How whitespace and indentation is handled during completion
-	// item insertion. If not provided the clients default value depends on
-	// the `textDocument.completion.insertTextMode` client capability.
-	//
-	// @since 3.16.0
-	InsertTextMode Optional[InsertTextMode]
-
-	// An {@link TextEdit edit} which is applied to a document when selecting
-	// this completion. When an edit is provided the value of
-	// {@link CompletionItem.insertText insertText} is ignored.
-	//
-	// Most editors support two different operations when accepting a completion
-	// item. One is to insert a completion text and the other is to replace an
-	// existing text with a completion text. Since this can usually not be
-	// predetermined by a server it can report both ranges. Clients need to
-	// signal support for `InsertReplaceEdits` via the
-	// `textDocument.completion.insertReplaceSupport` client capability
-	// property.
-	//
-	// *Note 1:* The text edit's range as well as both ranges from an insert
-	// replace edit must be a [single line] and they must contain the position
-	// at which completion has been requested.
-	// *Note 2:* If an `InsertReplaceEdit` is returned the edit's insert range
-	// must be a prefix of the edit's replace range, that means it must be
-	// contained and starting at the same position.
-	//
-	// @since 3.16.0 additional type `InsertReplaceEdit`
-	TextEdit CompletionItemTextEdit
-
-	// The edit text used if the completion item is part of a CompletionList and
-	// CompletionList defines an item default for the text edit range.
-	//
-	// Clients will only honor this property if they opt into completion list
-	// item defaults using the capability `completionList.itemDefaults`.
-	//
-	// If not provided and a list's default range is provided the label
-	// property is used as a text.
-	//
-	// @since 3.17.0
-	TextEditText String
-
-	// An optional array of additional {@link TextEdit text edits} that are applied when
-	// selecting this completion. Edits must not overlap (including the same insert position)
-	// with the main {@link CompletionItem.textEdit edit} nor with themselves.
-	//
-	// Additional text edits should be used to change text unrelated to the current cursor position
-	// (for example adding an import statement at the top of the file if the completion item will
-	// insert an unqualified type).
-	AdditionalTextEdits TextEditArray
-
-	// An optional set of characters that when pressed while this completion is active will accept it first and
-	// then type that character. *Note* that all commit characters should have `length=1` and that superfluous
-	// characters will be ignored.
-	CommitCharacters StringArray
-
-	// An optional {@link Command command} that is executed *after* inserting this completion. *Note* that
-	// additional modifications to the current document should be described with the
-	// {@link CompletionItem.additionalTextEdits additionalTextEdits}-property.
-	Command Optional[Command]
-
-	// A data entry field that is preserved on a completion item between a
-	// {@link CompletionRequest} and a {@link CompletionResolveRequest}.
-	Data LSPAny
-}
-
-func (x CompletionItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "labelDetails", x.LabelDetails); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentation", x.Documentation); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "deprecated", x.Deprecated); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "preselect", x.Preselect); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "sortText", x.SortText); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "filterText", x.FilterText); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "insertText", x.InsertText); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "insertTextFormat", x.InsertTextFormat); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "insertTextMode", x.InsertTextMode); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textEdit", x.TextEdit); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textEditText", x.TextEditText); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "additionalTextEdits", x.AdditionalTextEdits); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "commitCharacters", x.CommitCharacters); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type CompletionItemDocumentation interface {
-	isCompletionItemDocumentation()
-}
-
-func (String) isCompletionItemDocumentation()        {}
-func (MarkupContent) isCompletionItemDocumentation() {}
-
-// Generated from an LSP 'or' type.
-type CompletionItemTextEdit interface {
-	isCompletionItemTextEdit()
-}
-
-func (TextEdit) isCompletionItemTextEdit()          {}
-func (InsertReplaceEdit) isCompletionItemTextEdit() {}
-
-//////////////////////////
-/// CompletionItemKind ///
-//////////////////////////
-
-// The kind of a completion entry.
-//
-// Generated from the LSP 'CompletionItemKind' enumeration.
-type CompletionItemKind UInteger
+//	The kind of a completion entry.
+type CompletionItemKind UInt
 
 const (
+	// TextCompletionItemKind is a member of the CompletionItemKind enumeration.
 	TextCompletionItemKind CompletionItemKind = 1
+
+	// MethodCompletionItemKind is a member of the CompletionItemKind enumeration.
 	MethodCompletionItemKind CompletionItemKind = 2
+
+	// FunctionCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FunctionCompletionItemKind CompletionItemKind = 3
+
+	// ConstructorCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ConstructorCompletionItemKind CompletionItemKind = 4
+
+	// FieldCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FieldCompletionItemKind CompletionItemKind = 5
+
+	// VariableCompletionItemKind is a member of the CompletionItemKind enumeration.
 	VariableCompletionItemKind CompletionItemKind = 6
+
+	// ClassCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ClassCompletionItemKind CompletionItemKind = 7
+
+	// InterfaceCompletionItemKind is a member of the CompletionItemKind enumeration.
 	InterfaceCompletionItemKind CompletionItemKind = 8
+
+	// ModuleCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ModuleCompletionItemKind CompletionItemKind = 9
+
+	// PropertyCompletionItemKind is a member of the CompletionItemKind enumeration.
 	PropertyCompletionItemKind CompletionItemKind = 10
+
+	// UnitCompletionItemKind is a member of the CompletionItemKind enumeration.
 	UnitCompletionItemKind CompletionItemKind = 11
+
+	// ValueCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ValueCompletionItemKind CompletionItemKind = 12
+
+	// EnumCompletionItemKind is a member of the CompletionItemKind enumeration.
 	EnumCompletionItemKind CompletionItemKind = 13
+
+	// KeywordCompletionItemKind is a member of the CompletionItemKind enumeration.
 	KeywordCompletionItemKind CompletionItemKind = 14
+
+	// SnippetCompletionItemKind is a member of the CompletionItemKind enumeration.
 	SnippetCompletionItemKind CompletionItemKind = 15
+
+	// ColorCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ColorCompletionItemKind CompletionItemKind = 16
+
+	// FileCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FileCompletionItemKind CompletionItemKind = 17
+
+	// ReferenceCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ReferenceCompletionItemKind CompletionItemKind = 18
+
+	// FolderCompletionItemKind is a member of the CompletionItemKind enumeration.
 	FolderCompletionItemKind CompletionItemKind = 19
+
+	// EnumMemberCompletionItemKind is a member of the CompletionItemKind enumeration.
 	EnumMemberCompletionItemKind CompletionItemKind = 20
+
+	// ConstantCompletionItemKind is a member of the CompletionItemKind enumeration.
 	ConstantCompletionItemKind CompletionItemKind = 21
+
+	// StructCompletionItemKind is a member of the CompletionItemKind enumeration.
 	StructCompletionItemKind CompletionItemKind = 22
+
+	// EventCompletionItemKind is a member of the CompletionItemKind enumeration.
 	EventCompletionItemKind CompletionItemKind = 23
+
+	// OperatorCompletionItemKind is a member of the CompletionItemKind enumeration.
 	OperatorCompletionItemKind CompletionItemKind = 24
+
+	// TypeParameterCompletionItemKind is a member of the CompletionItemKind enumeration.
 	TypeParameterCompletionItemKind CompletionItemKind = 25
 )
 
-func (x *CompletionItemKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*CompletionItemKind)(x)); err != nil {
-		return fmt.Errorf("CompletionItemKind: %w", err)
-	}
+// CompletionItemKindArray is an array of CompletionItemKind elements.
+type CompletionItemKindArray []CompletionItemKind
 
-	switch *x {
-	case TextCompletionItemKind:
-	case MethodCompletionItemKind:
-	case FunctionCompletionItemKind:
-	case ConstructorCompletionItemKind:
-	case FieldCompletionItemKind:
-	case VariableCompletionItemKind:
-	case ClassCompletionItemKind:
-	case InterfaceCompletionItemKind:
-	case ModuleCompletionItemKind:
-	case PropertyCompletionItemKind:
-	case UnitCompletionItemKind:
-	case ValueCompletionItemKind:
-	case EnumCompletionItemKind:
-	case KeywordCompletionItemKind:
-	case SnippetCompletionItemKind:
-	case ColorCompletionItemKind:
-	case FileCompletionItemKind:
-	case ReferenceCompletionItemKind:
-	case FolderCompletionItemKind:
-	case EnumMemberCompletionItemKind:
-	case ConstantCompletionItemKind:
-	case StructCompletionItemKind:
-	case EventCompletionItemKind:
-	case OperatorCompletionItemKind:
-	case TypeParameterCompletionItemKind:
-	default:
-		return fmt.Errorf("CompletionItemKind: %v is not a member of the enum", x)
-	}
+// CompletionItemLabelDetails is a structure.
+type CompletionItemLabelDetails struct{}
 
-	return nil
-}
-
-//////////////////////////////////
-/// CompletionItemLabelDetails ///
-//////////////////////////////////
-
-// Additional details for a completion item label.
+// CompletionItemTag is an enumeration of UInt values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'CompletionItemLabelDetails' structure.
-type CompletionItemLabelDetails struct {
-	// An optional string which is rendered less prominently directly after {@link CompletionItem.label label},
-	// without any spacing. Should be used for function signatures and type annotations.
-	Detail String
-
-	// An optional string which is rendered less prominently after {@link CompletionItem.detail}. Should be used
-	// for fully qualified names and file paths.
-	Description String
-}
-
-func (x CompletionItemLabelDetails) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionItemLabelDetails) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "description", x.Description); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// CompletionItemTag ///
-/////////////////////////
-
-// Completion item tags are extra annotations that tweak the rendering of a completion
-// item.
+//	Completion item tags are extra annotations that tweak the rendering of a completion
+//	item.
 //
-// @since 3.15.0
-//
-// Generated from the LSP 'CompletionItemTag' enumeration.
-type CompletionItemTag UInteger
+//	@since 3.15.0
+type CompletionItemTag UInt
 
 const (
-	// Render a completion as obsolete, usually using a strike-out.
+	// DeprecatedCompletionItemTag is a member of the CompletionItemTag enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Render a completion as obsolete, usually using a strike-out.
 	DeprecatedCompletionItemTag CompletionItemTag = 1
 )
 
-func (x *CompletionItemTag) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*CompletionItemTag)(x)); err != nil {
-		return fmt.Errorf("CompletionItemTag: %w", err)
-	}
+// CompletionItemTagArray is an array of CompletionItemTag elements.
+type CompletionItemTagArray []CompletionItemTag
 
-	switch *x {
-	case DeprecatedCompletionItemTag:
-	default:
-		return fmt.Errorf("CompletionItemTag: %v is not a member of the enum", x)
-	}
+// CompletionItemTextEdit is a union of <TODO>.
+type CompletionItemTextEdit interface{}
 
-	return nil
-}
+// CompletionList is a structure.
+type CompletionList struct{}
 
-//////////////////////
-/// CompletionList ///
-//////////////////////
+// CompletionListItemDefaults is a literal structure.
+type CompletionListItemDefaults struct{}
 
-// Represents a collection of {@link CompletionItem completion items} to be presented
-// in the editor.
+// CompletionListItemDefaultsEditRange is a union of <TODO>.
+type CompletionListItemDefaultsEditRange interface{}
+
+// CompletionListItemDefaultsEditRangeOption2 is a literal structure.
+type CompletionListItemDefaultsEditRangeOption2 struct{}
+
+// CompletionOptions is a structure.
+type CompletionOptions struct{}
+
+// CompletionOptionsCompletionItem is a literal structure.
+type CompletionOptionsCompletionItem struct{}
+
+// CompletionParams is a structure.
+type CompletionParams struct{}
+
+// CompletionRegistrationOptions is a structure.
+type CompletionRegistrationOptions struct{}
+
+// CompletionTriggerKind is an enumeration of UInt values.
 //
-// Generated from the LSP 'CompletionList' structure.
-type CompletionList struct {
-	// This list it not complete. Further typing results in recomputing this list.
-	//
-	// Recomputed lists have all their items replaced (not appended) in the
-	// incomplete completion sessions.
-	IsIncomplete Bool
-
-	// In many cases the items of an actual completion result share the same
-	// value for properties like `commitCharacters` or the range of a text
-	// edit. A completion list can therefore define item defaults which will
-	// be used if a completion item itself doesn't specify the value.
-	//
-	// If a completion list specifies a default value and a completion item
-	// also specifies a corresponding value the one from the item is used.
-	//
-	// Servers are only allowed to return default values if the client
-	// signals support for this via the `completionList.itemDefaults`
-	// capability.
-	//
-	// @since 3.17.0
-	ItemDefaults Optional[CompletionListItemDefaults]
-
-	// The completion items.
-	Items CompletionItemArray
-}
-
-func (x CompletionList) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionList) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "isIncomplete", x.IsIncomplete); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "itemDefaults", x.ItemDefaults); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "items", x.Items); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type CompletionItemArray []CompletionItem
-
-// Generated from an LSP 'literal' type.
-type CompletionListItemDefaults struct {
-	// A default commit character set.
-	//
-	// @since 3.17.0
-	CommitCharacters StringArray
-
-	// A default edit range.
-	//
-	// @since 3.17.0
-	EditRange CompletionListItemDefaultsEditRange
-
-	// A default insert text format.
-	//
-	// @since 3.17.0
-	InsertTextFormat Optional[InsertTextFormat]
-
-	// A default insert text mode.
-	//
-	// @since 3.17.0
-	InsertTextMode Optional[InsertTextMode]
-
-	// A default data value.
-	//
-	// @since 3.17.0
-	Data LSPAny
-}
-
-func (x CompletionListItemDefaults) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionListItemDefaults) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "commitCharacters", x.CommitCharacters); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "editRange", x.EditRange); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "insertTextFormat", x.InsertTextFormat); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "insertTextMode", x.InsertTextMode); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type CompletionListItemDefaultsEditRange interface {
-	isCompletionListItemDefaultsEditRange()
-}
-
-func (Range) isCompletionListItemDefaultsEditRange()                                      {}
-func (CompletionListItemDefaultsEditRangeOption1) isCompletionListItemDefaultsEditRange() {}
-
-// Generated from an LSP 'literal' type.
-type CompletionListItemDefaultsEditRangeOption1 struct {
-	Insert Range
-
-	Replace Range
-}
-
-func (x CompletionListItemDefaultsEditRangeOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionListItemDefaultsEditRangeOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "insert", x.Insert); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "replace", x.Replace); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// CompletionOptions ///
-/////////////////////////
-
-// Completion options.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'CompletionOptions' structure.
-type CompletionOptions struct {
-	WorkDoneProgressOptions
-
-	// Most tools trigger completion request automatically without explicitly requesting
-	// it using a keyboard shortcut (e.g. Ctrl+Space). Typically they do so when the user
-	// starts to type an identifier. For example if the user types `c` in a JavaScript file
-	// code complete will automatically pop up present `console` besides others as a
-	// completion item. Characters that make up identifiers don't need to be listed here.
-	//
-	// If code complete should automatically be trigger on characters not being valid inside
-	// an identifier (for example `.` in JavaScript) list them in `triggerCharacters`.
-	TriggerCharacters StringArray
-
-	// The list of all possible characters that commit a completion. This field can be used
-	// if clients don't support individual commit characters per completion item. See
-	// `ClientCapabilities.textDocument.completion.completionItem.commitCharactersSupport`
-	//
-	// If a server provides both `allCommitCharacters` and commit characters on an individual
-	// completion item the ones on the completion item win.
-	//
-	// @since 3.2.0
-	AllCommitCharacters StringArray
-
-	// The server provides support to resolve additional
-	// information for a completion item.
-	ResolveProvider Bool
-
-	// The server supports the following `CompletionItem` specific
-	// capabilities.
-	//
-	// @since 3.17.0
-	CompletionItem Optional[CompletionOptionsCompletionItem]
-}
-
-func (x CompletionOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "triggerCharacters", x.TriggerCharacters); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "allCommitCharacters", x.AllCommitCharacters); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "completionItem", x.CompletionItem); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type CompletionOptionsCompletionItem struct {
-	// The server has support for completion item label
-	// details (see also `CompletionItemLabelDetails`) when
-	// receiving a completion item in a resolve call.
-	//
-	// @since 3.17.0
-	LabelDetailsSupport Bool
-}
-
-func (x CompletionOptionsCompletionItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionOptionsCompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "labelDetailsSupport", x.LabelDetailsSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// CompletionParams ///
-////////////////////////
-
-// Completion parameters
-//
-// Generated from the LSP 'CompletionParams' structure.
-type CompletionParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The completion context. This is only available it the client specifies
-	// to send this using the client capability `textDocument.completion.contextSupport === true`
-	Context Optional[CompletionContext]
-}
-
-func (x CompletionParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "context", x.Context); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// CompletionRegistrationOptions ///
-/////////////////////////////////////
-
-// Registration options for a {@link CompletionRequest}.
-//
-// Generated from the LSP 'CompletionRegistrationOptions' structure.
-type CompletionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	CompletionOptions
-}
-
-func (x CompletionRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x CompletionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.CompletionOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// CompletionTriggerKind ///
-/////////////////////////////
-
-// How a completion was triggered
-//
-// Generated from the LSP 'CompletionTriggerKind' enumeration.
-type CompletionTriggerKind UInteger
+//	How a completion was triggered
+type CompletionTriggerKind UInt
 
 const (
-	// Completion was triggered by typing an identifier (24x7 code
-	// complete), manual invocation (e.g Ctrl+Space) or via API.
+	// InvokedCompletionTriggerKind is a member of the CompletionTriggerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Completion was triggered by typing an identifier (24x7 code
+	//	complete), manual invocation (e.g Ctrl+Space) or via API.
 	InvokedCompletionTriggerKind CompletionTriggerKind = 1
-	// Completion was triggered by a trigger character specified by
-	// the `triggerCharacters` properties of the `CompletionRegistrationOptions`.
+
+	// TriggerCharacterCompletionTriggerKind is a member of the CompletionTriggerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Completion was triggered by a trigger character specified by
+	//	the `triggerCharacters` properties of the `CompletionRegistrationOptions`.
 	TriggerCharacterCompletionTriggerKind CompletionTriggerKind = 2
-	// Completion was re-triggered as current completion list is incomplete
+
+	// TriggerForIncompleteCompletionsCompletionTriggerKind is a member of the CompletionTriggerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Completion was re-triggered as current completion list is incomplete
 	TriggerForIncompleteCompletionsCompletionTriggerKind CompletionTriggerKind = 3
 )
 
-func (x *CompletionTriggerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*CompletionTriggerKind)(x)); err != nil {
-		return fmt.Errorf("CompletionTriggerKind: %w", err)
-	}
+// ConfigurationItem is a structure.
+type ConfigurationItem struct{}
 
-	switch *x {
-	case InvokedCompletionTriggerKind:
-	case TriggerCharacterCompletionTriggerKind:
-	case TriggerForIncompleteCompletionsCompletionTriggerKind:
-	default:
-		return fmt.Errorf("CompletionTriggerKind: %v is not a member of the enum", x)
-	}
-
-	return nil
-}
-
-/////////////////////////
-/// ConfigurationItem ///
-/////////////////////////
-
-// Generated from the LSP 'ConfigurationItem' structure.
-type ConfigurationItem struct {
-	// The scope to get the configuration section for.
-	ScopeURI String
-
-	// The configuration section asked for.
-	Section String
-}
-
-func (x ConfigurationItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ConfigurationItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "scopeUri", x.ScopeURI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "section", x.Section); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// ConfigurationParams ///
-///////////////////////////
-
-// The parameters of a configuration request.
-//
-// Generated from the LSP 'ConfigurationParams' structure.
-type ConfigurationParams struct {
-	Items ConfigurationItemArray
-}
-
-func (x ConfigurationParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ConfigurationParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "items", x.Items); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// ConfigurationItemArray is an array of ConfigurationItem elements.
 type ConfigurationItemArray []ConfigurationItem
 
-//////////////////
-/// CreateFile ///
-//////////////////
+// ConfigurationParams is a structure.
+type ConfigurationParams struct{}
 
-// Create file operation.
-//
-// Generated from the LSP 'CreateFile' structure.
-type CreateFile struct {
-	ResourceOperation
+// CreateFile is a structure.
+type CreateFile struct{}
 
-	// The resource to create.
-	URI *DocumentURI
+// CreateFileOptions is a structure.
+type CreateFileOptions struct{}
 
-	// Additional options
-	Options Optional[CreateFileOptions]
-}
+// CreateFilesParams is a structure.
+type CreateFilesParams struct{}
 
-func (x CreateFile) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// Decimal is the LSP decimal type.
+type Decimal float64
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// Declaration is a union of <TODO>.
+type Declaration interface{}
 
-	return w.Bytes(), nil
-}
+// DeclarationClientCapabilities is a structure.
+type DeclarationClientCapabilities struct{}
 
-func (x CreateFile) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.ResourceOperation.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "kind", "create"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
-		return err
-	}
-	return nil
-}
+// DeclarationLink is an alias for LocationLink.
+type DeclarationLink = LocationLink
 
-/////////////////////////
-/// CreateFileOptions ///
-/////////////////////////
+// DeclarationLinkArray is an array of DeclarationLink elements.
+type DeclarationLinkArray []DeclarationLink
 
-// Options to create a file.
-//
-// Generated from the LSP 'CreateFileOptions' structure.
-type CreateFileOptions struct {
-	// Overwrite existing file. Overwrite wins over `ignoreIfExists`
-	Overwrite Bool
+// DeclarationOptions is a structure.
+type DeclarationOptions struct{}
 
-	// Ignore if exists.
-	IgnoreIfExists Bool
-}
+// DeclarationParams is a structure.
+type DeclarationParams struct{}
 
-func (x CreateFileOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// DeclarationRegistrationOptions is a structure.
+type DeclarationRegistrationOptions struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// Definition is a union of <TODO>.
+type Definition interface{}
 
-	return w.Bytes(), nil
-}
+// DefinitionClientCapabilities is a structure.
+type DefinitionClientCapabilities struct{}
 
-func (x CreateFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "overwrite", x.Overwrite); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "ignoreIfExists", x.IgnoreIfExists); err != nil {
-		return err
-	}
-	return nil
-}
+// DefinitionLink is an alias for LocationLink.
+type DefinitionLink = LocationLink
 
-/////////////////////////
-/// CreateFilesParams ///
-/////////////////////////
+// DefinitionLinkArray is an array of DefinitionLink elements.
+type DefinitionLinkArray []DefinitionLink
 
-// The parameters sent in notifications/requests for user-initiated creation of
-// files.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'CreateFilesParams' structure.
-type CreateFilesParams struct {
-	// An array of all files/folders created in this operation.
-	Files FileCreateArray
-}
+// DefinitionOptions is a structure.
+type DefinitionOptions struct{}
 
-func (x CreateFilesParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// DefinitionParams is a structure.
+type DefinitionParams struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// DefinitionRegistrationOptions is a structure.
+type DefinitionRegistrationOptions struct{}
 
-	return w.Bytes(), nil
-}
+// DeleteFile is a structure.
+type DeleteFile struct{}
 
-func (x CreateFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "files", x.Files); err != nil {
-		return err
-	}
-	return nil
-}
+// DeleteFileOptions is a structure.
+type DeleteFileOptions struct{}
 
-// Generated from an LSP 'array' type.
-type FileCreateArray []FileCreate
+// DeleteFilesParams is a structure.
+type DeleteFilesParams struct{}
 
-///////////////////
-/// Declaration ///
-///////////////////
+// Diagnostic is a structure.
+type Diagnostic struct{}
 
-// The declaration of a symbol representation as one or many {@link Location locations}.
-//
-// Generated from the LSP 'Declaration' type alias.
-// Generated from an LSP 'or' type.
-type Declaration interface {
-	isDeclaration()
-}
+// DiagnosticArray is an array of Diagnostic elements.
+type DiagnosticArray []Diagnostic
 
-func (Location) isDeclaration()      {}
-func (LocationArray) isDeclaration() {}
+// DiagnosticClientCapabilities is a structure.
+type DiagnosticClientCapabilities struct{}
 
-// Generated from an LSP 'array' type.
-type LocationArray []Location
+// DiagnosticCode is a union of <TODO>.
+type DiagnosticCode interface{}
 
-/////////////////////////////////////
-/// DeclarationClientCapabilities ///
-/////////////////////////////////////
+// DiagnosticOptions is a structure.
+type DiagnosticOptions struct{}
 
-// @since 3.14.0
-//
-// Generated from the LSP 'DeclarationClientCapabilities' structure.
-type DeclarationClientCapabilities struct {
-	// Whether declaration supports dynamic registration. If this is set to `true`
-	// the client supports the new `DeclarationRegistrationOptions` return value
-	// for the corresponding server capability as well.
-	DynamicRegistration Bool
+// DiagnosticRegistrationOptions is a structure.
+type DiagnosticRegistrationOptions struct{}
 
-	// The client supports additional metadata in the form of declaration links.
-	LinkSupport Bool
-}
+// DiagnosticRelatedInformation is a structure.
+type DiagnosticRelatedInformation struct{}
 
-func (x DeclarationClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DeclarationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// DeclarationLink ///
-///////////////////////
-
-// Information about where a symbol is declared.
-//
-// Provides additional metadata over normal {@link Location location} declarations, including the range of
-// the declaring symbol.
-//
-// Servers should prefer returning `DeclarationLink` over `Declaration` if supported
-// by the client.
-//
-// Generated from the LSP 'DeclarationLink' type alias.
-type DeclarationLink LocationLink
-
-//////////////////////////
-/// DeclarationOptions ///
-//////////////////////////
-
-// Generated from the LSP 'DeclarationOptions' structure.
-type DeclarationOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x DeclarationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DeclarationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// DeclarationParams ///
-/////////////////////////
-
-// Generated from the LSP 'DeclarationParams' structure.
-type DeclarationParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-}
-
-func (x DeclarationParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DeclarationParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// DeclarationRegistrationOptions ///
-//////////////////////////////////////
-
-// Generated from the LSP 'DeclarationRegistrationOptions' structure.
-type DeclarationRegistrationOptions struct {
-	DeclarationOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
-}
-
-func (x DeclarationRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DeclarationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.DeclarationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// Definition ///
-//////////////////
-
-// The definition of a symbol represented as one or many {@link Location locations}.
-// For most programming languages there is only one location at which a symbol is
-// defined.
-//
-// Servers should prefer returning `DefinitionLink` over `Definition` if supported
-// by the client.
-//
-// Generated from the LSP 'Definition' type alias.
-// Generated from an LSP 'or' type.
-type Definition interface {
-	isDefinition()
-}
-
-func (Location) isDefinition()      {}
-func (LocationArray) isDefinition() {}
-
-////////////////////////////////////
-/// DefinitionClientCapabilities ///
-////////////////////////////////////
-
-// Client Capabilities for a {@link DefinitionRequest}.
-//
-// Generated from the LSP 'DefinitionClientCapabilities' structure.
-type DefinitionClientCapabilities struct {
-	// Whether definition supports dynamic registration.
-	DynamicRegistration Bool
-
-	// The client supports additional metadata in the form of definition links.
-	//
-	// @since 3.14.0
-	LinkSupport Bool
-}
-
-func (x DefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////
-/// DefinitionLink ///
-//////////////////////
-
-// Information about where a symbol is defined.
-//
-// Provides additional metadata over normal {@link Location location} definitions, including the range of
-// the defining symbol
-//
-// Generated from the LSP 'DefinitionLink' type alias.
-type DefinitionLink LocationLink
-
-/////////////////////////
-/// DefinitionOptions ///
-/////////////////////////
-
-// Server Capabilities for a {@link DefinitionRequest}.
-//
-// Generated from the LSP 'DefinitionOptions' structure.
-type DefinitionOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x DefinitionOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// DefinitionParams ///
-////////////////////////
-
-// Parameters for a {@link DefinitionRequest}.
-//
-// Generated from the LSP 'DefinitionParams' structure.
-type DefinitionParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-}
-
-func (x DefinitionParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// DefinitionRegistrationOptions ///
-/////////////////////////////////////
-
-// Registration options for a {@link DefinitionRequest}.
-//
-// Generated from the LSP 'DefinitionRegistrationOptions' structure.
-type DefinitionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DefinitionOptions
-}
-
-func (x DefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DefinitionOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// DeleteFile ///
-//////////////////
-
-// Delete file operation
-//
-// Generated from the LSP 'DeleteFile' structure.
-type DeleteFile struct {
-	ResourceOperation
-
-	// The file to delete.
-	URI *DocumentURI
-
-	// Delete options.
-	Options Optional[DeleteFileOptions]
-}
-
-func (x DeleteFile) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DeleteFile) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.ResourceOperation.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "kind", "delete"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// DeleteFileOptions ///
-/////////////////////////
-
-// Delete file options
-//
-// Generated from the LSP 'DeleteFileOptions' structure.
-type DeleteFileOptions struct {
-	// Delete the content recursively if a folder is denoted.
-	Recursive Bool
-
-	// Ignore the operation if the file doesn't exist.
-	IgnoreIfNotExists Bool
-}
-
-func (x DeleteFileOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DeleteFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "recursive", x.Recursive); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "ignoreIfNotExists", x.IgnoreIfNotExists); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// DeleteFilesParams ///
-/////////////////////////
-
-// The parameters sent in notifications/requests for user-initiated deletes of
-// files.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'DeleteFilesParams' structure.
-type DeleteFilesParams struct {
-	// An array of all files/folders deleted in this operation.
-	Files FileDeleteArray
-}
-
-func (x DeleteFilesParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DeleteFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "files", x.Files); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type FileDeleteArray []FileDelete
-
-//////////////////
-/// Diagnostic ///
-//////////////////
-
-// Represents a diagnostic, such as a compiler error or warning. Diagnostic objects
-// are only valid in the scope of a resource.
-//
-// Generated from the LSP 'Diagnostic' structure.
-type Diagnostic struct {
-	// The range at which the message applies
-	Range Range
-
-	// The diagnostic's severity. Can be omitted. If omitted it is up to the
-	// client to interpret diagnostics as error, warning, info or hint.
-	Severity Optional[DiagnosticSeverity]
-
-	// The diagnostic's code, which usually appear in the user interface.
-	Code DiagnosticCode
-
-	// An optional property to describe the error code.
-	// Requires the code field (above) to be present/not null.
-	//
-	// @since 3.16.0
-	CodeDescription Optional[CodeDescription]
-
-	// A human-readable string describing the source of this
-	// diagnostic, e.g. 'typescript' or 'super lint'. It usually
-	// appears in the user interface.
-	Source String
-
-	// The diagnostic's message. It usually appears in the user interface
-	Message String
-
-	// Additional metadata about the diagnostic.
-	//
-	// @since 3.15.0
-	Tags DiagnosticTagArray
-
-	// An array of related diagnostic information, e.g. when symbol-names within
-	// a scope collide all definitions can be marked via this property.
-	RelatedInformation DiagnosticRelatedInformationArray
-
-	// A data entry field that is preserved between a `textDocument/publishDiagnostics`
-	// notification and `textDocument/codeAction` request.
-	//
-	// @since 3.16.0
-	Data LSPAny
-}
-
-func (x Diagnostic) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Diagnostic) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "severity", x.Severity); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "code", x.Code); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "codeDescription", x.CodeDescription); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "source", x.Source); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "relatedInformation", x.RelatedInformation); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type DiagnosticCode interface {
-	isDiagnosticCode()
-}
-
-func (Integer) isDiagnosticCode() {}
-func (String) isDiagnosticCode()  {}
-
-// Generated from an LSP 'array' type.
+// DiagnosticRelatedInformationArray is an array of DiagnosticRelatedInformation elements.
 type DiagnosticRelatedInformationArray []DiagnosticRelatedInformation
 
-// Generated from an LSP 'array' type.
-type DiagnosticTagArray []DiagnosticTag
+// DiagnosticServerCancellationData is a structure.
+type DiagnosticServerCancellationData struct{}
 
-////////////////////////////////////
-/// DiagnosticClientCapabilities ///
-////////////////////////////////////
-
-// Client capabilities specific to diagnostic pull requests.
+// DiagnosticSeverity is an enumeration of UInt values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'DiagnosticClientCapabilities' structure.
-type DiagnosticClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration Bool
-
-	// Whether the clients supports related documents for document diagnostic pulls.
-	RelatedDocumentSupport Bool
-}
-
-func (x DiagnosticClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DiagnosticClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "relatedDocumentSupport", x.RelatedDocumentSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// DiagnosticOptions ///
-/////////////////////////
-
-// Diagnostic options.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DiagnosticOptions' structure.
-type DiagnosticOptions struct {
-	WorkDoneProgressOptions
-
-	// An optional identifier under which the diagnostics are
-	// managed by the client.
-	Identifier String
-
-	// Whether the language has inter file dependencies meaning that
-	// editing code in one file can result in a different diagnostic
-	// set in another file. Inter file dependencies are common for
-	// most programming languages and typically uncommon for linters.
-	InterFileDependencies Bool
-
-	// The server provides support for workspace diagnostics as well.
-	WorkspaceDiagnostics Bool
-}
-
-func (x DiagnosticOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DiagnosticOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "interFileDependencies", x.InterFileDependencies); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "workspaceDiagnostics", x.WorkspaceDiagnostics); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// DiagnosticRegistrationOptions ///
-/////////////////////////////////////
-
-// Diagnostic registration options.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DiagnosticRegistrationOptions' structure.
-type DiagnosticRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DiagnosticOptions
-	StaticRegistrationOptions
-}
-
-func (x DiagnosticRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DiagnosticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DiagnosticOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////
-/// DiagnosticRelatedInformation ///
-////////////////////////////////////
-
-// Represents a related message and source code location for a diagnostic. This should be
-// used to point to code locations that cause or related to a diagnostics, e.g when duplicating
-// a symbol in a scope.
-//
-// Generated from the LSP 'DiagnosticRelatedInformation' structure.
-type DiagnosticRelatedInformation struct {
-	// The location of this related diagnostic information.
-	Location Location
-
-	// The message of this related diagnostic information.
-	Message String
-}
-
-func (x DiagnosticRelatedInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DiagnosticRelatedInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "location", x.Location); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// DiagnosticServerCancellationData ///
-////////////////////////////////////////
-
-// Cancellation data returned from a diagnostic request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DiagnosticServerCancellationData' structure.
-type DiagnosticServerCancellationData struct {
-	RetriggerRequest Bool
-}
-
-func (x DiagnosticServerCancellationData) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DiagnosticServerCancellationData) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "retriggerRequest", x.RetriggerRequest); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// DiagnosticSeverity ///
-//////////////////////////
-
-// The diagnostic's severity.
-//
-// Generated from the LSP 'DiagnosticSeverity' enumeration.
-type DiagnosticSeverity UInteger
+//	The diagnostic's severity.
+type DiagnosticSeverity UInt
 
 const (
-	// Reports an error.
+	// ErrorDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Reports an error.
 	ErrorDiagnosticSeverity DiagnosticSeverity = 1
-	// Reports a warning.
+
+	// WarningDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Reports a warning.
 	WarningDiagnosticSeverity DiagnosticSeverity = 2
-	// Reports an information.
+
+	// InformationDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Reports an information.
 	InformationDiagnosticSeverity DiagnosticSeverity = 3
-	// Reports a hint.
+
+	// HintDiagnosticSeverity is a member of the DiagnosticSeverity enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Reports a hint.
 	HintDiagnosticSeverity DiagnosticSeverity = 4
 )
 
-func (x *DiagnosticSeverity) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*DiagnosticSeverity)(x)); err != nil {
-		return fmt.Errorf("DiagnosticSeverity: %w", err)
-	}
-
-	switch *x {
-	case ErrorDiagnosticSeverity:
-	case WarningDiagnosticSeverity:
-	case InformationDiagnosticSeverity:
-	case HintDiagnosticSeverity:
-	default:
-		return fmt.Errorf("DiagnosticSeverity: %v is not a member of the enum", x)
-	}
-
-	return nil
-}
-
-/////////////////////
-/// DiagnosticTag ///
-/////////////////////
-
-// The diagnostic tags.
+// DiagnosticTag is an enumeration of UInt values.
 //
-// @since 3.15.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'DiagnosticTag' enumeration.
-type DiagnosticTag UInteger
+//	The diagnostic tags.
+//
+//	@since 3.15.0
+type DiagnosticTag UInt
 
 const (
-	// Unused or unnecessary code.
+	// UnnecessaryDiagnosticTag is a member of the DiagnosticTag enumeration.
 	//
-	// Clients are allowed to render diagnostics with this tag faded out instead of having
-	// an error squiggle.
+	// Documentation from the LSP specification:
+	//
+	//	Unused or unnecessary code.
+	//
+	//	Clients are allowed to render diagnostics with this tag faded out instead of having
+	//	an error squiggle.
 	UnnecessaryDiagnosticTag DiagnosticTag = 1
-	// Deprecated or obsolete code.
+
+	// DeprecatedDiagnosticTag is a member of the DiagnosticTag enumeration.
 	//
-	// Clients are allowed to rendered diagnostics with this tag strike through.
+	// Documentation from the LSP specification:
+	//
+	//	Deprecated or obsolete code.
+	//
+	//	Clients are allowed to rendered diagnostics with this tag strike through.
 	DeprecatedDiagnosticTag DiagnosticTag = 2
 )
 
-func (x *DiagnosticTag) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*DiagnosticTag)(x)); err != nil {
-		return fmt.Errorf("DiagnosticTag: %w", err)
-	}
+// DiagnosticTagArray is an array of DiagnosticTag elements.
+type DiagnosticTagArray []DiagnosticTag
 
-	switch *x {
-	case UnnecessaryDiagnosticTag:
-	case DeprecatedDiagnosticTag:
-	default:
-		return fmt.Errorf("DiagnosticTag: %v is not a member of the enum", x)
-	}
+// DiagnosticWorkspaceClientCapabilities is a structure.
+type DiagnosticWorkspaceClientCapabilities struct{}
 
-	return nil
-}
+// DidChangeConfigurationClientCapabilities is a structure.
+type DidChangeConfigurationClientCapabilities struct{}
 
-/////////////////////////////////////////////
-/// DiagnosticWorkspaceClientCapabilities ///
-/////////////////////////////////////////////
+// DidChangeConfigurationParams is a structure.
+type DidChangeConfigurationParams struct{}
 
-// Workspace client capabilities specific to diagnostic pull requests.
+// DidChangeConfigurationRegistrationOptions is a structure.
+type DidChangeConfigurationRegistrationOptions struct{}
+
+// DidChangeConfigurationRegistrationOptionsSection is a union of <TODO>.
+type DidChangeConfigurationRegistrationOptionsSection interface{}
+
+// DidChangeNotebookDocumentParams is a structure.
+type DidChangeNotebookDocumentParams struct{}
+
+// DidChangeTextDocumentParams is a structure.
+type DidChangeTextDocumentParams struct{}
+
+// DidChangeWatchedFilesClientCapabilities is a structure.
+type DidChangeWatchedFilesClientCapabilities struct{}
+
+// DidChangeWatchedFilesParams is a structure.
+type DidChangeWatchedFilesParams struct{}
+
+// DidChangeWatchedFilesRegistrationOptions is a structure.
+type DidChangeWatchedFilesRegistrationOptions struct{}
+
+// DidChangeWorkspaceFoldersParams is a structure.
+type DidChangeWorkspaceFoldersParams struct{}
+
+// DidCloseNotebookDocumentParams is a structure.
+type DidCloseNotebookDocumentParams struct{}
+
+// DidCloseTextDocumentParams is a structure.
+type DidCloseTextDocumentParams struct{}
+
+// DidOpenNotebookDocumentParams is a structure.
+type DidOpenNotebookDocumentParams struct{}
+
+// DidOpenTextDocumentParams is a structure.
+type DidOpenTextDocumentParams struct{}
+
+// DidSaveNotebookDocumentParams is a structure.
+type DidSaveNotebookDocumentParams struct{}
+
+// DidSaveTextDocumentParams is a structure.
+type DidSaveTextDocumentParams struct{}
+
+// DocumentColorClientCapabilities is a structure.
+type DocumentColorClientCapabilities struct{}
+
+// DocumentColorOptions is a structure.
+type DocumentColorOptions struct{}
+
+// DocumentColorParams is a structure.
+type DocumentColorParams struct{}
+
+// DocumentColorRegistrationOptions is a structure.
+type DocumentColorRegistrationOptions struct{}
+
+// DocumentDiagnosticParams is a structure.
+type DocumentDiagnosticParams struct{}
+
+// DocumentDiagnosticReport is a union of <TODO>.
+type DocumentDiagnosticReport interface{}
+
+// DocumentDiagnosticReportKind is an enumeration of String values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'DiagnosticWorkspaceClientCapabilities' structure.
-type DiagnosticWorkspaceClientCapabilities struct {
-	// Whether the client implementation supports a refresh request sent from
-	// the server to the client.
-	//
-	// Note that this event is global and will force the client to refresh all
-	// pulled diagnostics currently shown. It should be used with absolute care and
-	// is useful for situation where a server for example detects a project wide
-	// change that requires such a calculation.
-	RefreshSupport Bool
-}
-
-func (x DiagnosticWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DiagnosticWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////////////
-/// DidChangeConfigurationClientCapabilities ///
-////////////////////////////////////////////////
-
-// Generated from the LSP 'DidChangeConfigurationClientCapabilities' structure.
-type DidChangeConfigurationClientCapabilities struct {
-	// Did change configuration notification supports dynamic registration.
-	DynamicRegistration Bool
-}
-
-func (x DidChangeConfigurationClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeConfigurationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////
-/// DidChangeConfigurationParams ///
-////////////////////////////////////
-
-// The parameters of a change configuration notification.
+//	The document diagnostic report kinds.
 //
-// Generated from the LSP 'DidChangeConfigurationParams' structure.
-type DidChangeConfigurationParams struct {
-	// The actual changed settings
-	Settings LSPAny
-}
-
-func (x DidChangeConfigurationParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeConfigurationParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "settings", x.Settings); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////////////
-/// DidChangeConfigurationRegistrationOptions ///
-/////////////////////////////////////////////////
-
-// Generated from the LSP 'DidChangeConfigurationRegistrationOptions' structure.
-type DidChangeConfigurationRegistrationOptions struct {
-	Section DidChangeConfigurationRegistrationOptionsSection
-}
-
-func (x DidChangeConfigurationRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeConfigurationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "section", x.Section); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type DidChangeConfigurationRegistrationOptionsSection interface {
-	isDidChangeConfigurationRegistrationOptionsSection()
-}
-
-func (String) isDidChangeConfigurationRegistrationOptionsSection()      {}
-func (StringArray) isDidChangeConfigurationRegistrationOptionsSection() {}
-
-///////////////////////////////////////
-/// DidChangeNotebookDocumentParams ///
-///////////////////////////////////////
-
-// The params sent in a change notebook document notification.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DidChangeNotebookDocumentParams' structure.
-type DidChangeNotebookDocumentParams struct {
-	// The notebook document that did change. The version number points
-	// to the version after all provided changes have been applied. If
-	// only the text document content of a cell changes the notebook version
-	// doesn't necessarily have to change.
-	NotebookDocument VersionedNotebookDocumentIdentifier
-
-	// The actual changes to the notebook document.
-	//
-	// The changes describe single state changes to the notebook document.
-	// So if there are two changes c1 (at array index 0) and c2 (at array
-	// index 1) for a notebook in state S then c1 moves the notebook from
-	// S to S' and c2 from S' to S”. So c1 is computed on the state S and
-	// c2 is computed on the state S'.
-	//
-	// To mirror the content of a notebook using change events use the following approach:
-	//   - start with the same initial content
-	//   - apply the 'notebookDocument/didChange' notifications in the order you receive them.
-	//   - apply the `NotebookChangeEvent`s in a single notification in the order
-	//     you receive them.
-	Change NotebookDocumentChangeEvent
-}
-
-func (x DidChangeNotebookDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "change", x.Change); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// DidChangeTextDocumentParams ///
-///////////////////////////////////
-
-// The change text document notification's parameters.
-//
-// Generated from the LSP 'DidChangeTextDocumentParams' structure.
-type DidChangeTextDocumentParams struct {
-	// The document that did change. The version number points
-	// to the version after all provided content changes have
-	// been applied.
-	TextDocument VersionedTextDocumentIdentifier
-
-	// The actual content changes. The content changes describe single state changes
-	// to the document. So if there are two content changes c1 (at array index 0) and
-	// c2 (at array index 1) for a document in state S then c1 moves the document from
-	// S to S' and c2 from S' to S”. So c1 is computed on the state S and c2 is computed
-	// on the state S'.
-	//
-	// To mirror the content of a document using change events use the following approach:
-	//   - start with the same initial content
-	//   - apply the 'textDocument/didChange' notifications in the order you receive them.
-	//   - apply the `TextDocumentContentChangeEvent`s in a single notification in the order
-	//     you receive them.
-	ContentChanges TextDocumentContentChangeEventArray
-}
-
-func (x DidChangeTextDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "contentChanges", x.ContentChanges); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type TextDocumentContentChangeEventArray []TextDocumentContentChangeEvent
-
-///////////////////////////////////////////////
-/// DidChangeWatchedFilesClientCapabilities ///
-///////////////////////////////////////////////
-
-// Generated from the LSP 'DidChangeWatchedFilesClientCapabilities' structure.
-type DidChangeWatchedFilesClientCapabilities struct {
-	// Did change watched files notification supports dynamic registration. Please note
-	// that the current protocol doesn't support static configuration for file changes
-	// from the server side.
-	DynamicRegistration Bool
-
-	// Whether the client has support for {@link  RelativePattern relative pattern}
-	// or not.
-	//
-	// @since 3.17.0
-	RelativePatternSupport Bool
-}
-
-func (x DidChangeWatchedFilesClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeWatchedFilesClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "relativePatternSupport", x.RelativePatternSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// DidChangeWatchedFilesParams ///
-///////////////////////////////////
-
-// The watched files change notification's parameters.
-//
-// Generated from the LSP 'DidChangeWatchedFilesParams' structure.
-type DidChangeWatchedFilesParams struct {
-	// The actual file events.
-	Changes FileEventArray
-}
-
-func (x DidChangeWatchedFilesParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeWatchedFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "changes", x.Changes); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type FileEventArray []FileEvent
-
-////////////////////////////////////////////////
-/// DidChangeWatchedFilesRegistrationOptions ///
-////////////////////////////////////////////////
-
-// Describe options to be used when registered for text document change events.
-//
-// Generated from the LSP 'DidChangeWatchedFilesRegistrationOptions' structure.
-type DidChangeWatchedFilesRegistrationOptions struct {
-	// The watchers to register.
-	Watchers FileSystemWatcherArray
-}
-
-func (x DidChangeWatchedFilesRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeWatchedFilesRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "watchers", x.Watchers); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type FileSystemWatcherArray []FileSystemWatcher
-
-///////////////////////////////////////
-/// DidChangeWorkspaceFoldersParams ///
-///////////////////////////////////////
-
-// The parameters of a `workspace/didChangeWorkspaceFolders` notification.
-//
-// Generated from the LSP 'DidChangeWorkspaceFoldersParams' structure.
-type DidChangeWorkspaceFoldersParams struct {
-	// The actual workspace folder change event.
-	Event WorkspaceFoldersChangeEvent
-}
-
-func (x DidChangeWorkspaceFoldersParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidChangeWorkspaceFoldersParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "event", x.Event); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// DidCloseNotebookDocumentParams ///
-//////////////////////////////////////
-
-// The params sent in a close notebook document notification.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DidCloseNotebookDocumentParams' structure.
-type DidCloseNotebookDocumentParams struct {
-	// The notebook document that got closed.
-	NotebookDocument NotebookDocumentIdentifier
-
-	// The text documents that represent the content
-	// of a notebook cell that got closed.
-	CellTextDocuments TextDocumentIdentifierArray
-}
-
-func (x DidCloseNotebookDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidCloseNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "cellTextDocuments", x.CellTextDocuments); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type TextDocumentIdentifierArray []TextDocumentIdentifier
-
-//////////////////////////////////
-/// DidCloseTextDocumentParams ///
-//////////////////////////////////
-
-// The parameters sent in a close text document notification
-//
-// Generated from the LSP 'DidCloseTextDocumentParams' structure.
-type DidCloseTextDocumentParams struct {
-	// The document that was closed.
-	TextDocument TextDocumentIdentifier
-}
-
-func (x DidCloseTextDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidCloseTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// DidOpenNotebookDocumentParams ///
-/////////////////////////////////////
-
-// The params sent in an open notebook document notification.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DidOpenNotebookDocumentParams' structure.
-type DidOpenNotebookDocumentParams struct {
-	// The notebook document that got opened.
-	NotebookDocument NotebookDocument
-
-	// The text documents that represent the content
-	// of a notebook cell.
-	CellTextDocuments TextDocumentItemArray
-}
-
-func (x DidOpenNotebookDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidOpenNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "cellTextDocuments", x.CellTextDocuments); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type TextDocumentItemArray []TextDocumentItem
-
-/////////////////////////////////
-/// DidOpenTextDocumentParams ///
-/////////////////////////////////
-
-// The parameters sent in an open text document notification
-//
-// Generated from the LSP 'DidOpenTextDocumentParams' structure.
-type DidOpenTextDocumentParams struct {
-	// The document that was opened.
-	TextDocument TextDocumentItem
-}
-
-func (x DidOpenTextDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidOpenTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// DidSaveNotebookDocumentParams ///
-/////////////////////////////////////
-
-// The params sent in a save notebook document notification.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DidSaveNotebookDocumentParams' structure.
-type DidSaveNotebookDocumentParams struct {
-	// The notebook document that got saved.
-	NotebookDocument NotebookDocumentIdentifier
-}
-
-func (x DidSaveNotebookDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidSaveNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// DidSaveTextDocumentParams ///
-/////////////////////////////////
-
-// The parameters sent in a save text document notification
-//
-// Generated from the LSP 'DidSaveTextDocumentParams' structure.
-type DidSaveTextDocumentParams struct {
-	// The document that was saved.
-	TextDocument TextDocumentIdentifier
-
-	// Optional the content when saved. Depends on the includeText value
-	// when the save notification was requested.
-	Text String
-}
-
-func (x DidSaveTextDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DidSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "text", x.Text); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////
-/// DocumentColorClientCapabilities ///
-///////////////////////////////////////
-
-// Generated from the LSP 'DocumentColorClientCapabilities' structure.
-type DocumentColorClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `DocumentColorRegistrationOptions` return value
-	// for the corresponding server capability as well.
-	DynamicRegistration Bool
-}
-
-func (x DocumentColorClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentColorClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// DocumentColorOptions ///
-////////////////////////////
-
-// Generated from the LSP 'DocumentColorOptions' structure.
-type DocumentColorOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x DocumentColorOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentColorOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// DocumentColorParams ///
-///////////////////////////
-
-// Parameters for a {@link DocumentColorRequest}.
-//
-// Generated from the LSP 'DocumentColorParams' structure.
-type DocumentColorParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-}
-
-func (x DocumentColorParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentColorParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// DocumentColorRegistrationOptions ///
-////////////////////////////////////////
-
-// Generated from the LSP 'DocumentColorRegistrationOptions' structure.
-type DocumentColorRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentColorOptions
-	StaticRegistrationOptions
-}
-
-func (x DocumentColorRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentColorRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DocumentColorOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// DocumentDiagnosticParams ///
-////////////////////////////////
-
-// Parameters of the document diagnostic request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DocumentDiagnosticParams' structure.
-type DocumentDiagnosticParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The additional identifier  provided during registration.
-	Identifier String
-
-	// The result id of a previous response if provided.
-	PreviousResultID String
-}
-
-func (x DocumentDiagnosticParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "previousResultId", x.PreviousResultID); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// DocumentDiagnosticReport ///
-////////////////////////////////
-
-// The result of a document diagnostic pull request. A report can
-// either be a full report containing all diagnostics for the
-// requested document or an unchanged report indicating that nothing
-// has changed in terms of diagnostics in comparison to the last
-// pull request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DocumentDiagnosticReport' type alias.
-// Generated from an LSP 'or' type.
-type DocumentDiagnosticReport interface {
-	isDocumentDiagnosticReport()
-}
-
-func (RelatedFullDocumentDiagnosticReport) isDocumentDiagnosticReport()      {}
-func (RelatedUnchangedDocumentDiagnosticReport) isDocumentDiagnosticReport() {}
-
-////////////////////////////////////
-/// DocumentDiagnosticReportKind ///
-////////////////////////////////////
-
-// The document diagnostic report kinds.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'DocumentDiagnosticReportKind' enumeration.
+//	@since 3.17.0
 type DocumentDiagnosticReportKind String
 
 const (
-	// A diagnostic report with a full
-	// set of problems.
+	// FullDocumentDiagnosticReportKind is a member of the DocumentDiagnosticReportKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	A diagnostic report with a full
+	//	set of problems.
 	FullDocumentDiagnosticReportKind DocumentDiagnosticReportKind = "full"
-	// A report indicating that the last
-	// returned report is still accurate.
+
+	// UnchangedDocumentDiagnosticReportKind is a member of the DocumentDiagnosticReportKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	A report indicating that the last
+	//	returned report is still accurate.
 	UnchangedDocumentDiagnosticReportKind DocumentDiagnosticReportKind = "unchanged"
 )
 
-func (x *DocumentDiagnosticReportKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*DocumentDiagnosticReportKind)(x)); err != nil {
-		return fmt.Errorf("DocumentDiagnosticReportKind: %w", err)
-	}
+// DocumentDiagnosticReportPartialResult is a structure.
+type DocumentDiagnosticReportPartialResult struct{}
 
-	switch *x {
-	case FullDocumentDiagnosticReportKind:
-	case UnchangedDocumentDiagnosticReportKind:
-	default:
-		return fmt.Errorf("DocumentDiagnosticReportKind: %v is not a member of the enum", x)
-	}
+// DocumentDiagnosticReportPartialResultRelatedDocuments is a union of <TODO>.
+type DocumentDiagnosticReportPartialResultRelatedDocuments interface{}
 
-	return nil
-}
+// DocumentDiagnosticReportPartialResultRelatedDocumentsMap is an array of DocumentURI to DocumentDiagnosticReportPartialResultRelatedDocuments.
+type DocumentDiagnosticReportPartialResultRelatedDocumentsMap map[DocumentURI]DocumentDiagnosticReportPartialResultRelatedDocuments
 
-/////////////////////////////////////////////
-/// DocumentDiagnosticReportPartialResult ///
-/////////////////////////////////////////////
+// DocumentFilter is a union of <TODO>.
+type DocumentFilter interface{}
 
-// A partial result for a document diagnostic report.
+// DocumentFilterArray is an array of DocumentFilter elements.
+type DocumentFilterArray []DocumentFilter
+
+// DocumentFormattingClientCapabilities is a structure.
+type DocumentFormattingClientCapabilities struct{}
+
+// DocumentFormattingOptions is a structure.
+type DocumentFormattingOptions struct{}
+
+// DocumentFormattingParams is a structure.
+type DocumentFormattingParams struct{}
+
+// DocumentFormattingRegistrationOptions is a structure.
+type DocumentFormattingRegistrationOptions struct{}
+
+// DocumentHighlight is a structure.
+type DocumentHighlight struct{}
+
+// DocumentHighlightArray is an array of DocumentHighlight elements.
+type DocumentHighlightArray []DocumentHighlight
+
+// DocumentHighlightClientCapabilities is a structure.
+type DocumentHighlightClientCapabilities struct{}
+
+// DocumentHighlightKind is an enumeration of UInt values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'DocumentDiagnosticReportPartialResult' structure.
-type DocumentDiagnosticReportPartialResult struct {
-	RelatedDocuments DocumentURIDocumentDiagnosticReportPartialResultRelatedDocumentsMap
-}
-
-func (x DocumentDiagnosticReportPartialResult) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "relatedDocuments", x.RelatedDocuments); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'map' type.
-type DocumentURIDocumentDiagnosticReportPartialResultRelatedDocumentsMap map[*DocumentURI]DocumentURIDocumentDiagnosticReportPartialResultRelatedDocumentsMap
-
-//////////////////////
-/// DocumentFilter ///
-//////////////////////
-
-// A document filter describes a top level text document or
-// a notebook cell document.
-//
-// @since 3.17.0 - proposed support for NotebookCellTextDocumentFilter.
-//
-// Generated from the LSP 'DocumentFilter' type alias.
-// Generated from an LSP 'or' type.
-type DocumentFilter interface {
-	isDocumentFilter()
-}
-
-func (NotebookCellTextDocumentFilter) isDocumentFilter() {}
-
-////////////////////////////////////////////
-/// DocumentFormattingClientCapabilities ///
-////////////////////////////////////////////
-
-// Client capabilities of a {@link DocumentFormattingRequest}.
-//
-// Generated from the LSP 'DocumentFormattingClientCapabilities' structure.
-type DocumentFormattingClientCapabilities struct {
-	// Whether formatting supports dynamic registration.
-	DynamicRegistration Bool
-}
-
-func (x DocumentFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// DocumentFormattingOptions ///
-/////////////////////////////////
-
-// Provider options for a {@link DocumentFormattingRequest}.
-//
-// Generated from the LSP 'DocumentFormattingOptions' structure.
-type DocumentFormattingOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x DocumentFormattingOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// DocumentFormattingParams ///
-////////////////////////////////
-
-// The parameters of a {@link DocumentFormattingRequest}.
-//
-// Generated from the LSP 'DocumentFormattingParams' structure.
-type DocumentFormattingParams struct {
-	WorkDoneProgressParams
-
-	// The document to format.
-	TextDocument TextDocumentIdentifier
-
-	// The format options.
-	Options FormattingOptions
-}
-
-func (x DocumentFormattingParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentFormattingParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "options", x.Options); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////////
-/// DocumentFormattingRegistrationOptions ///
-/////////////////////////////////////////////
-
-// Registration options for a {@link DocumentFormattingRequest}.
-//
-// Generated from the LSP 'DocumentFormattingRegistrationOptions' structure.
-type DocumentFormattingRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentFormattingOptions
-}
-
-func (x DocumentFormattingRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DocumentFormattingOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// DocumentHighlight ///
-/////////////////////////
-
-// A document highlight is a range inside a text document which deserves
-// special attention. Usually a document highlight is visualized by changing
-// the background color of its range.
-//
-// Generated from the LSP 'DocumentHighlight' structure.
-type DocumentHighlight struct {
-	// The range this highlight applies to.
-	Range Range
-
-	// The highlight kind, default is {@link DocumentHighlightKind.Text text}.
-	Kind Optional[DocumentHighlightKind]
-}
-
-func (x DocumentHighlight) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentHighlight) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////////
-/// DocumentHighlightClientCapabilities ///
-///////////////////////////////////////////
-
-// Client Capabilities for a {@link DocumentHighlightRequest}.
-//
-// Generated from the LSP 'DocumentHighlightClientCapabilities' structure.
-type DocumentHighlightClientCapabilities struct {
-	// Whether document highlight supports dynamic registration.
-	DynamicRegistration Bool
-}
-
-func (x DocumentHighlightClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentHighlightClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// DocumentHighlightKind ///
-/////////////////////////////
-
-// A document highlight kind.
-//
-// Generated from the LSP 'DocumentHighlightKind' enumeration.
-type DocumentHighlightKind UInteger
+//	A document highlight kind.
+type DocumentHighlightKind UInt
 
 const (
-	// A textual occurrence.
+	// TextDocumentHighlightKind is a member of the DocumentHighlightKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	A textual occurrence.
 	TextDocumentHighlightKind DocumentHighlightKind = 1
-	// Read-access of a symbol, like reading a variable.
+
+	// ReadDocumentHighlightKind is a member of the DocumentHighlightKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Read-access of a symbol, like reading a variable.
 	ReadDocumentHighlightKind DocumentHighlightKind = 2
-	// Write-access of a symbol, like writing to a variable.
+
+	// WriteDocumentHighlightKind is a member of the DocumentHighlightKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Write-access of a symbol, like writing to a variable.
 	WriteDocumentHighlightKind DocumentHighlightKind = 3
 )
 
-func (x *DocumentHighlightKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*DocumentHighlightKind)(x)); err != nil {
-		return fmt.Errorf("DocumentHighlightKind: %w", err)
-	}
+// DocumentHighlightOptions is a structure.
+type DocumentHighlightOptions struct{}
 
-	switch *x {
-	case TextDocumentHighlightKind:
-	case ReadDocumentHighlightKind:
-	case WriteDocumentHighlightKind:
-	default:
-		return fmt.Errorf("DocumentHighlightKind: %v is not a member of the enum", x)
-	}
+// DocumentHighlightParams is a structure.
+type DocumentHighlightParams struct{}
 
-	return nil
-}
+// DocumentHighlightRegistrationOptions is a structure.
+type DocumentHighlightRegistrationOptions struct{}
 
-////////////////////////////////
-/// DocumentHighlightOptions ///
-////////////////////////////////
+// DocumentLink is a structure.
+type DocumentLink struct{}
 
-// Provider options for a {@link DocumentHighlightRequest}.
-//
-// Generated from the LSP 'DocumentHighlightOptions' structure.
-type DocumentHighlightOptions struct {
-	WorkDoneProgressOptions
-}
+// DocumentLinkArray is an array of DocumentLink elements.
+type DocumentLinkArray []DocumentLink
 
-func (x DocumentHighlightOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// DocumentLinkClientCapabilities is a structure.
+type DocumentLinkClientCapabilities struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// DocumentLinkOptions is a structure.
+type DocumentLinkOptions struct{}
 
-	return w.Bytes(), nil
-}
+// DocumentLinkParams is a structure.
+type DocumentLinkParams struct{}
 
-func (x DocumentHighlightOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
+// DocumentLinkRegistrationOptions is a structure.
+type DocumentLinkRegistrationOptions struct{}
 
-///////////////////////////////
-/// DocumentHighlightParams ///
-///////////////////////////////
+// DocumentOnTypeFormattingClientCapabilities is a structure.
+type DocumentOnTypeFormattingClientCapabilities struct{}
 
-// Parameters for a {@link DocumentHighlightRequest}.
-//
-// Generated from the LSP 'DocumentHighlightParams' structure.
-type DocumentHighlightParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-}
+// DocumentOnTypeFormattingOptions is a structure.
+type DocumentOnTypeFormattingOptions struct{}
 
-func (x DocumentHighlightParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// DocumentOnTypeFormattingParams is a structure.
+type DocumentOnTypeFormattingParams struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// DocumentOnTypeFormattingRegistrationOptions is a structure.
+type DocumentOnTypeFormattingRegistrationOptions struct{}
 
-	return w.Bytes(), nil
-}
+// DocumentRangeFormattingClientCapabilities is a structure.
+type DocumentRangeFormattingClientCapabilities struct{}
 
-func (x DocumentHighlightParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
+// DocumentRangeFormattingOptions is a structure.
+type DocumentRangeFormattingOptions struct{}
 
-////////////////////////////////////////////
-/// DocumentHighlightRegistrationOptions ///
-////////////////////////////////////////////
+// DocumentRangeFormattingParams is a structure.
+type DocumentRangeFormattingParams struct{}
 
-// Registration options for a {@link DocumentHighlightRequest}.
-//
-// Generated from the LSP 'DocumentHighlightRegistrationOptions' structure.
-type DocumentHighlightRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentHighlightOptions
-}
+// DocumentRangeFormattingRegistrationOptions is a structure.
+type DocumentRangeFormattingRegistrationOptions struct{}
 
-func (x DocumentHighlightRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// DocumentSymbol is a structure.
+type DocumentSymbol struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentHighlightRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DocumentHighlightOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// DocumentLink ///
-////////////////////
-
-// A document link is a range in a text document that links to an internal or external resource, like another
-// text document or a web site.
-//
-// Generated from the LSP 'DocumentLink' structure.
-type DocumentLink struct {
-	// The range this link applies to.
-	Range Range
-
-	// The uri this link points to. If missing a resolve request is sent later.
-	Target Optional[*URI]
-
-	// The tooltip text when you hover over this link.
-	//
-	// If a tooltip is provided, is will be displayed in a string that includes instructions on how to
-	// trigger the link, such as `{0} (ctrl + click)`. The specific instructions vary depending on OS,
-	// user settings, and localization.
-	//
-	// @since 3.15.0
-	Tooltip String
-
-	// A data entry field that is preserved on a document link between a
-	// DocumentLinkRequest and a DocumentLinkResolveRequest.
-	Data LSPAny
-}
-
-func (x DocumentLink) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentLink) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "target", x.Target); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tooltip", x.Tooltip); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// DocumentLinkClientCapabilities ///
-//////////////////////////////////////
-
-// The client capabilities of a {@link DocumentLinkRequest}.
-//
-// Generated from the LSP 'DocumentLinkClientCapabilities' structure.
-type DocumentLinkClientCapabilities struct {
-	// Whether document link supports dynamic registration.
-	DynamicRegistration Bool
-
-	// Whether the client supports the `tooltip` property on `DocumentLink`.
-	//
-	// @since 3.15.0
-	TooltipSupport Bool
-}
-
-func (x DocumentLinkClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentLinkClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tooltipSupport", x.TooltipSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// DocumentLinkOptions ///
-///////////////////////////
-
-// Provider options for a {@link DocumentLinkRequest}.
-//
-// Generated from the LSP 'DocumentLinkOptions' structure.
-type DocumentLinkOptions struct {
-	WorkDoneProgressOptions
-
-	// Document links have a resolve provider as well.
-	ResolveProvider Bool
-}
-
-func (x DocumentLinkOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentLinkOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// DocumentLinkParams ///
-//////////////////////////
-
-// The parameters of a {@link DocumentLinkRequest}.
-//
-// Generated from the LSP 'DocumentLinkParams' structure.
-type DocumentLinkParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The document to provide document links for.
-	TextDocument TextDocumentIdentifier
-}
-
-func (x DocumentLinkParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentLinkParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////
-/// DocumentLinkRegistrationOptions ///
-///////////////////////////////////////
-
-// Registration options for a {@link DocumentLinkRequest}.
-//
-// Generated from the LSP 'DocumentLinkRegistrationOptions' structure.
-type DocumentLinkRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentLinkOptions
-}
-
-func (x DocumentLinkRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentLinkRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DocumentLinkOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////////////////
-/// DocumentOnTypeFormattingClientCapabilities ///
-//////////////////////////////////////////////////
-
-// Client capabilities of a {@link DocumentOnTypeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentOnTypeFormattingClientCapabilities' structure.
-type DocumentOnTypeFormattingClientCapabilities struct {
-	// Whether on type formatting supports dynamic registration.
-	DynamicRegistration Bool
-}
-
-func (x DocumentOnTypeFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentOnTypeFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////
-/// DocumentOnTypeFormattingOptions ///
-///////////////////////////////////////
-
-// Provider options for a {@link DocumentOnTypeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentOnTypeFormattingOptions' structure.
-type DocumentOnTypeFormattingOptions struct {
-	// A character on which formatting should be triggered, like `{`.
-	FirstTriggerCharacter String
-
-	// More trigger characters.
-	MoreTriggerCharacter StringArray
-}
-
-func (x DocumentOnTypeFormattingOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentOnTypeFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "firstTriggerCharacter", x.FirstTriggerCharacter); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "moreTriggerCharacter", x.MoreTriggerCharacter); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// DocumentOnTypeFormattingParams ///
-//////////////////////////////////////
-
-// The parameters of a {@link DocumentOnTypeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentOnTypeFormattingParams' structure.
-type DocumentOnTypeFormattingParams struct {
-	// The document to format.
-	TextDocument TextDocumentIdentifier
-
-	// The position around which the on type formatting should happen.
-	// This is not necessarily the exact position where the character denoted
-	// by the property `ch` got typed.
-	Position Position
-
-	// The character that has been typed that triggered the formatting
-	// on type request. That is not necessarily the last character that
-	// got inserted into the document since the client could auto insert
-	// characters as well (e.g. like automatic brace completion).
-	Ch String
-
-	// The formatting options.
-	Options FormattingOptions
-}
-
-func (x DocumentOnTypeFormattingParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentOnTypeFormattingParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "position", x.Position); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "ch", x.Ch); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "options", x.Options); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////////////////
-/// DocumentOnTypeFormattingRegistrationOptions ///
-///////////////////////////////////////////////////
-
-// Registration options for a {@link DocumentOnTypeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentOnTypeFormattingRegistrationOptions' structure.
-type DocumentOnTypeFormattingRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentOnTypeFormattingOptions
-}
-
-func (x DocumentOnTypeFormattingRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentOnTypeFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DocumentOnTypeFormattingOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////////////
-/// DocumentRangeFormattingClientCapabilities ///
-/////////////////////////////////////////////////
-
-// Client capabilities of a {@link DocumentRangeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentRangeFormattingClientCapabilities' structure.
-type DocumentRangeFormattingClientCapabilities struct {
-	// Whether range formatting supports dynamic registration.
-	DynamicRegistration Bool
-}
-
-func (x DocumentRangeFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentRangeFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// DocumentRangeFormattingOptions ///
-//////////////////////////////////////
-
-// Provider options for a {@link DocumentRangeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentRangeFormattingOptions' structure.
-type DocumentRangeFormattingOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x DocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentRangeFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// DocumentRangeFormattingParams ///
-/////////////////////////////////////
-
-// The parameters of a {@link DocumentRangeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentRangeFormattingParams' structure.
-type DocumentRangeFormattingParams struct {
-	WorkDoneProgressParams
-
-	// The document to format.
-	TextDocument TextDocumentIdentifier
-
-	// The range to format
-	Range Range
-
-	// The format options
-	Options FormattingOptions
-}
-
-func (x DocumentRangeFormattingParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentRangeFormattingParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "options", x.Options); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////////////////
-/// DocumentRangeFormattingRegistrationOptions ///
-//////////////////////////////////////////////////
-
-// Registration options for a {@link DocumentRangeFormattingRequest}.
-//
-// Generated from the LSP 'DocumentRangeFormattingRegistrationOptions' structure.
-type DocumentRangeFormattingRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentRangeFormattingOptions
-}
-
-func (x DocumentRangeFormattingRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentRangeFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DocumentRangeFormattingOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// DocumentSelector ///
-////////////////////////
-
-// A document selector is the combination of one or many document filters.
-//
-// @sample `let sel:DocumentSelector = [{ language: 'typescript' }, { language: 'json', pattern: '**∕tsconfig.json' }]`;
-//
-// The use of a string as a document filter is deprecated @since 3.16.0.
-//
-// Generated from the LSP 'DocumentSelector' type alias.
-// Generated from an LSP 'array' type.
-type DocumentSelector []DocumentFilter
-
-//////////////////////
-/// DocumentSymbol ///
-//////////////////////
-
-// Represents programming constructs like variables, classes, interfaces etc.
-// that appear in a document. Document symbols can be hierarchical and they
-// have two ranges: one that encloses its definition and one that points to
-// its most interesting range, e.g. the range of an identifier.
-//
-// Generated from the LSP 'DocumentSymbol' structure.
-type DocumentSymbol struct {
-	// The name of this symbol. Will be displayed in the user interface and therefore must not be
-	// an empty string or a string only consisting of white spaces.
-	Name String
-
-	// More detail for this symbol, e.g the signature of a function.
-	Detail String
-
-	// The kind of this symbol.
-	Kind SymbolKind
-
-	// Tags for this document symbol.
-	//
-	// @since 3.16.0
-	Tags SymbolTagArray
-
-	// Indicates if this symbol is deprecated.
-	//
-	// @deprecated Use tags instead
-	//
-	// Deprecated: Use tags instead
-	Deprecated Bool
-
-	// The range enclosing this symbol not including leading/trailing whitespace but everything else
-	// like comments. This information is typically used to determine if the clients cursor is
-	// inside the symbol to reveal in the symbol in the UI.
-	Range Range
-
-	// The range that should be selected and revealed when this symbol is being picked, e.g the name of a function.
-	// Must be contained by the `range`.
-	SelectionRange Range
-
-	// Children of this symbol, e.g. properties of a class.
-	Children DocumentSymbolArray
-}
-
-func (x DocumentSymbol) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "name", x.Name); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "deprecated", x.Deprecated); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "children", x.Children); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// DocumentSymbolArray is an array of DocumentSymbol elements.
 type DocumentSymbolArray []DocumentSymbol
 
-////////////////////////////////////////
-/// DocumentSymbolClientCapabilities ///
-////////////////////////////////////////
+// DocumentSymbolClientCapabilities is a structure.
+type DocumentSymbolClientCapabilities struct{}
 
-// Client Capabilities for a {@link DocumentSymbolRequest}.
+// DocumentSymbolClientCapabilitiesSymbolKind is a literal structure.
+type DocumentSymbolClientCapabilitiesSymbolKind struct{}
+
+// DocumentSymbolClientCapabilitiesTagSupport is a literal structure.
+type DocumentSymbolClientCapabilitiesTagSupport struct{}
+
+// DocumentSymbolOptions is a structure.
+type DocumentSymbolOptions struct{}
+
+// DocumentSymbolParams is a structure.
+type DocumentSymbolParams struct{}
+
+// DocumentSymbolRegistrationOptions is a structure.
+type DocumentSymbolRegistrationOptions struct{}
+
+// DocumentURI is the URI of a document.
+type DocumentURI url.URL
+
+// ErrorCodes is an enumeration of Int values.
 //
-// Generated from the LSP 'DocumentSymbolClientCapabilities' structure.
-type DocumentSymbolClientCapabilities struct {
-	// Whether document symbol supports dynamic registration.
-	DynamicRegistration Bool
-
-	// Specific capabilities for the `SymbolKind` in the
-	// `textDocument/documentSymbol` request.
-	SymbolKind Optional[DocumentSymbolClientCapabilitiesSymbolKind]
-
-	// The client supports hierarchical document symbols.
-	HierarchicalDocumentSymbolSupport Bool
-
-	// The client supports tags on `SymbolInformation`. Tags are supported on
-	// `DocumentSymbol` if `hierarchicalDocumentSymbolSupport` is set to true.
-	// Clients supporting tags have to handle unknown tags gracefully.
-	//
-	// @since 3.16.0
-	TagSupport Optional[DocumentSymbolClientCapabilitiesTagSupport]
-
-	// The client supports an additional label presented in the UI when
-	// registering a document symbol provider.
-	//
-	// @since 3.16.0
-	LabelSupport Bool
-}
-
-func (x DocumentSymbolClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "symbolKind", x.SymbolKind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "hierarchicalDocumentSymbolSupport", x.HierarchicalDocumentSymbolSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "labelSupport", x.LabelSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type DocumentSymbolClientCapabilitiesSymbolKind struct {
-	// The symbol kind values the client supports. When this
-	// property exists the client also guarantees that it will
-	// handle values outside its set gracefully and falls back
-	// to a default value when unknown.
-	//
-	// If this property is not present the client only supports
-	// the symbol kinds from `File` to `Array` as defined in
-	// the initial version of the protocol.
-	ValueSet SymbolKindArray
-}
-
-func (x DocumentSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type SymbolKindArray []SymbolKind
-
-// Generated from an LSP 'literal' type.
-type DocumentSymbolClientCapabilitiesTagSupport struct {
-	// The tags supported by the client.
-	ValueSet SymbolTagArray
-}
-
-func (x DocumentSymbolClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// DocumentSymbolOptions ///
-/////////////////////////////
-
-// Provider options for a {@link DocumentSymbolRequest}.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'DocumentSymbolOptions' structure.
-type DocumentSymbolOptions struct {
-	WorkDoneProgressOptions
-
-	// A human-readable string that is shown when multiple outlines trees
-	// are shown for the same document.
-	//
-	// @since 3.16.0
-	Label String
-}
-
-func (x DocumentSymbolOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// DocumentSymbolParams ///
-////////////////////////////
-
-// Parameters for a {@link DocumentSymbolRequest}.
-//
-// Generated from the LSP 'DocumentSymbolParams' structure.
-type DocumentSymbolParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-}
-
-func (x DocumentSymbolParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////
-/// DocumentSymbolRegistrationOptions ///
-/////////////////////////////////////////
-
-// Registration options for a {@link DocumentSymbolRequest}.
-//
-// Generated from the LSP 'DocumentSymbolRegistrationOptions' structure.
-type DocumentSymbolRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	DocumentSymbolOptions
-}
-
-func (x DocumentSymbolRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x DocumentSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.DocumentSymbolOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// ErrorCodes ///
-//////////////////
-
-// Predefined error codes.
-//
-// Generated from the LSP 'ErrorCodes' enumeration.
-type ErrorCodes Integer
+//	Predefined error codes.
+type ErrorCodes Int
 
 const (
+	// ParseErrorErrorCodes is a member of the ErrorCodes enumeration.
 	ParseErrorErrorCodes ErrorCodes = -32700
+
+	// InvalidRequestErrorCodes is a member of the ErrorCodes enumeration.
 	InvalidRequestErrorCodes ErrorCodes = -32600
+
+	// MethodNotFoundErrorCodes is a member of the ErrorCodes enumeration.
 	MethodNotFoundErrorCodes ErrorCodes = -32601
+
+	// InvalidParamsErrorCodes is a member of the ErrorCodes enumeration.
 	InvalidParamsErrorCodes ErrorCodes = -32602
+
+	// InternalErrorErrorCodes is a member of the ErrorCodes enumeration.
 	InternalErrorErrorCodes ErrorCodes = -32603
-	// Error code indicating that a server received a notification or
-	// request before the server has received the `initialize` request.
+
+	// ServerNotInitializedErrorCodes is a member of the ErrorCodes enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Error code indicating that a server received a notification or
+	//	request before the server has received the `initialize` request.
 	ServerNotInitializedErrorCodes ErrorCodes = -32002
+
+	// UnknownErrorCodeErrorCodes is a member of the ErrorCodes enumeration.
 	UnknownErrorCodeErrorCodes ErrorCodes = -32001
 )
 
-////////////////////////////////////////
-/// ExecuteCommandClientCapabilities ///
-////////////////////////////////////////
+// ExecuteCommandClientCapabilities is a structure.
+type ExecuteCommandClientCapabilities struct{}
 
-// The client capabilities of a {@link ExecuteCommandRequest}.
-//
-// Generated from the LSP 'ExecuteCommandClientCapabilities' structure.
-type ExecuteCommandClientCapabilities struct {
-	// Execute command supports dynamic registration.
-	DynamicRegistration Bool
-}
+// ExecuteCommandOptions is a structure.
+type ExecuteCommandOptions struct{}
 
-func (x ExecuteCommandClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// ExecuteCommandParams is a structure.
+type ExecuteCommandParams struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// ExecuteCommandRegistrationOptions is a structure.
+type ExecuteCommandRegistrationOptions struct{}
 
-	return w.Bytes(), nil
-}
+// ExecutionSummary is a structure.
+type ExecutionSummary struct{}
 
-func (x ExecuteCommandClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// ExecuteCommandOptions ///
-/////////////////////////////
-
-// The server capabilities of a {@link ExecuteCommandRequest}.
-//
-// Generated from the LSP 'ExecuteCommandOptions' structure.
-type ExecuteCommandOptions struct {
-	WorkDoneProgressOptions
-
-	// The commands to be executed on the server
-	Commands StringArray
-}
-
-func (x ExecuteCommandOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ExecuteCommandOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "commands", x.Commands); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// ExecuteCommandParams ///
-////////////////////////////
-
-// The parameters of a {@link ExecuteCommandRequest}.
-//
-// Generated from the LSP 'ExecuteCommandParams' structure.
-type ExecuteCommandParams struct {
-	WorkDoneProgressParams
-
-	// The identifier of the actual command handler.
-	Command String
-
-	// Arguments that the command should be invoked with.
-	Arguments LSPAnyArray
-}
-
-func (x ExecuteCommandParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ExecuteCommandParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "command", x.Command); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "arguments", x.Arguments); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////
-/// ExecuteCommandRegistrationOptions ///
-/////////////////////////////////////////
-
-// Registration options for a {@link ExecuteCommandRequest}.
-//
-// Generated from the LSP 'ExecuteCommandRegistrationOptions' structure.
-type ExecuteCommandRegistrationOptions struct {
-	ExecuteCommandOptions
-}
-
-func (x ExecuteCommandRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ExecuteCommandRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.ExecuteCommandOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// ExecutionSummary ///
-////////////////////////
-
-// Generated from the LSP 'ExecutionSummary' structure.
-type ExecutionSummary struct {
-	// A strict monotonically increasing value
-	// indicating the execution order of a cell
-	// inside a notebook.
-	ExecutionOrder UInteger
-
-	// Whether the execution was successful or
-	// not if known by the client.
-	Success Bool
-}
-
-func (x ExecutionSummary) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ExecutionSummary) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "executionOrder", x.ExecutionOrder); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "success", x.Success); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// FailureHandlingKind ///
-///////////////////////////
-
-// Generated from the LSP 'FailureHandlingKind' enumeration.
+// FailureHandlingKind is an enumeration of String values.
 type FailureHandlingKind String
 
 const (
-	// Applying the workspace change is simply aborted if one of the changes provided
-	// fails. All operations executed before the failing operation stay executed.
+	// AbortFailureHandlingKind is a member of the FailureHandlingKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Applying the workspace change is simply aborted if one of the changes provided
+	//	fails. All operations executed before the failing operation stay executed.
 	AbortFailureHandlingKind FailureHandlingKind = "abort"
-	// All operations are executed transactional. That means they either all
-	// succeed or no changes at all are applied to the workspace.
+
+	// TransactionalFailureHandlingKind is a member of the FailureHandlingKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	All operations are executed transactional. That means they either all
+	//	succeed or no changes at all are applied to the workspace.
 	TransactionalFailureHandlingKind FailureHandlingKind = "transactional"
-	// If the workspace edit contains only textual file changes they are executed transactional.
-	// If resource changes (create, rename or delete file) are part of the change the failure
-	// handling strategy is abort.
+
+	// TextOnlyTransactionalFailureHandlingKind is a member of the FailureHandlingKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	If the workspace edit contains only textual file changes they are executed transactional.
+	//	If resource changes (create, rename or delete file) are part of the change the failure
+	//	handling strategy is abort.
 	TextOnlyTransactionalFailureHandlingKind FailureHandlingKind = "textOnlyTransactional"
-	// The client tries to undo the operations already executed. But there is no
-	// guarantee that this is succeeding.
+
+	// UndoFailureHandlingKind is a member of the FailureHandlingKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The client tries to undo the operations already executed. But there is no
+	//	guarantee that this is succeeding.
 	UndoFailureHandlingKind FailureHandlingKind = "undo"
 )
 
-func (x *FailureHandlingKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*FailureHandlingKind)(x)); err != nil {
-		return fmt.Errorf("FailureHandlingKind: %w", err)
-	}
-
-	switch *x {
-	case AbortFailureHandlingKind:
-	case TransactionalFailureHandlingKind:
-	case TextOnlyTransactionalFailureHandlingKind:
-	case UndoFailureHandlingKind:
-	default:
-		return fmt.Errorf("FailureHandlingKind: %v is not a member of the enum", x)
-	}
-
-	return nil
-}
-
-//////////////////////
-/// FileChangeType ///
-//////////////////////
-
-// The file event type
+// FileChangeType is an enumeration of UInt values.
 //
-// Generated from the LSP 'FileChangeType' enumeration.
-type FileChangeType UInteger
+// Documentation from the LSP specification:
+//
+//	The file event type
+type FileChangeType UInt
 
 const (
-	// The file got created.
+	// CreatedFileChangeType is a member of the FileChangeType enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The file got created.
 	CreatedFileChangeType FileChangeType = 1
-	// The file got changed.
+
+	// ChangedFileChangeType is a member of the FileChangeType enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The file got changed.
 	ChangedFileChangeType FileChangeType = 2
-	// The file got deleted.
+
+	// DeletedFileChangeType is a member of the FileChangeType enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The file got deleted.
 	DeletedFileChangeType FileChangeType = 3
 )
 
-func (x *FileChangeType) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*FileChangeType)(x)); err != nil {
-		return fmt.Errorf("FileChangeType: %w", err)
-	}
+// FileCreate is a structure.
+type FileCreate struct{}
 
-	switch *x {
-	case CreatedFileChangeType:
-	case ChangedFileChangeType:
-	case DeletedFileChangeType:
-	default:
-		return fmt.Errorf("FileChangeType: %v is not a member of the enum", x)
-	}
+// FileCreateArray is an array of FileCreate elements.
+type FileCreateArray []FileCreate
 
-	return nil
-}
+// FileDelete is a structure.
+type FileDelete struct{}
 
-//////////////////
-/// FileCreate ///
-//////////////////
+// FileDeleteArray is an array of FileDelete elements.
+type FileDeleteArray []FileDelete
 
-// Represents information on a file/folder create.
+// FileEvent is a structure.
+type FileEvent struct{}
+
+// FileEventArray is an array of FileEvent elements.
+type FileEventArray []FileEvent
+
+// FileOperationClientCapabilities is a structure.
+type FileOperationClientCapabilities struct{}
+
+// FileOperationFilter is a structure.
+type FileOperationFilter struct{}
+
+// FileOperationFilterArray is an array of FileOperationFilter elements.
+type FileOperationFilterArray []FileOperationFilter
+
+// FileOperationOptions is a structure.
+type FileOperationOptions struct{}
+
+// FileOperationPattern is a structure.
+type FileOperationPattern struct{}
+
+// FileOperationPatternKind is an enumeration of String values.
 //
-// @since 3.16.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'FileCreate' structure.
-type FileCreate struct {
-	// A file:// URI for the location of the file/folder being created.
-	URI String
-}
-
-func (x FileCreate) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileCreate) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// FileDelete ///
-//////////////////
-
-// Represents information on a file/folder delete.
+//	A pattern kind describing if a glob pattern matches a file a folder or
+//	both.
 //
-// @since 3.16.0
-//
-// Generated from the LSP 'FileDelete' structure.
-type FileDelete struct {
-	// A file:// URI for the location of the file/folder being deleted.
-	URI String
-}
-
-func (x FileDelete) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileDelete) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////
-/// FileEvent ///
-/////////////////
-
-// An event describing a file change.
-//
-// Generated from the LSP 'FileEvent' structure.
-type FileEvent struct {
-	// The file's uri.
-	URI *DocumentURI
-
-	// The change type.
-	Type FileChangeType
-}
-
-func (x FileEvent) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileEvent) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "type", x.Type); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////
-/// FileOperationClientCapabilities ///
-///////////////////////////////////////
-
-// Capabilities relating to events from file operations by the user in the client.
-//
-// These events do not come from the file system, they come from user operations
-// like renaming a file in the UI.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'FileOperationClientCapabilities' structure.
-type FileOperationClientCapabilities struct {
-	// Whether the client supports dynamic registration for file requests/notifications.
-	DynamicRegistration Bool
-
-	// The client has support for sending didCreateFiles notifications.
-	DidCreate Bool
-
-	// The client has support for sending willCreateFiles requests.
-	WillCreate Bool
-
-	// The client has support for sending didRenameFiles notifications.
-	DidRename Bool
-
-	// The client has support for sending willRenameFiles requests.
-	WillRename Bool
-
-	// The client has support for sending didDeleteFiles notifications.
-	DidDelete Bool
-
-	// The client has support for sending willDeleteFiles requests.
-	WillDelete Bool
-}
-
-func (x FileOperationClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileOperationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "didCreate", x.DidCreate); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "willCreate", x.WillCreate); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "didRename", x.DidRename); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "willRename", x.WillRename); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "didDelete", x.DidDelete); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "willDelete", x.WillDelete); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// FileOperationFilter ///
-///////////////////////////
-
-// A filter to describe in which file operation requests or notifications
-// the server is interested in receiving.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'FileOperationFilter' structure.
-type FileOperationFilter struct {
-	// A Uri scheme like `file` or `untitled`.
-	Scheme String
-
-	// The actual file operation pattern.
-	Pattern FileOperationPattern
-}
-
-func (x FileOperationFilter) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileOperationFilter) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// FileOperationOptions ///
-////////////////////////////
-
-// Options for notifications/requests for user operations on files.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'FileOperationOptions' structure.
-type FileOperationOptions struct {
-	// The server is interested in receiving didCreateFiles notifications.
-	DidCreate Optional[FileOperationRegistrationOptions]
-
-	// The server is interested in receiving willCreateFiles requests.
-	WillCreate Optional[FileOperationRegistrationOptions]
-
-	// The server is interested in receiving didRenameFiles notifications.
-	DidRename Optional[FileOperationRegistrationOptions]
-
-	// The server is interested in receiving willRenameFiles requests.
-	WillRename Optional[FileOperationRegistrationOptions]
-
-	// The server is interested in receiving didDeleteFiles file notifications.
-	DidDelete Optional[FileOperationRegistrationOptions]
-
-	// The server is interested in receiving willDeleteFiles file requests.
-	WillDelete Optional[FileOperationRegistrationOptions]
-}
-
-func (x FileOperationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileOperationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "didCreate", x.DidCreate); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "willCreate", x.WillCreate); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "didRename", x.DidRename); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "willRename", x.WillRename); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "didDelete", x.DidDelete); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "willDelete", x.WillDelete); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// FileOperationPattern ///
-////////////////////////////
-
-// A pattern to describe in which file operation requests or notifications
-// the server is interested in receiving.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'FileOperationPattern' structure.
-type FileOperationPattern struct {
-	// The glob pattern to match. Glob patterns can have the following syntax:
-	// - `*` to match one or more characters in a path segment
-	// - `?` to match on one character in a path segment
-	// - `**` to match any number of path segments, including none
-	// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-	// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-	// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-	Glob String
-
-	// Whether to match files or folders with this pattern.
-	//
-	// Matches both if undefined.
-	Matches Optional[FileOperationPatternKind]
-
-	// Additional options used during matching.
-	Options Optional[FileOperationPatternOptions]
-}
-
-func (x FileOperationPattern) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileOperationPattern) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "glob", x.Glob); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "matches", x.Matches); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// FileOperationPatternKind ///
-////////////////////////////////
-
-// A pattern kind describing if a glob pattern matches a file a folder or
-// both.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'FileOperationPatternKind' enumeration.
+//	@since 3.16.0
 type FileOperationPatternKind String
 
 const (
-	// The pattern matches a file only.
+	// FileFileOperationPatternKind is a member of the FileOperationPatternKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The pattern matches a file only.
 	FileFileOperationPatternKind FileOperationPatternKind = "file"
-	// The pattern matches a folder only.
+
+	// FolderFileOperationPatternKind is a member of the FileOperationPatternKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The pattern matches a folder only.
 	FolderFileOperationPatternKind FileOperationPatternKind = "folder"
 )
 
-func (x *FileOperationPatternKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*FileOperationPatternKind)(x)); err != nil {
-		return fmt.Errorf("FileOperationPatternKind: %w", err)
-	}
+// FileOperationPatternOptions is a structure.
+type FileOperationPatternOptions struct{}
 
-	switch *x {
-	case FileFileOperationPatternKind:
-	case FolderFileOperationPatternKind:
-	default:
-		return fmt.Errorf("FileOperationPatternKind: %v is not a member of the enum", x)
-	}
+// FileOperationRegistrationOptions is a structure.
+type FileOperationRegistrationOptions struct{}
 
-	return nil
-}
+// FileRename is a structure.
+type FileRename struct{}
 
-///////////////////////////////////
-/// FileOperationPatternOptions ///
-///////////////////////////////////
+// FileRenameArray is an array of FileRename elements.
+type FileRenameArray []FileRename
 
-// Matching options for the file operation pattern.
+// FileSystemWatcher is a structure.
+type FileSystemWatcher struct{}
+
+// FileSystemWatcherArray is an array of FileSystemWatcher elements.
+type FileSystemWatcherArray []FileSystemWatcher
+
+// FoldingRange is a structure.
+type FoldingRange struct{}
+
+// FoldingRangeArray is an array of FoldingRange elements.
+type FoldingRangeArray []FoldingRange
+
+// FoldingRangeClientCapabilities is a structure.
+type FoldingRangeClientCapabilities struct{}
+
+// FoldingRangeClientCapabilitiesFoldingRange is a literal structure.
+type FoldingRangeClientCapabilitiesFoldingRange struct{}
+
+// FoldingRangeClientCapabilitiesFoldingRangeKind is a literal structure.
+type FoldingRangeClientCapabilitiesFoldingRangeKind struct{}
+
+// FoldingRangeKind is an enumeration of String values.
 //
-// @since 3.16.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'FileOperationPatternOptions' structure.
-type FileOperationPatternOptions struct {
-	// The pattern should be matched ignoring casing.
-	IgnoreCase Bool
-}
-
-func (x FileOperationPatternOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileOperationPatternOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "ignoreCase", x.IgnoreCase); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// FileOperationRegistrationOptions ///
-////////////////////////////////////////
-
-// The options to register for file operations.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'FileOperationRegistrationOptions' structure.
-type FileOperationRegistrationOptions struct {
-	// The actual filters.
-	Filters FileOperationFilterArray
-}
-
-func (x FileOperationRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileOperationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "filters", x.Filters); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type FileOperationFilterArray []FileOperationFilter
-
-//////////////////
-/// FileRename ///
-//////////////////
-
-// Represents information on a file/folder rename.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'FileRename' structure.
-type FileRename struct {
-	// A file:// URI for the original location of the file/folder being renamed.
-	OldURI String
-
-	// A file:// URI for the new location of the file/folder being renamed.
-	NewURI String
-}
-
-func (x FileRename) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileRename) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "oldUri", x.OldURI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "newUri", x.NewURI); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// FileSystemWatcher ///
-/////////////////////////
-
-// Generated from the LSP 'FileSystemWatcher' structure.
-type FileSystemWatcher struct {
-	// The glob pattern to watch. See {@link GlobPattern glob pattern} for more detail.
-	//
-	// @since 3.17.0 support for relative patterns.
-	GlobPattern GlobPattern
-
-	// The kind of events of interest. If omitted it defaults
-	// to WatchKind.Create | WatchKind.Change | WatchKind.Delete
-	// which is 7.
-	Kind Optional[WatchKind]
-}
-
-func (x FileSystemWatcher) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FileSystemWatcher) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "globPattern", x.GlobPattern); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// FoldingRange ///
-////////////////////
-
-// Represents a folding range. To be valid, start and end line must be bigger than zero and smaller
-// than the number of lines in the document. Clients are free to ignore invalid ranges.
-//
-// Generated from the LSP 'FoldingRange' structure.
-type FoldingRange struct {
-	// The zero-based start line of the range to fold. The folded area starts after the line's last character.
-	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	StartLine UInteger
-
-	// The zero-based character offset from where the folded range starts. If not defined, defaults to the length of the start line.
-	StartCharacter Optional[UInteger]
-
-	// The zero-based end line of the range to fold. The folded area ends with the line's last character.
-	// To be valid, the end must be zero or larger and smaller than the number of lines in the document.
-	EndLine UInteger
-
-	// The zero-based character offset before the folded range ends. If not defined, defaults to the length of the end line.
-	EndCharacter Optional[UInteger]
-
-	// Describes the kind of the folding range such as `comment' or 'region'. The kind
-	// is used to categorize folding ranges and used by commands like 'Fold all comments'.
-	// See {@link FoldingRangeKind} for an enumeration of standardized kinds.
-	Kind Optional[FoldingRangeKind]
-
-	// The text that the client should show when the specified range is
-	// collapsed. If not defined or not supported by the client, a default
-	// will be chosen by the client.
-	//
-	// @since 3.17.0
-	CollapsedText String
-}
-
-func (x FoldingRange) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "startLine", x.StartLine); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "startCharacter", x.StartCharacter); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "endLine", x.EndLine); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "endCharacter", x.EndCharacter); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "collapsedText", x.CollapsedText); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// FoldingRangeClientCapabilities ///
-//////////////////////////////////////
-
-// Generated from the LSP 'FoldingRangeClientCapabilities' structure.
-type FoldingRangeClientCapabilities struct {
-	// Whether implementation supports dynamic registration for folding range
-	// providers. If this is set to `true` the client supports the new
-	// `FoldingRangeRegistrationOptions` return value for the corresponding
-	// server capability as well.
-	DynamicRegistration Bool
-
-	// The maximum number of folding ranges that the client prefers to receive
-	// per document. The value serves as a hint, servers are free to follow the
-	// limit.
-	RangeLimit Optional[UInteger]
-
-	// If set, the client signals that it only supports folding complete lines.
-	// If set, client will ignore specified `startCharacter` and `endCharacter`
-	// properties in a FoldingRange.
-	LineFoldingOnly Bool
-
-	// Specific options for the folding range kind.
-	//
-	// @since 3.17.0
-	FoldingRangeKind Optional[FoldingRangeClientCapabilitiesFoldingRangeKind]
-
-	// Specific options for the folding range.
-	//
-	// @since 3.17.0
-	FoldingRange Optional[FoldingRangeClientCapabilitiesFoldingRange]
-}
-
-func (x FoldingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FoldingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "rangeLimit", x.RangeLimit); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "lineFoldingOnly", x.LineFoldingOnly); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "foldingRangeKind", x.FoldingRangeKind); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "foldingRange", x.FoldingRange); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type FoldingRangeClientCapabilitiesFoldingRange struct {
-	// If set, the client signals that it supports setting collapsedText on
-	// folding ranges to display custom labels instead of the default text.
-	//
-	// @since 3.17.0
-	CollapsedText Bool
-}
-
-func (x FoldingRangeClientCapabilitiesFoldingRange) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FoldingRangeClientCapabilitiesFoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "collapsedText", x.CollapsedText); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
-	// The folding range kind values the client supports. When this
-	// property exists the client also guarantees that it will
-	// handle values outside its set gracefully and falls back
-	// to a default value when unknown.
-	ValueSet FoldingRangeKindArray
-}
-
-func (x FoldingRangeClientCapabilitiesFoldingRangeKind) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FoldingRangeClientCapabilitiesFoldingRangeKind) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type FoldingRangeKindArray []FoldingRangeKind
-
-////////////////////////
-/// FoldingRangeKind ///
-////////////////////////
-
-// A set of predefined range kinds.
-//
-// Generated from the LSP 'FoldingRangeKind' enumeration.
+//	A set of predefined range kinds.
 type FoldingRangeKind String
 
 const (
-	// Folding range for a comment
+	// CommentFoldingRangeKind is a member of the FoldingRangeKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Folding range for a comment
 	CommentFoldingRangeKind FoldingRangeKind = "comment"
-	// Folding range for an import or include
+
+	// ImportsFoldingRangeKind is a member of the FoldingRangeKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Folding range for an import or include
 	ImportsFoldingRangeKind FoldingRangeKind = "imports"
-	// Folding range for a region (e.g. `#region`)
+
+	// RegionFoldingRangeKind is a member of the FoldingRangeKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Folding range for a region (e.g. `#region`)
 	RegionFoldingRangeKind FoldingRangeKind = "region"
 )
 
-///////////////////////////
-/// FoldingRangeOptions ///
-///////////////////////////
+// FoldingRangeKindArray is an array of FoldingRangeKind elements.
+type FoldingRangeKindArray []FoldingRangeKind
 
-// Generated from the LSP 'FoldingRangeOptions' structure.
-type FoldingRangeOptions struct {
-	WorkDoneProgressOptions
-}
+// FoldingRangeOptions is a structure.
+type FoldingRangeOptions struct{}
 
-func (x FoldingRangeOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// FoldingRangeParams is a structure.
+type FoldingRangeParams struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// FoldingRangeRegistrationOptions is a structure.
+type FoldingRangeRegistrationOptions struct{}
 
-	return w.Bytes(), nil
-}
+// FormattingOptions is a structure.
+type FormattingOptions struct{}
 
-func (x FoldingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
+// FullDocumentDiagnosticReport is a structure.
+type FullDocumentDiagnosticReport struct{}
 
-//////////////////////////
-/// FoldingRangeParams ///
-//////////////////////////
+// GeneralClientCapabilities is a structure.
+type GeneralClientCapabilities struct{}
 
-// Parameters for a {@link FoldingRangeRequest}.
-//
-// Generated from the LSP 'FoldingRangeParams' structure.
-type FoldingRangeParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
+// GeneralClientCapabilitiesStaleRequestSupport is a literal structure.
+type GeneralClientCapabilitiesStaleRequestSupport struct{}
 
-	// The text document.
-	TextDocument TextDocumentIdentifier
-}
+// GlobPattern is a union of <TODO>.
+type GlobPattern interface{}
 
-func (x FoldingRangeParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// Hover is a structure.
+type Hover struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// HoverClientCapabilities is a structure.
+type HoverClientCapabilities struct{}
 
-	return w.Bytes(), nil
-}
+// HoverContents is a union of <TODO>.
+type HoverContents interface{}
 
-func (x FoldingRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
+// HoverOptions is a structure.
+type HoverOptions struct{}
 
-///////////////////////////////////////
-/// FoldingRangeRegistrationOptions ///
-///////////////////////////////////////
+// HoverParams is a structure.
+type HoverParams struct{}
 
-// Generated from the LSP 'FoldingRangeRegistrationOptions' structure.
-type FoldingRangeRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	FoldingRangeOptions
-	StaticRegistrationOptions
-}
+// HoverRegistrationOptions is a structure.
+type HoverRegistrationOptions struct{}
 
-func (x FoldingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// ImplementationClientCapabilities is a structure.
+type ImplementationClientCapabilities struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// ImplementationOptions is a structure.
+type ImplementationOptions struct{}
 
-	return w.Bytes(), nil
-}
+// ImplementationParams is a structure.
+type ImplementationParams struct{}
 
-func (x FoldingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.FoldingRangeOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
+// ImplementationRegistrationOptions is a structure.
+type ImplementationRegistrationOptions struct{}
 
-/////////////////////////
-/// FormattingOptions ///
-/////////////////////////
+// InitializeError is a structure.
+type InitializeError struct{}
 
-// Value-object describing what options formatting should use.
-//
-// Generated from the LSP 'FormattingOptions' structure.
-type FormattingOptions struct {
-	// Size of a tab in spaces.
-	TabSize UInteger
+// InitializeParams is a structure.
+type InitializeParams struct{}
 
-	// Prefer spaces over tabs.
-	InsertSpaces Bool
+// InitializeParamsClientInfo is a literal structure.
+type InitializeParamsClientInfo struct{}
 
-	// Trim trailing whitespace on a line.
-	//
-	// @since 3.15.0
-	TrimTrailingWhitespace Bool
+// InitializeParamsProcessID is a union of <TODO>.
+type InitializeParamsProcessID interface{}
 
-	// Insert a newline character at the end of the file if one does not exist.
-	//
-	// @since 3.15.0
-	InsertFinalNewline Bool
+// InitializeParamsRootPath is a union of <TODO>.
+type InitializeParamsRootPath interface{}
 
-	// Trim all newlines after the final newline at the end of the file.
-	//
-	// @since 3.15.0
-	TrimFinalNewlines Bool
-}
+// InitializeParamsRootURI is a union of <TODO>.
+type InitializeParamsRootURI interface{}
 
-func (x FormattingOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// InitializeResult is a structure.
+type InitializeResult struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// InitializeResultServerInfo is a literal structure.
+type InitializeResultServerInfo struct{}
 
-	return w.Bytes(), nil
-}
-
-func (x FormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "tabSize", x.TabSize); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "insertSpaces", x.InsertSpaces); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "trimTrailingWhitespace", x.TrimTrailingWhitespace); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "insertFinalNewline", x.InsertFinalNewline); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "trimFinalNewlines", x.TrimFinalNewlines); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////
-/// FullDocumentDiagnosticReport ///
-////////////////////////////////////
-
-// A diagnostic report with a full set of problems.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'FullDocumentDiagnosticReport' structure.
-type FullDocumentDiagnosticReport struct {
-	// An optional result id. If provided it will
-	// be sent on the next diagnostic request for the
-	// same document.
-	ResultID String
-
-	// The actual items.
-	Items DiagnosticArray
-}
-
-func (x FullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x FullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", "full"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "items", x.Items); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// GeneralClientCapabilities ///
-/////////////////////////////////
-
-// General client capabilities.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'GeneralClientCapabilities' structure.
-type GeneralClientCapabilities struct {
-	// Client capability that signals how the client
-	// handles stale requests (e.g. a request
-	// for which the client will not process the response
-	// anymore since the information is outdated).
-	//
-	// @since 3.17.0
-	StaleRequestSupport Optional[GeneralClientCapabilitiesStaleRequestSupport]
-
-	// Client capabilities specific to regular expressions.
-	//
-	// @since 3.16.0
-	RegularExpressions Optional[RegularExpressionsClientCapabilities]
-
-	// Client capabilities specific to the client's markdown parser.
-	//
-	// @since 3.16.0
-	Markdown Optional[MarkdownClientCapabilities]
-
-	// The position encodings supported by the client. Client and server
-	// have to agree on the same position encoding to ensure that offsets
-	// (e.g. character position in a line) are interpreted the same on both
-	// sides.
-	//
-	// To keep the protocol backwards compatible the following applies: if
-	// the value 'utf-16' is missing from the array of position encodings
-	// servers can assume that the client supports UTF-16. UTF-16 is
-	// therefore a mandatory encoding.
-	//
-	// If omitted it defaults to ['utf-16'].
-	//
-	// Implementation considerations: since the conversion from one encoding
-	// into another requires the content of the file / line the conversion
-	// is best done where the file is read which is usually on the server
-	// side.
-	//
-	// @since 3.17.0
-	PositionEncodings PositionEncodingKindArray
-}
-
-func (x GeneralClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x GeneralClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "staleRequestSupport", x.StaleRequestSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "regularExpressions", x.RegularExpressions); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "markdown", x.Markdown); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "positionEncodings", x.PositionEncodings); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type GeneralClientCapabilitiesStaleRequestSupport struct {
-	// The client will actively cancel the request.
-	Cancel Bool
-
-	// The list of requests for which the client
-	// will retry the request if it receives a
-	// response with error code `ContentModified`
-	RetryOnContentModified StringArray
-}
-
-func (x GeneralClientCapabilitiesStaleRequestSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x GeneralClientCapabilitiesStaleRequestSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "cancel", x.Cancel); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "retryOnContentModified", x.RetryOnContentModified); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type PositionEncodingKindArray []PositionEncodingKind
-
-///////////////////
-/// GlobPattern ///
-///////////////////
-
-// The glob pattern. Either a string pattern or a relative pattern.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'GlobPattern' type alias.
-// Generated from an LSP 'or' type.
-type GlobPattern interface {
-	isGlobPattern()
-}
-
-func (Pattern) isGlobPattern()         {}
-func (RelativePattern) isGlobPattern() {}
-
-/////////////
-/// Hover ///
-/////////////
-
-// The result of a hover request.
-//
-// Generated from the LSP 'Hover' structure.
-type Hover struct {
-	// The hover's content
-	Contents HoverContents
-
-	// An optional range inside the text document that is used to
-	// visualize the hover, e.g. by changing the background color.
-	Range Optional[Range]
-}
-
-func (x Hover) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Hover) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "contents", x.Contents); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type HoverContents interface {
-	isHoverContents()
-}
-
-func (MarkupContent) isHoverContents()     {}
-func (MarkedStringArray) isHoverContents() {}
-
-// Generated from an LSP 'array' type.
-type MarkedStringArray []MarkedString
-
-///////////////////////////////
-/// HoverClientCapabilities ///
-///////////////////////////////
-
-// Generated from the LSP 'HoverClientCapabilities' structure.
-type HoverClientCapabilities struct {
-	// Whether hover supports dynamic registration.
-	DynamicRegistration Bool
-
-	// Client supports the following content formats for the content
-	// property. The order describes the preferred format of the client.
-	ContentFormat MarkupKindArray
-}
-
-func (x HoverClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x HoverClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "contentFormat", x.ContentFormat); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// HoverOptions ///
-////////////////////
-
-// Hover options.
-//
-// Generated from the LSP 'HoverOptions' structure.
-type HoverOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x HoverOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x HoverOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////
-/// HoverParams ///
-///////////////////
-
-// Parameters for a {@link HoverRequest}.
-//
-// Generated from the LSP 'HoverParams' structure.
-type HoverParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-}
-
-func (x HoverParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x HoverParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// HoverRegistrationOptions ///
-////////////////////////////////
-
-// Registration options for a {@link HoverRequest}.
-//
-// Generated from the LSP 'HoverRegistrationOptions' structure.
-type HoverRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	HoverOptions
-}
-
-func (x HoverRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x HoverRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.HoverOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// ImplementationClientCapabilities ///
-////////////////////////////////////////
-
-// @since 3.6.0
-//
-// Generated from the LSP 'ImplementationClientCapabilities' structure.
-type ImplementationClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `ImplementationRegistrationOptions` return value
-	// for the corresponding server capability as well.
-	DynamicRegistration Bool
-
-	// The client supports additional metadata in the form of definition links.
-	//
-	// @since 3.14.0
-	LinkSupport Bool
-}
-
-func (x ImplementationClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ImplementationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// ImplementationOptions ///
-/////////////////////////////
-
-// Generated from the LSP 'ImplementationOptions' structure.
-type ImplementationOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x ImplementationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ImplementationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// ImplementationParams ///
-////////////////////////////
-
-// Generated from the LSP 'ImplementationParams' structure.
-type ImplementationParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-}
-
-func (x ImplementationParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ImplementationParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////
-/// ImplementationRegistrationOptions ///
-/////////////////////////////////////////
-
-// Generated from the LSP 'ImplementationRegistrationOptions' structure.
-type ImplementationRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	ImplementationOptions
-	StaticRegistrationOptions
-}
-
-func (x ImplementationRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ImplementationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.ImplementationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// InitializeError ///
-///////////////////////
-
-// The data type of the ResponseError if the
-// initialize request fails.
-//
-// Generated from the LSP 'InitializeError' structure.
-type InitializeError struct {
-	// Indicates whether the client execute the following retry logic:
-	// (1) show the message provided by the ResponseError to the user
-	// (2) user selects retry or cancel
-	// (3) if user selected retry the initialize method is sent again.
-	Retry Bool
-}
-
-func (x InitializeError) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InitializeError) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "retry", x.Retry); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// InitializeParams ///
-////////////////////////
-
-// Generated from the LSP 'InitializeParams' structure.
-type InitializeParams struct {
-	initializeParams
-	WorkspaceFoldersInitializeParams
-}
-
-func (x InitializeParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InitializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.initializeParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkspaceFoldersInitializeParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// InitializeResult ///
-////////////////////////
-
-// The result returned from an initialize request.
-//
-// Generated from the LSP 'InitializeResult' structure.
-type InitializeResult struct {
-	// The capabilities the language server provides.
-	Capabilities ServerCapabilities
-
-	// Information about the server.
-	//
-	// @since 3.15.0
-	ServerInfo Optional[InitializeResultServerInfo]
-}
-
-func (x InitializeResult) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InitializeResult) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "capabilities", x.Capabilities); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "serverInfo", x.ServerInfo); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type InitializeResultServerInfo struct {
-	// The name of the server as defined by the server.
-	Name String
-
-	// The server's version as defined by the server.
-	Version String
-}
-
-func (x InitializeResultServerInfo) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InitializeResultServerInfo) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "name", x.Name); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// InitializedParams ///
-/////////////////////////
-
-// Generated from the LSP 'InitializedParams' structure.
+// InitializedParams is a structure.
 type InitializedParams struct{}
 
-func (x InitializedParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// InlayHint is a structure.
+type InlayHint struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// InlayHintArray is an array of InlayHint elements.
+type InlayHintArray []InlayHint
 
-	return w.Bytes(), nil
-}
+// InlayHintClientCapabilities is a structure.
+type InlayHintClientCapabilities struct{}
 
-func (x InitializedParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	return nil
-}
+// InlayHintClientCapabilitiesResolveSupport is a literal structure.
+type InlayHintClientCapabilitiesResolveSupport struct{}
 
-/////////////////
-/// InlayHint ///
-/////////////////
-
-// Inlay hint information.
+// InlayHintKind is an enumeration of UInt values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'InlayHint' structure.
-type InlayHint struct {
-	// The position of this hint.
-	Position Position
-
-	// The label of this hint. A human readable string or an array of
-	// InlayHintLabelPart label parts.
-	//
-	// *Note* that neither the string nor the label part can be empty.
-	Label InlayHintLabel
-
-	// The kind of this hint. Can be omitted in which case the client
-	// should fall back to a reasonable default.
-	Kind Optional[InlayHintKind]
-
-	// Optional text edits that are performed when accepting this inlay hint.
-	//
-	// *Note* that edits are expected to change the document so that the inlay
-	// hint (or its nearest variant) is now part of the document and the inlay
-	// hint itself is now obsolete.
-	TextEdits TextEditArray
-
-	// The tooltip text when you hover over this item.
-	Tooltip InlayHintTooltip
-
-	// Render padding before the hint.
-	//
-	// Note: Padding should use the editor's background color, not the
-	// background color of the hint itself. That means padding can be used
-	// to visually align/separate an inlay hint.
-	PaddingLeft Bool
-
-	// Render padding after the hint.
-	//
-	// Note: Padding should use the editor's background color, not the
-	// background color of the hint itself. That means padding can be used
-	// to visually align/separate an inlay hint.
-	PaddingRight Bool
-
-	// A data entry field that is preserved on an inlay hint between
-	// a `textDocument/inlayHint` and a `inlayHint/resolve` request.
-	Data LSPAny
-}
-
-func (x InlayHint) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHint) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "position", x.Position); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textEdits", x.TextEdits); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tooltip", x.Tooltip); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "paddingLeft", x.PaddingLeft); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "paddingRight", x.PaddingRight); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type InlayHintLabel interface {
-	isInlayHintLabel()
-}
-
-func (String) isInlayHintLabel()                  {}
-func (InlayHintLabelPartArray) isInlayHintLabel() {}
-
-// Generated from an LSP 'array' type.
-type InlayHintLabelPartArray []InlayHintLabelPart
-
-// Generated from an LSP 'or' type.
-type InlayHintTooltip interface {
-	isInlayHintTooltip()
-}
-
-func (String) isInlayHintTooltip()        {}
-func (MarkupContent) isInlayHintTooltip() {}
-
-///////////////////////////////////
-/// InlayHintClientCapabilities ///
-///////////////////////////////////
-
-// Inlay hint client capabilities.
+//	Inlay hint kinds.
 //
-// @since 3.17.0
-//
-// Generated from the LSP 'InlayHintClientCapabilities' structure.
-type InlayHintClientCapabilities struct {
-	// Whether inlay hints support dynamic registration.
-	DynamicRegistration Bool
-
-	// Indicates which properties a client can resolve lazily on an inlay
-	// hint.
-	ResolveSupport Optional[InlayHintClientCapabilitiesResolveSupport]
-}
-
-func (x InlayHintClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHintClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type InlayHintClientCapabilitiesResolveSupport struct {
-	// The properties that a client can resolve lazily.
-	Properties StringArray
-}
-
-func (x InlayHintClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHintClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////
-/// InlayHintKind ///
-/////////////////////
-
-// Inlay hint kinds.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlayHintKind' enumeration.
-type InlayHintKind UInteger
+//	@since 3.17.0
+type InlayHintKind UInt
 
 const (
-	// An inlay hint that for a type annotation.
+	// TypeInlayHintKind is a member of the InlayHintKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	An inlay hint that for a type annotation.
 	TypeInlayHintKind InlayHintKind = 1
-	// An inlay hint that is for a parameter.
+
+	// ParameterInlayHintKind is a member of the InlayHintKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	An inlay hint that is for a parameter.
 	ParameterInlayHintKind InlayHintKind = 2
 )
 
-func (x *InlayHintKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*InlayHintKind)(x)); err != nil {
-		return fmt.Errorf("InlayHintKind: %w", err)
-	}
+// InlayHintLabel is a union of <TODO>.
+type InlayHintLabel interface{}
 
-	switch *x {
-	case TypeInlayHintKind:
-	case ParameterInlayHintKind:
-	default:
-		return fmt.Errorf("InlayHintKind: %v is not a member of the enum", x)
-	}
+// InlayHintLabelPart is a structure.
+type InlayHintLabelPart struct{}
 
-	return nil
-}
+// InlayHintLabelPartArray is an array of InlayHintLabelPart elements.
+type InlayHintLabelPartArray []InlayHintLabelPart
 
-//////////////////////////
-/// InlayHintLabelPart ///
-//////////////////////////
+// InlayHintLabelPartTooltip is a union of <TODO>.
+type InlayHintLabelPartTooltip interface{}
 
-// An inlay hint label part allows for interactive and composite labels
-// of inlay hints.
+// InlayHintOptions is a structure.
+type InlayHintOptions struct{}
+
+// InlayHintParams is a structure.
+type InlayHintParams struct{}
+
+// InlayHintRegistrationOptions is a structure.
+type InlayHintRegistrationOptions struct{}
+
+// InlayHintTooltip is a union of <TODO>.
+type InlayHintTooltip interface{}
+
+// InlayHintWorkspaceClientCapabilities is a structure.
+type InlayHintWorkspaceClientCapabilities struct{}
+
+// InlineValue is a union of <TODO>.
+type InlineValue interface{}
+
+// InlineValueArray is an array of InlineValue elements.
+type InlineValueArray []InlineValue
+
+// InlineValueClientCapabilities is a structure.
+type InlineValueClientCapabilities struct{}
+
+// InlineValueContext is a structure.
+type InlineValueContext struct{}
+
+// InlineValueEvaluatableExpression is a structure.
+type InlineValueEvaluatableExpression struct{}
+
+// InlineValueOptions is a structure.
+type InlineValueOptions struct{}
+
+// InlineValueParams is a structure.
+type InlineValueParams struct{}
+
+// InlineValueRegistrationOptions is a structure.
+type InlineValueRegistrationOptions struct{}
+
+// InlineValueText is a structure.
+type InlineValueText struct{}
+
+// InlineValueVariableLookup is a structure.
+type InlineValueVariableLookup struct{}
+
+// InlineValueWorkspaceClientCapabilities is a structure.
+type InlineValueWorkspaceClientCapabilities struct{}
+
+// InsertReplaceEdit is a structure.
+type InsertReplaceEdit struct{}
+
+// InsertTextFormat is an enumeration of UInt values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'InlayHintLabelPart' structure.
-type InlayHintLabelPart struct {
-	// The value of this label part.
-	Value String
-
-	// The tooltip text when you hover over this label part. Depending on
-	// the client capability `inlayHint.resolveSupport` clients might resolve
-	// this property late using the resolve request.
-	Tooltip InlayHintLabelPartTooltip
-
-	// An optional source code location that represents this
-	// label part.
-	//
-	// The editor will use this location for the hover and for code navigation
-	// features: This part will become a clickable link that resolves to the
-	// definition of the symbol at the given location (not necessarily the
-	// location itself), it shows the hover that shows at the given location,
-	// and it shows a context menu with further code navigation commands.
-	//
-	// Depending on the client capability `inlayHint.resolveSupport` clients
-	// might resolve this property late using the resolve request.
-	Location Optional[Location]
-
-	// An optional command for this label part.
-	//
-	// Depending on the client capability `inlayHint.resolveSupport` clients
-	// might resolve this property late using the resolve request.
-	Command Optional[Command]
-}
-
-func (x InlayHintLabelPart) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHintLabelPart) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "value", x.Value); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tooltip", x.Tooltip); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "location", x.Location); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "command", x.Command); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type InlayHintLabelPartTooltip interface {
-	isInlayHintLabelPartTooltip()
-}
-
-func (String) isInlayHintLabelPartTooltip()        {}
-func (MarkupContent) isInlayHintLabelPartTooltip() {}
-
-////////////////////////
-/// InlayHintOptions ///
-////////////////////////
-
-// Inlay hint options used during static registration.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlayHintOptions' structure.
-type InlayHintOptions struct {
-	WorkDoneProgressOptions
-
-	// The server provides support to resolve additional
-	// information for an inlay hint item.
-	ResolveProvider Bool
-}
-
-func (x InlayHintOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHintOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// InlayHintParams ///
-///////////////////////
-
-// A parameter literal used in inlay hint requests.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlayHintParams' structure.
-type InlayHintParams struct {
-	WorkDoneProgressParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The document range for which inlay hints should be computed.
-	Range Range
-}
-
-func (x InlayHintParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHintParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////
-/// InlayHintRegistrationOptions ///
-////////////////////////////////////
-
-// Inlay hint options used during static or dynamic registration.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlayHintRegistrationOptions' structure.
-type InlayHintRegistrationOptions struct {
-	InlayHintOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
-}
-
-func (x InlayHintRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHintRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.InlayHintOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////////
-/// InlayHintWorkspaceClientCapabilities ///
-////////////////////////////////////////////
-
-// Client workspace capabilities specific to inlay hints.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlayHintWorkspaceClientCapabilities' structure.
-type InlayHintWorkspaceClientCapabilities struct {
-	// Whether the client implementation supports a refresh request sent from
-	// the server to the client.
-	//
-	// Note that this event is global and will force the client to refresh all
-	// inlay hints currently shown. It should be used with absolute care and
-	// is useful for situation where a server for example detects a project wide
-	// change that requires such a calculation.
-	RefreshSupport Bool
-}
-
-func (x InlayHintWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlayHintWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////
-/// InlineValue ///
-///////////////////
-
-// Inline value information can be provided by different means:
-// - directly as a text value (class InlineValueText).
-// - as a name to use for a variable lookup (class InlineValueVariableLookup)
-// - as an evaluatable expression (class InlineValueEvaluatableExpression)
-// The InlineValue types combines all inline value types into one type.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValue' type alias.
-// Generated from an LSP 'or' type.
-type InlineValue interface {
-	isInlineValue()
-}
-
-func (InlineValueText) isInlineValue()                  {}
-func (InlineValueVariableLookup) isInlineValue()        {}
-func (InlineValueEvaluatableExpression) isInlineValue() {}
-
-/////////////////////////////////////
-/// InlineValueClientCapabilities ///
-/////////////////////////////////////
-
-// Client capabilities specific to inline values.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueClientCapabilities' structure.
-type InlineValueClientCapabilities struct {
-	// Whether implementation supports dynamic registration for inline value providers.
-	DynamicRegistration Bool
-}
-
-func (x InlineValueClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// InlineValueContext ///
-//////////////////////////
-
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueContext' structure.
-type InlineValueContext struct {
-	// The stack frame (as a DAP Id) where the execution has stopped.
-	FrameID Integer
-
-	// The document range where execution has stopped.
-	// Typically the end position of the range denotes the line where the inline values are shown.
-	StoppedLocation Range
-}
-
-func (x InlineValueContext) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueContext) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "frameId", x.FrameID); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "stoppedLocation", x.StoppedLocation); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// InlineValueEvaluatableExpression ///
-////////////////////////////////////////
-
-// Provide an inline value through an expression evaluation.
-// If only a range is specified, the expression will be extracted from the underlying document.
-// An optional expression can be used to override the extracted expression.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueEvaluatableExpression' structure.
-type InlineValueEvaluatableExpression struct {
-	// The document range for which the inline value applies.
-	// The range is used to extract the evaluatable expression from the underlying document.
-	Range Range
-
-	// If specified the expression overrides the extracted expression.
-	Expression String
-}
-
-func (x InlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueEvaluatableExpression) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "expression", x.Expression); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// InlineValueOptions ///
-//////////////////////////
-
-// Inline value options used during static registration.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueOptions' structure.
-type InlineValueOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x InlineValueOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// InlineValueParams ///
-/////////////////////////
-
-// A parameter literal used in inline value requests.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueParams' structure.
-type InlineValueParams struct {
-	WorkDoneProgressParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The document range for which inline values should be computed.
-	Range Range
-
-	// Additional information about the context in which inline values were
-	// requested.
-	Context InlineValueContext
-}
-
-func (x InlineValueParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "context", x.Context); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// InlineValueRegistrationOptions ///
-//////////////////////////////////////
-
-// Inline value options used during static or dynamic registration.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueRegistrationOptions' structure.
-type InlineValueRegistrationOptions struct {
-	InlineValueOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
-}
-
-func (x InlineValueRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.InlineValueOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// InlineValueText ///
-///////////////////////
-
-// Provide inline value as text.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueText' structure.
-type InlineValueText struct {
-	// The document range for which the inline value applies.
-	Range Range
-
-	// The text of the inline value.
-	Text String
-}
-
-func (x InlineValueText) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueText) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "text", x.Text); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// InlineValueVariableLookup ///
-/////////////////////////////////
-
-// Provide inline value through a variable lookup.
-// If only a range is specified, the variable name will be extracted from the underlying document.
-// An optional variable name can be used to override the extracted name.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueVariableLookup' structure.
-type InlineValueVariableLookup struct {
-	// The document range for which the inline value applies.
-	// The range is used to extract the variable name from the underlying document.
-	Range Range
-
-	// If specified the name of the variable to look up.
-	VariableName String
-
-	// How to perform the lookup.
-	CaseSensitiveLookup Bool
-}
-
-func (x InlineValueVariableLookup) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueVariableLookup) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "variableName", x.VariableName); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "caseSensitiveLookup", x.CaseSensitiveLookup); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////////////
-/// InlineValueWorkspaceClientCapabilities ///
-//////////////////////////////////////////////
-
-// Client workspace capabilities specific to inline values.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'InlineValueWorkspaceClientCapabilities' structure.
-type InlineValueWorkspaceClientCapabilities struct {
-	// Whether the client implementation supports a refresh request sent from the
-	// server to the client.
-	//
-	// Note that this event is global and will force the client to refresh all
-	// inline values currently shown. It should be used with absolute care and is
-	// useful for situation where a server for example detects a project wide
-	// change that requires such a calculation.
-	RefreshSupport Bool
-}
-
-func (x InlineValueWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InlineValueWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// InsertReplaceEdit ///
-/////////////////////////
-
-// A special text edit to provide an insert and a replace operation.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'InsertReplaceEdit' structure.
-type InsertReplaceEdit struct {
-	// The string to be inserted.
-	NewText String
-
-	// The range if the insert is requested
-	Insert Range
-
-	// The range if the replace is requested.
-	Replace Range
-}
-
-func (x InsertReplaceEdit) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InsertReplaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "newText", x.NewText); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "insert", x.Insert); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "replace", x.Replace); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// InsertTextFormat ///
-////////////////////////
-
-// Defines whether the insert text in a completion item should be interpreted as
-// plain text or a snippet.
-//
-// Generated from the LSP 'InsertTextFormat' enumeration.
-type InsertTextFormat UInteger
+//	Defines whether the insert text in a completion item should be interpreted as
+//	plain text or a snippet.
+type InsertTextFormat UInt
 
 const (
-	// The primary text to be inserted is treated as a plain string.
+	// PlainTextInsertTextFormat is a member of the InsertTextFormat enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The primary text to be inserted is treated as a plain string.
 	PlainTextInsertTextFormat InsertTextFormat = 1
-	// The primary text to be inserted is treated as a snippet.
+
+	// SnippetInsertTextFormat is a member of the InsertTextFormat enumeration.
 	//
-	// A snippet can define tab stops and placeholders with `$1`, `$2`
-	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
-	// the end of the snippet. Placeholders with equal identifiers are linked,
-	// that is typing in one will update others too.
+	// Documentation from the LSP specification:
 	//
-	// See also: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#snippet_syntax
+	//	The primary text to be inserted is treated as a snippet.
+	//
+	//	A snippet can define tab stops and placeholders with `$1`, `$2`
+	//	and `${3:foo}`. `$0` defines the final tab stop, it defaults to
+	//	the end of the snippet. Placeholders with equal identifiers are linked,
+	//	that is typing in one will update others too.
+	//
+	//	See also: https://microsoft.github.io/language-server-protocol/specifications/specification-current/#snippet_syntax
 	SnippetInsertTextFormat InsertTextFormat = 2
 )
 
-func (x *InsertTextFormat) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*InsertTextFormat)(x)); err != nil {
-		return fmt.Errorf("InsertTextFormat: %w", err)
-	}
-
-	switch *x {
-	case PlainTextInsertTextFormat:
-	case SnippetInsertTextFormat:
-	default:
-		return fmt.Errorf("InsertTextFormat: %v is not a member of the enum", x)
-	}
-
-	return nil
-}
-
-//////////////////////
-/// InsertTextMode ///
-//////////////////////
-
-// How whitespace and indentation is handled during completion
-// item insertion.
+// InsertTextMode is an enumeration of UInt values.
 //
-// @since 3.16.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'InsertTextMode' enumeration.
-type InsertTextMode UInteger
+//	How whitespace and indentation is handled during completion
+//	item insertion.
+//
+//	@since 3.16.0
+type InsertTextMode UInt
 
 const (
-	// The insertion or replace strings is taken as it is. If the
-	// value is multi line the lines below the cursor will be
-	// inserted using the indentation defined in the string value.
-	// The client will not apply any kind of adjustments to the
-	// string.
-	AsIsInsertTextMode InsertTextMode = 1
-	// The editor adjusts leading whitespace of new lines so that
-	// they match the indentation up to the cursor of the line for
-	// which the item is accepted.
+	// AsIsInsertTextMode is a member of the InsertTextMode enumeration.
 	//
-	// Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
-	// multi line completion item is indented using 2 tabs and all
-	// following lines inserted will be indented using 2 tabs as well.
+	// Documentation from the LSP specification:
+	//
+	//	The insertion or replace strings is taken as it is. If the
+	//	value is multi line the lines below the cursor will be
+	//	inserted using the indentation defined in the string value.
+	//	The client will not apply any kind of adjustments to the
+	//	string.
+	AsIsInsertTextMode InsertTextMode = 1
+
+	// AdjustIndentationInsertTextMode is a member of the InsertTextMode enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The editor adjusts leading whitespace of new lines so that
+	//	they match the indentation up to the cursor of the line for
+	//	which the item is accepted.
+	//
+	//	Consider a line like this: <2tabs><cursor><3tabs>foo. Accepting a
+	//	multi line completion item is indented using 2 tabs and all
+	//	following lines inserted will be indented using 2 tabs as well.
 	AdjustIndentationInsertTextMode InsertTextMode = 2
 )
 
-func (x *InsertTextMode) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*InsertTextMode)(x)); err != nil {
-		return fmt.Errorf("InsertTextMode: %w", err)
-	}
+// InsertTextModeArray is an array of InsertTextMode elements.
+type InsertTextModeArray []InsertTextMode
 
-	switch *x {
-	case AsIsInsertTextMode:
-	case AdjustIndentationInsertTextMode:
-	default:
-		return fmt.Errorf("InsertTextMode: %v is not a member of the enum", x)
-	}
+// Int is the LSP signed integer type.
+type Int int32
 
-	return nil
-}
+// LSPAny is a union of <TODO>.
+type LSPAny interface{}
 
-//////////////
-/// LSPAny ///
-//////////////
+// LSPAnyArray is an array of LSPAny elements.
+type LSPAnyArray []LSPAny
 
-// The LSP any type.
-// Please note that strictly speaking a property with the value `undefined`
-// can't be converted into JSON preserving the property name. However for
-// convenience it is allowed and assumed that all these properties are
-// optional as well.
-// @since 3.17.0
-//
-// Generated from the LSP 'LSPAny' type alias.
-// Generated from an LSP 'or' type.
-type LSPAny interface {
-	isLSPAny()
-}
+// LSPAnyMap is an array of String to LSPAny.
+type LSPAnyMap map[String]LSPAny
 
-func (LSPObject) isLSPAny() {}
-func (LSPArray) isLSPAny()  {}
-func (String) isLSPAny()    {}
-func (Integer) isLSPAny()   {}
-func (UInteger) isLSPAny()  {}
-func (Decimal) isLSPAny()   {}
-func (Bool) isLSPAny()      {}
-
-////////////////
-/// LSPArray ///
-////////////////
-
-// LSP arrays.
-// @since 3.17.0
-//
-// Generated from the LSP 'LSPArray' type alias.
-// Generated from an LSP 'array' type.
-type LSPArray []LSPAny
-
-/////////////////////
-/// LSPErrorCodes ///
-/////////////////////
-
-// Generated from the LSP 'LSPErrorCodes' enumeration.
-type LSPErrorCodes Integer
+// LSPErrorCodes is an enumeration of Int values.
+type LSPErrorCodes Int
 
 const (
-	// A request failed but it was syntactically correct, e.g the
-	// method name was known and the parameters were valid. The error
-	// message should contain human readable information about why
-	// the request failed.
+	// RequestFailedLSPErrorCodes is a member of the LSPErrorCodes enumeration.
 	//
-	// @since 3.17.0
+	// Documentation from the LSP specification:
+	//
+	//	A request failed but it was syntactically correct, e.g the
+	//	method name was known and the parameters were valid. The error
+	//	message should contain human readable information about why
+	//	the request failed.
+	//
+	//	@since 3.17.0
 	RequestFailedLSPErrorCodes LSPErrorCodes = -32803
-	// The server cancelled the request. This error code should
-	// only be used for requests that explicitly support being
-	// server cancellable.
+
+	// ServerCancelledLSPErrorCodes is a member of the LSPErrorCodes enumeration.
 	//
-	// @since 3.17.0
+	// Documentation from the LSP specification:
+	//
+	//	The server cancelled the request. This error code should
+	//	only be used for requests that explicitly support being
+	//	server cancellable.
+	//
+	//	@since 3.17.0
 	ServerCancelledLSPErrorCodes LSPErrorCodes = -32802
-	// The server detected that the content of a document got
-	// modified outside normal conditions. A server should
-	// NOT send this error code if it detects a content change
-	// in it unprocessed messages. The result even computed
-	// on an older state might still be useful for the client.
+
+	// ContentModifiedLSPErrorCodes is a member of the LSPErrorCodes enumeration.
 	//
-	// If a client decides that a result is not of any use anymore
-	// the client should cancel the request.
+	// Documentation from the LSP specification:
+	//
+	//	The server detected that the content of a document got
+	//	modified outside normal conditions. A server should
+	//	NOT send this error code if it detects a content change
+	//	in it unprocessed messages. The result even computed
+	//	on an older state might still be useful for the client.
+	//
+	//	If a client decides that a result is not of any use anymore
+	//	the client should cancel the request.
 	ContentModifiedLSPErrorCodes LSPErrorCodes = -32801
-	// The client has canceled a request and a server as detected
-	// the cancel.
+
+	// RequestCancelledLSPErrorCodes is a member of the LSPErrorCodes enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The client has canceled a request and a server as detected
+	//	the cancel.
 	RequestCancelledLSPErrorCodes LSPErrorCodes = -32800
 )
 
-/////////////////
-/// LSPObject ///
-/////////////////
+// LinkedEditingRangeClientCapabilities is a structure.
+type LinkedEditingRangeClientCapabilities struct{}
 
-// LSP object definition.
-// @since 3.17.0
+// LinkedEditingRangeOptions is a structure.
+type LinkedEditingRangeOptions struct{}
+
+// LinkedEditingRangeParams is a structure.
+type LinkedEditingRangeParams struct{}
+
+// LinkedEditingRangeRegistrationOptions is a structure.
+type LinkedEditingRangeRegistrationOptions struct{}
+
+// LinkedEditingRanges is a structure.
+type LinkedEditingRanges struct{}
+
+// Location is a structure.
+type Location struct{}
+
+// LocationArray is an array of Location elements.
+type LocationArray []Location
+
+// LocationLink is a structure.
+type LocationLink struct{}
+
+// LogMessageParams is a structure.
+type LogMessageParams struct{}
+
+// LogTraceParams is a structure.
+type LogTraceParams struct{}
+
+// MarkdownClientCapabilities is a structure.
+type MarkdownClientCapabilities struct{}
+
+// MarkedString is a union of <TODO>.
+type MarkedString interface{}
+
+// MarkedStringArray is an array of MarkedString elements.
+type MarkedStringArray []MarkedString
+
+// MarkedStringOption2 is a literal structure.
+type MarkedStringOption2 struct{}
+
+// MarkupContent is a structure.
+type MarkupContent struct{}
+
+// MarkupKind is an enumeration of String values.
 //
-// Generated from the LSP 'LSPObject' type alias.
-// Generated from an LSP 'map' type.
-type LSPObject map[String]LSPAny
-
-////////////////////////////////////////////
-/// LinkedEditingRangeClientCapabilities ///
-////////////////////////////////////////////
-
-// Client capabilities for the linked editing range request.
+// Documentation from the LSP specification:
 //
-// @since 3.16.0
+//	Describes the content type that a client supports in various
+//	result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
 //
-// Generated from the LSP 'LinkedEditingRangeClientCapabilities' structure.
-type LinkedEditingRangeClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration Bool
-}
-
-func (x LinkedEditingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LinkedEditingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// LinkedEditingRangeOptions ///
-/////////////////////////////////
-
-// Generated from the LSP 'LinkedEditingRangeOptions' structure.
-type LinkedEditingRangeOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x LinkedEditingRangeOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LinkedEditingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// LinkedEditingRangeParams ///
-////////////////////////////////
-
-// Generated from the LSP 'LinkedEditingRangeParams' structure.
-type LinkedEditingRangeParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-}
-
-func (x LinkedEditingRangeParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LinkedEditingRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////////
-/// LinkedEditingRangeRegistrationOptions ///
-/////////////////////////////////////////////
-
-// Generated from the LSP 'LinkedEditingRangeRegistrationOptions' structure.
-type LinkedEditingRangeRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	LinkedEditingRangeOptions
-	StaticRegistrationOptions
-}
-
-func (x LinkedEditingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LinkedEditingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.LinkedEditingRangeOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// LinkedEditingRanges ///
-///////////////////////////
-
-// The result of a linked editing range request.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'LinkedEditingRanges' structure.
-type LinkedEditingRanges struct {
-	// A list of ranges that can be edited together. The ranges must have
-	// identical length and contain identical text content. The ranges cannot overlap.
-	Ranges RangeArray
-
-	// An optional word pattern (regular expression) that describes valid contents for
-	// the given ranges. If no pattern is provided, the client configuration's word
-	// pattern will be used.
-	WordPattern String
-}
-
-func (x LinkedEditingRanges) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LinkedEditingRanges) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "ranges", x.Ranges); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "wordPattern", x.WordPattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////
-/// Location ///
-////////////////
-
-// Represents a location inside a resource, such as a line
-// inside a text file.
-//
-// Generated from the LSP 'Location' structure.
-type Location struct {
-	URI *DocumentURI
-
-	Range Range
-}
-
-func (x Location) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Location) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// LocationLink ///
-////////////////////
-
-// Represents the connection of two locations. Provides additional metadata over normal {@link Location locations},
-// including an origin range.
-//
-// Generated from the LSP 'LocationLink' structure.
-type LocationLink struct {
-	// Span of the origin of this link.
-	//
-	// Used as the underlined span for mouse interaction. Defaults to the word range at
-	// the definition position.
-	OriginSelectionRange Optional[Range]
-
-	// The target resource identifier of this link.
-	TargetURI *DocumentURI
-
-	// The full target range of this link. If the target for example is a symbol then target range is the
-	// range enclosing this symbol not including leading/trailing whitespace but everything else
-	// like comments. This information is typically used to highlight the range in the editor.
-	TargetRange Range
-
-	// The range that should be selected and revealed when this link is being followed, e.g the name of a function.
-	// Must be contained by the `targetRange`. See also `DocumentSymbol#range`
-	TargetSelectionRange Range
-}
-
-func (x LocationLink) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LocationLink) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "originSelectionRange", x.OriginSelectionRange); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "targetUri", x.TargetURI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "targetRange", x.TargetRange); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "targetSelectionRange", x.TargetSelectionRange); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// LogMessageParams ///
-////////////////////////
-
-// The log message parameters.
-//
-// Generated from the LSP 'LogMessageParams' structure.
-type LogMessageParams struct {
-	// The message type. See {@link MessageType}
-	Type MessageType
-
-	// The actual message.
-	Message String
-}
-
-func (x LogMessageParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LogMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "type", x.Type); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////
-/// LogTraceParams ///
-//////////////////////
-
-// Generated from the LSP 'LogTraceParams' structure.
-type LogTraceParams struct {
-	Message String
-
-	Verbose String
-}
-
-func (x LogTraceParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x LogTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "verbose", x.Verbose); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// MarkdownClientCapabilities ///
-//////////////////////////////////
-
-// Client capabilities specific to the used markdown parser.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'MarkdownClientCapabilities' structure.
-type MarkdownClientCapabilities struct {
-	// The name of the parser.
-	Parser String
-
-	// The version of the parser.
-	Version String
-
-	// A list of HTML tags that the client allows / supports in
-	// Markdown.
-	//
-	// @since 3.17.0
-	AllowedTags StringArray
-}
-
-func (x MarkdownClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MarkdownClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "parser", x.Parser); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "allowedTags", x.AllowedTags); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// MarkedString ///
-////////////////////
-
-// MarkedString can be used to render human readable text. It is either a markdown string
-// or a code-block that provides a language and a code snippet. The language identifier
-// is semantically equal to the optional language identifier in fenced code blocks in GitHub
-// issues. See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
-//
-// The pair of a language and a value is an equivalent to markdown:
-// ```${language}
-// ${value}
-// ```
-//
-// Note that markdown strings will be sanitized - that means html will be escaped.
-// @deprecated use MarkupContent instead.
-//
-// Generated from the LSP 'MarkedString' type alias.
-//
-// Deprecated: use MarkupContent instead.
-// Generated from an LSP 'or' type.
-type MarkedString interface {
-	isMarkedString()
-}
-
-func (String) isMarkedString()              {}
-func (MarkedStringOption1) isMarkedString() {}
-
-// Generated from an LSP 'literal' type.
-type MarkedStringOption1 struct {
-	Language String
-
-	Value String
-}
-
-func (x MarkedStringOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MarkedStringOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "language", x.Language); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "value", x.Value); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////
-/// MarkupContent ///
-/////////////////////
-
-// A `MarkupContent` literal represents a string value which content is interpreted base on its
-// kind flag. Currently the protocol supports `plaintext` and `markdown` as markup kinds.
-//
-// If the kind is `markdown` then the value can contain fenced code blocks like in GitHub issues.
-// See https://help.github.com/articles/creating-and-highlighting-code-blocks/#syntax-highlighting
-//
-// Here is an example how such a string can be constructed using JavaScript / TypeScript:
-// ```ts
-//
-//	let markdown: MarkdownContent = {
-//	 kind: MarkupKind.Markdown,
-//	 value: [
-//	   '# Header',
-//	   'Some text',
-//	   '```typescript',
-//	   'someCode();',
-//	   '```'
-//	 ].join('\n')
-//	};
-//
-// ```
-//
-// *Please Note* that clients might sanitize the return markdown. A client could decide to
-// remove HTML from the markdown to avoid script execution.
-//
-// Generated from the LSP 'MarkupContent' structure.
-type MarkupContent struct {
-	// The type of the Markup
-	Kind MarkupKind
-
-	// The content itself
-	Value String
-}
-
-func (x MarkupContent) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MarkupContent) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "value", x.Value); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// MarkupKind ///
-//////////////////
-
-// Describes the content type that a client supports in various
-// result literals like `Hover`, `ParameterInfo` or `CompletionItem`.
-//
-// Please note that `MarkupKinds` must not start with a `$`. This kinds
-// are reserved for internal usage.
-//
-// Generated from the LSP 'MarkupKind' enumeration.
+//	Please note that `MarkupKinds` must not start with a `$`. This kinds
+//	are reserved for internal usage.
 type MarkupKind String
 
 const (
-	// Plain text is supported as a content format
+	// PlainTextMarkupKind is a member of the MarkupKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Plain text is supported as a content format
 	PlainTextMarkupKind MarkupKind = "plaintext"
-	// Markdown is supported as a content format
+
+	// MarkdownMarkupKind is a member of the MarkupKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Markdown is supported as a content format
 	MarkdownMarkupKind MarkupKind = "markdown"
 )
 
-func (x *MarkupKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*MarkupKind)(x)); err != nil {
-		return fmt.Errorf("MarkupKind: %w", err)
-	}
+// MarkupKindArray is an array of MarkupKind elements.
+type MarkupKindArray []MarkupKind
 
-	switch *x {
-	case PlainTextMarkupKind:
-	case MarkdownMarkupKind:
-	default:
-		return fmt.Errorf("MarkupKind: %v is not a member of the enum", x)
-	}
+// MessageActionItem is a structure.
+type MessageActionItem struct{}
 
-	return nil
-}
+// MessageActionItemArray is an array of MessageActionItem elements.
+type MessageActionItemArray []MessageActionItem
 
-/////////////////////////
-/// MessageActionItem ///
-/////////////////////////
-
-// Generated from the LSP 'MessageActionItem' structure.
-type MessageActionItem struct {
-	// A short title like 'Retry', 'Open Log' etc.
-	Title String
-}
-
-func (x MessageActionItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MessageActionItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "title", x.Title); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////
-/// MessageType ///
-///////////////////
-
-// The message type
+// MessageType is an enumeration of UInt values.
 //
-// Generated from the LSP 'MessageType' enumeration.
-type MessageType UInteger
+// Documentation from the LSP specification:
+//
+//	The message type
+type MessageType UInt
 
 const (
-	// An error message.
+	// ErrorMessageType is a member of the MessageType enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	An error message.
 	ErrorMessageType MessageType = 1
-	// A warning message.
+
+	// WarningMessageType is a member of the MessageType enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	A warning message.
 	WarningMessageType MessageType = 2
-	// An information message.
+
+	// InfoMessageType is a member of the MessageType enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	An information message.
 	InfoMessageType MessageType = 3
-	// A log message.
+
+	// LogMessageType is a member of the MessageType enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	A log message.
 	LogMessageType MessageType = 4
 )
 
-func (x *MessageType) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*MessageType)(x)); err != nil {
-		return fmt.Errorf("MessageType: %w", err)
-	}
+// Moniker is a structure.
+type Moniker struct{}
 
-	switch *x {
-	case ErrorMessageType:
-	case WarningMessageType:
-	case InfoMessageType:
-	case LogMessageType:
-	default:
-		return fmt.Errorf("MessageType: %v is not a member of the enum", x)
-	}
+// MonikerArray is an array of Moniker elements.
+type MonikerArray []Moniker
 
-	return nil
-}
+// MonikerClientCapabilities is a structure.
+type MonikerClientCapabilities struct{}
 
-///////////////
-/// Moniker ///
-///////////////
-
-// Moniker definition to match LSIF 0.5 moniker definition.
+// MonikerKind is an enumeration of String values.
 //
-// @since 3.16.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'Moniker' structure.
-type Moniker struct {
-	// The scheme of the moniker. For example tsc or .Net
-	Scheme String
-
-	// The identifier of the moniker. The value is opaque in LSIF however
-	// schema owners are allowed to define the structure if they want.
-	Identifier String
-
-	// The scope in which the moniker is unique
-	Unique UniquenessLevel
-
-	// The moniker kind if known.
-	Kind Optional[MonikerKind]
-}
-
-func (x Moniker) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Moniker) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "unique", x.Unique); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// MonikerClientCapabilities ///
-/////////////////////////////////
-
-// Client capabilities specific to the moniker request.
+//	The moniker kind.
 //
-// @since 3.16.0
-//
-// Generated from the LSP 'MonikerClientCapabilities' structure.
-type MonikerClientCapabilities struct {
-	// Whether moniker supports dynamic registration. If this is set to `true`
-	// the client supports the new `MonikerRegistrationOptions` return value
-	// for the corresponding server capability as well.
-	DynamicRegistration Bool
-}
-
-func (x MonikerClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MonikerClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////
-/// MonikerKind ///
-///////////////////
-
-// The moniker kind.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'MonikerKind' enumeration.
+//	@since 3.16.0
 type MonikerKind String
 
 const (
-	// The moniker represent a symbol that is imported into a project
+	// ImportMonikerKind is a member of the MonikerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker represent a symbol that is imported into a project
 	ImportMonikerKind MonikerKind = "import"
-	// The moniker represents a symbol that is exported from a project
+
+	// ExportMonikerKind is a member of the MonikerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker represents a symbol that is exported from a project
 	ExportMonikerKind MonikerKind = "export"
-	// The moniker represents a symbol that is local to a project (e.g. a local
-	// variable of a function, a class not visible outside the project, ...)
+
+	// LocalMonikerKind is a member of the MonikerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker represents a symbol that is local to a project (e.g. a local
+	//	variable of a function, a class not visible outside the project, ...)
 	LocalMonikerKind MonikerKind = "local"
 )
 
-func (x *MonikerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*MonikerKind)(x)); err != nil {
-		return fmt.Errorf("MonikerKind: %w", err)
-	}
+// MonikerOptions is a structure.
+type MonikerOptions struct{}
 
-	switch *x {
-	case ImportMonikerKind:
-	case ExportMonikerKind:
-	case LocalMonikerKind:
-	default:
-		return fmt.Errorf("MonikerKind: %v is not a member of the enum", x)
-	}
+// MonikerParams is a structure.
+type MonikerParams struct{}
 
-	return nil
-}
+// MonikerRegistrationOptions is a structure.
+type MonikerRegistrationOptions struct{}
 
-//////////////////////
-/// MonikerOptions ///
-//////////////////////
+// NotebookCell is a structure.
+type NotebookCell struct{}
 
-// Generated from the LSP 'MonikerOptions' structure.
-type MonikerOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x MonikerOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MonikerOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////
-/// MonikerParams ///
-/////////////////////
-
-// Generated from the LSP 'MonikerParams' structure.
-type MonikerParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-}
-
-func (x MonikerParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MonikerParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// MonikerRegistrationOptions ///
-//////////////////////////////////
-
-// Generated from the LSP 'MonikerRegistrationOptions' structure.
-type MonikerRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	MonikerOptions
-}
-
-func (x MonikerRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x MonikerRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.MonikerOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// NotebookCell ///
-////////////////////
-
-// A notebook cell.
-//
-// A cell's document URI must be unique across ALL notebook
-// cells and can therefore be used to uniquely identify a
-// notebook cell or the cell's text document.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookCell' structure.
-type NotebookCell struct {
-	// The cell's kind
-	Kind NotebookCellKind
-
-	// The URI of the cell's text document
-	// content.
-	Document *DocumentURI
-
-	// Additional metadata stored with the cell.
-	//
-	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata LSPObject
-
-	// Additional execution summary information
-	// if supported by the client.
-	ExecutionSummary Optional[ExecutionSummary]
-}
-
-func (x NotebookCell) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookCell) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "document", x.Document); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "metadata", x.Metadata); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "executionSummary", x.ExecutionSummary); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////
-/// NotebookCellArrayChange ///
-///////////////////////////////
-
-// A change describing how to move a `NotebookCell`
-// array from state S to S'.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookCellArrayChange' structure.
-type NotebookCellArrayChange struct {
-	// The start oftest of the cell that changed.
-	Start UInteger
-
-	// The deleted cells
-	DeleteCount UInteger
-
-	// The new cells, if any
-	Cells NotebookCellArray
-}
-
-func (x NotebookCellArrayChange) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookCellArrayChange) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "start", x.Start); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "deleteCount", x.DeleteCount); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// NotebookCellArray is an array of NotebookCell elements.
 type NotebookCellArray []NotebookCell
 
-////////////////////////
-/// NotebookCellKind ///
-////////////////////////
+// NotebookCellArrayChange is a structure.
+type NotebookCellArrayChange struct{}
 
-// A notebook cell kind.
+// NotebookCellKind is an enumeration of UInt values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'NotebookCellKind' enumeration.
-type NotebookCellKind UInteger
+//	A notebook cell kind.
+//
+//	@since 3.17.0
+type NotebookCellKind UInt
 
 const (
-	// A markup-cell is formatted source that is used for display.
+	// MarkupNotebookCellKind is a member of the NotebookCellKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	A markup-cell is formatted source that is used for display.
 	MarkupNotebookCellKind NotebookCellKind = 1
-	// A code-cell is source code.
+
+	// CodeNotebookCellKind is a member of the NotebookCellKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	A code-cell is source code.
 	CodeNotebookCellKind NotebookCellKind = 2
 )
 
-func (x *NotebookCellKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*NotebookCellKind)(x)); err != nil {
-		return fmt.Errorf("NotebookCellKind: %w", err)
-	}
+// NotebookCellTextDocumentFilter is a structure.
+type NotebookCellTextDocumentFilter struct{}
 
-	switch *x {
-	case MarkupNotebookCellKind:
-	case CodeNotebookCellKind:
-	default:
-		return fmt.Errorf("NotebookCellKind: %v is not a member of the enum", x)
-	}
+// NotebookCellTextDocumentFilterNotebook is a union of <TODO>.
+type NotebookCellTextDocumentFilterNotebook interface{}
 
-	return nil
-}
+// NotebookDocument is a structure.
+type NotebookDocument struct{}
 
-//////////////////////////////////////
-/// NotebookCellTextDocumentFilter ///
-//////////////////////////////////////
+// NotebookDocumentChangeEvent is a structure.
+type NotebookDocumentChangeEvent struct{}
 
-// A notebook cell text document filter denotes a cell text
-// document by different properties.
+// NotebookDocumentChangeEventCells is a literal structure.
+type NotebookDocumentChangeEventCells struct{}
+
+// NotebookDocumentChangeEventCellsStructure is a literal structure.
+type NotebookDocumentChangeEventCellsStructure struct{}
+
+// NotebookDocumentChangeEventCellsTextContent is a literal structure.
+type NotebookDocumentChangeEventCellsTextContent struct{}
+
+// NotebookDocumentChangeEventCellsTextContentArray is an array of NotebookDocumentChangeEventCellsTextContent elements.
+type NotebookDocumentChangeEventCellsTextContentArray []NotebookDocumentChangeEventCellsTextContent
+
+// NotebookDocumentClientCapabilities is a structure.
+type NotebookDocumentClientCapabilities struct{}
+
+// NotebookDocumentFilter is a union of <TODO>.
+type NotebookDocumentFilter interface{}
+
+// NotebookDocumentFilterOption1 is a literal structure.
+type NotebookDocumentFilterOption1 struct{}
+
+// NotebookDocumentFilterOption2 is a literal structure.
+type NotebookDocumentFilterOption2 struct{}
+
+// NotebookDocumentFilterOption3 is a literal structure.
+type NotebookDocumentFilterOption3 struct{}
+
+// NotebookDocumentIdentifier is a structure.
+type NotebookDocumentIdentifier struct{}
+
+// NotebookDocumentSyncClientCapabilities is a structure.
+type NotebookDocumentSyncClientCapabilities struct{}
+
+// NotebookDocumentSyncOptions is a structure.
+type NotebookDocumentSyncOptions struct{}
+
+// NotebookDocumentSyncOptionsNotebookSelector is a union of <TODO>.
+type NotebookDocumentSyncOptionsNotebookSelector interface{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorArray is an array of NotebookDocumentSyncOptionsNotebookSelector elements.
+type NotebookDocumentSyncOptionsNotebookSelectorArray []NotebookDocumentSyncOptionsNotebookSelector
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption1 is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorOption1 struct{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption1Cells is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorOption1Cells struct{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption1CellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorOption1Cells elements.
+type NotebookDocumentSyncOptionsNotebookSelectorOption1CellsArray []NotebookDocumentSyncOptionsNotebookSelectorOption1Cells
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption1Notebook is a union of <TODO>.
+type NotebookDocumentSyncOptionsNotebookSelectorOption1Notebook interface{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption2 is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorOption2 struct{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption2Cells is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorOption2Cells struct{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption2CellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorOption2Cells elements.
+type NotebookDocumentSyncOptionsNotebookSelectorOption2CellsArray []NotebookDocumentSyncOptionsNotebookSelectorOption2Cells
+
+// NotebookDocumentSyncOptionsNotebookSelectorOption2Notebook is a union of <TODO>.
+type NotebookDocumentSyncOptionsNotebookSelectorOption2Notebook interface{}
+
+// NotebookDocumentSyncRegistrationOptions is a structure.
+type NotebookDocumentSyncRegistrationOptions struct{}
+
+// OptionalVersionedTextDocumentIdentifier is a structure.
+type OptionalVersionedTextDocumentIdentifier struct{}
+
+// OptionalVersionedTextDocumentIdentifierVersion is a union of <TODO>.
+type OptionalVersionedTextDocumentIdentifierVersion interface{}
+
+// ParameterInformation is a structure.
+type ParameterInformation struct{}
+
+// ParameterInformationArray is an array of ParameterInformation elements.
+type ParameterInformationArray []ParameterInformation
+
+// ParameterInformationDocumentation is a union of <TODO>.
+type ParameterInformationDocumentation interface{}
+
+// ParameterInformationLabel is a union of <TODO>.
+type ParameterInformationLabel interface{}
+
+// ParameterInformationLabelOption2 is a 2-tuple.
+type ParameterInformationLabelOption2 struct{}
+
+// PartialResult is a union of <TODO>.
+type PartialResult interface{}
+
+// PartialResultArray is an array of PartialResult elements.
+type PartialResultArray []PartialResult
+
+// PartialResultParams is a structure.
+type PartialResultParams struct{}
+
+// Pattern is an alias for String.
+type Pattern = String
+
+// Position is a structure.
+type Position struct{}
+
+// PositionArray is an array of Position elements.
+type PositionArray []Position
+
+// PositionEncodingKind is an enumeration of String values.
 //
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'NotebookCellTextDocumentFilter' structure.
-type NotebookCellTextDocumentFilter struct {
-	// A filter that matches against the notebook
-	// containing the notebook cell. If a string
-	// value is provided it matches against the
-	// notebook type. '*' matches every notebook.
-	Notebook NotebookCellTextDocumentFilterNotebook
-
-	// A language id like `python`.
-	//
-	// Will be matched against the language id of the
-	// notebook cell document. '*' matches every language.
-	Language String
-}
-
-func (x NotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookCellTextDocumentFilter) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebook", x.Notebook); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "language", x.Language); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type NotebookCellTextDocumentFilterNotebook interface {
-	isNotebookCellTextDocumentFilterNotebook()
-}
-
-func (String) isNotebookCellTextDocumentFilterNotebook() {}
-
-////////////////////////
-/// NotebookDocument ///
-////////////////////////
-
-// A notebook document.
+//	A set of predefined position encoding kinds.
 //
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocument' structure.
-type NotebookDocument struct {
-	// The notebook document's uri.
-	URI *URI
-
-	// The type of the notebook.
-	NotebookType String
-
-	// The version number of this document (it will increase after each
-	// change, including undo/redo).
-	Version Integer
-
-	// Additional metadata stored with the notebook
-	// document.
-	//
-	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata LSPObject
-
-	// The cells of a notebook.
-	Cells NotebookCellArray
-}
-
-func (x NotebookDocument) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocument) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "metadata", x.Metadata); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// NotebookDocumentChangeEvent ///
-///////////////////////////////////
-
-// A change event for a notebook document.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocumentChangeEvent' structure.
-type NotebookDocumentChangeEvent struct {
-	// The changed meta data if any.
-	//
-	// Note: should always be an object literal (e.g. LSPObject)
-	Metadata LSPObject
-
-	// Changes to cells
-	Cells Optional[NotebookDocumentChangeEventCells]
-}
-
-func (x NotebookDocumentChangeEvent) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentChangeEvent) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "metadata", x.Metadata); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "cells", x.Cells); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type NotebookDocumentChangeEventCells struct {
-	// Changes to the cell structure to add or
-	// remove cells.
-	Structure Optional[NotebookDocumentChangeEventCellsStructure]
-
-	// Changes to notebook cells properties like its
-	// kind, execution summary or metadata.
-	Data NotebookCellArray
-
-	// Changes to the text content of notebook cells.
-	TextContent NotebookDocumentChangeEventCellsTextContentArray
-}
-
-func (x NotebookDocumentChangeEventCells) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentChangeEventCells) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "structure", x.Structure); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textContent", x.TextContent); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type NotebookDocumentChangeEventCellsStructure struct {
-	// The change to the cell array.
-	Array NotebookCellArrayChange
-
-	// Additional opened cell text documents.
-	DidOpen TextDocumentItemArray
-
-	// Additional closed cell text documents.
-	DidClose TextDocumentIdentifierArray
-}
-
-func (x NotebookDocumentChangeEventCellsStructure) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentChangeEventCellsStructure) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "array", x.Array); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "didOpen", x.DidOpen); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "didClose", x.DidClose); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type NotebookDocumentChangeEventCellsTextContentArray []NotebookDocumentChangeEventCellsTextContentArray
-
-//////////////////////////////////////////
-/// NotebookDocumentClientCapabilities ///
-//////////////////////////////////////////
-
-// Capabilities specific to the notebook document support.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocumentClientCapabilities' structure.
-type NotebookDocumentClientCapabilities struct {
-	// Capabilities specific to notebook document synchronization
-	//
-	// @since 3.17.0
-	Synchronization NotebookDocumentSyncClientCapabilities
-}
-
-func (x NotebookDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "synchronization", x.Synchronization); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////
-/// NotebookDocumentFilter ///
-//////////////////////////////
-
-// A notebook document filter denotes a notebook document by
-// different properties. The properties will be match
-// against the notebook's URI (same as with documents)
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocumentFilter' type alias.
-// Generated from an LSP 'or' type.
-type NotebookDocumentFilter interface {
-	isNotebookDocumentFilter()
-}
-
-func (NotebookDocumentFilterOption0) isNotebookDocumentFilter() {}
-func (NotebookDocumentFilterOption1) isNotebookDocumentFilter() {}
-func (NotebookDocumentFilterOption2) isNotebookDocumentFilter() {}
-
-// Generated from an LSP 'literal' type.
-type NotebookDocumentFilterOption0 struct {
-	// The type of the enclosing notebook.
-	NotebookType String
-
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme String
-
-	// A glob pattern.
-	Pattern String
-}
-
-func (x NotebookDocumentFilterOption0) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentFilterOption0) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type NotebookDocumentFilterOption1 struct {
-	// The type of the enclosing notebook.
-	NotebookType String
-
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme String
-
-	// A glob pattern.
-	Pattern String
-}
-
-func (x NotebookDocumentFilterOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentFilterOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type NotebookDocumentFilterOption2 struct {
-	// The type of the enclosing notebook.
-	NotebookType String
-
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme String
-
-	// A glob pattern.
-	Pattern String
-}
-
-func (x NotebookDocumentFilterOption2) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentFilterOption2) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookType", x.NotebookType); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// NotebookDocumentIdentifier ///
-//////////////////////////////////
-
-// A literal to identify a notebook document in the client.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocumentIdentifier' structure.
-type NotebookDocumentIdentifier struct {
-	// The notebook document's uri.
-	URI *URI
-}
-
-func (x NotebookDocumentIdentifier) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////////////
-/// NotebookDocumentSyncClientCapabilities ///
-//////////////////////////////////////////////
-
-// Notebook specific client capabilities.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocumentSyncClientCapabilities' structure.
-type NotebookDocumentSyncClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is
-	// set to `true` the client supports the new
-	// `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration Bool
-
-	// The client supports sending execution summary data per cell.
-	ExecutionSummarySupport Bool
-}
-
-func (x NotebookDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "executionSummarySupport", x.ExecutionSummarySupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// NotebookDocumentSyncOptions ///
-///////////////////////////////////
-
-// Options specific to a notebook plus its cells
-// to be synced to the server.
-//
-// If a selector provides a notebook document
-// filter but no cell selector all cells of a
-// matching notebook document will be synced.
-//
-// If a selector provides no notebook document
-// filter but only a cell selector all notebook
-// document that contain at least one matching
-// cell will be synced.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocumentSyncOptions' structure.
-type NotebookDocumentSyncOptions struct {
-	// The notebooks to be synced
-	NotebookSelector NotebookDocumentSyncOptionsNotebookSelectorArray
-
-	// Whether save notification should be forwarded to
-	// the server. Will only be honored if mode === `notebook`.
-	Save Bool
-}
-
-func (x NotebookDocumentSyncOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "notebookSelector", x.NotebookSelector); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "save", x.Save); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type NotebookDocumentSyncOptionsNotebookSelectorArray []NotebookDocumentSyncOptionsNotebookSelectorArray
-
-///////////////////////////////////////////////
-/// NotebookDocumentSyncRegistrationOptions ///
-///////////////////////////////////////////////
-
-// Registration options specific to a notebook.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'NotebookDocumentSyncRegistrationOptions' structure.
-type NotebookDocumentSyncRegistrationOptions struct {
-	NotebookDocumentSyncOptions
-	StaticRegistrationOptions
-}
-
-func (x NotebookDocumentSyncRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x NotebookDocumentSyncRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.NotebookDocumentSyncOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////////////
-/// OptionalVersionedTextDocumentIdentifier ///
-///////////////////////////////////////////////
-
-// A text document identifier to optionally denote a specific version of a text document.
-//
-// Generated from the LSP 'OptionalVersionedTextDocumentIdentifier' structure.
-type OptionalVersionedTextDocumentIdentifier struct {
-	TextDocumentIdentifier
-
-	// The version number of this document. If a versioned text document identifier
-	// is sent from the server to the client and the file is not open in the editor
-	// (the server has not received an open notification before) the server can send
-	// `null` to indicate that the version is unknown and the content on disk is the
-	// truth (as specified with document content ownership).
-	Version OptionalVersionedTextDocumentIdentifierVersion
-}
-
-func (x OptionalVersionedTextDocumentIdentifier) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x OptionalVersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentIdentifier.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type OptionalVersionedTextDocumentIdentifierVersion interface {
-	isOptionalVersionedTextDocumentIdentifierVersion()
-}
-
-func (Integer) isOptionalVersionedTextDocumentIdentifierVersion() {}
-
-////////////////////////////
-/// ParameterInformation ///
-////////////////////////////
-
-// Represents a parameter of a callable-signature. A parameter can
-// have a label and a doc-comment.
-//
-// Generated from the LSP 'ParameterInformation' structure.
-type ParameterInformation struct {
-	// The label of this parameter information.
-	//
-	// Either a string or an inclusive start and exclusive end offsets within its containing
-	// signature label. (see SignatureInformation.label). The offsets are based on a UTF-16
-	// string representation as `Position` and `Range` does.
-	//
-	// *Note*: a label of type string should be a substring of its containing signature label.
-	// Its intended use case is to highlight the parameter label part in the `SignatureInformation.label`.
-	Label ParameterInformationLabel
-
-	// The human-readable doc-comment of this parameter. Will be shown
-	// in the UI but can be omitted.
-	Documentation ParameterInformationDocumentation
-}
-
-func (x ParameterInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentation", x.Documentation); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type ParameterInformationDocumentation interface {
-	isParameterInformationDocumentation()
-}
-
-func (String) isParameterInformationDocumentation()        {}
-func (MarkupContent) isParameterInformationDocumentation() {}
-
-// Generated from an LSP 'or' type.
-type ParameterInformationLabel interface {
-	isParameterInformationLabel()
-}
-
-func (String) isParameterInformationLabel()                           {}
-func (ParameterInformationLabelOption1) isParameterInformationLabel() {}
-
-// Generated from an LSP 'tuple' type.
-type ParameterInformationLabelOption1 struct{}
-
-///////////////////////////
-/// PartialResultParams ///
-///////////////////////////
-
-// Generated from the LSP 'PartialResultParams' structure.
-type PartialResultParams struct {
-	// An optional token that a server can use to report partial results (e.g. streaming) to
-	// the client.
-	PartialResultToken ProgressToken
-}
-
-func (x PartialResultParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x PartialResultParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "partialResultToken", x.PartialResultToken); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////
-/// Pattern ///
-///////////////
-
-// The glob pattern to watch relative to the base path. Glob patterns can have the following syntax:
-// - `*` to match one or more characters in a path segment
-// - `?` to match on one character in a path segment
-// - `**` to match any number of path segments, including none
-// - `{}` to group conditions (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'Pattern' type alias.
-type Pattern String
-
-////////////////
-/// Position ///
-////////////////
-
-// Position in a text document expressed as zero-based line and character
-// offset. Prior to 3.17 the offsets were always based on a UTF-16 string
-// representation. So a string of the form `a𐐀b` the character offset of the
-// character `a` is 0, the character offset of `𐐀` is 1 and the character
-// offset of b is 3 since `𐐀` is represented using two code units in UTF-16.
-// Since 3.17 clients and servers can agree on a different string encoding
-// representation (e.g. UTF-8). The client announces it's supported encoding
-// via the client capability [`general.positionEncodings`](#clientCapabilities).
-// The value is an array of position encodings the client supports, with
-// decreasing preference (e.g. the encoding at index `0` is the most preferred
-// one). To stay backwards compatible the only mandatory encoding is UTF-16
-// represented via the string `utf-16`. The server can pick one of the
-// encodings offered by the client and signals that encoding back to the
-// client via the initialize result's property
-// [`capabilities.positionEncoding`](#serverCapabilities). If the string value
-// `utf-16` is missing from the client's capability `general.positionEncodings`
-// servers can safely assume that the client supports UTF-16. If the server
-// omits the position encoding in its initialize result the encoding defaults
-// to the string value `utf-16`. Implementation considerations: since the
-// conversion from one encoding into another requires the content of the
-// file / line the conversion is best done where the file is read which is
-// usually on the server side.
-//
-// Positions are line end character agnostic. So you can not specify a position
-// that denotes `\r|\n` or `\n|` where `|` represents the character offset.
-//
-// @since 3.17.0 - support for negotiated position encoding.
-//
-// Generated from the LSP 'Position' structure.
-type Position struct {
-	// Line position in a document (zero-based).
-	//
-	// If a line number is greater than the number of lines in a document, it defaults back to the number of lines in the document.
-	// If a line number is negative, it defaults to 0.
-	Line UInteger
-
-	// Character offset on a line in a document (zero-based).
-	//
-	// The meaning of this offset is determined by the negotiated
-	// `PositionEncodingKind`.
-	//
-	// If the character value is greater than the line length it defaults back to the
-	// line length.
-	Character UInteger
-}
-
-func (x Position) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Position) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "line", x.Line); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "character", x.Character); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// PositionEncodingKind ///
-////////////////////////////
-
-// A set of predefined position encoding kinds.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'PositionEncodingKind' enumeration.
+//	@since 3.17.0
 type PositionEncodingKind String
 
 const (
-	// Character offsets count UTF-8 code units (e.g. bytes).
+	// UTF8PositionEncodingKind is a member of the PositionEncodingKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Character offsets count UTF-8 code units (e.g. bytes).
 	UTF8PositionEncodingKind PositionEncodingKind = "utf-8"
-	// Character offsets count UTF-16 code units.
+
+	// UTF16PositionEncodingKind is a member of the PositionEncodingKind enumeration.
 	//
-	// This is the default and must always be supported
-	// by servers
+	// Documentation from the LSP specification:
+	//
+	//	Character offsets count UTF-16 code units.
+	//
+	//	This is the default and must always be supported
+	//	by servers
 	UTF16PositionEncodingKind PositionEncodingKind = "utf-16"
-	// Character offsets count UTF-32 code units.
+
+	// UTF32PositionEncodingKind is a member of the PositionEncodingKind enumeration.
 	//
-	// Implementation note: these are the same as Unicode codepoints,
-	// so this `PositionEncodingKind` may also be used for an
-	// encoding-agnostic representation of character offsets.
+	// Documentation from the LSP specification:
+	//
+	//	Character offsets count UTF-32 code units.
+	//
+	//	Implementation note: these are the same as Unicode codepoints,
+	//	so this `PositionEncodingKind` may also be used for an
+	//	encoding-agnostic representation of character offsets.
 	UTF32PositionEncodingKind PositionEncodingKind = "utf-32"
 )
 
-///////////////////////////
-/// PrepareRenameParams ///
-///////////////////////////
+// PositionEncodingKindArray is an array of PositionEncodingKind elements.
+type PositionEncodingKindArray []PositionEncodingKind
 
-// Generated from the LSP 'PrepareRenameParams' structure.
-type PrepareRenameParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-}
+// PrepareRenameParams is a structure.
+type PrepareRenameParams struct{}
 
-func (x PrepareRenameParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// PrepareRenameResult is a union of <TODO>.
+type PrepareRenameResult interface{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// PrepareRenameResultOption2 is a literal structure.
+type PrepareRenameResultOption2 struct{}
 
-	return w.Bytes(), nil
-}
+// PrepareRenameResultOption3 is a literal structure.
+type PrepareRenameResultOption3 struct{}
 
-func (x PrepareRenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// PrepareRenameResult ///
-///////////////////////////
-
-// Generated from the LSP 'PrepareRenameResult' type alias.
-// Generated from an LSP 'or' type.
-type PrepareRenameResult interface {
-	isPrepareRenameResult()
-}
-
-func (Range) isPrepareRenameResult()                      {}
-func (PrepareRenameResultOption1) isPrepareRenameResult() {}
-func (PrepareRenameResultOption2) isPrepareRenameResult() {}
-
-// Generated from an LSP 'literal' type.
-type PrepareRenameResultOption1 struct {
-	Range Range
-
-	Placeholder String
-}
-
-func (x PrepareRenameResultOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x PrepareRenameResultOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "placeholder", x.Placeholder); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type PrepareRenameResultOption2 struct {
-	DefaultBehavior Bool
-}
-
-func (x PrepareRenameResultOption2) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x PrepareRenameResultOption2) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "defaultBehavior", x.DefaultBehavior); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// PrepareSupportDefaultBehavior ///
-/////////////////////////////////////
-
-// Generated from the LSP 'PrepareSupportDefaultBehavior' enumeration.
-type PrepareSupportDefaultBehavior UInteger
+// PrepareSupportDefaultBehavior is an enumeration of UInt values.
+type PrepareSupportDefaultBehavior UInt
 
 const (
-	// The client's default behavior is to select the identifier
-	// according the to language's syntax rule.
+	// IdentifierPrepareSupportDefaultBehavior is a member of the PrepareSupportDefaultBehavior enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The client's default behavior is to select the identifier
+	//	according the to language's syntax rule.
 	IdentifierPrepareSupportDefaultBehavior PrepareSupportDefaultBehavior = 1
 )
 
-func (x *PrepareSupportDefaultBehavior) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*PrepareSupportDefaultBehavior)(x)); err != nil {
-		return fmt.Errorf("PrepareSupportDefaultBehavior: %w", err)
-	}
+// PreviousResultIDArray is an array of PreviousResultID elements.
+type PreviousResultIDArray []PreviousResultID
 
-	switch *x {
-	case IdentifierPrepareSupportDefaultBehavior:
-	default:
-		return fmt.Errorf("PrepareSupportDefaultBehavior: %v is not a member of the enum", x)
-	}
+// PreviousResultID is a structure.
+type PreviousResultID struct{}
 
-	return nil
-}
+// ProgressParams is a structure.
+type ProgressParams struct{}
 
-////////////////////////
-/// PreviousResultID ///
-////////////////////////
+// ProgressToken is a union of <TODO>.
+type ProgressToken interface{}
 
-// A previous result id in a workspace pull request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'PreviousResultId' structure.
-type PreviousResultID struct {
-	// The URI for which the client knowns a
-	// result id.
-	URI *DocumentURI
+// PublishDiagnosticsClientCapabilities is a structure.
+type PublishDiagnosticsClientCapabilities struct{}
 
-	// The value of the previous result id.
-	Value String
-}
+// PublishDiagnosticsClientCapabilitiesTagSupport is a literal structure.
+type PublishDiagnosticsClientCapabilitiesTagSupport struct{}
 
-func (x PreviousResultID) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// PublishDiagnosticsParams is a structure.
+type PublishDiagnosticsParams struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// Range is a structure.
+type Range struct{}
 
-	return w.Bytes(), nil
-}
+// RangeArray is an array of Range elements.
+type RangeArray []Range
 
-func (x PreviousResultID) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "value", x.Value); err != nil {
-		return err
-	}
-	return nil
-}
+// ReferenceClientCapabilities is a structure.
+type ReferenceClientCapabilities struct{}
 
-//////////////////////
-/// ProgressParams ///
-//////////////////////
+// ReferenceContext is a structure.
+type ReferenceContext struct{}
 
-// Generated from the LSP 'ProgressParams' structure.
-type ProgressParams struct {
-	// The progress token provided by the client or server.
-	Token ProgressToken
+// ReferenceOptions is a structure.
+type ReferenceOptions struct{}
 
-	// The progress data.
-	Value LSPAny
-}
+// ReferenceParams is a structure.
+type ReferenceParams struct{}
 
-func (x ProgressParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// ReferenceRegistrationOptions is a structure.
+type ReferenceRegistrationOptions struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// Registration is a structure.
+type Registration struct{}
 
-	return w.Bytes(), nil
-}
-
-func (x ProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "token", x.Token); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "value", x.Value); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////
-/// ProgressToken ///
-/////////////////////
-
-// Generated from the LSP 'ProgressToken' type alias.
-// Generated from an LSP 'or' type.
-type ProgressToken interface {
-	isProgressToken()
-}
-
-func (Integer) isProgressToken() {}
-func (String) isProgressToken()  {}
-
-////////////////////////////////////////////
-/// PublishDiagnosticsClientCapabilities ///
-////////////////////////////////////////////
-
-// The publish diagnostic client capabilities.
-//
-// Generated from the LSP 'PublishDiagnosticsClientCapabilities' structure.
-type PublishDiagnosticsClientCapabilities struct {
-	// Whether the clients accepts diagnostics with related information.
-	RelatedInformation Bool
-
-	// Client supports the tag property to provide meta data about a diagnostic.
-	// Clients supporting tags have to handle unknown tags gracefully.
-	//
-	// @since 3.15.0
-	TagSupport Optional[PublishDiagnosticsClientCapabilitiesTagSupport]
-
-	// Whether the client interprets the version property of the
-	// `textDocument/publishDiagnostics` notification's parameter.
-	//
-	// @since 3.15.0
-	VersionSupport Bool
-
-	// Client supports a codeDescription property
-	//
-	// @since 3.16.0
-	CodeDescriptionSupport Bool
-
-	// Whether code action supports the `data` property which is
-	// preserved between a `textDocument/publishDiagnostics` and
-	// `textDocument/codeAction` request.
-	//
-	// @since 3.16.0
-	DataSupport Bool
-}
-
-func (x PublishDiagnosticsClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x PublishDiagnosticsClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "relatedInformation", x.RelatedInformation); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "versionSupport", x.VersionSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "codeDescriptionSupport", x.CodeDescriptionSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "dataSupport", x.DataSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type PublishDiagnosticsClientCapabilitiesTagSupport struct {
-	// The tags supported by the client.
-	ValueSet DiagnosticTagArray
-}
-
-func (x PublishDiagnosticsClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x PublishDiagnosticsClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// PublishDiagnosticsParams ///
-////////////////////////////////
-
-// The publish diagnostic notification's parameters.
-//
-// Generated from the LSP 'PublishDiagnosticsParams' structure.
-type PublishDiagnosticsParams struct {
-	// The URI for which diagnostic information is reported.
-	URI *DocumentURI
-
-	// Optional the version number of the document the diagnostics are published for.
-	//
-	// @since 3.15.0
-	Version Optional[Integer]
-
-	// An array of diagnostic information items.
-	Diagnostics DiagnosticArray
-}
-
-func (x PublishDiagnosticsParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x PublishDiagnosticsParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////
-/// Range ///
-/////////////
-
-// A range in a text document expressed as (zero-based) start and end positions.
-//
-// If you want to specify a range that contains a line including the line ending
-// character(s) then use an end position denoting the start of the next line.
-// For example:
-// ```ts
-//
-//	{
-//	    start: { line: 5, character: 23 }
-//	    end : { line 6, character : 0 }
-//	}
-//
-// ```
-//
-// Generated from the LSP 'Range' structure.
-type Range struct {
-	// The range's start position.
-	Start Position
-
-	// The range's end position.
-	End Position
-}
-
-func (x Range) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Range) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "start", x.Start); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "end", x.End); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// ReferenceClientCapabilities ///
-///////////////////////////////////
-
-// Client Capabilities for a {@link ReferencesRequest}.
-//
-// Generated from the LSP 'ReferenceClientCapabilities' structure.
-type ReferenceClientCapabilities struct {
-	// Whether references supports dynamic registration.
-	DynamicRegistration Bool
-}
-
-func (x ReferenceClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ReferenceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// ReferenceContext ///
-////////////////////////
-
-// Value-object that contains additional information when
-// requesting references.
-//
-// Generated from the LSP 'ReferenceContext' structure.
-type ReferenceContext struct {
-	// Include the declaration of the current symbol.
-	IncludeDeclaration Bool
-}
-
-func (x ReferenceContext) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ReferenceContext) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "includeDeclaration", x.IncludeDeclaration); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// ReferenceOptions ///
-////////////////////////
-
-// Reference options.
-//
-// Generated from the LSP 'ReferenceOptions' structure.
-type ReferenceOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x ReferenceOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ReferenceOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// ReferenceParams ///
-///////////////////////
-
-// Parameters for a {@link ReferencesRequest}.
-//
-// Generated from the LSP 'ReferenceParams' structure.
-type ReferenceParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-
-	Context ReferenceContext
-}
-
-func (x ReferenceParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ReferenceParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "context", x.Context); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////
-/// ReferenceRegistrationOptions ///
-////////////////////////////////////
-
-// Registration options for a {@link ReferencesRequest}.
-//
-// Generated from the LSP 'ReferenceRegistrationOptions' structure.
-type ReferenceRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	ReferenceOptions
-}
-
-func (x ReferenceRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ReferenceRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.ReferenceOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// Registration ///
-////////////////////
-
-// General parameters to to register for an notification or to register a provider.
-//
-// Generated from the LSP 'Registration' structure.
-type Registration struct {
-	// The id used to register the request. The id can be used to deregister
-	// the request again.
-	ID String
-
-	// The method / capability to register for.
-	Method String
-
-	// Options necessary for the registration.
-	RegisterOptions LSPAny
-}
-
-func (x Registration) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Registration) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "id", x.ID); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "method", x.Method); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "registerOptions", x.RegisterOptions); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// RegistrationParams ///
-//////////////////////////
-
-// Generated from the LSP 'RegistrationParams' structure.
-type RegistrationParams struct {
-	Registrations RegistrationArray
-}
-
-func (x RegistrationParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RegistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "registrations", x.Registrations); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// RegistrationArray is an array of Registration elements.
 type RegistrationArray []Registration
 
-////////////////////////////////////////////
-/// RegularExpressionsClientCapabilities ///
-////////////////////////////////////////////
+// RegistrationOptions is the intersection of several types.
+type RegistrationOptions struct{}
 
-// Client capabilities specific to regular expressions.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'RegularExpressionsClientCapabilities' structure.
-type RegularExpressionsClientCapabilities struct {
-	// The engine's name.
-	Engine String
+// RegistrationParams is a structure.
+type RegistrationParams struct{}
 
-	// The engine's version.
-	Version String
-}
+// RegularExpressionsClientCapabilities is a structure.
+type RegularExpressionsClientCapabilities struct{}
 
-func (x RegularExpressionsClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// RelatedFullDocumentDiagnosticReport is a structure.
+type RelatedFullDocumentDiagnosticReport struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// RelatedFullDocumentDiagnosticReportRelatedDocuments is a union of <TODO>.
+type RelatedFullDocumentDiagnosticReportRelatedDocuments interface{}
 
-	return w.Bytes(), nil
-}
+// RelatedFullDocumentDiagnosticReportRelatedDocumentsMap is an array of DocumentURI to RelatedFullDocumentDiagnosticReportRelatedDocuments.
+type RelatedFullDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedFullDocumentDiagnosticReportRelatedDocuments
 
-func (x RegularExpressionsClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "engine", x.Engine); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	return nil
-}
+// RelatedUnchangedDocumentDiagnosticReport is a structure.
+type RelatedUnchangedDocumentDiagnosticReport struct{}
 
-///////////////////////////////////////////
-/// RelatedFullDocumentDiagnosticReport ///
-///////////////////////////////////////////
+// RelatedUnchangedDocumentDiagnosticReportRelatedDocuments is a union of <TODO>.
+type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments interface{}
 
-// A full diagnostic report with a set of related documents.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'RelatedFullDocumentDiagnosticReport' structure.
-type RelatedFullDocumentDiagnosticReport struct {
-	FullDocumentDiagnosticReport
+// RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap is an array of DocumentURI to RelatedUnchangedDocumentDiagnosticReportRelatedDocuments.
+type RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedUnchangedDocumentDiagnosticReportRelatedDocuments
 
-	// Diagnostics of related documents. This information is useful
-	// in programming languages where code in a file A can generate
-	// diagnostics in a file B which A depends on. An example of
-	// such a language is C/C++ where marco definitions in a file
-	// a.cpp and result in errors in a header file b.hpp.
-	//
-	// @since 3.17.0
-	RelatedDocuments DocumentURIRelatedFullDocumentDiagnosticReportRelatedDocumentsMap
-}
+// RelativePattern is a structure.
+type RelativePattern struct{}
 
-func (x RelatedFullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// RelativePatternBaseURI is a union of <TODO>.
+type RelativePatternBaseURI interface{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// RenameClientCapabilities is a structure.
+type RenameClientCapabilities struct{}
 
-	return w.Bytes(), nil
-}
+// RenameFile is a structure.
+type RenameFile struct{}
 
-func (x RelatedFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.FullDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "relatedDocuments", x.RelatedDocuments); err != nil {
-		return err
-	}
-	return nil
-}
+// RenameFileOptions is a structure.
+type RenameFileOptions struct{}
 
-// Generated from an LSP 'map' type.
-type DocumentURIRelatedFullDocumentDiagnosticReportRelatedDocumentsMap map[*DocumentURI]DocumentURIRelatedFullDocumentDiagnosticReportRelatedDocumentsMap
+// RenameFilesParams is a structure.
+type RenameFilesParams struct{}
 
-////////////////////////////////////////////////
-/// RelatedUnchangedDocumentDiagnosticReport ///
-////////////////////////////////////////////////
+// RenameOptions is a structure.
+type RenameOptions struct{}
 
-// An unchanged diagnostic report with a set of related documents.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'RelatedUnchangedDocumentDiagnosticReport' structure.
-type RelatedUnchangedDocumentDiagnosticReport struct {
-	UnchangedDocumentDiagnosticReport
+// RenameParams is a structure.
+type RenameParams struct{}
 
-	// Diagnostics of related documents. This information is useful
-	// in programming languages where code in a file A can generate
-	// diagnostics in a file B which A depends on. An example of
-	// such a language is C/C++ where marco definitions in a file
-	// a.cpp and result in errors in a header file b.hpp.
-	//
-	// @since 3.17.0
-	RelatedDocuments DocumentURIRelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap
-}
+// RenameRegistrationOptions is a structure.
+type RenameRegistrationOptions struct{}
 
-func (x RelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// ResourceOperation is a structure.
+type ResourceOperation struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RelatedUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.UnchangedDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "relatedDocuments", x.RelatedDocuments); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'map' type.
-type DocumentURIRelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap map[*DocumentURI]DocumentURIRelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap
-
-///////////////////////
-/// RelativePattern ///
-///////////////////////
-
-// A relative pattern is a helper to construct glob patterns that are matched
-// relatively to a base URI. The common value for a `baseUri` is a workspace
-// folder root, but it can be another absolute URI as well.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'RelativePattern' structure.
-type RelativePattern struct {
-	// A workspace folder or a base URI to which this pattern will be matched
-	// against relatively.
-	BaseURI RelativePatternBaseURI
-
-	// The actual glob pattern;
-	Pattern Pattern
-}
-
-func (x RelativePattern) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RelativePattern) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "baseUri", x.BaseURI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type RelativePatternBaseURI interface {
-	isRelativePatternBaseURI()
-}
-
-func (WorkspaceFolder) isRelativePatternBaseURI() {}
-func (*URI) isRelativePatternBaseURI()            {}
-
-////////////////////////////////
-/// RenameClientCapabilities ///
-////////////////////////////////
-
-// Generated from the LSP 'RenameClientCapabilities' structure.
-type RenameClientCapabilities struct {
-	// Whether rename supports dynamic registration.
-	DynamicRegistration Bool
-
-	// Client supports testing for validity of rename operations
-	// before execution.
-	//
-	// @since 3.12.0
-	PrepareSupport Bool
-
-	// Client supports the default behavior result.
-	//
-	// The value indicates the default behavior used by the
-	// client.
-	//
-	// @since 3.16.0
-	PrepareSupportDefaultBehavior Optional[PrepareSupportDefaultBehavior]
-
-	// Whether the client honors the change annotations in
-	// text edits and resource operations returned via the
-	// rename request's workspace edit by for example presenting
-	// the workspace edit in the user interface and asking
-	// for confirmation.
-	//
-	// @since 3.16.0
-	HonorsChangeAnnotations Bool
-}
-
-func (x RenameClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RenameClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "prepareSupport", x.PrepareSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "prepareSupportDefaultBehavior", x.PrepareSupportDefaultBehavior); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "honorsChangeAnnotations", x.HonorsChangeAnnotations); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// RenameFile ///
-//////////////////
-
-// Rename file operation
-//
-// Generated from the LSP 'RenameFile' structure.
-type RenameFile struct {
-	ResourceOperation
-
-	// The old (existing) location.
-	OldURI *DocumentURI
-
-	// The new location.
-	NewURI *DocumentURI
-
-	// Rename options.
-	Options Optional[RenameFileOptions]
-}
-
-func (x RenameFile) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RenameFile) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.ResourceOperation.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "kind", "rename"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "oldUri", x.OldURI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "newUri", x.NewURI); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// RenameFileOptions ///
-/////////////////////////
-
-// Rename file options
-//
-// Generated from the LSP 'RenameFileOptions' structure.
-type RenameFileOptions struct {
-	// Overwrite target if existing. Overwrite wins over `ignoreIfExists`
-	Overwrite Bool
-
-	// Ignores if target exists.
-	IgnoreIfExists Bool
-}
-
-func (x RenameFileOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RenameFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "overwrite", x.Overwrite); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "ignoreIfExists", x.IgnoreIfExists); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// RenameFilesParams ///
-/////////////////////////
-
-// The parameters sent in notifications/requests for user-initiated renames of
-// files.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'RenameFilesParams' structure.
-type RenameFilesParams struct {
-	// An array of all files/folders renamed in this operation. When a folder is renamed, only
-	// the folder will be included, and not its children.
-	Files FileRenameArray
-}
-
-func (x RenameFilesParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RenameFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "files", x.Files); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type FileRenameArray []FileRename
-
-/////////////////////
-/// RenameOptions ///
-/////////////////////
-
-// Provider options for a {@link RenameRequest}.
-//
-// Generated from the LSP 'RenameOptions' structure.
-type RenameOptions struct {
-	WorkDoneProgressOptions
-
-	// Renames should be checked and tested before being executed.
-	//
-	// @since version 3.12.0
-	PrepareProvider Bool
-}
-
-func (x RenameOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RenameOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "prepareProvider", x.PrepareProvider); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////
-/// RenameParams ///
-////////////////////
-
-// The parameters of a {@link RenameRequest}.
-//
-// Generated from the LSP 'RenameParams' structure.
-type RenameParams struct {
-	WorkDoneProgressParams
-
-	// The document to rename.
-	TextDocument TextDocumentIdentifier
-
-	// The position at which this request was sent.
-	Position Position
-
-	// The new name of the symbol. If the given name is not valid the
-	// request must return a {@link ResponseError} with an
-	// appropriate message set.
-	NewName String
-}
-
-func (x RenameParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "position", x.Position); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "newName", x.NewName); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// RenameRegistrationOptions ///
-/////////////////////////////////
-
-// Registration options for a {@link RenameRequest}.
-//
-// Generated from the LSP 'RenameRegistrationOptions' structure.
-type RenameRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	RenameOptions
-}
-
-func (x RenameRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x RenameRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.RenameOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// ResourceOperation ///
-/////////////////////////
-
-// A generic resource operation.
-//
-// Generated from the LSP 'ResourceOperation' structure.
-type ResourceOperation struct {
-	// The resource operation kind.
-	Kind String
-
-	// An optional annotation identifier describing the operation.
-	//
-	// @since 3.16.0
-	AnnotationID ChangeAnnotationIdentifier
-}
-
-func (x ResourceOperation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ResourceOperation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "annotationId", x.AnnotationID); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// ResourceOperationKind ///
-/////////////////////////////
-
-// Generated from the LSP 'ResourceOperationKind' enumeration.
+// ResourceOperationKind is an enumeration of String values.
 type ResourceOperationKind String
 
 const (
-	// Supports creating new files and folders.
+	// CreateResourceOperationKind is a member of the ResourceOperationKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Supports creating new files and folders.
 	CreateResourceOperationKind ResourceOperationKind = "create"
-	// Supports renaming existing files and folders.
+
+	// RenameResourceOperationKind is a member of the ResourceOperationKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Supports renaming existing files and folders.
 	RenameResourceOperationKind ResourceOperationKind = "rename"
-	// Supports deleting existing files and folders.
+
+	// DeleteResourceOperationKind is a member of the ResourceOperationKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Supports deleting existing files and folders.
 	DeleteResourceOperationKind ResourceOperationKind = "delete"
 )
 
-func (x *ResourceOperationKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*ResourceOperationKind)(x)); err != nil {
-		return fmt.Errorf("ResourceOperationKind: %w", err)
-	}
+// ResourceOperationKindArray is an array of ResourceOperationKind elements.
+type ResourceOperationKindArray []ResourceOperationKind
 
-	switch *x {
-	case CreateResourceOperationKind:
-	case RenameResourceOperationKind:
-	case DeleteResourceOperationKind:
-	default:
-		return fmt.Errorf("ResourceOperationKind: %v is not a member of the enum", x)
-	}
+// Result is a union of <TODO>.
+type Result interface{}
 
-	return nil
-}
+// ResultOption1 is a union of <TODO>.
+type ResultOption1 interface{}
 
-///////////////////
-/// SaveOptions ///
-///////////////////
+// ResultOption1Array is an array of ResultOption1 elements.
+type ResultOption1Array []ResultOption1
 
-// Save options.
+// SaveOptions is a structure.
+type SaveOptions struct{}
+
+// SelectionRange is a structure.
+type SelectionRange struct{}
+
+// SelectionRangeArray is an array of SelectionRange elements.
+type SelectionRangeArray []SelectionRange
+
+// SelectionRangeClientCapabilities is a structure.
+type SelectionRangeClientCapabilities struct{}
+
+// SelectionRangeOptions is a structure.
+type SelectionRangeOptions struct{}
+
+// SelectionRangeParams is a structure.
+type SelectionRangeParams struct{}
+
+// SelectionRangeRegistrationOptions is a structure.
+type SelectionRangeRegistrationOptions struct{}
+
+// SemanticTokenModifiers is an enumeration of String values.
 //
-// Generated from the LSP 'SaveOptions' structure.
-type SaveOptions struct {
-	// The client is supposed to include the content on save.
-	IncludeText Bool
-}
-
-func (x SaveOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SaveOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "includeText", x.IncludeText); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////
-/// SelectionRange ///
-//////////////////////
-
-// A selection range represents a part of a selection hierarchy. A selection range
-// may have a parent selection range that contains it.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'SelectionRange' structure.
-type SelectionRange struct {
-	// The {@link Range range} of this selection range.
-	Range Range
-
-	// The parent selection range containing this range. Therefore `parent.range` must contain `this.range`.
-	Parent Optional[SelectionRange]
-}
-
-func (x SelectionRange) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SelectionRange) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "parent", x.Parent); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// SelectionRangeClientCapabilities ///
-////////////////////////////////////////
-
-// Generated from the LSP 'SelectionRangeClientCapabilities' structure.
-type SelectionRangeClientCapabilities struct {
-	// Whether implementation supports dynamic registration for selection range providers. If this is set to `true`
-	// the client supports the new `SelectionRangeRegistrationOptions` return value for the corresponding server
-	// capability as well.
-	DynamicRegistration Bool
-}
-
-func (x SelectionRangeClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SelectionRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// SelectionRangeOptions ///
-/////////////////////////////
-
-// Generated from the LSP 'SelectionRangeOptions' structure.
-type SelectionRangeOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x SelectionRangeOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SelectionRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// SelectionRangeParams ///
-////////////////////////////
-
-// A parameter literal used in selection range requests.
+//	A set of predefined token modifiers. This set is not fixed
+//	an clients can specify additional token types via the
+//	corresponding client capabilities.
 //
-// Generated from the LSP 'SelectionRangeParams' structure.
-type SelectionRangeParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The positions inside the text document.
-	Positions PositionArray
-}
-
-func (x SelectionRangeParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SelectionRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "positions", x.Positions); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type PositionArray []Position
-
-/////////////////////////////////////////
-/// SelectionRangeRegistrationOptions ///
-/////////////////////////////////////////
-
-// Generated from the LSP 'SelectionRangeRegistrationOptions' structure.
-type SelectionRangeRegistrationOptions struct {
-	SelectionRangeOptions
-	TextDocumentRegistrationOptions
-	StaticRegistrationOptions
-}
-
-func (x SelectionRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SelectionRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.SelectionRangeOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////
-/// SemanticTokenModifiers ///
-//////////////////////////////
-
-// A set of predefined token modifiers. This set is not fixed
-// an clients can specify additional token types via the
-// corresponding client capabilities.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokenModifiers' enumeration.
+//	@since 3.16.0
 type SemanticTokenModifiers String
 
 const (
+	// DeclarationSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DeclarationSemanticTokenModifiers SemanticTokenModifiers = "declaration"
+
+	// DefinitionSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DefinitionSemanticTokenModifiers SemanticTokenModifiers = "definition"
+
+	// ReadonlySemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	ReadonlySemanticTokenModifiers SemanticTokenModifiers = "readonly"
+
+	// StaticSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	StaticSemanticTokenModifiers SemanticTokenModifiers = "static"
+
+	// DeprecatedSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DeprecatedSemanticTokenModifiers SemanticTokenModifiers = "deprecated"
+
+	// AbstractSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	AbstractSemanticTokenModifiers SemanticTokenModifiers = "abstract"
+
+	// AsyncSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	AsyncSemanticTokenModifiers SemanticTokenModifiers = "async"
+
+	// ModificationSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	ModificationSemanticTokenModifiers SemanticTokenModifiers = "modification"
+
+	// DocumentationSemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DocumentationSemanticTokenModifiers SemanticTokenModifiers = "documentation"
+
+	// DefaultLibrarySemanticTokenModifiers is a member of the SemanticTokenModifiers enumeration.
 	DefaultLibrarySemanticTokenModifiers SemanticTokenModifiers = "defaultLibrary"
 )
 
-//////////////////////////
-/// SemanticTokenTypes ///
-//////////////////////////
-
-// A set of predefined token types. This set is not fixed
-// an clients can specify additional token types via the
-// corresponding client capabilities.
+// SemanticTokenTypes is an enumeration of String values.
 //
-// @since 3.16.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'SemanticTokenTypes' enumeration.
+//	A set of predefined token types. This set is not fixed
+//	an clients can specify additional token types via the
+//	corresponding client capabilities.
+//
+//	@since 3.16.0
 type SemanticTokenTypes String
 
 const (
+	// NamespaceSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	NamespaceSemanticTokenTypes SemanticTokenTypes = "namespace"
-	// Represents a generic type. Acts as a fallback for types which can't be mapped to
-	// a specific type like class or enum.
+
+	// TypeSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Represents a generic type. Acts as a fallback for types which can't be mapped to
+	//	a specific type like class or enum.
 	TypeSemanticTokenTypes SemanticTokenTypes = "type"
+
+	// ClassSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	ClassSemanticTokenTypes SemanticTokenTypes = "class"
+
+	// EnumSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	EnumSemanticTokenTypes SemanticTokenTypes = "enum"
+
+	// InterfaceSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	InterfaceSemanticTokenTypes SemanticTokenTypes = "interface"
+
+	// StructSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	StructSemanticTokenTypes SemanticTokenTypes = "struct"
+
+	// TypeParameterSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	TypeParameterSemanticTokenTypes SemanticTokenTypes = "typeParameter"
+
+	// ParameterSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	ParameterSemanticTokenTypes SemanticTokenTypes = "parameter"
+
+	// VariableSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	VariableSemanticTokenTypes SemanticTokenTypes = "variable"
+
+	// PropertySemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	PropertySemanticTokenTypes SemanticTokenTypes = "property"
+
+	// EnumMemberSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	EnumMemberSemanticTokenTypes SemanticTokenTypes = "enumMember"
+
+	// EventSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	EventSemanticTokenTypes SemanticTokenTypes = "event"
+
+	// FunctionSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	FunctionSemanticTokenTypes SemanticTokenTypes = "function"
+
+	// MethodSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	MethodSemanticTokenTypes SemanticTokenTypes = "method"
+
+	// MacroSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	MacroSemanticTokenTypes SemanticTokenTypes = "macro"
+
+	// KeywordSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	KeywordSemanticTokenTypes SemanticTokenTypes = "keyword"
+
+	// ModifierSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	ModifierSemanticTokenTypes SemanticTokenTypes = "modifier"
+
+	// CommentSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	CommentSemanticTokenTypes SemanticTokenTypes = "comment"
+
+	// StringSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	StringSemanticTokenTypes SemanticTokenTypes = "string"
+
+	// NumberSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	NumberSemanticTokenTypes SemanticTokenTypes = "number"
+
+	// RegexpSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	RegexpSemanticTokenTypes SemanticTokenTypes = "regexp"
+
+	// OperatorSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
 	OperatorSemanticTokenTypes SemanticTokenTypes = "operator"
-	// @since 3.17.0
+
+	// DecoratorSemanticTokenTypes is a member of the SemanticTokenTypes enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	@since 3.17.0
 	DecoratorSemanticTokenTypes SemanticTokenTypes = "decorator"
 )
 
-//////////////////////
-/// SemanticTokens ///
-//////////////////////
+// SemanticTokens is a structure.
+type SemanticTokens struct{}
 
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokens' structure.
-type SemanticTokens struct {
-	// An optional result id. If provided and clients support delta updating
-	// the client will include the result id in the next semantic token request.
-	// A server can then instead of computing all semantic tokens again simply
-	// send a delta.
-	ResultID String
+// SemanticTokensClientCapabilities is a structure.
+type SemanticTokensClientCapabilities struct{}
 
-	// The actual tokens.
-	Data UIntegerArray
-}
+// SemanticTokensClientCapabilitiesRequests is a literal structure.
+type SemanticTokensClientCapabilitiesRequests struct{}
 
-func (x SemanticTokens) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// SemanticTokensClientCapabilitiesRequestsFull is a union of <TODO>.
+type SemanticTokensClientCapabilitiesRequestsFull interface{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// SemanticTokensClientCapabilitiesRequestsFullOption2 is a literal structure.
+type SemanticTokensClientCapabilitiesRequestsFullOption2 struct{}
 
-	return w.Bytes(), nil
-}
+// SemanticTokensClientCapabilitiesRequestsRange is a union of <TODO>.
+type SemanticTokensClientCapabilitiesRequestsRange interface{}
 
-func (x SemanticTokens) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
+// SemanticTokensClientCapabilitiesRequestsRangeOption2 is a literal structure.
+type SemanticTokensClientCapabilitiesRequestsRangeOption2 struct{}
 
-// Generated from an LSP 'array' type.
-type UIntegerArray []UInteger
+// SemanticTokensDelta is a structure.
+type SemanticTokensDelta struct{}
 
-////////////////////////////////////////
-/// SemanticTokensClientCapabilities ///
-////////////////////////////////////////
+// SemanticTokensDeltaParams is a structure.
+type SemanticTokensDeltaParams struct{}
 
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensClientCapabilities' structure.
-type SemanticTokensClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration Bool
+// SemanticTokensDeltaPartialResult is a structure.
+type SemanticTokensDeltaPartialResult struct{}
 
-	// Which requests the client supports and might send to the server
-	// depending on the server's capability. Please note that clients might not
-	// show semantic tokens or degrade some of the user experience if a range
-	// or full request is advertised by the client but not provided by the
-	// server. If for example the client capability `requests.full` and
-	// `request.range` are both set to true but the server only provides a
-	// range provider the client might not render a minimap correctly or might
-	// even decide to not show any semantic tokens at all.
-	Requests SemanticTokensClientCapabilitiesRequests
+// SemanticTokensEdit is a structure.
+type SemanticTokensEdit struct{}
 
-	// The token types that the client supports.
-	TokenTypes StringArray
-
-	// The token modifiers that the client supports.
-	TokenModifiers StringArray
-
-	// The token formats the clients supports.
-	Formats TokenFormatArray
-
-	// Whether the client supports tokens that can overlap each other.
-	OverlappingTokenSupport Bool
-
-	// Whether the client supports tokens that can span multiple lines.
-	MultilineTokenSupport Bool
-
-	// Whether the client allows the server to actively cancel a
-	// semantic token request, e.g. supports returning
-	// LSPErrorCodes.ServerCancelled. If a server does the client
-	// needs to retrigger the request.
-	//
-	// @since 3.17.0
-	ServerCancelSupport Bool
-
-	// Whether the client uses semantic tokens to augment existing
-	// syntax tokens. If set to `true` client side created syntax
-	// tokens and semantic tokens are both used for colorization. If
-	// set to `false` the client only uses the returned semantic tokens
-	// for colorization.
-	//
-	// If the value is `undefined` then the client behavior is not
-	// specified.
-	//
-	// @since 3.17.0
-	AugmentsSyntaxTokens Bool
-}
-
-func (x SemanticTokensClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "requests", x.Requests); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tokenTypes", x.TokenTypes); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tokenModifiers", x.TokenModifiers); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "formats", x.Formats); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "overlappingTokenSupport", x.OverlappingTokenSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "multilineTokenSupport", x.MultilineTokenSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "serverCancelSupport", x.ServerCancelSupport); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "augmentsSyntaxTokens", x.AugmentsSyntaxTokens); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type SemanticTokensClientCapabilitiesRequests struct {
-	// The client will send the `textDocument/semanticTokens/range` request if
-	// the server provides a corresponding handler.
-	Range SemanticTokensClientCapabilitiesRequestsRange
-
-	// The client will send the `textDocument/semanticTokens/full` request if
-	// the server provides a corresponding handler.
-	Full SemanticTokensClientCapabilitiesRequestsFull
-}
-
-func (x SemanticTokensClientCapabilitiesRequests) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensClientCapabilitiesRequests) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "full", x.Full); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type SemanticTokensClientCapabilitiesRequestsFull interface {
-	isSemanticTokensClientCapabilitiesRequestsFull()
-}
-
-func (Bool) isSemanticTokensClientCapabilitiesRequestsFull() {}
-func (SemanticTokensClientCapabilitiesRequestsFullOption1) isSemanticTokensClientCapabilitiesRequestsFull() {
-}
-
-// Generated from an LSP 'literal' type.
-type SemanticTokensClientCapabilitiesRequestsFullOption1 struct {
-	// The client will send the `textDocument/semanticTokens/full/delta` request if
-	// the server provides a corresponding handler.
-	Delta Bool
-}
-
-func (x SemanticTokensClientCapabilitiesRequestsFullOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensClientCapabilitiesRequestsFullOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "delta", x.Delta); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type SemanticTokensClientCapabilitiesRequestsRange interface {
-	isSemanticTokensClientCapabilitiesRequestsRange()
-}
-
-func (Bool) isSemanticTokensClientCapabilitiesRequestsRange() {}
-func (SemanticTokensClientCapabilitiesRequestsRangeOption1) isSemanticTokensClientCapabilitiesRequestsRange() {
-}
-
-// Generated from an LSP 'literal' type.
-type SemanticTokensClientCapabilitiesRequestsRangeOption1 struct{}
-
-func (x SemanticTokensClientCapabilitiesRequestsRangeOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensClientCapabilitiesRequestsRangeOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type TokenFormatArray []TokenFormat
-
-///////////////////////////
-/// SemanticTokensDelta ///
-///////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensDelta' structure.
-type SemanticTokensDelta struct {
-	ResultID String
-
-	// The semantic token edits to transform a previous result into a new result.
-	Edits SemanticTokensEditArray
-}
-
-func (x SemanticTokensDelta) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensDelta) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// SemanticTokensEditArray is an array of SemanticTokensEdit elements.
 type SemanticTokensEditArray []SemanticTokensEdit
 
-/////////////////////////////////
-/// SemanticTokensDeltaParams ///
-/////////////////////////////////
+// SemanticTokensLegend is a structure.
+type SemanticTokensLegend struct{}
 
-// @since 3.16.0
+// SemanticTokensOptions is a structure.
+type SemanticTokensOptions struct{}
+
+// SemanticTokensOptionsFull is a union of <TODO>.
+type SemanticTokensOptionsFull interface{}
+
+// SemanticTokensOptionsFullOption2 is a literal structure.
+type SemanticTokensOptionsFullOption2 struct{}
+
+// SemanticTokensOptionsRange is a union of <TODO>.
+type SemanticTokensOptionsRange interface{}
+
+// SemanticTokensOptionsRangeOption2 is a literal structure.
+type SemanticTokensOptionsRangeOption2 struct{}
+
+// SemanticTokensParams is a structure.
+type SemanticTokensParams struct{}
+
+// SemanticTokensPartialResult is a structure.
+type SemanticTokensPartialResult struct{}
+
+// SemanticTokensRangeParams is a structure.
+type SemanticTokensRangeParams struct{}
+
+// SemanticTokensRegistrationOptions is a structure.
+type SemanticTokensRegistrationOptions struct{}
+
+// SemanticTokensWorkspaceClientCapabilities is a structure.
+type SemanticTokensWorkspaceClientCapabilities struct{}
+
+// ServerCapabilities is a structure.
+type ServerCapabilities struct{}
+
+// ServerCapabilitiesCallHierarchyProvider is a union of <TODO>.
+type ServerCapabilitiesCallHierarchyProvider interface{}
+
+// ServerCapabilitiesCodeActionProvider is a union of <TODO>.
+type ServerCapabilitiesCodeActionProvider interface{}
+
+// ServerCapabilitiesColorProvider is a union of <TODO>.
+type ServerCapabilitiesColorProvider interface{}
+
+// ServerCapabilitiesDeclarationProvider is a union of <TODO>.
+type ServerCapabilitiesDeclarationProvider interface{}
+
+// ServerCapabilitiesDefinitionProvider is a union of <TODO>.
+type ServerCapabilitiesDefinitionProvider interface{}
+
+// ServerCapabilitiesDiagnosticProvider is a union of <TODO>.
+type ServerCapabilitiesDiagnosticProvider interface{}
+
+// ServerCapabilitiesDocumentFormattingProvider is a union of <TODO>.
+type ServerCapabilitiesDocumentFormattingProvider interface{}
+
+// ServerCapabilitiesDocumentHighlightProvider is a union of <TODO>.
+type ServerCapabilitiesDocumentHighlightProvider interface{}
+
+// ServerCapabilitiesDocumentRangeFormattingProvider is a union of <TODO>.
+type ServerCapabilitiesDocumentRangeFormattingProvider interface{}
+
+// ServerCapabilitiesDocumentSymbolProvider is a union of <TODO>.
+type ServerCapabilitiesDocumentSymbolProvider interface{}
+
+// ServerCapabilitiesFoldingRangeProvider is a union of <TODO>.
+type ServerCapabilitiesFoldingRangeProvider interface{}
+
+// ServerCapabilitiesHoverProvider is a union of <TODO>.
+type ServerCapabilitiesHoverProvider interface{}
+
+// ServerCapabilitiesImplementationProvider is a union of <TODO>.
+type ServerCapabilitiesImplementationProvider interface{}
+
+// ServerCapabilitiesInlayHintProvider is a union of <TODO>.
+type ServerCapabilitiesInlayHintProvider interface{}
+
+// ServerCapabilitiesInlineValueProvider is a union of <TODO>.
+type ServerCapabilitiesInlineValueProvider interface{}
+
+// ServerCapabilitiesLinkedEditingRangeProvider is a union of <TODO>.
+type ServerCapabilitiesLinkedEditingRangeProvider interface{}
+
+// ServerCapabilitiesMonikerProvider is a union of <TODO>.
+type ServerCapabilitiesMonikerProvider interface{}
+
+// ServerCapabilitiesNotebookDocumentSync is a union of <TODO>.
+type ServerCapabilitiesNotebookDocumentSync interface{}
+
+// ServerCapabilitiesReferencesProvider is a union of <TODO>.
+type ServerCapabilitiesReferencesProvider interface{}
+
+// ServerCapabilitiesRenameProvider is a union of <TODO>.
+type ServerCapabilitiesRenameProvider interface{}
+
+// ServerCapabilitiesSelectionRangeProvider is a union of <TODO>.
+type ServerCapabilitiesSelectionRangeProvider interface{}
+
+// ServerCapabilitiesSemanticTokensProvider is a union of <TODO>.
+type ServerCapabilitiesSemanticTokensProvider interface{}
+
+// ServerCapabilitiesTextDocumentSync is a union of <TODO>.
+type ServerCapabilitiesTextDocumentSync interface{}
+
+// ServerCapabilitiesTypeDefinitionProvider is a union of <TODO>.
+type ServerCapabilitiesTypeDefinitionProvider interface{}
+
+// ServerCapabilitiesTypeHierarchyProvider is a union of <TODO>.
+type ServerCapabilitiesTypeHierarchyProvider interface{}
+
+// ServerCapabilitiesWorkspace is a literal structure.
+type ServerCapabilitiesWorkspace struct{}
+
+// ServerCapabilitiesWorkspaceSymbolProvider is a union of <TODO>.
+type ServerCapabilitiesWorkspaceSymbolProvider interface{}
+
+// SetTraceParams is a structure.
+type SetTraceParams struct{}
+
+// ShowDocumentClientCapabilities is a structure.
+type ShowDocumentClientCapabilities struct{}
+
+// ShowDocumentParams is a structure.
+type ShowDocumentParams struct{}
+
+// ShowDocumentResult is a structure.
+type ShowDocumentResult struct{}
+
+// ShowMessageParams is a structure.
+type ShowMessageParams struct{}
+
+// ShowMessageRequestClientCapabilities is a structure.
+type ShowMessageRequestClientCapabilities struct{}
+
+// ShowMessageRequestClientCapabilitiesMessageActionItem is a literal structure.
+type ShowMessageRequestClientCapabilitiesMessageActionItem struct{}
+
+// ShowMessageRequestParams is a structure.
+type ShowMessageRequestParams struct{}
+
+// SignatureHelp is a structure.
+type SignatureHelp struct{}
+
+// SignatureHelpClientCapabilities is a structure.
+type SignatureHelpClientCapabilities struct{}
+
+// SignatureHelpClientCapabilitiesSignatureInformation is a literal structure.
+type SignatureHelpClientCapabilitiesSignatureInformation struct{}
+
+// SignatureHelpClientCapabilitiesSignatureInformationParameterInformation is a literal structure.
+type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct{}
+
+// SignatureHelpContext is a structure.
+type SignatureHelpContext struct{}
+
+// SignatureHelpOptions is a structure.
+type SignatureHelpOptions struct{}
+
+// SignatureHelpParams is a structure.
+type SignatureHelpParams struct{}
+
+// SignatureHelpRegistrationOptions is a structure.
+type SignatureHelpRegistrationOptions struct{}
+
+// SignatureHelpTriggerKind is an enumeration of UInt values.
 //
-// Generated from the LSP 'SemanticTokensDeltaParams' structure.
-type SemanticTokensDeltaParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The result id of a previous response. The result Id can either point to a full response
-	// or a delta response depending on what was received last.
-	PreviousResultID String
-}
-
-func (x SemanticTokensDeltaParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensDeltaParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "previousResultId", x.PreviousResultID); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// SemanticTokensDeltaPartialResult ///
-////////////////////////////////////////
-
-// @since 3.16.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'SemanticTokensDeltaPartialResult' structure.
-type SemanticTokensDeltaPartialResult struct {
-	Edits SemanticTokensEditArray
-}
-
-func (x SemanticTokensDeltaPartialResult) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensDeltaPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// SemanticTokensEdit ///
-//////////////////////////
-
-// @since 3.16.0
+//	How a signature help was triggered.
 //
-// Generated from the LSP 'SemanticTokensEdit' structure.
-type SemanticTokensEdit struct {
-	// The start offset of the edit.
-	Start UInteger
-
-	// The count of elements to remove.
-	DeleteCount UInteger
-
-	// The elements to insert.
-	Data UIntegerArray
-}
-
-func (x SemanticTokensEdit) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensEdit) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "start", x.Start); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "deleteCount", x.DeleteCount); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// SemanticTokensLegend ///
-////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensLegend' structure.
-type SemanticTokensLegend struct {
-	// The token types a server uses.
-	TokenTypes StringArray
-
-	// The token modifiers a server uses.
-	TokenModifiers StringArray
-}
-
-func (x SemanticTokensLegend) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensLegend) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "tokenTypes", x.TokenTypes); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tokenModifiers", x.TokenModifiers); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// SemanticTokensOptions ///
-/////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensOptions' structure.
-type SemanticTokensOptions struct {
-	WorkDoneProgressOptions
-
-	// The legend used by the server
-	Legend SemanticTokensLegend
-
-	// Server supports providing semantic tokens for a specific range
-	// of a document.
-	Range SemanticTokensOptionsRange
-
-	// Server supports providing semantic tokens for a full document.
-	Full SemanticTokensOptionsFull
-}
-
-func (x SemanticTokensOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "legend", x.Legend); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "full", x.Full); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type SemanticTokensOptionsFull interface {
-	isSemanticTokensOptionsFull()
-}
-
-func (Bool) isSemanticTokensOptionsFull()                             {}
-func (SemanticTokensOptionsFullOption1) isSemanticTokensOptionsFull() {}
-
-// Generated from an LSP 'literal' type.
-type SemanticTokensOptionsFullOption1 struct {
-	// The server supports deltas for full documents.
-	Delta Bool
-}
-
-func (x SemanticTokensOptionsFullOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensOptionsFullOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "delta", x.Delta); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type SemanticTokensOptionsRange interface {
-	isSemanticTokensOptionsRange()
-}
-
-func (Bool) isSemanticTokensOptionsRange()                              {}
-func (SemanticTokensOptionsRangeOption1) isSemanticTokensOptionsRange() {}
-
-// Generated from an LSP 'literal' type.
-type SemanticTokensOptionsRangeOption1 struct{}
-
-func (x SemanticTokensOptionsRangeOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensOptionsRangeOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	return nil
-}
-
-////////////////////////////
-/// SemanticTokensParams ///
-////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensParams' structure.
-type SemanticTokensParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-}
-
-func (x SemanticTokensParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// SemanticTokensPartialResult ///
-///////////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensPartialResult' structure.
-type SemanticTokensPartialResult struct {
-	Data UIntegerArray
-}
-
-func (x SemanticTokensPartialResult) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// SemanticTokensRangeParams ///
-/////////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensRangeParams' structure.
-type SemanticTokensRangeParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The range the semantic tokens are requested for.
-	Range Range
-}
-
-func (x SemanticTokensRangeParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////
-/// SemanticTokensRegistrationOptions ///
-/////////////////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensRegistrationOptions' structure.
-type SemanticTokensRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	SemanticTokensOptions
-	StaticRegistrationOptions
-}
-
-func (x SemanticTokensRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.SemanticTokensOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////////////
-/// SemanticTokensWorkspaceClientCapabilities ///
-/////////////////////////////////////////////////
-
-// @since 3.16.0
-//
-// Generated from the LSP 'SemanticTokensWorkspaceClientCapabilities' structure.
-type SemanticTokensWorkspaceClientCapabilities struct {
-	// Whether the client implementation supports a refresh request sent from
-	// the server to the client.
-	//
-	// Note that this event is global and will force the client to refresh all
-	// semantic tokens currently shown. It should be used with absolute care
-	// and is useful for situation where a server for example detects a project
-	// wide change that requires such a calculation.
-	RefreshSupport Bool
-}
-
-func (x SemanticTokensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SemanticTokensWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// ServerCapabilities ///
-//////////////////////////
-
-// Defines the capabilities provided by a language
-// server.
-//
-// Generated from the LSP 'ServerCapabilities' structure.
-type ServerCapabilities struct {
-	// The position encoding the server picked from the encodings offered
-	// by the client via the client capability `general.positionEncodings`.
-	//
-	// If the client didn't provide any position encodings the only valid
-	// value that a server can return is 'utf-16'.
-	//
-	// If omitted it defaults to 'utf-16'.
-	//
-	// @since 3.17.0
-	PositionEncoding Optional[PositionEncodingKind]
-
-	// Defines how text documents are synced. Is either a detailed structure
-	// defining each notification or for backwards compatibility the
-	// TextDocumentSyncKind number.
-	TextDocumentSync ServerCapabilitiesTextDocumentSync
-
-	// Defines how notebook documents are synced.
-	//
-	// @since 3.17.0
-	NotebookDocumentSync ServerCapabilitiesNotebookDocumentSync
-
-	// The server provides completion support.
-	CompletionProvider Optional[CompletionOptions]
-
-	// The server provides hover support.
-	HoverProvider ServerCapabilitiesHoverProvider
-
-	// The server provides signature help support.
-	SignatureHelpProvider Optional[SignatureHelpOptions]
-
-	// The server provides Goto Declaration support.
-	DeclarationProvider ServerCapabilitiesDeclarationProvider
-
-	// The server provides goto definition support.
-	DefinitionProvider ServerCapabilitiesDefinitionProvider
-
-	// The server provides Goto Type Definition support.
-	TypeDefinitionProvider ServerCapabilitiesTypeDefinitionProvider
-
-	// The server provides Goto Implementation support.
-	ImplementationProvider ServerCapabilitiesImplementationProvider
-
-	// The server provides find references support.
-	ReferencesProvider ServerCapabilitiesReferencesProvider
-
-	// The server provides document highlight support.
-	DocumentHighlightProvider ServerCapabilitiesDocumentHighlightProvider
-
-	// The server provides document symbol support.
-	DocumentSymbolProvider ServerCapabilitiesDocumentSymbolProvider
-
-	// The server provides code actions. CodeActionOptions may only be
-	// specified if the client states that it supports
-	// `codeActionLiteralSupport` in its initial `initialize` request.
-	CodeActionProvider ServerCapabilitiesCodeActionProvider
-
-	// The server provides code lens.
-	CodeLensProvider Optional[CodeLensOptions]
-
-	// The server provides document link support.
-	DocumentLinkProvider Optional[DocumentLinkOptions]
-
-	// The server provides color provider support.
-	ColorProvider ServerCapabilitiesColorProvider
-
-	// The server provides workspace symbol support.
-	WorkspaceSymbolProvider ServerCapabilitiesWorkspaceSymbolProvider
-
-	// The server provides document formatting.
-	DocumentFormattingProvider ServerCapabilitiesDocumentFormattingProvider
-
-	// The server provides document range formatting.
-	DocumentRangeFormattingProvider ServerCapabilitiesDocumentRangeFormattingProvider
-
-	// The server provides document formatting on typing.
-	DocumentOnTypeFormattingProvider Optional[DocumentOnTypeFormattingOptions]
-
-	// The server provides rename support. RenameOptions may only be
-	// specified if the client states that it supports
-	// `prepareSupport` in its initial `initialize` request.
-	RenameProvider ServerCapabilitiesRenameProvider
-
-	// The server provides folding provider support.
-	FoldingRangeProvider ServerCapabilitiesFoldingRangeProvider
-
-	// The server provides selection range support.
-	SelectionRangeProvider ServerCapabilitiesSelectionRangeProvider
-
-	// The server provides execute command support.
-	ExecuteCommandProvider Optional[ExecuteCommandOptions]
-
-	// The server provides call hierarchy support.
-	//
-	// @since 3.16.0
-	CallHierarchyProvider ServerCapabilitiesCallHierarchyProvider
-
-	// The server provides linked editing range support.
-	//
-	// @since 3.16.0
-	LinkedEditingRangeProvider ServerCapabilitiesLinkedEditingRangeProvider
-
-	// The server provides semantic tokens support.
-	//
-	// @since 3.16.0
-	SemanticTokensProvider ServerCapabilitiesSemanticTokensProvider
-
-	// The server provides moniker support.
-	//
-	// @since 3.16.0
-	MonikerProvider ServerCapabilitiesMonikerProvider
-
-	// The server provides type hierarchy support.
-	//
-	// @since 3.17.0
-	TypeHierarchyProvider ServerCapabilitiesTypeHierarchyProvider
-
-	// The server provides inline values.
-	//
-	// @since 3.17.0
-	InlineValueProvider ServerCapabilitiesInlineValueProvider
-
-	// The server provides inlay hints.
-	//
-	// @since 3.17.0
-	InlayHintProvider ServerCapabilitiesInlayHintProvider
-
-	// The server has support for pull model diagnostics.
-	//
-	// @since 3.17.0
-	DiagnosticProvider ServerCapabilitiesDiagnosticProvider
-
-	// Workspace specific server capabilities.
-	Workspace Optional[ServerCapabilitiesWorkspace]
-
-	// Experimental server capabilities.
-	Experimental LSPAny
-}
-
-func (x ServerCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "positionEncoding", x.PositionEncoding); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "textDocumentSync", x.TextDocumentSync); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "notebookDocumentSync", x.NotebookDocumentSync); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "completionProvider", x.CompletionProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "hoverProvider", x.HoverProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "signatureHelpProvider", x.SignatureHelpProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "declarationProvider", x.DeclarationProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "definitionProvider", x.DefinitionProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "typeDefinitionProvider", x.TypeDefinitionProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "implementationProvider", x.ImplementationProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "referencesProvider", x.ReferencesProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentHighlightProvider", x.DocumentHighlightProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentSymbolProvider", x.DocumentSymbolProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "codeActionProvider", x.CodeActionProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "codeLensProvider", x.CodeLensProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "documentLinkProvider", x.DocumentLinkProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "colorProvider", x.ColorProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "workspaceSymbolProvider", x.WorkspaceSymbolProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentFormattingProvider", x.DocumentFormattingProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentRangeFormattingProvider", x.DocumentRangeFormattingProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "documentOnTypeFormattingProvider", x.DocumentOnTypeFormattingProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "renameProvider", x.RenameProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "foldingRangeProvider", x.FoldingRangeProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "selectionRangeProvider", x.SelectionRangeProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "executeCommandProvider", x.ExecuteCommandProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "callHierarchyProvider", x.CallHierarchyProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "linkedEditingRangeProvider", x.LinkedEditingRangeProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "semanticTokensProvider", x.SemanticTokensProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "monikerProvider", x.MonikerProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "typeHierarchyProvider", x.TypeHierarchyProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "inlineValueProvider", x.InlineValueProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "inlayHintProvider", x.InlayHintProvider); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "diagnosticProvider", x.DiagnosticProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "workspace", x.Workspace); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "experimental", x.Experimental); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesCallHierarchyProvider interface {
-	isServerCapabilitiesCallHierarchyProvider()
-}
-
-func (Bool) isServerCapabilitiesCallHierarchyProvider()                             {}
-func (CallHierarchyOptions) isServerCapabilitiesCallHierarchyProvider()             {}
-func (CallHierarchyRegistrationOptions) isServerCapabilitiesCallHierarchyProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesCodeActionProvider interface {
-	isServerCapabilitiesCodeActionProvider()
-}
-
-func (Bool) isServerCapabilitiesCodeActionProvider()              {}
-func (CodeActionOptions) isServerCapabilitiesCodeActionProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesColorProvider interface {
-	isServerCapabilitiesColorProvider()
-}
-
-func (Bool) isServerCapabilitiesColorProvider()                             {}
-func (DocumentColorOptions) isServerCapabilitiesColorProvider()             {}
-func (DocumentColorRegistrationOptions) isServerCapabilitiesColorProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesDeclarationProvider interface {
-	isServerCapabilitiesDeclarationProvider()
-}
-
-func (Bool) isServerCapabilitiesDeclarationProvider()                           {}
-func (DeclarationOptions) isServerCapabilitiesDeclarationProvider()             {}
-func (DeclarationRegistrationOptions) isServerCapabilitiesDeclarationProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesDefinitionProvider interface {
-	isServerCapabilitiesDefinitionProvider()
-}
-
-func (Bool) isServerCapabilitiesDefinitionProvider()              {}
-func (DefinitionOptions) isServerCapabilitiesDefinitionProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesDiagnosticProvider interface {
-	isServerCapabilitiesDiagnosticProvider()
-}
-
-func (DiagnosticOptions) isServerCapabilitiesDiagnosticProvider()             {}
-func (DiagnosticRegistrationOptions) isServerCapabilitiesDiagnosticProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesDocumentFormattingProvider interface {
-	isServerCapabilitiesDocumentFormattingProvider()
-}
-
-func (Bool) isServerCapabilitiesDocumentFormattingProvider()                      {}
-func (DocumentFormattingOptions) isServerCapabilitiesDocumentFormattingProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesDocumentHighlightProvider interface {
-	isServerCapabilitiesDocumentHighlightProvider()
-}
-
-func (Bool) isServerCapabilitiesDocumentHighlightProvider()                     {}
-func (DocumentHighlightOptions) isServerCapabilitiesDocumentHighlightProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesDocumentRangeFormattingProvider interface {
-	isServerCapabilitiesDocumentRangeFormattingProvider()
-}
-
-func (Bool) isServerCapabilitiesDocumentRangeFormattingProvider()                           {}
-func (DocumentRangeFormattingOptions) isServerCapabilitiesDocumentRangeFormattingProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesDocumentSymbolProvider interface {
-	isServerCapabilitiesDocumentSymbolProvider()
-}
-
-func (Bool) isServerCapabilitiesDocumentSymbolProvider()                  {}
-func (DocumentSymbolOptions) isServerCapabilitiesDocumentSymbolProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesFoldingRangeProvider interface {
-	isServerCapabilitiesFoldingRangeProvider()
-}
-
-func (Bool) isServerCapabilitiesFoldingRangeProvider()                            {}
-func (FoldingRangeOptions) isServerCapabilitiesFoldingRangeProvider()             {}
-func (FoldingRangeRegistrationOptions) isServerCapabilitiesFoldingRangeProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesHoverProvider interface {
-	isServerCapabilitiesHoverProvider()
-}
-
-func (Bool) isServerCapabilitiesHoverProvider()         {}
-func (HoverOptions) isServerCapabilitiesHoverProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesImplementationProvider interface {
-	isServerCapabilitiesImplementationProvider()
-}
-
-func (Bool) isServerCapabilitiesImplementationProvider()                              {}
-func (ImplementationOptions) isServerCapabilitiesImplementationProvider()             {}
-func (ImplementationRegistrationOptions) isServerCapabilitiesImplementationProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesInlayHintProvider interface {
-	isServerCapabilitiesInlayHintProvider()
-}
-
-func (Bool) isServerCapabilitiesInlayHintProvider()                         {}
-func (InlayHintOptions) isServerCapabilitiesInlayHintProvider()             {}
-func (InlayHintRegistrationOptions) isServerCapabilitiesInlayHintProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesInlineValueProvider interface {
-	isServerCapabilitiesInlineValueProvider()
-}
-
-func (Bool) isServerCapabilitiesInlineValueProvider()                           {}
-func (InlineValueOptions) isServerCapabilitiesInlineValueProvider()             {}
-func (InlineValueRegistrationOptions) isServerCapabilitiesInlineValueProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesLinkedEditingRangeProvider interface {
-	isServerCapabilitiesLinkedEditingRangeProvider()
-}
-
-func (Bool) isServerCapabilitiesLinkedEditingRangeProvider()                                  {}
-func (LinkedEditingRangeOptions) isServerCapabilitiesLinkedEditingRangeProvider()             {}
-func (LinkedEditingRangeRegistrationOptions) isServerCapabilitiesLinkedEditingRangeProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesMonikerProvider interface {
-	isServerCapabilitiesMonikerProvider()
-}
-
-func (Bool) isServerCapabilitiesMonikerProvider()                       {}
-func (MonikerOptions) isServerCapabilitiesMonikerProvider()             {}
-func (MonikerRegistrationOptions) isServerCapabilitiesMonikerProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesNotebookDocumentSync interface {
-	isServerCapabilitiesNotebookDocumentSync()
-}
-
-func (NotebookDocumentSyncOptions) isServerCapabilitiesNotebookDocumentSync()             {}
-func (NotebookDocumentSyncRegistrationOptions) isServerCapabilitiesNotebookDocumentSync() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesReferencesProvider interface {
-	isServerCapabilitiesReferencesProvider()
-}
-
-func (Bool) isServerCapabilitiesReferencesProvider()             {}
-func (ReferenceOptions) isServerCapabilitiesReferencesProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesRenameProvider interface {
-	isServerCapabilitiesRenameProvider()
-}
-
-func (Bool) isServerCapabilitiesRenameProvider()          {}
-func (RenameOptions) isServerCapabilitiesRenameProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesSelectionRangeProvider interface {
-	isServerCapabilitiesSelectionRangeProvider()
-}
-
-func (Bool) isServerCapabilitiesSelectionRangeProvider()                              {}
-func (SelectionRangeOptions) isServerCapabilitiesSelectionRangeProvider()             {}
-func (SelectionRangeRegistrationOptions) isServerCapabilitiesSelectionRangeProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesSemanticTokensProvider interface {
-	isServerCapabilitiesSemanticTokensProvider()
-}
-
-func (SemanticTokensOptions) isServerCapabilitiesSemanticTokensProvider()             {}
-func (SemanticTokensRegistrationOptions) isServerCapabilitiesSemanticTokensProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesTextDocumentSync interface {
-	isServerCapabilitiesTextDocumentSync()
-}
-
-func (TextDocumentSyncOptions) isServerCapabilitiesTextDocumentSync() {}
-func (TextDocumentSyncKind) isServerCapabilitiesTextDocumentSync()    {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesTypeDefinitionProvider interface {
-	isServerCapabilitiesTypeDefinitionProvider()
-}
-
-func (Bool) isServerCapabilitiesTypeDefinitionProvider()                              {}
-func (TypeDefinitionOptions) isServerCapabilitiesTypeDefinitionProvider()             {}
-func (TypeDefinitionRegistrationOptions) isServerCapabilitiesTypeDefinitionProvider() {}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesTypeHierarchyProvider interface {
-	isServerCapabilitiesTypeHierarchyProvider()
-}
-
-func (Bool) isServerCapabilitiesTypeHierarchyProvider()                             {}
-func (TypeHierarchyOptions) isServerCapabilitiesTypeHierarchyProvider()             {}
-func (TypeHierarchyRegistrationOptions) isServerCapabilitiesTypeHierarchyProvider() {}
-
-// Generated from an LSP 'literal' type.
-type ServerCapabilitiesWorkspace struct {
-	// The server supports workspace folder.
-	//
-	// @since 3.6.0
-	WorkspaceFolders Optional[WorkspaceFoldersServerCapabilities]
-
-	// The server is interested in notifications/requests for operations on files.
-	//
-	// @since 3.16.0
-	FileOperations Optional[FileOperationOptions]
-}
-
-func (x ServerCapabilitiesWorkspace) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ServerCapabilitiesWorkspace) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "workspaceFolders", x.WorkspaceFolders); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "fileOperations", x.FileOperations); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type ServerCapabilitiesWorkspaceSymbolProvider interface {
-	isServerCapabilitiesWorkspaceSymbolProvider()
-}
-
-func (Bool) isServerCapabilitiesWorkspaceSymbolProvider()                   {}
-func (WorkspaceSymbolOptions) isServerCapabilitiesWorkspaceSymbolProvider() {}
-
-//////////////////////
-/// SetTraceParams ///
-//////////////////////
-
-// Generated from the LSP 'SetTraceParams' structure.
-type SetTraceParams struct {
-	Value TraceValues
-}
-
-func (x SetTraceParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SetTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "value", x.Value); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// ShowDocumentClientCapabilities ///
-//////////////////////////////////////
-
-// Client capabilities for the showDocument request.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'ShowDocumentClientCapabilities' structure.
-type ShowDocumentClientCapabilities struct {
-	// The client has support for the showDocument
-	// request.
-	Support Bool
-}
-
-func (x ShowDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ShowDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "support", x.Support); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// ShowDocumentParams ///
-//////////////////////////
-
-// Params to show a resource in the UI.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'ShowDocumentParams' structure.
-type ShowDocumentParams struct {
-	// The uri to show.
-	URI *URI
-
-	// Indicates to show the resource in an external program.
-	// To show, for example, `https://code.visualstudio.com/`
-	// in the default WEB browser set `external` to `true`.
-	External Bool
-
-	// An optional property to indicate whether the editor
-	// showing the document should take focus or not.
-	// Clients might ignore this property if an external
-	// program is started.
-	TakeFocus Bool
-
-	// An optional selection range if the document is a text
-	// document. Clients might ignore the property if an
-	// external program is started or the file is not a text
-	// file.
-	Selection Optional[Range]
-}
-
-func (x ShowDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ShowDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "external", x.External); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "takeFocus", x.TakeFocus); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "selection", x.Selection); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////
-/// ShowDocumentResult ///
-//////////////////////////
-
-// The result of a showDocument request.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'ShowDocumentResult' structure.
-type ShowDocumentResult struct {
-	// A boolean indicating if the show was successful.
-	Success Bool
-}
-
-func (x ShowDocumentResult) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ShowDocumentResult) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "success", x.Success); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// ShowMessageParams ///
-/////////////////////////
-
-// The parameters of a notification message.
-//
-// Generated from the LSP 'ShowMessageParams' structure.
-type ShowMessageParams struct {
-	// The message type. See {@link MessageType}
-	Type MessageType
-
-	// The actual message.
-	Message String
-}
-
-func (x ShowMessageParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ShowMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "type", x.Type); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////////
-/// ShowMessageRequestClientCapabilities ///
-////////////////////////////////////////////
-
-// Show message request client capabilities
-//
-// Generated from the LSP 'ShowMessageRequestClientCapabilities' structure.
-type ShowMessageRequestClientCapabilities struct {
-	// Capabilities specific to the `MessageActionItem` type.
-	MessageActionItem Optional[ShowMessageRequestClientCapabilitiesMessageActionItem]
-}
-
-func (x ShowMessageRequestClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ShowMessageRequestClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "messageActionItem", x.MessageActionItem); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
-	// Whether the client supports additional attributes which
-	// are preserved and send back to the server in the
-	// request's response.
-	AdditionalPropertiesSupport Bool
-}
-
-func (x ShowMessageRequestClientCapabilitiesMessageActionItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ShowMessageRequestClientCapabilitiesMessageActionItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "additionalPropertiesSupport", x.AdditionalPropertiesSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// ShowMessageRequestParams ///
-////////////////////////////////
-
-// Generated from the LSP 'ShowMessageRequestParams' structure.
-type ShowMessageRequestParams struct {
-	// The message type. See {@link MessageType}
-	Type MessageType
-
-	// The actual message.
-	Message String
-
-	// The message action items to present.
-	Actions MessageActionItemArray
-}
-
-func (x ShowMessageRequestParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x ShowMessageRequestParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "type", x.Type); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "actions", x.Actions); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type MessageActionItemArray []MessageActionItem
-
-/////////////////////
-/// SignatureHelp ///
-/////////////////////
-
-// Signature help represents the signature of something
-// callable. There can be multiple signature but only one
-// active and only one active parameter.
-//
-// Generated from the LSP 'SignatureHelp' structure.
-type SignatureHelp struct {
-	// One or more signatures.
-	Signatures SignatureInformationArray
-
-	// The active signature. If omitted or the value lies outside the
-	// range of `signatures` the value defaults to zero or is ignored if
-	// the `SignatureHelp` has no signatures.
-	//
-	// Whenever possible implementors should make an active decision about
-	// the active signature and shouldn't rely on a default value.
-	//
-	// In future version of the protocol this property might become
-	// mandatory to better express this.
-	ActiveSignature Optional[UInteger]
-
-	// The active parameter of the active signature. If omitted or the value
-	// lies outside the range of `signatures[activeSignature].parameters`
-	// defaults to 0 if the active signature has parameters. If
-	// the active signature has no parameters it is ignored.
-	// In future version of the protocol this property might become
-	// mandatory to better express the active parameter if the
-	// active signature does have any.
-	ActiveParameter Optional[UInteger]
-}
-
-func (x SignatureHelp) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelp) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "signatures", x.Signatures); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "activeSignature", x.ActiveSignature); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type SignatureInformationArray []SignatureInformation
-
-///////////////////////////////////////
-/// SignatureHelpClientCapabilities ///
-///////////////////////////////////////
-
-// Client Capabilities for a {@link SignatureHelpRequest}.
-//
-// Generated from the LSP 'SignatureHelpClientCapabilities' structure.
-type SignatureHelpClientCapabilities struct {
-	// Whether signature help supports dynamic registration.
-	DynamicRegistration Bool
-
-	// The client supports the following `SignatureInformation`
-	// specific properties.
-	SignatureInformation Optional[SignatureHelpClientCapabilitiesSignatureInformation]
-
-	// The client supports to send additional context information for a
-	// `textDocument/signatureHelp` request. A client that opts into
-	// contextSupport will also support the `retriggerCharacters` on
-	// `SignatureHelpOptions`.
-	//
-	// @since 3.15.0
-	ContextSupport Bool
-}
-
-func (x SignatureHelpClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelpClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "signatureInformation", x.SignatureInformation); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "contextSupport", x.ContextSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type SignatureHelpClientCapabilitiesSignatureInformation struct {
-	// Client supports the following content formats for the documentation
-	// property. The order describes the preferred format of the client.
-	DocumentationFormat MarkupKindArray
-
-	// Client capabilities specific to parameter information.
-	ParameterInformation Optional[SignatureHelpClientCapabilitiesSignatureInformationParameterInformation]
-
-	// The client supports the `activeParameter` property on `SignatureInformation`
-	// literal.
-	//
-	// @since 3.16.0
-	ActiveParameterSupport Bool
-}
-
-func (x SignatureHelpClientCapabilitiesSignatureInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelpClientCapabilitiesSignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "documentationFormat", x.DocumentationFormat); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "parameterInformation", x.ParameterInformation); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "activeParameterSupport", x.ActiveParameterSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct {
-	// The client supports processing label offsets instead of a
-	// simple label string.
-	//
-	// @since 3.14.0
-	LabelOffsetSupport Bool
-}
-
-func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "labelOffsetSupport", x.LabelOffsetSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// SignatureHelpContext ///
-////////////////////////////
-
-// Additional information about the context in which a signature help request was triggered.
-//
-// @since 3.15.0
-//
-// Generated from the LSP 'SignatureHelpContext' structure.
-type SignatureHelpContext struct {
-	// Action that caused signature help to be triggered.
-	TriggerKind SignatureHelpTriggerKind
-
-	// Character that caused signature help to be triggered.
-	//
-	// This is undefined when `triggerKind !== SignatureHelpTriggerKind.TriggerCharacter`
-	TriggerCharacter String
-
-	// `true` if signature help was already showing when it was triggered.
-	//
-	// Retriggers occurs when the signature help is already active and can be caused by actions such as
-	// typing a trigger character, a cursor move, or document content changes.
-	IsRetrigger Bool
-
-	// The currently active `SignatureHelp`.
-	//
-	// The `activeSignatureHelp` has its `SignatureHelp.activeSignature` field updated based on
-	// the user navigating through available signatures.
-	ActiveSignatureHelp Optional[SignatureHelp]
-}
-
-func (x SignatureHelpContext) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelpContext) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "triggerKind", x.TriggerKind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "triggerCharacter", x.TriggerCharacter); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "isRetrigger", x.IsRetrigger); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "activeSignatureHelp", x.ActiveSignatureHelp); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// SignatureHelpOptions ///
-////////////////////////////
-
-// Server Capabilities for a {@link SignatureHelpRequest}.
-//
-// Generated from the LSP 'SignatureHelpOptions' structure.
-type SignatureHelpOptions struct {
-	WorkDoneProgressOptions
-
-	// List of characters that trigger signature help automatically.
-	TriggerCharacters StringArray
-
-	// List of characters that re-trigger signature help.
-	//
-	// These trigger characters are only active when signature help is already showing. All trigger characters
-	// are also counted as re-trigger characters.
-	//
-	// @since 3.15.0
-	RetriggerCharacters StringArray
-}
-
-func (x SignatureHelpOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelpOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "triggerCharacters", x.TriggerCharacters); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "retriggerCharacters", x.RetriggerCharacters); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// SignatureHelpParams ///
-///////////////////////////
-
-// Parameters for a {@link SignatureHelpRequest}.
-//
-// Generated from the LSP 'SignatureHelpParams' structure.
-type SignatureHelpParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-
-	// The signature help context. This is only available if the client specifies
-	// to send this using the client capability `textDocument.signatureHelp.contextSupport === true`
-	//
-	// @since 3.15.0
-	Context Optional[SignatureHelpContext]
-}
-
-func (x SignatureHelpParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelpParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "context", x.Context); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// SignatureHelpRegistrationOptions ///
-////////////////////////////////////////
-
-// Registration options for a {@link SignatureHelpRequest}.
-//
-// Generated from the LSP 'SignatureHelpRegistrationOptions' structure.
-type SignatureHelpRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	SignatureHelpOptions
-}
-
-func (x SignatureHelpRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureHelpRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.SignatureHelpOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////
-/// SignatureHelpTriggerKind ///
-////////////////////////////////
-
-// How a signature help was triggered.
-//
-// @since 3.15.0
-//
-// Generated from the LSP 'SignatureHelpTriggerKind' enumeration.
-type SignatureHelpTriggerKind UInteger
+//	@since 3.15.0
+type SignatureHelpTriggerKind UInt
 
 const (
-	// Signature help was invoked manually by the user or by a command.
+	// InvokedSignatureHelpTriggerKind is a member of the SignatureHelpTriggerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Signature help was invoked manually by the user or by a command.
 	InvokedSignatureHelpTriggerKind SignatureHelpTriggerKind = 1
-	// Signature help was triggered by a trigger character.
+
+	// TriggerCharacterSignatureHelpTriggerKind is a member of the SignatureHelpTriggerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Signature help was triggered by a trigger character.
 	TriggerCharacterSignatureHelpTriggerKind SignatureHelpTriggerKind = 2
-	// Signature help was triggered by the cursor moving or by the document content changing.
+
+	// ContentChangeSignatureHelpTriggerKind is a member of the SignatureHelpTriggerKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Signature help was triggered by the cursor moving or by the document content changing.
 	ContentChangeSignatureHelpTriggerKind SignatureHelpTriggerKind = 3
 )
 
-func (x *SignatureHelpTriggerKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*SignatureHelpTriggerKind)(x)); err != nil {
-		return fmt.Errorf("SignatureHelpTriggerKind: %w", err)
-	}
+// SignatureInformation is a structure.
+type SignatureInformation struct{}
 
-	switch *x {
-	case InvokedSignatureHelpTriggerKind:
-	case TriggerCharacterSignatureHelpTriggerKind:
-	case ContentChangeSignatureHelpTriggerKind:
-	default:
-		return fmt.Errorf("SignatureHelpTriggerKind: %v is not a member of the enum", x)
-	}
+// SignatureInformationArray is an array of SignatureInformation elements.
+type SignatureInformationArray []SignatureInformation
 
-	return nil
-}
+// SignatureInformationDocumentation is a union of <TODO>.
+type SignatureInformationDocumentation interface{}
 
-////////////////////////////
-/// SignatureInformation ///
-////////////////////////////
+// StaticRegistrationOptions is a structure.
+type StaticRegistrationOptions struct{}
 
-// Represents the signature of something callable. A signature
-// can have a label, like a function-name, a doc-comment, and
-// a set of parameters.
+// String is the LSP string type.
+type String string
+
+// StringArray is an array of String elements.
+type StringArray []String
+
+// SymbolInformation is a structure.
+type SymbolInformation struct{}
+
+// SymbolInformationArray is an array of SymbolInformation elements.
+type SymbolInformationArray []SymbolInformation
+
+// SymbolKind is an enumeration of UInt values.
 //
-// Generated from the LSP 'SignatureInformation' structure.
-type SignatureInformation struct {
-	// The label of this signature. Will be shown in
-	// the UI.
-	Label String
-
-	// The human-readable doc-comment of this signature. Will be shown
-	// in the UI but can be omitted.
-	Documentation SignatureInformationDocumentation
-
-	// The parameters of this signature.
-	Parameters ParameterInformationArray
-
-	// The index of the active parameter.
-	//
-	// If provided, this is used in place of `SignatureHelp.activeParameter`.
-	//
-	// @since 3.16.0
-	ActiveParameter Optional[UInteger]
-}
-
-func (x SignatureInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "label", x.Label); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentation", x.Documentation); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "parameters", x.Parameters); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type ParameterInformationArray []ParameterInformation
-
-// Generated from an LSP 'or' type.
-type SignatureInformationDocumentation interface {
-	isSignatureInformationDocumentation()
-}
-
-func (String) isSignatureInformationDocumentation()        {}
-func (MarkupContent) isSignatureInformationDocumentation() {}
-
-/////////////////////////////////
-/// StaticRegistrationOptions ///
-/////////////////////////////////
-
-// Static registration options to be returned in the initialize
-// request.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'StaticRegistrationOptions' structure.
-type StaticRegistrationOptions struct {
-	// The id used to register the request. The id can be used to deregister
-	// the request again. See also Registration#id.
-	ID String
-}
-
-func (x StaticRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x StaticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "id", x.ID); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// SymbolInformation ///
-/////////////////////////
-
-// Represents information about programming constructs like variables, classes,
-// interfaces etc.
-//
-// Generated from the LSP 'SymbolInformation' structure.
-type SymbolInformation struct {
-	BaseSymbolInformation
-
-	// Indicates if this symbol is deprecated.
-	//
-	// @deprecated Use tags instead
-	//
-	// Deprecated: Use tags instead
-	Deprecated Bool
-
-	// The location of this symbol. The location's range is used by a tool
-	// to reveal the location in the editor. If the symbol is selected in the
-	// tool the range's start information is used to position the cursor. So
-	// the range usually spans more than the actual symbol's name and does
-	// normally include things like visibility modifiers.
-	//
-	// The range doesn't have to denote a node range in the sense of an abstract
-	// syntax tree. It can therefore not be used to re-construct a hierarchy of
-	// the symbols.
-	Location Location
-}
-
-func (x SymbolInformation) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x SymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.BaseSymbolInformation.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "deprecated", x.Deprecated); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "location", x.Location); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////
-/// SymbolKind ///
-//////////////////
-
-// A symbol kind.
-//
-// Generated from the LSP 'SymbolKind' enumeration.
-type SymbolKind UInteger
+//	A symbol kind.
+type SymbolKind UInt
 
 const (
+	// FileSymbolKind is a member of the SymbolKind enumeration.
 	FileSymbolKind SymbolKind = 1
+
+	// ModuleSymbolKind is a member of the SymbolKind enumeration.
 	ModuleSymbolKind SymbolKind = 2
+
+	// NamespaceSymbolKind is a member of the SymbolKind enumeration.
 	NamespaceSymbolKind SymbolKind = 3
+
+	// PackageSymbolKind is a member of the SymbolKind enumeration.
 	PackageSymbolKind SymbolKind = 4
+
+	// ClassSymbolKind is a member of the SymbolKind enumeration.
 	ClassSymbolKind SymbolKind = 5
+
+	// MethodSymbolKind is a member of the SymbolKind enumeration.
 	MethodSymbolKind SymbolKind = 6
+
+	// PropertySymbolKind is a member of the SymbolKind enumeration.
 	PropertySymbolKind SymbolKind = 7
+
+	// FieldSymbolKind is a member of the SymbolKind enumeration.
 	FieldSymbolKind SymbolKind = 8
+
+	// ConstructorSymbolKind is a member of the SymbolKind enumeration.
 	ConstructorSymbolKind SymbolKind = 9
+
+	// EnumSymbolKind is a member of the SymbolKind enumeration.
 	EnumSymbolKind SymbolKind = 10
+
+	// InterfaceSymbolKind is a member of the SymbolKind enumeration.
 	InterfaceSymbolKind SymbolKind = 11
+
+	// FunctionSymbolKind is a member of the SymbolKind enumeration.
 	FunctionSymbolKind SymbolKind = 12
+
+	// VariableSymbolKind is a member of the SymbolKind enumeration.
 	VariableSymbolKind SymbolKind = 13
+
+	// ConstantSymbolKind is a member of the SymbolKind enumeration.
 	ConstantSymbolKind SymbolKind = 14
+
+	// StringSymbolKind is a member of the SymbolKind enumeration.
 	StringSymbolKind SymbolKind = 15
+
+	// NumberSymbolKind is a member of the SymbolKind enumeration.
 	NumberSymbolKind SymbolKind = 16
+
+	// BooleanSymbolKind is a member of the SymbolKind enumeration.
 	BooleanSymbolKind SymbolKind = 17
+
+	// ArraySymbolKind is a member of the SymbolKind enumeration.
 	ArraySymbolKind SymbolKind = 18
+
+	// ObjectSymbolKind is a member of the SymbolKind enumeration.
 	ObjectSymbolKind SymbolKind = 19
+
+	// KeySymbolKind is a member of the SymbolKind enumeration.
 	KeySymbolKind SymbolKind = 20
+
+	// NullSymbolKind is a member of the SymbolKind enumeration.
 	NullSymbolKind SymbolKind = 21
+
+	// EnumMemberSymbolKind is a member of the SymbolKind enumeration.
 	EnumMemberSymbolKind SymbolKind = 22
+
+	// StructSymbolKind is a member of the SymbolKind enumeration.
 	StructSymbolKind SymbolKind = 23
+
+	// EventSymbolKind is a member of the SymbolKind enumeration.
 	EventSymbolKind SymbolKind = 24
+
+	// OperatorSymbolKind is a member of the SymbolKind enumeration.
 	OperatorSymbolKind SymbolKind = 25
+
+	// TypeParameterSymbolKind is a member of the SymbolKind enumeration.
 	TypeParameterSymbolKind SymbolKind = 26
 )
 
-func (x *SymbolKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*SymbolKind)(x)); err != nil {
-		return fmt.Errorf("SymbolKind: %w", err)
-	}
+// SymbolKindArray is an array of SymbolKind elements.
+type SymbolKindArray []SymbolKind
 
-	switch *x {
-	case FileSymbolKind:
-	case ModuleSymbolKind:
-	case NamespaceSymbolKind:
-	case PackageSymbolKind:
-	case ClassSymbolKind:
-	case MethodSymbolKind:
-	case PropertySymbolKind:
-	case FieldSymbolKind:
-	case ConstructorSymbolKind:
-	case EnumSymbolKind:
-	case InterfaceSymbolKind:
-	case FunctionSymbolKind:
-	case VariableSymbolKind:
-	case ConstantSymbolKind:
-	case StringSymbolKind:
-	case NumberSymbolKind:
-	case BooleanSymbolKind:
-	case ArraySymbolKind:
-	case ObjectSymbolKind:
-	case KeySymbolKind:
-	case NullSymbolKind:
-	case EnumMemberSymbolKind:
-	case StructSymbolKind:
-	case EventSymbolKind:
-	case OperatorSymbolKind:
-	case TypeParameterSymbolKind:
-	default:
-		return fmt.Errorf("SymbolKind: %v is not a member of the enum", x)
-	}
-
-	return nil
-}
-
-/////////////////
-/// SymbolTag ///
-/////////////////
-
-// Symbol tags are extra annotations that tweak the rendering of a symbol.
+// SymbolTag is an enumeration of UInt values.
 //
-// @since 3.16
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'SymbolTag' enumeration.
-type SymbolTag UInteger
+//	Symbol tags are extra annotations that tweak the rendering of a symbol.
+//
+//	@since 3.16
+type SymbolTag UInt
 
 const (
-	// Render a symbol as obsolete, usually using a strike-out.
+	// DeprecatedSymbolTag is a member of the SymbolTag enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Render a symbol as obsolete, usually using a strike-out.
 	DeprecatedSymbolTag SymbolTag = 1
 )
 
-func (x *SymbolTag) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*SymbolTag)(x)); err != nil {
-		return fmt.Errorf("SymbolTag: %w", err)
-	}
+// SymbolTagArray is an array of SymbolTag elements.
+type SymbolTagArray []SymbolTag
 
-	switch *x {
-	case DeprecatedSymbolTag:
-	default:
-		return fmt.Errorf("SymbolTag: %v is not a member of the enum", x)
-	}
+// TextDocumentChangeRegistrationOptions is a structure.
+type TextDocumentChangeRegistrationOptions struct{}
 
-	return nil
-}
+// TextDocumentClientCapabilities is a structure.
+type TextDocumentClientCapabilities struct{}
 
-/////////////////////////////////////////////
-/// TextDocumentChangeRegistrationOptions ///
-/////////////////////////////////////////////
+// TextDocumentContentChangeEvent is a union of <TODO>.
+type TextDocumentContentChangeEvent interface{}
 
-// Describe options to be used when registered for text document change events.
+// TextDocumentContentChangeEventArray is an array of TextDocumentContentChangeEvent elements.
+type TextDocumentContentChangeEventArray []TextDocumentContentChangeEvent
+
+// TextDocumentContentChangeEventOption1 is a literal structure.
+type TextDocumentContentChangeEventOption1 struct{}
+
+// TextDocumentContentChangeEventOption2 is a literal structure.
+type TextDocumentContentChangeEventOption2 struct{}
+
+// TextDocumentEdit is a structure.
+type TextDocumentEdit struct{}
+
+// TextDocumentEditEdits is a union of <TODO>.
+type TextDocumentEditEdits interface{}
+
+// TextDocumentEditEditsArray is an array of TextDocumentEditEdits elements.
+type TextDocumentEditEditsArray []TextDocumentEditEdits
+
+// TextDocumentFilter is a union of <TODO>.
+type TextDocumentFilter interface{}
+
+// TextDocumentFilterOption1 is a literal structure.
+type TextDocumentFilterOption1 struct{}
+
+// TextDocumentFilterOption2 is a literal structure.
+type TextDocumentFilterOption2 struct{}
+
+// TextDocumentFilterOption3 is a literal structure.
+type TextDocumentFilterOption3 struct{}
+
+// TextDocumentIdentifier is a structure.
+type TextDocumentIdentifier struct{}
+
+// TextDocumentIdentifierArray is an array of TextDocumentIdentifier elements.
+type TextDocumentIdentifierArray []TextDocumentIdentifier
+
+// TextDocumentItem is a structure.
+type TextDocumentItem struct{}
+
+// TextDocumentItemArray is an array of TextDocumentItem elements.
+type TextDocumentItemArray []TextDocumentItem
+
+// TextDocumentPositionParams is a structure.
+type TextDocumentPositionParams struct{}
+
+// TextDocumentRegistrationOptions is a structure.
+type TextDocumentRegistrationOptions struct{}
+
+// TextDocumentRegistrationOptionsDocumentSelector is a union of <TODO>.
+type TextDocumentRegistrationOptionsDocumentSelector interface{}
+
+// TextDocumentSaveReason is an enumeration of UInt values.
 //
-// Generated from the LSP 'TextDocumentChangeRegistrationOptions' structure.
-type TextDocumentChangeRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-
-	// How documents are synced to the server.
-	SyncKind TextDocumentSyncKind
-}
-
-func (x TextDocumentChangeRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentChangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "syncKind", x.SyncKind); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// TextDocumentClientCapabilities ///
-//////////////////////////////////////
-
-// Text document specific client capabilities.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'TextDocumentClientCapabilities' structure.
-type TextDocumentClientCapabilities struct {
-	// Defines which synchronization capabilities the client supports.
-	Synchronization Optional[TextDocumentSyncClientCapabilities]
-
-	// Capabilities specific to the `textDocument/completion` request.
-	Completion Optional[CompletionClientCapabilities]
-
-	// Capabilities specific to the `textDocument/hover` request.
-	Hover Optional[HoverClientCapabilities]
-
-	// Capabilities specific to the `textDocument/signatureHelp` request.
-	SignatureHelp Optional[SignatureHelpClientCapabilities]
-
-	// Capabilities specific to the `textDocument/declaration` request.
-	//
-	// @since 3.14.0
-	Declaration Optional[DeclarationClientCapabilities]
-
-	// Capabilities specific to the `textDocument/definition` request.
-	Definition Optional[DefinitionClientCapabilities]
-
-	// Capabilities specific to the `textDocument/typeDefinition` request.
-	//
-	// @since 3.6.0
-	TypeDefinition Optional[TypeDefinitionClientCapabilities]
-
-	// Capabilities specific to the `textDocument/implementation` request.
-	//
-	// @since 3.6.0
-	Implementation Optional[ImplementationClientCapabilities]
-
-	// Capabilities specific to the `textDocument/references` request.
-	References Optional[ReferenceClientCapabilities]
-
-	// Capabilities specific to the `textDocument/documentHighlight` request.
-	DocumentHighlight Optional[DocumentHighlightClientCapabilities]
-
-	// Capabilities specific to the `textDocument/documentSymbol` request.
-	DocumentSymbol Optional[DocumentSymbolClientCapabilities]
-
-	// Capabilities specific to the `textDocument/codeAction` request.
-	CodeAction Optional[CodeActionClientCapabilities]
-
-	// Capabilities specific to the `textDocument/codeLens` request.
-	CodeLens Optional[CodeLensClientCapabilities]
-
-	// Capabilities specific to the `textDocument/documentLink` request.
-	DocumentLink Optional[DocumentLinkClientCapabilities]
-
-	// Capabilities specific to the `textDocument/documentColor` and the
-	// `textDocument/colorPresentation` request.
-	//
-	// @since 3.6.0
-	ColorProvider Optional[DocumentColorClientCapabilities]
-
-	// Capabilities specific to the `textDocument/formatting` request.
-	Formatting Optional[DocumentFormattingClientCapabilities]
-
-	// Capabilities specific to the `textDocument/rangeFormatting` request.
-	RangeFormatting Optional[DocumentRangeFormattingClientCapabilities]
-
-	// Capabilities specific to the `textDocument/onTypeFormatting` request.
-	OnTypeFormatting Optional[DocumentOnTypeFormattingClientCapabilities]
-
-	// Capabilities specific to the `textDocument/rename` request.
-	Rename Optional[RenameClientCapabilities]
-
-	// Capabilities specific to the `textDocument/foldingRange` request.
-	//
-	// @since 3.10.0
-	FoldingRange Optional[FoldingRangeClientCapabilities]
-
-	// Capabilities specific to the `textDocument/selectionRange` request.
-	//
-	// @since 3.15.0
-	SelectionRange Optional[SelectionRangeClientCapabilities]
-
-	// Capabilities specific to the `textDocument/publishDiagnostics` notification.
-	PublishDiagnostics Optional[PublishDiagnosticsClientCapabilities]
-
-	// Capabilities specific to the various call hierarchy requests.
-	//
-	// @since 3.16.0
-	CallHierarchy Optional[CallHierarchyClientCapabilities]
-
-	// Capabilities specific to the various semantic token request.
-	//
-	// @since 3.16.0
-	SemanticTokens Optional[SemanticTokensClientCapabilities]
-
-	// Capabilities specific to the `textDocument/linkedEditingRange` request.
-	//
-	// @since 3.16.0
-	LinkedEditingRange Optional[LinkedEditingRangeClientCapabilities]
-
-	// Client capabilities specific to the `textDocument/moniker` request.
-	//
-	// @since 3.16.0
-	Moniker Optional[MonikerClientCapabilities]
-
-	// Capabilities specific to the various type hierarchy requests.
-	//
-	// @since 3.17.0
-	TypeHierarchy Optional[TypeHierarchyClientCapabilities]
-
-	// Capabilities specific to the `textDocument/inlineValue` request.
-	//
-	// @since 3.17.0
-	InlineValue Optional[InlineValueClientCapabilities]
-
-	// Capabilities specific to the `textDocument/inlayHint` request.
-	//
-	// @since 3.17.0
-	InlayHint Optional[InlayHintClientCapabilities]
-
-	// Capabilities specific to the diagnostic pull model.
-	//
-	// @since 3.17.0
-	Diagnostic Optional[DiagnosticClientCapabilities]
-}
-
-func (x TextDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalOptionalProperty(w, n, "synchronization", x.Synchronization); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "completion", x.Completion); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "hover", x.Hover); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "signatureHelp", x.SignatureHelp); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "declaration", x.Declaration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "definition", x.Definition); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "typeDefinition", x.TypeDefinition); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "implementation", x.Implementation); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "references", x.References); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "documentHighlight", x.DocumentHighlight); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "documentSymbol", x.DocumentSymbol); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "codeAction", x.CodeAction); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "codeLens", x.CodeLens); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "documentLink", x.DocumentLink); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "colorProvider", x.ColorProvider); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "formatting", x.Formatting); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "rangeFormatting", x.RangeFormatting); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "onTypeFormatting", x.OnTypeFormatting); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "rename", x.Rename); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "foldingRange", x.FoldingRange); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "publishDiagnostics", x.PublishDiagnostics); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "callHierarchy", x.CallHierarchy); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "semanticTokens", x.SemanticTokens); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "linkedEditingRange", x.LinkedEditingRange); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "moniker", x.Moniker); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "typeHierarchy", x.TypeHierarchy); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "inlineValue", x.InlineValue); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "inlayHint", x.InlayHint); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "diagnostic", x.Diagnostic); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////
-/// TextDocumentContentChangeEvent ///
-//////////////////////////////////////
-
-// An event describing a change to a text document. If only a text is provided
-// it is considered to be the full content of the document.
-//
-// Generated from the LSP 'TextDocumentContentChangeEvent' type alias.
-// Generated from an LSP 'or' type.
-type TextDocumentContentChangeEvent interface {
-	isTextDocumentContentChangeEvent()
-}
-
-func (TextDocumentContentChangeEventOption0) isTextDocumentContentChangeEvent() {}
-func (TextDocumentContentChangeEventOption1) isTextDocumentContentChangeEvent() {}
-
-// Generated from an LSP 'literal' type.
-type TextDocumentContentChangeEventOption0 struct {
-	// The range of the document that changed.
-	Range Range
-
-	// The optional length of the range that got replaced.
-	//
-	// @deprecated use range instead.
-	RangeLength Optional[UInteger]
-
-	// The new text for the provided range.
-	Text String
-}
-
-func (x TextDocumentContentChangeEventOption0) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentContentChangeEventOption0) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "rangeLength", x.RangeLength); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "text", x.Text); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type TextDocumentContentChangeEventOption1 struct {
-	// The new text of the whole document.
-	Text String
-}
-
-func (x TextDocumentContentChangeEventOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentContentChangeEventOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "text", x.Text); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// TextDocumentEdit ///
-////////////////////////
-
-// Describes textual changes on a text document. A TextDocumentEdit describes all changes
-// on a document version Si and after they are applied move the document to version Si+1.
-// So the creator of a TextDocumentEdit doesn't need to sort the array of edits or do any
-// kind of ordering. However the edits must be non overlapping.
-//
-// Generated from the LSP 'TextDocumentEdit' structure.
-type TextDocumentEdit struct {
-	// The text document to change.
-	TextDocument OptionalVersionedTextDocumentIdentifier
-
-	// The edits to be applied.
-	//
-	// @since 3.16.0 - support for AnnotatedTextEdit. This is guarded using a
-	// client capability.
-	Edits TextDocumentEditEditsArray
-}
-
-func (x TextDocumentEdit) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentEdit) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type TextDocumentEditEditsArray []TextDocumentEditEditsArray
-
-//////////////////////////
-/// TextDocumentFilter ///
-//////////////////////////
-
-// A document filter denotes a document by different properties like
-// the {@link TextDocument.languageId language}, the {@link Uri.scheme scheme} of
-// its resource, or a glob-pattern that is applied to the {@link TextDocument.fileName path}.
-//
-// Glob patterns can have the following syntax:
-// - `*` to match one or more characters in a path segment
-// - `?` to match on one character in a path segment
-// - `**` to match any number of path segments, including none
-// - `{}` to group sub patterns into an OR expression. (e.g. `**​/*.{ts,js}` matches all TypeScript and JavaScript files)
-// - `[]` to declare a range of characters to match in a path segment (e.g., `example.[0-9]` to match on `example.0`, `example.1`, …)
-// - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
-//
-// @sample A language filter that applies to typescript files on disk: `{ language: 'typescript', scheme: 'file' }`
-// @sample A language filter that applies to all package.json paths: `{ language: 'json', pattern: '**package.json' }`
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'TextDocumentFilter' type alias.
-// Generated from an LSP 'or' type.
-type TextDocumentFilter interface {
-	isTextDocumentFilter()
-}
-
-func (TextDocumentFilterOption0) isTextDocumentFilter() {}
-func (TextDocumentFilterOption1) isTextDocumentFilter() {}
-func (TextDocumentFilterOption2) isTextDocumentFilter() {}
-
-// Generated from an LSP 'literal' type.
-type TextDocumentFilterOption0 struct {
-	// A language id, like `typescript`.
-	Language String
-
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme String
-
-	// A glob pattern, like `*.{ts,js}`.
-	Pattern String
-}
-
-func (x TextDocumentFilterOption0) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentFilterOption0) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "language", x.Language); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type TextDocumentFilterOption1 struct {
-	// A language id, like `typescript`.
-	Language String
-
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme String
-
-	// A glob pattern, like `*.{ts,js}`.
-	Pattern String
-}
-
-func (x TextDocumentFilterOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentFilterOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "language", x.Language); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type TextDocumentFilterOption2 struct {
-	// A language id, like `typescript`.
-	Language String
-
-	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
-	Scheme String
-
-	// A glob pattern, like `*.{ts,js}`.
-	Pattern String
-}
-
-func (x TextDocumentFilterOption2) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentFilterOption2) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "language", x.Language); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "scheme", x.Scheme); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////
-/// TextDocumentIdentifier ///
-//////////////////////////////
-
-// A literal to identify a text document in the client.
-//
-// Generated from the LSP 'TextDocumentIdentifier' structure.
-type TextDocumentIdentifier struct {
-	// The text document's uri.
-	URI *DocumentURI
-}
-
-func (x TextDocumentIdentifier) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////
-/// TextDocumentItem ///
-////////////////////////
-
-// An item to transfer a text document from the client to the
-// server.
-//
-// Generated from the LSP 'TextDocumentItem' structure.
-type TextDocumentItem struct {
-	// The text document's uri.
-	URI *DocumentURI
-
-	// The text document's language identifier.
-	LanguageID String
-
-	// The version number of this document (it will increase after each
-	// change, including undo/redo).
-	Version Integer
-
-	// The content of the opened text document.
-	Text String
-}
-
-func (x TextDocumentItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "languageId", x.LanguageID); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "text", x.Text); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// TextDocumentPositionParams ///
-//////////////////////////////////
-
-// A parameter literal used in requests to pass a text document and a position inside that
-// document.
-//
-// Generated from the LSP 'TextDocumentPositionParams' structure.
-type TextDocumentPositionParams struct {
-	// The text document.
-	TextDocument TextDocumentIdentifier
-
-	// The position inside the text document.
-	Position Position
-}
-
-func (x TextDocumentPositionParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentPositionParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "position", x.Position); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////
-/// TextDocumentRegistrationOptions ///
-///////////////////////////////////////
-
-// General text document registration options.
-//
-// Generated from the LSP 'TextDocumentRegistrationOptions' structure.
-type TextDocumentRegistrationOptions struct {
-	// A document selector to identify the scope of the registration. If set to null
-	// the document selector provided on the client side will be used.
-	DocumentSelector TextDocumentRegistrationOptionsDocumentSelector
-}
-
-func (x TextDocumentRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "documentSelector", x.DocumentSelector); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentRegistrationOptionsDocumentSelector interface {
-	isTextDocumentRegistrationOptionsDocumentSelector()
-}
-
-func (DocumentSelector) isTextDocumentRegistrationOptionsDocumentSelector() {}
-
-//////////////////////////////
-/// TextDocumentSaveReason ///
-//////////////////////////////
-
-// Represents reasons why a text document is saved.
-//
-// Generated from the LSP 'TextDocumentSaveReason' enumeration.
-type TextDocumentSaveReason UInteger
+//	Represents reasons why a text document is saved.
+type TextDocumentSaveReason UInt
 
 const (
-	// Manually triggered, e.g. by the user pressing save, by starting debugging,
-	// or by an API call.
+	// ManualTextDocumentSaveReason is a member of the TextDocumentSaveReason enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Manually triggered, e.g. by the user pressing save, by starting debugging,
+	//	or by an API call.
 	ManualTextDocumentSaveReason TextDocumentSaveReason = 1
-	// Automatic after a delay.
+
+	// AfterDelayTextDocumentSaveReason is a member of the TextDocumentSaveReason enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Automatic after a delay.
 	AfterDelayTextDocumentSaveReason TextDocumentSaveReason = 2
-	// When the editor lost focus.
+
+	// FocusOutTextDocumentSaveReason is a member of the TextDocumentSaveReason enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	When the editor lost focus.
 	FocusOutTextDocumentSaveReason TextDocumentSaveReason = 3
 )
 
-func (x *TextDocumentSaveReason) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*TextDocumentSaveReason)(x)); err != nil {
-		return fmt.Errorf("TextDocumentSaveReason: %w", err)
-	}
+// TextDocumentSaveRegistrationOptions is a structure.
+type TextDocumentSaveRegistrationOptions struct{}
 
-	switch *x {
-	case ManualTextDocumentSaveReason:
-	case AfterDelayTextDocumentSaveReason:
-	case FocusOutTextDocumentSaveReason:
-	default:
-		return fmt.Errorf("TextDocumentSaveReason: %v is not a member of the enum", x)
-	}
+// TextDocumentSyncClientCapabilities is a structure.
+type TextDocumentSyncClientCapabilities struct{}
 
-	return nil
-}
-
-///////////////////////////////////////////
-/// TextDocumentSaveRegistrationOptions ///
-///////////////////////////////////////////
-
-// Save registration options.
+// TextDocumentSyncKind is an enumeration of UInt values.
 //
-// Generated from the LSP 'TextDocumentSaveRegistrationOptions' structure.
-type TextDocumentSaveRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	SaveOptions
-}
-
-func (x TextDocumentSaveRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentSaveRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.SaveOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////////
-/// TextDocumentSyncClientCapabilities ///
-//////////////////////////////////////////
-
-// Generated from the LSP 'TextDocumentSyncClientCapabilities' structure.
-type TextDocumentSyncClientCapabilities struct {
-	// Whether text document synchronization supports dynamic registration.
-	DynamicRegistration Bool
-
-	// The client supports sending will save notifications.
-	WillSave Bool
-
-	// The client supports sending a will save request and
-	// waits for a response providing text edits which will
-	// be applied to the document before it is saved.
-	WillSaveWaitUntil Bool
-
-	// The client supports did save notifications.
-	DidSave Bool
-}
-
-func (x TextDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "willSave", x.WillSave); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "willSaveWaitUntil", x.WillSaveWaitUntil); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "didSave", x.DidSave); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// TextDocumentSyncKind ///
-////////////////////////////
-
-// Defines how the host (editor) should sync
-// document changes to the language server.
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'TextDocumentSyncKind' enumeration.
-type TextDocumentSyncKind UInteger
+//	Defines how the host (editor) should sync
+//	document changes to the language server.
+type TextDocumentSyncKind UInt
 
 const (
-	// Documents should not be synced at all.
+	// NoneTextDocumentSyncKind is a member of the TextDocumentSyncKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Documents should not be synced at all.
 	NoneTextDocumentSyncKind TextDocumentSyncKind = 0
-	// Documents are synced by always sending the full content
-	// of the document.
+
+	// FullTextDocumentSyncKind is a member of the TextDocumentSyncKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Documents are synced by always sending the full content
+	//	of the document.
 	FullTextDocumentSyncKind TextDocumentSyncKind = 1
-	// Documents are synced by sending the full content on open.
-	// After that only incremental updates to the document are
-	// send.
+
+	// IncrementalTextDocumentSyncKind is a member of the TextDocumentSyncKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Documents are synced by sending the full content on open.
+	//	After that only incremental updates to the document are
+	//	send.
 	IncrementalTextDocumentSyncKind TextDocumentSyncKind = 2
 )
 
-func (x *TextDocumentSyncKind) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*TextDocumentSyncKind)(x)); err != nil {
-		return fmt.Errorf("TextDocumentSyncKind: %w", err)
-	}
+// TextDocumentSyncOptions is a structure.
+type TextDocumentSyncOptions struct{}
 
-	switch *x {
-	case NoneTextDocumentSyncKind:
-	case FullTextDocumentSyncKind:
-	case IncrementalTextDocumentSyncKind:
-	default:
-		return fmt.Errorf("TextDocumentSyncKind: %v is not a member of the enum", x)
-	}
+// TextDocumentSyncOptionsSave is a union of <TODO>.
+type TextDocumentSyncOptionsSave interface{}
 
-	return nil
-}
+// TextEdit is a structure.
+type TextEdit struct{}
 
-///////////////////////////////
-/// TextDocumentSyncOptions ///
-///////////////////////////////
+// TextEditArray is an array of TextEdit elements.
+type TextEditArray []TextEdit
 
-// Generated from the LSP 'TextDocumentSyncOptions' structure.
-type TextDocumentSyncOptions struct {
-	// Open and close notifications are sent to the server. If omitted open close notification should not
-	// be sent.
-	OpenClose Bool
+// TextEditArrayMap is an array of DocumentURI to TextEditArray.
+type TextEditArrayMap map[DocumentURI]TextEditArray
 
-	// Change notifications are sent to the server. See TextDocumentSyncKind.None, TextDocumentSyncKind.Full
-	// and TextDocumentSyncKind.Incremental. If omitted it defaults to TextDocumentSyncKind.None.
-	Change Optional[TextDocumentSyncKind]
-
-	// If present will save notifications are sent to the server. If omitted the notification should not be
-	// sent.
-	WillSave Bool
-
-	// If present will save wait until requests are sent to the server. If omitted the request should not be
-	// sent.
-	WillSaveWaitUntil Bool
-
-	// If present save notifications are sent to the server. If omitted the notification should not be
-	// sent.
-	Save TextDocumentSyncOptionsSave
-}
-
-func (x TextDocumentSyncOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "openClose", x.OpenClose); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "change", x.Change); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "willSave", x.WillSave); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "willSaveWaitUntil", x.WillSaveWaitUntil); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "save", x.Save); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentSyncOptionsSave interface {
-	isTextDocumentSyncOptionsSave()
-}
-
-func (Bool) isTextDocumentSyncOptionsSave()        {}
-func (SaveOptions) isTextDocumentSyncOptionsSave() {}
-
-////////////////
-/// TextEdit ///
-////////////////
-
-// A text edit applicable to a text document.
-//
-// Generated from the LSP 'TextEdit' structure.
-type TextEdit struct {
-	// The range of the text document to be manipulated. To insert
-	// text into a document create a range where start === end.
-	Range Range
-
-	// The string to be inserted. For delete operations use an
-	// empty string.
-	NewText String
-}
-
-func (x TextEdit) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "newText", x.NewText); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////
-/// TokenFormat ///
-///////////////////
-
-// Generated from the LSP 'TokenFormat' enumeration.
+// TokenFormat is an enumeration of String values.
 type TokenFormat String
 
 const (
+	// RelativeTokenFormat is a member of the TokenFormat enumeration.
 	RelativeTokenFormat TokenFormat = "relative"
 )
 
-func (x *TokenFormat) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*TokenFormat)(x)); err != nil {
-		return fmt.Errorf("TokenFormat: %w", err)
-	}
+// TokenFormatArray is an array of TokenFormat elements.
+type TokenFormatArray []TokenFormat
 
-	switch *x {
-	case RelativeTokenFormat:
-	default:
-		return fmt.Errorf("TokenFormat: %v is not a member of the enum", x)
-	}
-
-	return nil
-}
-
-///////////////////
-/// TraceValues ///
-///////////////////
-
-// Generated from the LSP 'TraceValues' enumeration.
+// TraceValues is an enumeration of String values.
 type TraceValues String
 
 const (
-	// Turn tracing off.
+	// OffTraceValues is a member of the TraceValues enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Turn tracing off.
 	OffTraceValues TraceValues = "off"
-	// Trace messages only.
+
+	// MessagesTraceValues is a member of the TraceValues enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Trace messages only.
 	MessagesTraceValues TraceValues = "messages"
-	// Verbose message tracing.
+
+	// VerboseTraceValues is a member of the TraceValues enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Verbose message tracing.
 	VerboseTraceValues TraceValues = "verbose"
 )
 
-func (x *TraceValues) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*TraceValues)(x)); err != nil {
-		return fmt.Errorf("TraceValues: %w", err)
-	}
+// TypeDefinitionClientCapabilities is a structure.
+type TypeDefinitionClientCapabilities struct{}
 
-	switch *x {
-	case OffTraceValues:
-	case MessagesTraceValues:
-	case VerboseTraceValues:
-	default:
-		return fmt.Errorf("TraceValues: %v is not a member of the enum", x)
-	}
+// TypeDefinitionOptions is a structure.
+type TypeDefinitionOptions struct{}
 
-	return nil
-}
+// TypeDefinitionParams is a structure.
+type TypeDefinitionParams struct{}
 
-////////////////////////////////////////
-/// TypeDefinitionClientCapabilities ///
-////////////////////////////////////////
+// TypeDefinitionRegistrationOptions is a structure.
+type TypeDefinitionRegistrationOptions struct{}
 
-// Since 3.6.0
+// TypeHierarchyClientCapabilities is a structure.
+type TypeHierarchyClientCapabilities struct{}
+
+// TypeHierarchyItem is a structure.
+type TypeHierarchyItem struct{}
+
+// TypeHierarchyItemArray is an array of TypeHierarchyItem elements.
+type TypeHierarchyItemArray []TypeHierarchyItem
+
+// TypeHierarchyOptions is a structure.
+type TypeHierarchyOptions struct{}
+
+// TypeHierarchyPrepareParams is a structure.
+type TypeHierarchyPrepareParams struct{}
+
+// TypeHierarchyRegistrationOptions is a structure.
+type TypeHierarchyRegistrationOptions struct{}
+
+// TypeHierarchySubtypesParams is a structure.
+type TypeHierarchySubtypesParams struct{}
+
+// TypeHierarchySupertypesParams is a structure.
+type TypeHierarchySupertypesParams struct{}
+
+// UInt is the LSP unsigned integer type.
+type UInt uint32
+
+// UIntArray is an array of UInt elements.
+type UIntArray []UInt
+
+// URI is the URI of some non-document resource.
+type URI url.URL
+
+// UnchangedDocumentDiagnosticReport is a structure.
+type UnchangedDocumentDiagnosticReport struct{}
+
+// UniquenessLevel is an enumeration of String values.
 //
-// Generated from the LSP 'TypeDefinitionClientCapabilities' structure.
-type TypeDefinitionClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `TypeDefinitionRegistrationOptions` return value
-	// for the corresponding server capability as well.
-	DynamicRegistration Bool
-
-	// The client supports additional metadata in the form of definition links.
-	//
-	// Since 3.14.0
-	LinkSupport Bool
-}
-
-func (x TypeDefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeDefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// TypeDefinitionOptions ///
-/////////////////////////////
-
-// Generated from the LSP 'TypeDefinitionOptions' structure.
-type TypeDefinitionOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x TypeDefinitionOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeDefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// TypeDefinitionParams ///
-////////////////////////////
-
-// Generated from the LSP 'TypeDefinitionParams' structure.
-type TypeDefinitionParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-	PartialResultParams
-}
-
-func (x TypeDefinitionParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeDefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////
-/// TypeDefinitionRegistrationOptions ///
-/////////////////////////////////////////
-
-// Generated from the LSP 'TypeDefinitionRegistrationOptions' structure.
-type TypeDefinitionRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	TypeDefinitionOptions
-	StaticRegistrationOptions
-}
-
-func (x TypeDefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeDefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.TypeDefinitionOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////
-/// TypeHierarchyClientCapabilities ///
-///////////////////////////////////////
-
-// @since 3.17.0
+// Documentation from the LSP specification:
 //
-// Generated from the LSP 'TypeHierarchyClientCapabilities' structure.
-type TypeHierarchyClientCapabilities struct {
-	// Whether implementation supports dynamic registration. If this is set to `true`
-	// the client supports the new `(TextDocumentRegistrationOptions & StaticRegistrationOptions)`
-	// return value for the corresponding server capability as well.
-	DynamicRegistration Bool
-}
-
-func (x TypeHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////
-/// TypeHierarchyItem ///
-/////////////////////////
-
-// @since 3.17.0
+//	Moniker uniqueness level to define scope of the moniker.
 //
-// Generated from the LSP 'TypeHierarchyItem' structure.
-type TypeHierarchyItem struct {
-	// The name of this item.
-	Name String
-
-	// The kind of this item.
-	Kind SymbolKind
-
-	// Tags for this item.
-	Tags SymbolTagArray
-
-	// More detail for this item, e.g. the signature of a function.
-	Detail String
-
-	// The resource identifier of this item.
-	URI *DocumentURI
-
-	// The range enclosing this symbol not including leading/trailing whitespace
-	// but everything else, e.g. comments and code.
-	Range Range
-
-	// The range that should be selected and revealed when this symbol is being
-	// picked, e.g. the name of a function. Must be contained by the
-	// {@link TypeHierarchyItem.range `range`}.
-	SelectionRange Range
-
-	// A data entry field that is preserved between a type hierarchy prepare and
-	// supertypes or subtypes requests. It could also be used to identify the
-	// type hierarchy in the server, helping improve the performance on
-	// resolving supertypes and subtypes.
-	Data LSPAny
-}
-
-func (x TypeHierarchyItem) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "name", x.Name); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "kind", x.Kind); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "tags", x.Tags); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "detail", x.Detail); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "range", x.Range); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "selectionRange", x.SelectionRange); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// TypeHierarchyOptions ///
-////////////////////////////
-
-// Type hierarchy options used during static registration.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'TypeHierarchyOptions' structure.
-type TypeHierarchyOptions struct {
-	WorkDoneProgressOptions
-}
-
-func (x TypeHierarchyOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////
-/// TypeHierarchyPrepareParams ///
-//////////////////////////////////
-
-// The parameter of a `textDocument/prepareTypeHierarchy` request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'TypeHierarchyPrepareParams' structure.
-type TypeHierarchyPrepareParams struct {
-	TextDocumentPositionParams
-	WorkDoneProgressParams
-}
-
-func (x TypeHierarchyPrepareParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentPositionParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////////
-/// TypeHierarchyRegistrationOptions ///
-////////////////////////////////////////
-
-// Type hierarchy options used during static or dynamic registration.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'TypeHierarchyRegistrationOptions' structure.
-type TypeHierarchyRegistrationOptions struct {
-	TextDocumentRegistrationOptions
-	TypeHierarchyOptions
-	StaticRegistrationOptions
-}
-
-func (x TypeHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.TypeHierarchyOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// TypeHierarchySubtypesParams ///
-///////////////////////////////////
-
-// The parameter of a `typeHierarchy/subtypes` request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'TypeHierarchySubtypesParams' structure.
-type TypeHierarchySubtypesParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	Item TypeHierarchyItem
-}
-
-func (x TypeHierarchySubtypesParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeHierarchySubtypesParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "item", x.Item); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////
-/// TypeHierarchySupertypesParams ///
-/////////////////////////////////////
-
-// The parameter of a `typeHierarchy/supertypes` request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'TypeHierarchySupertypesParams' structure.
-type TypeHierarchySupertypesParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	Item TypeHierarchyItem
-}
-
-func (x TypeHierarchySupertypesParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x TypeHierarchySupertypesParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "item", x.Item); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////
-/// UnchangedDocumentDiagnosticReport ///
-/////////////////////////////////////////
-
-// A diagnostic report indicating that the last returned
-// report is still accurate.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'UnchangedDocumentDiagnosticReport' structure.
-type UnchangedDocumentDiagnosticReport struct {
-	// A result id which will be sent on the next
-	// diagnostic request for the same document.
-	ResultID String
-}
-
-func (x UnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x UnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", "unchanged"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// UniquenessLevel ///
-///////////////////////
-
-// Moniker uniqueness level to define scope of the moniker.
-//
-// @since 3.16.0
-//
-// Generated from the LSP 'UniquenessLevel' enumeration.
+//	@since 3.16.0
 type UniquenessLevel String
 
 const (
-	// The moniker is only unique inside a document
+	// DocumentUniquenessLevel is a member of the UniquenessLevel enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker is only unique inside a document
 	DocumentUniquenessLevel UniquenessLevel = "document"
-	// The moniker is unique inside a project for which a dump got created
+
+	// ProjectUniquenessLevel is a member of the UniquenessLevel enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker is unique inside a project for which a dump got created
 	ProjectUniquenessLevel UniquenessLevel = "project"
-	// The moniker is unique inside the group to which a project belongs
+
+	// GroupUniquenessLevel is a member of the UniquenessLevel enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker is unique inside the group to which a project belongs
 	GroupUniquenessLevel UniquenessLevel = "group"
-	// The moniker is unique inside the moniker scheme.
+
+	// SchemeUniquenessLevel is a member of the UniquenessLevel enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker is unique inside the moniker scheme.
 	SchemeUniquenessLevel UniquenessLevel = "scheme"
-	// The moniker is globally unique
+
+	// GlobalUniquenessLevel is a member of the UniquenessLevel enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	The moniker is globally unique
 	GlobalUniquenessLevel UniquenessLevel = "global"
 )
 
-func (x *UniquenessLevel) UnmarshalJSON(data []byte) error {
-	if err := json.Unmarshal(data, (*UniquenessLevel)(x)); err != nil {
-		return fmt.Errorf("UniquenessLevel: %w", err)
-	}
+// Unregistration is a structure.
+type Unregistration struct{}
 
-	switch *x {
-	case DocumentUniquenessLevel:
-	case ProjectUniquenessLevel:
-	case GroupUniquenessLevel:
-	case SchemeUniquenessLevel:
-	case GlobalUniquenessLevel:
-	default:
-		return fmt.Errorf("UniquenessLevel: %v is not a member of the enum", x)
-	}
-
-	return nil
-}
-
-//////////////////////
-/// Unregistration ///
-//////////////////////
-
-// General parameters to unregister a request or notification.
-//
-// Generated from the LSP 'Unregistration' structure.
-type Unregistration struct {
-	// The id used to unregister the request or notification. Usually an id
-	// provided during the register request.
-	ID String
-
-	// The method to unregister for.
-	Method String
-}
-
-func (x Unregistration) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x Unregistration) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "id", x.ID); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "method", x.Method); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////
-/// UnregistrationParams ///
-////////////////////////////
-
-// Generated from the LSP 'UnregistrationParams' structure.
-type UnregistrationParams struct {
-	Unregisterations UnregistrationArray
-}
-
-func (x UnregistrationParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x UnregistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "unregisterations", x.Unregisterations); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// UnregistrationArray is an array of Unregistration elements.
 type UnregistrationArray []Unregistration
 
-///////////////////////////////////////////
-/// VersionedNotebookDocumentIdentifier ///
-///////////////////////////////////////////
+// UnregistrationParams is a structure.
+type UnregistrationParams struct{}
 
-// A versioned notebook document identifier.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'VersionedNotebookDocumentIdentifier' structure.
-type VersionedNotebookDocumentIdentifier struct {
-	// The version number of this notebook document.
-	Version Integer
+// VersionedNotebookDocumentIdentifier is a structure.
+type VersionedNotebookDocumentIdentifier struct{}
 
-	// The notebook document's uri.
-	URI *URI
-}
+// VersionedTextDocumentIdentifier is a structure.
+type VersionedTextDocumentIdentifier struct{}
 
-func (x VersionedNotebookDocumentIdentifier) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x VersionedNotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////////
-/// VersionedTextDocumentIdentifier ///
-///////////////////////////////////////
-
-// A text document identifier to denote a specific version of a text document.
-//
-// Generated from the LSP 'VersionedTextDocumentIdentifier' structure.
-type VersionedTextDocumentIdentifier struct {
-	TextDocumentIdentifier
-
-	// The version number of this document.
-	Version Integer
-}
-
-func (x VersionedTextDocumentIdentifier) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x VersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.TextDocumentIdentifier.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////
-/// WatchKind ///
-/////////////////
-
-// Generated from the LSP 'WatchKind' enumeration.
-type WatchKind UInteger
+// WatchKind is an enumeration of UInt values.
+type WatchKind UInt
 
 const (
-	// Interested in create events.
+	// CreateWatchKind is a member of the WatchKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Interested in create events.
 	CreateWatchKind WatchKind = 1
-	// Interested in change events
+
+	// ChangeWatchKind is a member of the WatchKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Interested in change events
 	ChangeWatchKind WatchKind = 2
-	// Interested in delete events
+
+	// DeleteWatchKind is a member of the WatchKind enumeration.
+	//
+	// Documentation from the LSP specification:
+	//
+	//	Interested in delete events
 	DeleteWatchKind WatchKind = 4
 )
 
-//////////////////////////////////
-/// WillSaveTextDocumentParams ///
-//////////////////////////////////
+// WillSaveTextDocumentParams is a structure.
+type WillSaveTextDocumentParams struct{}
 
-// The parameters sent in a will save text document notification.
-//
-// Generated from the LSP 'WillSaveTextDocumentParams' structure.
-type WillSaveTextDocumentParams struct {
-	// The document that will be saved.
-	TextDocument TextDocumentIdentifier
+// WindowClientCapabilities is a structure.
+type WindowClientCapabilities struct{}
 
-	// The 'TextDocumentSaveReason'.
-	Reason TextDocumentSaveReason
-}
+// WorkDoneProgressBegin is a structure.
+type WorkDoneProgressBegin struct{}
 
-func (x WillSaveTextDocumentParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// WorkDoneProgressCancelParams is a structure.
+type WorkDoneProgressCancelParams struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// WorkDoneProgressCreateParams is a structure.
+type WorkDoneProgressCreateParams struct{}
 
-	return w.Bytes(), nil
-}
+// WorkDoneProgressEnd is a structure.
+type WorkDoneProgressEnd struct{}
 
-func (x WillSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "reason", x.Reason); err != nil {
-		return err
-	}
-	return nil
-}
+// WorkDoneProgressOptions is a structure.
+type WorkDoneProgressOptions struct{}
 
-////////////////////////////////
-/// WindowClientCapabilities ///
-////////////////////////////////
+// WorkDoneProgressParams is a structure.
+type WorkDoneProgressParams struct{}
 
-// Generated from the LSP 'WindowClientCapabilities' structure.
-type WindowClientCapabilities struct {
-	// It indicates whether the client supports server initiated
-	// progress using the `window/workDoneProgress/create` request.
-	//
-	// The capability also controls Whether client supports handling
-	// of progress notifications. If set servers are allowed to report a
-	// `workDoneProgress` property in the request specific server
-	// capabilities.
-	//
-	// @since 3.15.0
-	WorkDoneProgress Bool
+// WorkDoneProgressReport is a structure.
+type WorkDoneProgressReport struct{}
 
-	// Capabilities specific to the showMessage request.
-	//
-	// @since 3.16.0
-	ShowMessage Optional[ShowMessageRequestClientCapabilities]
+// WorkspaceClientCapabilities is a structure.
+type WorkspaceClientCapabilities struct{}
 
-	// Capabilities specific to the showDocument request.
-	//
-	// @since 3.16.0
-	ShowDocument Optional[ShowDocumentClientCapabilities]
-}
+// WorkspaceDiagnosticParams is a structure.
+type WorkspaceDiagnosticParams struct{}
 
-func (x WindowClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// WorkspaceDiagnosticReport is a structure.
+type WorkspaceDiagnosticReport struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// WorkspaceDiagnosticReportPartialResult is a structure.
+type WorkspaceDiagnosticReportPartialResult struct{}
 
-	return w.Bytes(), nil
-}
+// WorkspaceDocumentDiagnosticReport is a union of <TODO>.
+type WorkspaceDocumentDiagnosticReport interface{}
 
-func (x WindowClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "workDoneProgress", x.WorkDoneProgress); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "showMessage", x.ShowMessage); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "showDocument", x.ShowDocument); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// WorkDoneProgressBegin ///
-/////////////////////////////
-
-// Generated from the LSP 'WorkDoneProgressBegin' structure.
-type WorkDoneProgressBegin struct {
-	// Mandatory title of the progress operation. Used to briefly inform about
-	// the kind of operation being performed.
-	//
-	// Examples: "Indexing" or "Linking dependencies".
-	Title String
-
-	// Controls if a cancel button should show to allow the user to cancel the
-	// long running operation. Clients that don't support cancellation are allowed
-	// to ignore the setting.
-	Cancellable Bool
-
-	// Optional, more detailed associated progress message. Contains
-	// complementary information to the `title`.
-	//
-	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
-	// If unset, the previous progress message (if any) is still valid.
-	Message String
-
-	// Optional progress percentage to display (value 100 is considered 100%).
-	// If not provided infinite progress is assumed and clients are allowed
-	// to ignore the `percentage` value in subsequent in report notifications.
-	//
-	// The value should be steadily rising. Clients are free to ignore values
-	// that are not following this rule. The value range is [0, 100].
-	Percentage Optional[UInteger]
-}
-
-func (x WorkDoneProgressBegin) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkDoneProgressBegin) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", "begin"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "title", x.Title); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "cancellable", x.Cancellable); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "percentage", x.Percentage); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////
-/// WorkDoneProgressCancelParams ///
-////////////////////////////////////
-
-// Generated from the LSP 'WorkDoneProgressCancelParams' structure.
-type WorkDoneProgressCancelParams struct {
-	// The token to be used to report progress.
-	Token ProgressToken
-}
-
-func (x WorkDoneProgressCancelParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkDoneProgressCancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "token", x.Token); err != nil {
-		return err
-	}
-	return nil
-}
-
-////////////////////////////////////
-/// WorkDoneProgressCreateParams ///
-////////////////////////////////////
-
-// Generated from the LSP 'WorkDoneProgressCreateParams' structure.
-type WorkDoneProgressCreateParams struct {
-	// The token to be used to report progress.
-	Token ProgressToken
-}
-
-func (x WorkDoneProgressCreateParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkDoneProgressCreateParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "token", x.Token); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////
-/// WorkDoneProgressEnd ///
-///////////////////////////
-
-// Generated from the LSP 'WorkDoneProgressEnd' structure.
-type WorkDoneProgressEnd struct {
-	// Optional, a final message indicating to for example indicate the outcome
-	// of the operation.
-	Message String
-}
-
-func (x WorkDoneProgressEnd) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkDoneProgressEnd) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", "end"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////
-/// WorkDoneProgressOptions ///
-///////////////////////////////
-
-// Generated from the LSP 'WorkDoneProgressOptions' structure.
-type WorkDoneProgressOptions struct {
-	WorkDoneProgress Bool
-}
-
-func (x WorkDoneProgressOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkDoneProgressOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "workDoneProgress", x.WorkDoneProgress); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////
-/// WorkDoneProgressParams ///
-//////////////////////////////
-
-// Generated from the LSP 'WorkDoneProgressParams' structure.
-type WorkDoneProgressParams struct {
-	// An optional token that a server can use to report work done progress.
-	WorkDoneToken ProgressToken
-}
-
-func (x WorkDoneProgressParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkDoneProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "workDoneToken", x.WorkDoneToken); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////
-/// WorkDoneProgressReport ///
-//////////////////////////////
-
-// Generated from the LSP 'WorkDoneProgressReport' structure.
-type WorkDoneProgressReport struct {
-	// Controls enablement state of a cancel button.
-	//
-	// Clients that don't support cancellation or don't support controlling the button's
-	// enablement state are allowed to ignore the property.
-	Cancellable Bool
-
-	// Optional, more detailed associated progress message. Contains
-	// complementary information to the `title`.
-	//
-	// Examples: "3/25 files", "project/src/module2", "node_modules/some_dep".
-	// If unset, the previous progress message (if any) is still valid.
-	Message String
-
-	// Optional progress percentage to display (value 100 is considered 100%).
-	// If not provided infinite progress is assumed and clients are allowed
-	// to ignore the `percentage` value in subsequent in report notifications.
-	//
-	// The value should be steadily rising. Clients are free to ignore values
-	// that are not following this rule. The value range is [0, 100]
-	Percentage Optional[UInteger]
-}
-
-func (x WorkDoneProgressReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkDoneProgressReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "kind", "report"); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "cancellable", x.Cancellable); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "message", x.Message); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "percentage", x.Percentage); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// WorkspaceClientCapabilities ///
-///////////////////////////////////
-
-// Workspace specific client capabilities.
-//
-// Generated from the LSP 'WorkspaceClientCapabilities' structure.
-type WorkspaceClientCapabilities struct {
-	// The client supports applying batch edits
-	// to the workspace by supporting the request
-	// 'workspace/applyEdit'
-	ApplyEdit Bool
-
-	// Capabilities specific to `WorkspaceEdit`s.
-	WorkspaceEdit Optional[WorkspaceEditClientCapabilities]
-
-	// Capabilities specific to the `workspace/didChangeConfiguration` notification.
-	DidChangeConfiguration Optional[DidChangeConfigurationClientCapabilities]
-
-	// Capabilities specific to the `workspace/didChangeWatchedFiles` notification.
-	DidChangeWatchedFiles Optional[DidChangeWatchedFilesClientCapabilities]
-
-	// Capabilities specific to the `workspace/symbol` request.
-	Symbol Optional[WorkspaceSymbolClientCapabilities]
-
-	// Capabilities specific to the `workspace/executeCommand` request.
-	ExecuteCommand Optional[ExecuteCommandClientCapabilities]
-
-	// The client has support for workspace folders.
-	//
-	// @since 3.6.0
-	WorkspaceFolders Bool
-
-	// The client supports `workspace/configuration` requests.
-	//
-	// @since 3.6.0
-	Configuration Bool
-
-	// Capabilities specific to the semantic token requests scoped to the
-	// workspace.
-	//
-	// @since 3.16.0.
-	SemanticTokens Optional[SemanticTokensWorkspaceClientCapabilities]
-
-	// Capabilities specific to the code lens requests scoped to the
-	// workspace.
-	//
-	// @since 3.16.0.
-	CodeLens Optional[CodeLensWorkspaceClientCapabilities]
-
-	// The client has support for file notifications/requests for user operations on files.
-	//
-	// Since 3.16.0
-	FileOperations Optional[FileOperationClientCapabilities]
-
-	// Capabilities specific to the inline values requests scoped to the
-	// workspace.
-	//
-	// @since 3.17.0.
-	InlineValue Optional[InlineValueWorkspaceClientCapabilities]
-
-	// Capabilities specific to the inlay hint requests scoped to the
-	// workspace.
-	//
-	// @since 3.17.0.
-	InlayHint Optional[InlayHintWorkspaceClientCapabilities]
-
-	// Capabilities specific to the diagnostic requests scoped to the
-	// workspace.
-	//
-	// @since 3.17.0.
-	Diagnostics Optional[DiagnosticWorkspaceClientCapabilities]
-}
-
-func (x WorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "applyEdit", x.ApplyEdit); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "workspaceEdit", x.WorkspaceEdit); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "didChangeConfiguration", x.DidChangeConfiguration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "didChangeWatchedFiles", x.DidChangeWatchedFiles); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "symbol", x.Symbol); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "executeCommand", x.ExecuteCommand); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "workspaceFolders", x.WorkspaceFolders); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "configuration", x.Configuration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "semanticTokens", x.SemanticTokens); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "codeLens", x.CodeLens); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "fileOperations", x.FileOperations); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "inlineValue", x.InlineValue); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "inlayHint", x.InlayHint); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////
-/// WorkspaceDiagnosticParams ///
-/////////////////////////////////
-
-// Parameters of the workspace diagnostic request.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'WorkspaceDiagnosticParams' structure.
-type WorkspaceDiagnosticParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// The additional identifier provided during registration.
-	Identifier String
-
-	// The currently known diagnostic reports with their
-	// previous result ids.
-	PreviousResultIDs PreviousResultIDArray
-}
-
-func (x WorkspaceDiagnosticParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "identifier", x.Identifier); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "previousResultIds", x.PreviousResultIDs); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type PreviousResultIDArray []PreviousResultID
-
-/////////////////////////////////
-/// WorkspaceDiagnosticReport ///
-/////////////////////////////////
-
-// A workspace diagnostic report.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'WorkspaceDiagnosticReport' structure.
-type WorkspaceDiagnosticReport struct {
-	Items WorkspaceDocumentDiagnosticReportArray
-}
-
-func (x WorkspaceDiagnosticReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "items", x.Items); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// WorkspaceDocumentDiagnosticReportArray is an array of WorkspaceDocumentDiagnosticReport elements.
 type WorkspaceDocumentDiagnosticReportArray []WorkspaceDocumentDiagnosticReport
 
-//////////////////////////////////////////////
-/// WorkspaceDiagnosticReportPartialResult ///
-//////////////////////////////////////////////
+// WorkspaceEdit is a structure.
+type WorkspaceEdit struct{}
 
-// A partial result for a workspace diagnostic report.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'WorkspaceDiagnosticReportPartialResult' structure.
-type WorkspaceDiagnosticReportPartialResult struct {
-	Items WorkspaceDocumentDiagnosticReportArray
-}
+// WorkspaceEditClientCapabilities is a structure.
+type WorkspaceEditClientCapabilities struct{}
 
-func (x WorkspaceDiagnosticReportPartialResult) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// WorkspaceEditClientCapabilitiesChangeAnnotationSupport is a literal structure.
+type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// WorkspaceEditDocumentChanges is a union of <TODO>.
+type WorkspaceEditDocumentChanges interface{}
 
-	return w.Bytes(), nil
-}
+// WorkspaceEditDocumentChangesArray is an array of WorkspaceEditDocumentChanges elements.
+type WorkspaceEditDocumentChangesArray []WorkspaceEditDocumentChanges
 
-func (x WorkspaceDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "items", x.Items); err != nil {
-		return err
-	}
-	return nil
-}
+// WorkspaceFolder is a structure.
+type WorkspaceFolder struct{}
 
-/////////////////////////////////////////
-/// WorkspaceDocumentDiagnosticReport ///
-/////////////////////////////////////////
-
-// A workspace diagnostic document report.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'WorkspaceDocumentDiagnosticReport' type alias.
-// Generated from an LSP 'or' type.
-type WorkspaceDocumentDiagnosticReport interface {
-	isWorkspaceDocumentDiagnosticReport()
-}
-
-func (WorkspaceFullDocumentDiagnosticReport) isWorkspaceDocumentDiagnosticReport()      {}
-func (WorkspaceUnchangedDocumentDiagnosticReport) isWorkspaceDocumentDiagnosticReport() {}
-
-/////////////////////
-/// WorkspaceEdit ///
-/////////////////////
-
-// A workspace edit represents changes to many resources managed in the workspace. The edit
-// should either provide `changes` or `documentChanges`. If documentChanges are present
-// they are preferred over `changes` if the client can handle versioned document edits.
-//
-// Since version 3.13.0 a workspace edit can contain resource operations as well. If resource
-// operations are present clients need to execute the operations in the order in which they
-// are provided. So a workspace edit for example can consist of the following two changes:
-// (1) a create file a.txt and (2) a text document edit which insert text into file a.txt.
-//
-// An invalid sequence (e.g. (1) delete file a.txt and (2) insert text into file a.txt) will
-// cause failure of the operation. How the client recovers from the failure is described by
-// the client capability: `workspace.workspaceEdit.failureHandling`
-//
-// Generated from the LSP 'WorkspaceEdit' structure.
-type WorkspaceEdit struct {
-	// Holds changes to existing resources.
-	Changes DocumentURITextEditArrayMap
-
-	// Depending on the client capability `workspace.workspaceEdit.resourceOperations` document changes
-	// are either an array of `TextDocumentEdit`s to express changes to n different text documents
-	// where each text document edit addresses a specific version of a text document. Or it can contain
-	// above `TextDocumentEdit`s mixed with create, rename and delete file / folder operations.
-	//
-	// Whether a client supports versioned document edits is expressed via
-	// `workspace.workspaceEdit.documentChanges` client capability.
-	//
-	// If a client neither supports `documentChanges` nor `workspace.workspaceEdit.resourceOperations` then
-	// only plain `TextEdit`s using the `changes` property are supported.
-	DocumentChanges WorkspaceEditDocumentChangesArray
-
-	// A map of change annotations that can be referenced in `AnnotatedTextEdit`s or create, rename and
-	// delete file / folder operations.
-	//
-	// Whether clients honor this property depends on the client capability `workspace.changeAnnotationSupport`.
-	//
-	// @since 3.16.0
-	ChangeAnnotations ChangeAnnotationIdentifierChangeAnnotationMap
-}
-
-func (x WorkspaceEdit) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "changes", x.Changes); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "documentChanges", x.DocumentChanges); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "changeAnnotations", x.ChangeAnnotations); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'map' type.
-type ChangeAnnotationIdentifierChangeAnnotationMap map[ChangeAnnotationIdentifier]ChangeAnnotation
-
-// Generated from an LSP 'map' type.
-type DocumentURITextEditArrayMap map[*DocumentURI]TextEditArray
-
-// Generated from an LSP 'array' type.
-type WorkspaceEditDocumentChangesArray []WorkspaceEditDocumentChangesArray
-
-///////////////////////////////////////
-/// WorkspaceEditClientCapabilities ///
-///////////////////////////////////////
-
-// Generated from the LSP 'WorkspaceEditClientCapabilities' structure.
-type WorkspaceEditClientCapabilities struct {
-	// The client supports versioned document changes in `WorkspaceEdit`s
-	DocumentChanges Bool
-
-	// The resource operations the client supports. Clients should at least
-	// support 'create', 'rename' and 'delete' files and folders.
-	//
-	// @since 3.13.0
-	ResourceOperations ResourceOperationKindArray
-
-	// The failure handling strategy of a client if applying the workspace edit
-	// fails.
-	//
-	// @since 3.13.0
-	FailureHandling Optional[FailureHandlingKind]
-
-	// Whether the client normalizes line endings to the client specific
-	// setting.
-	// If set to `true` the client will normalize line ending characters
-	// in a workspace edit to the client-specified new line
-	// character.
-	//
-	// @since 3.16.0
-	NormalizesLineEndings Bool
-
-	// Whether the client in general supports change annotations on text edits,
-	// create file, rename file and delete file changes.
-	//
-	// @since 3.16.0
-	ChangeAnnotationSupport Optional[WorkspaceEditClientCapabilitiesChangeAnnotationSupport]
-}
-
-func (x WorkspaceEditClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceEditClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "documentChanges", x.DocumentChanges); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resourceOperations", x.ResourceOperations); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "failureHandling", x.FailureHandling); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "normalizesLineEndings", x.NormalizesLineEndings); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "changeAnnotationSupport", x.ChangeAnnotationSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
-type ResourceOperationKindArray []ResourceOperationKind
-
-// Generated from an LSP 'literal' type.
-type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
-	// Whether the client groups edits with equal labels into tree nodes,
-	// for instance all edits labelled with "Changes in Strings" would
-	// be a tree node.
-	GroupsOnLabel Bool
-}
-
-func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "groupsOnLabel", x.GroupsOnLabel); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////
-/// WorkspaceFolder ///
-///////////////////////
-
-// A workspace folder inside a client.
-//
-// Generated from the LSP 'WorkspaceFolder' structure.
-type WorkspaceFolder struct {
-	// The associated URI for this workspace folder.
-	URI *URI
-
-	// The name of the workspace folder. Used to refer to this
-	// workspace folder in the user interface.
-	Name String
-}
-
-func (x WorkspaceFolder) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceFolder) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "name", x.Name); err != nil {
-		return err
-	}
-	return nil
-}
-
-///////////////////////////////////
-/// WorkspaceFoldersChangeEvent ///
-///////////////////////////////////
-
-// The workspace folder change event.
-//
-// Generated from the LSP 'WorkspaceFoldersChangeEvent' structure.
-type WorkspaceFoldersChangeEvent struct {
-	// The array of added workspace folders
-	Added WorkspaceFolderArray
-
-	// The array of the removed workspace folders
-	Removed WorkspaceFolderArray
-}
-
-func (x WorkspaceFoldersChangeEvent) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceFoldersChangeEvent) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "added", x.Added); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "removed", x.Removed); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'array' type.
+// WorkspaceFolderArray is an array of WorkspaceFolder elements.
 type WorkspaceFolderArray []WorkspaceFolder
 
-////////////////////////////////////////
-/// WorkspaceFoldersInitializeParams ///
-////////////////////////////////////////
+// WorkspaceFoldersChangeEvent is a structure.
+type WorkspaceFoldersChangeEvent struct{}
 
-// Generated from the LSP 'WorkspaceFoldersInitializeParams' structure.
-type WorkspaceFoldersInitializeParams struct {
-	// The workspace folders configured in the client when the server starts.
-	//
-	// This property is only available if the client supports workspace folders.
-	// It can be `null` if the client supports workspace folders but none are
-	// configured.
-	//
-	// @since 3.6.0
-	WorkspaceFolders WorkspaceFoldersInitializeParamsWorkspaceFolders
-}
+// WorkspaceFoldersInitializeParams is a structure.
+type WorkspaceFoldersInitializeParams struct{}
 
-func (x WorkspaceFoldersInitializeParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
+// WorkspaceFoldersInitializeParamsWorkspaceFolders is a union of <TODO>.
+type WorkspaceFoldersInitializeParamsWorkspaceFolders interface{}
 
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
+// WorkspaceFoldersServerCapabilities is a structure.
+type WorkspaceFoldersServerCapabilities struct{}
 
-	return w.Bytes(), nil
-}
+// WorkspaceFoldersServerCapabilitiesChangeNotifications is a union of <TODO>.
+type WorkspaceFoldersServerCapabilitiesChangeNotifications interface{}
 
-func (x WorkspaceFoldersInitializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "workspaceFolders", x.WorkspaceFolders); err != nil {
-		return err
-	}
-	return nil
-}
+// WorkspaceFullDocumentDiagnosticReport is a structure.
+type WorkspaceFullDocumentDiagnosticReport struct{}
 
-// Generated from an LSP 'or' type.
-type WorkspaceFoldersInitializeParamsWorkspaceFolders interface {
-	isWorkspaceFoldersInitializeParamsWorkspaceFolders()
-}
+// WorkspaceFullDocumentDiagnosticReportVersion is a union of <TODO>.
+type WorkspaceFullDocumentDiagnosticReportVersion interface{}
 
-func (WorkspaceFolderArray) isWorkspaceFoldersInitializeParamsWorkspaceFolders() {}
+// WorkspaceSymbol is a structure.
+type WorkspaceSymbol struct{}
 
-//////////////////////////////////////////
-/// WorkspaceFoldersServerCapabilities ///
-//////////////////////////////////////////
-
-// Generated from the LSP 'WorkspaceFoldersServerCapabilities' structure.
-type WorkspaceFoldersServerCapabilities struct {
-	// The server has support for workspace folders
-	Supported Bool
-
-	// Whether the server wants to receive workspace folder
-	// change notifications.
-	//
-	// If a string is provided the string is treated as an ID
-	// under which the notification is registered on the client
-	// side. The ID can be used to unregister for these events
-	// using the `client/unregisterCapability` request.
-	ChangeNotifications WorkspaceFoldersServerCapabilitiesChangeNotifications
-}
-
-func (x WorkspaceFoldersServerCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceFoldersServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "supported", x.Supported); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "changeNotifications", x.ChangeNotifications); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type WorkspaceFoldersServerCapabilitiesChangeNotifications interface {
-	isWorkspaceFoldersServerCapabilitiesChangeNotifications()
-}
-
-func (String) isWorkspaceFoldersServerCapabilitiesChangeNotifications() {}
-func (Bool) isWorkspaceFoldersServerCapabilitiesChangeNotifications()   {}
-
-/////////////////////////////////////////////
-/// WorkspaceFullDocumentDiagnosticReport ///
-/////////////////////////////////////////////
-
-// A full document diagnostic report for a workspace diagnostic result.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'WorkspaceFullDocumentDiagnosticReport' structure.
-type WorkspaceFullDocumentDiagnosticReport struct {
-	FullDocumentDiagnosticReport
-
-	// The URI for which diagnostic information is reported.
-	URI *DocumentURI
-
-	// The version number for which the diagnostics are reported.
-	// If the document is not marked as open `null` can be provided.
-	Version WorkspaceFullDocumentDiagnosticReportVersion
-}
-
-func (x WorkspaceFullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.FullDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type WorkspaceFullDocumentDiagnosticReportVersion interface {
-	isWorkspaceFullDocumentDiagnosticReportVersion()
-}
-
-func (Integer) isWorkspaceFullDocumentDiagnosticReportVersion() {}
-
-///////////////////////
-/// WorkspaceSymbol ///
-///////////////////////
-
-// A special workspace symbol that supports locations without a range.
-//
-// See also SymbolInformation.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'WorkspaceSymbol' structure.
-type WorkspaceSymbol struct {
-	BaseSymbolInformation
-
-	// The location of the symbol. Whether a server is allowed to
-	// return a location without a range depends on the client
-	// capability `workspace.symbol.resolveSupport`.
-	//
-	// See SymbolInformation#location for more details.
-	Location WorkspaceSymbolLocation
-
-	// A data entry field that is preserved on a workspace symbol between a
-	// workspace symbol request and a workspace symbol resolve request.
-	Data LSPAny
-}
-
-func (x WorkspaceSymbol) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.BaseSymbolInformation.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "location", x.Location); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "data", x.Data); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type WorkspaceSymbolLocation interface {
-	isWorkspaceSymbolLocation()
-}
-
-func (Location) isWorkspaceSymbolLocation()                       {}
-func (WorkspaceSymbolLocationOption1) isWorkspaceSymbolLocation() {}
-
-// Generated from an LSP 'literal' type.
-type WorkspaceSymbolLocationOption1 struct {
-	URI *DocumentURI
-}
-
-func (x WorkspaceSymbolLocationOption1) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolLocationOption1) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////////////////
-/// WorkspaceSymbolClientCapabilities ///
-/////////////////////////////////////////
-
-// Client capabilities for a {@link WorkspaceSymbolRequest}.
-//
-// Generated from the LSP 'WorkspaceSymbolClientCapabilities' structure.
-type WorkspaceSymbolClientCapabilities struct {
-	// Symbol request supports dynamic registration.
-	DynamicRegistration Bool
-
-	// Specific capabilities for the `SymbolKind` in the `workspace/symbol` request.
-	SymbolKind Optional[WorkspaceSymbolClientCapabilitiesSymbolKind]
-
-	// The client supports tags on `SymbolInformation`.
-	// Clients supporting tags have to handle unknown tags gracefully.
-	//
-	// @since 3.16.0
-	TagSupport Optional[WorkspaceSymbolClientCapabilitiesTagSupport]
-
-	// The client support partial workspace symbols. The client will send the
-	// request `workspaceSymbol/resolve` to the server to resolve additional
-	// properties.
-	//
-	// @since 3.17.0
-	ResolveSupport Optional[WorkspaceSymbolClientCapabilitiesResolveSupport]
-}
-
-func (x WorkspaceSymbolClientCapabilities) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "symbolKind", x.SymbolKind); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "tagSupport", x.TagSupport); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
-	// The properties that a client can resolve lazily. Usually
-	// `location.range`
-	Properties StringArray
-}
-
-func (x WorkspaceSymbolClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
-	// The symbol kind values the client supports. When this
-	// property exists the client also guarantees that it will
-	// handle values outside its set gracefully and falls back
-	// to a default value when unknown.
-	//
-	// If this property is not present the client only supports
-	// the symbol kinds from `File` to `Array` as defined in
-	// the initial version of the protocol.
-	ValueSet SymbolKindArray
-}
-
-func (x WorkspaceSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type WorkspaceSymbolClientCapabilitiesTagSupport struct {
-	// The tags supported by the client.
-	ValueSet SymbolTagArray
-}
-
-func (x WorkspaceSymbolClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////
-/// WorkspaceSymbolOptions ///
-//////////////////////////////
-
-// Server capabilities for a {@link WorkspaceSymbolRequest}.
-//
-// Generated from the LSP 'WorkspaceSymbolOptions' structure.
-type WorkspaceSymbolOptions struct {
-	WorkDoneProgressOptions
-
-	// The server provides support to resolve additional
-	// information for a workspace symbol.
-	//
-	// @since 3.17.0
-	ResolveProvider Bool
-}
-
-func (x WorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
-		return err
-	}
-	return nil
-}
-
-/////////////////////////////
-/// WorkspaceSymbolParams ///
-/////////////////////////////
-
-// The parameters of a {@link WorkspaceSymbolRequest}.
-//
-// Generated from the LSP 'WorkspaceSymbolParams' structure.
-type WorkspaceSymbolParams struct {
-	WorkDoneProgressParams
-	PartialResultParams
-
-	// A query string to filter symbols by. Clients may send an empty
-	// string here to request all symbols.
-	Query String
-}
-
-func (x WorkspaceSymbolParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "query", x.Query); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////////
-/// WorkspaceSymbolRegistrationOptions ///
-//////////////////////////////////////////
-
-// Registration options for a {@link WorkspaceSymbolRequest}.
-//
-// Generated from the LSP 'WorkspaceSymbolRegistrationOptions' structure.
-type WorkspaceSymbolRegistrationOptions struct {
-	WorkspaceSymbolOptions
-}
-
-func (x WorkspaceSymbolRegistrationOptions) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkspaceSymbolOptions.marshalProperties(w, n); err != nil {
-		return err
-	}
-	return nil
-}
-
-//////////////////////////////////////////////////
-/// WorkspaceUnchangedDocumentDiagnosticReport ///
-//////////////////////////////////////////////////
-
-// An unchanged document diagnostic report for a workspace diagnostic result.
-//
-// @since 3.17.0
-//
-// Generated from the LSP 'WorkspaceUnchangedDocumentDiagnosticReport' structure.
-type WorkspaceUnchangedDocumentDiagnosticReport struct {
-	UnchangedDocumentDiagnosticReport
-
-	// The URI for which diagnostic information is reported.
-	URI *DocumentURI
-
-	// The version number for which the diagnostics are reported.
-	// If the document is not marked as open `null` can be provided.
-	Version WorkspaceUnchangedDocumentDiagnosticReportVersion
-}
-
-func (x WorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x WorkspaceUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.UnchangedDocumentDiagnosticReport.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type WorkspaceUnchangedDocumentDiagnosticReportVersion interface {
-	isWorkspaceUnchangedDocumentDiagnosticReportVersion()
-}
-
-func (Integer) isWorkspaceUnchangedDocumentDiagnosticReportVersion() {}
-
-////////////////////////
-/// initializeParams ///
-////////////////////////
-
-// The initialize parameters
-//
-// Generated from the LSP '_InitializeParams' structure.
-type initializeParams struct {
-	WorkDoneProgressParams
-
-	// The process Id of the parent process that started
-	// the server.
-	//
-	// Is `null` if the process has not been started by another process.
-	// If the parent process is not alive then the server should exit.
-	ProcessID initializeParamsProcessID
-
-	// Information about the client
-	//
-	// @since 3.15.0
-	ClientInfo Optional[InitializeParamsClientInfo]
-
-	// The locale the client is currently showing the user interface
-	// in. This must not necessarily be the locale of the operating
-	// system.
-	//
-	// Uses IETF language tags as the value's syntax
-	// (See https://en.wikipedia.org/wiki/IETF_language_tag)
-	//
-	// @since 3.16.0
-	Locale String
-
-	// The rootPath of the workspace. Is null
-	// if no folder is open.
-	//
-	// @deprecated in favour of rootUri.
-	//
-	// Deprecated: in favour of rootUri.
-	RootPath InitializeParamsRootPath
-
-	// The rootUri of the workspace. Is null if no
-	// folder is open. If both `rootPath` and `rootUri` are set
-	// `rootUri` wins.
-	//
-	// @deprecated in favour of workspaceFolders.
-	//
-	// Deprecated: in favour of workspaceFolders.
-	RootURI InitializeParamsRootURI
-
-	// The capabilities provided by the client (editor or tool)
-	Capabilities ClientCapabilities
-
-	// User provided initialization options.
-	InitializationOptions LSPAny
-
-	// The initial trace setting. If omitted trace is disabled ('off').
-	Trace Optional[TraceValues]
-}
-
-func (x initializeParams) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x initializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "processId", x.ProcessID); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "clientInfo", x.ClientInfo); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "locale", x.Locale); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "rootPath", x.RootPath); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "rootUri", x.RootURI); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "capabilities", x.Capabilities); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "initializationOptions", x.InitializationOptions); err != nil {
-		return err
-	}
-	if err := marshalOptionalProperty(w, n, "trace", x.Trace); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'literal' type.
-type InitializeParamsClientInfo struct {
-	// The name of the client as defined by the client.
-	Name String
-
-	// The client's version as defined by the client.
-	Version String
-}
-
-func (x InitializeParamsClientInfo) MarshalJSON() ([]byte, error) {
-	var (
-		w bytes.Buffer
-		n int
-	)
-
-	w.WriteByte('{')
-	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
-	}
-	w.WriteByte('}')
-
-	return w.Bytes(), nil
-}
-
-func (x InitializeParamsClientInfo) marshalProperties(w *bytes.Buffer, n *int) error {
-	if err := marshalProperty(w, n, "name", x.Name); err != nil {
-		return err
-	}
-	if err := marshalProperty(w, n, "version", x.Version); err != nil {
-		return err
-	}
-	return nil
-}
-
-// Generated from an LSP 'or' type.
-type InitializeParamsRootPath interface {
-	isInitializeParamsRootPath()
-}
-
-func (String) isInitializeParamsRootPath() {}
-
-// Generated from an LSP 'or' type.
-type InitializeParamsRootURI interface {
-	isInitializeParamsRootURI()
-}
-
-func (*DocumentURI) isInitializeParamsRootURI() {}
-
-// Generated from an LSP 'or' type.
-type initializeParamsProcessID interface {
-	isinitializeParamsProcessID()
-}
-
-func (Integer) isinitializeParamsProcessID() {}
-
-/////////////////////
-/// CancelRequest ///
-/////////////////////
-
-func (c *Client) CancelRequest(ctx context.Context, p CancelParams) error {
-	panic("not implemented")
-}
-
-////////////////
-/// LogTrace ///
-////////////////
-
-func (c *Client) LogTrace(ctx context.Context, p LogTraceParams) error {
-	panic("not implemented")
-}
-
-////////////////
-/// Progress ///
-////////////////
-
-func (c *Client) Progress(ctx context.Context, p ProgressParams) error {
-	panic("not implemented")
-}
-
-////////////////
-/// SetTrace ///
-////////////////
-
-type SetTraceHandler interface {
-	HandleSetTrace(context.Context, SetTraceParams) error
-}
-
-//////////////////////////////////
-/// CallHierarchyIncomingCalls ///
-//////////////////////////////////
-
-type CallHierarchyIncomingCallsHandler interface {
-	HandleCallHierarchyIncomingCalls(context.Context, CallHierarchyIncomingCallsParams) (CallHierarchyIncomingCallsResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type CallHierarchyIncomingCallsResult interface {
-	isCallHierarchyIncomingCallsResult()
-}
-
-func (CallHierarchyIncomingCallArray) isCallHierarchyIncomingCallsResult() {}
-
-// Generated from an LSP 'array' type.
-type CallHierarchyIncomingCallArray []CallHierarchyIncomingCall
-
-//////////////////////////////////
-/// CallHierarchyOutgoingCalls ///
-//////////////////////////////////
-
-type CallHierarchyOutgoingCallsHandler interface {
-	HandleCallHierarchyOutgoingCalls(context.Context, CallHierarchyOutgoingCallsParams) (CallHierarchyOutgoingCallsResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type CallHierarchyOutgoingCallsResult interface {
-	isCallHierarchyOutgoingCallsResult()
-}
-
-func (CallHierarchyOutgoingCallArray) isCallHierarchyOutgoingCallsResult() {}
-
-// Generated from an LSP 'array' type.
-type CallHierarchyOutgoingCallArray []CallHierarchyOutgoingCall
-
-////////////////////////////////
-/// ClientRegisterCapability ///
-////////////////////////////////
-
-func (c *Client) ClientRegisterCapability(ctx context.Context, p RegistrationParams) error {
-	panic("not implemented")
-}
-
-//////////////////////////////////
-/// ClientUnregisterCapability ///
-//////////////////////////////////
-
-func (c *Client) ClientUnregisterCapability(ctx context.Context, p UnregistrationParams) error {
-	panic("not implemented")
-}
-
-/////////////////////////
-/// CodeActionResolve ///
-/////////////////////////
-
-type CodeActionResolveHandler interface {
-	HandleCodeActionResolve(context.Context, CodeAction) (CodeAction, error)
-}
-
-///////////////////////
-/// CodeLensResolve ///
-///////////////////////
-
-type CodeLensResolveHandler interface {
-	HandleCodeLensResolve(context.Context, CodeLens) (CodeLens, error)
-}
-
-/////////////////////////////
-/// CompletionItemResolve ///
-/////////////////////////////
-
-type CompletionItemResolveHandler interface {
-	HandleCompletionItemResolve(context.Context, CompletionItem) (CompletionItem, error)
-}
-
-///////////////////////////
-/// DocumentLinkResolve ///
-///////////////////////////
-
-type DocumentLinkResolveHandler interface {
-	HandleDocumentLinkResolve(context.Context, DocumentLink) (DocumentLink, error)
-}
-
-////////////
-/// Exit ///
-////////////
-
-type ExitHandler interface {
-	HandleExit(context.Context) error
-}
-
-//////////////////
-/// Initialize ///
-//////////////////
-
-type InitializeHandler interface {
-	HandleInitialize(context.Context, InitializeParams) (InitializeResult, error)
-}
-
-///////////////////
-/// Initialized ///
-///////////////////
-
-type InitializedHandler interface {
-	HandleInitialized(context.Context, InitializedParams) error
-}
-
-////////////////////////
-/// InlayHintResolve ///
-////////////////////////
-
-type InlayHintResolveHandler interface {
-	HandleInlayHintResolve(context.Context, InlayHint) (InlayHint, error)
-}
-
-/////////////////////////////////
-/// NotebookDocumentDidChange ///
-/////////////////////////////////
-
-type NotebookDocumentDidChangeHandler interface {
-	HandleNotebookDocumentDidChange(context.Context, DidChangeNotebookDocumentParams) error
-}
-
-////////////////////////////////
-/// NotebookDocumentDidClose ///
-////////////////////////////////
-
-type NotebookDocumentDidCloseHandler interface {
-	HandleNotebookDocumentDidClose(context.Context, DidCloseNotebookDocumentParams) error
-}
-
-///////////////////////////////
-/// NotebookDocumentDidOpen ///
-///////////////////////////////
-
-type NotebookDocumentDidOpenHandler interface {
-	HandleNotebookDocumentDidOpen(context.Context, DidOpenNotebookDocumentParams) error
-}
-
-///////////////////////////////
-/// NotebookDocumentDidSave ///
-///////////////////////////////
-
-type NotebookDocumentDidSaveHandler interface {
-	HandleNotebookDocumentDidSave(context.Context, DidSaveNotebookDocumentParams) error
-}
-
-////////////////
-/// Shutdown ///
-////////////////
-
-type ShutdownHandler interface {
-	HandleShutdown(context.Context) error
-}
-
-//////////////////////
-/// TelemetryEvent ///
-//////////////////////
-
-func (c *Client) TelemetryEvent(ctx context.Context, p LSPAny) error {
-	panic("not implemented")
-}
-
-//////////////////////////////
-/// TextDocumentCodeAction ///
-//////////////////////////////
-
-type TextDocumentCodeActionHandler interface {
-	HandleTextDocumentCodeAction(context.Context, CodeActionParams) (TextDocumentCodeActionResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentCodeActionResult interface {
-	isTextDocumentCodeActionResult()
-}
-
-func (TextDocumentCodeActionResultOption0Array) isTextDocumentCodeActionResult() {}
-
-// Generated from an LSP 'array' type.
-type TextDocumentCodeActionResultOption0Array []TextDocumentCodeActionResultOption0Array
-
-////////////////////////////
-/// TextDocumentCodeLens ///
-////////////////////////////
-
-type TextDocumentCodeLensHandler interface {
-	HandleTextDocumentCodeLens(context.Context, CodeLensParams) (TextDocumentCodeLensResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentCodeLensResult interface {
-	isTextDocumentCodeLensResult()
-}
-
-func (CodeLensArray) isTextDocumentCodeLensResult() {}
-
-// Generated from an LSP 'array' type.
-type CodeLensArray []CodeLens
-
-/////////////////////////////////////
-/// TextDocumentColorPresentation ///
-/////////////////////////////////////
-
-type TextDocumentColorPresentationHandler interface {
-	HandleTextDocumentColorPresentation(context.Context, ColorPresentationParams) (ColorPresentationArray, error)
-}
-
-// Generated from an LSP 'array' type.
-type ColorPresentationArray []ColorPresentation
-
-//////////////////////////////
-/// TextDocumentCompletion ///
-//////////////////////////////
-
-type TextDocumentCompletionHandler interface {
-	HandleTextDocumentCompletion(context.Context, CompletionParams) (TextDocumentCompletionResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentCompletionResult interface {
-	isTextDocumentCompletionResult()
-}
-
-func (CompletionItemArray) isTextDocumentCompletionResult() {}
-func (CompletionList) isTextDocumentCompletionResult()      {}
-
-///////////////////////////////
-/// TextDocumentDeclaration ///
-///////////////////////////////
-
-type TextDocumentDeclarationHandler interface {
-	HandleTextDocumentDeclaration(context.Context, DeclarationParams) (TextDocumentDeclarationResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentDeclarationResult interface {
-	isTextDocumentDeclarationResult()
-}
-
-func (DeclarationLinkArray) isTextDocumentDeclarationResult() {}
-
-// Generated from an LSP 'array' type.
-type DeclarationLinkArray []DeclarationLink
-
-//////////////////////////////
-/// TextDocumentDefinition ///
-//////////////////////////////
-
-type TextDocumentDefinitionHandler interface {
-	HandleTextDocumentDefinition(context.Context, DefinitionParams) (TextDocumentDefinitionResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentDefinitionResult interface {
-	isTextDocumentDefinitionResult()
-}
-
-func (DefinitionLinkArray) isTextDocumentDefinitionResult() {}
-
-// Generated from an LSP 'array' type.
-type DefinitionLinkArray []DefinitionLink
-
-//////////////////////////////
-/// TextDocumentDiagnostic ///
-//////////////////////////////
-
-type TextDocumentDiagnosticHandler interface {
-	HandleTextDocumentDiagnostic(context.Context, DocumentDiagnosticParams) (DocumentDiagnosticReport, error)
-}
-
-/////////////////////////////
-/// TextDocumentDidChange ///
-/////////////////////////////
-
-type TextDocumentDidChangeHandler interface {
-	HandleTextDocumentDidChange(context.Context, DidChangeTextDocumentParams) error
-}
-
-////////////////////////////
-/// TextDocumentDidClose ///
-////////////////////////////
-
-type TextDocumentDidCloseHandler interface {
-	HandleTextDocumentDidClose(context.Context, DidCloseTextDocumentParams) error
-}
-
-///////////////////////////
-/// TextDocumentDidOpen ///
-///////////////////////////
-
-type TextDocumentDidOpenHandler interface {
-	HandleTextDocumentDidOpen(context.Context, DidOpenTextDocumentParams) error
-}
-
-///////////////////////////
-/// TextDocumentDidSave ///
-///////////////////////////
-
-type TextDocumentDidSaveHandler interface {
-	HandleTextDocumentDidSave(context.Context, DidSaveTextDocumentParams) error
-}
-
-/////////////////////////////////
-/// TextDocumentDocumentColor ///
-/////////////////////////////////
-
-type TextDocumentDocumentColorHandler interface {
-	HandleTextDocumentDocumentColor(context.Context, DocumentColorParams) (ColorInformationArray, error)
-}
-
-// Generated from an LSP 'array' type.
-type ColorInformationArray []ColorInformation
-
-/////////////////////////////////////
-/// TextDocumentDocumentHighlight ///
-/////////////////////////////////////
-
-type TextDocumentDocumentHighlightHandler interface {
-	HandleTextDocumentDocumentHighlight(context.Context, DocumentHighlightParams) (TextDocumentDocumentHighlightResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentDocumentHighlightResult interface {
-	isTextDocumentDocumentHighlightResult()
-}
-
-func (DocumentHighlightArray) isTextDocumentDocumentHighlightResult() {}
-
-// Generated from an LSP 'array' type.
-type DocumentHighlightArray []DocumentHighlight
-
-////////////////////////////////
-/// TextDocumentDocumentLink ///
-////////////////////////////////
-
-type TextDocumentDocumentLinkHandler interface {
-	HandleTextDocumentDocumentLink(context.Context, DocumentLinkParams) (TextDocumentDocumentLinkResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentDocumentLinkResult interface {
-	isTextDocumentDocumentLinkResult()
-}
-
-func (DocumentLinkArray) isTextDocumentDocumentLinkResult() {}
-
-// Generated from an LSP 'array' type.
-type DocumentLinkArray []DocumentLink
-
-//////////////////////////////////
-/// TextDocumentDocumentSymbol ///
-//////////////////////////////////
-
-type TextDocumentDocumentSymbolHandler interface {
-	HandleTextDocumentDocumentSymbol(context.Context, DocumentSymbolParams) (TextDocumentDocumentSymbolResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentDocumentSymbolResult interface {
-	isTextDocumentDocumentSymbolResult()
-}
-
-func (SymbolInformationArray) isTextDocumentDocumentSymbolResult() {}
-func (DocumentSymbolArray) isTextDocumentDocumentSymbolResult()    {}
-
-// Generated from an LSP 'array' type.
-type SymbolInformationArray []SymbolInformation
-
-////////////////////////////////
-/// TextDocumentFoldingRange ///
-////////////////////////////////
-
-type TextDocumentFoldingRangeHandler interface {
-	HandleTextDocumentFoldingRange(context.Context, FoldingRangeParams) (TextDocumentFoldingRangeResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentFoldingRangeResult interface {
-	isTextDocumentFoldingRangeResult()
-}
-
-func (FoldingRangeArray) isTextDocumentFoldingRangeResult() {}
-
-// Generated from an LSP 'array' type.
-type FoldingRangeArray []FoldingRange
-
-//////////////////////////////
-/// TextDocumentFormatting ///
-//////////////////////////////
-
-type TextDocumentFormattingHandler interface {
-	HandleTextDocumentFormatting(context.Context, DocumentFormattingParams) (TextDocumentFormattingResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentFormattingResult interface {
-	isTextDocumentFormattingResult()
-}
-
-func (TextEditArray) isTextDocumentFormattingResult() {}
-
-/////////////////////////
-/// TextDocumentHover ///
-/////////////////////////
-
-type TextDocumentHoverHandler interface {
-	HandleTextDocumentHover(context.Context, HoverParams) (TextDocumentHoverResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentHoverResult interface {
-	isTextDocumentHoverResult()
-}
-
-func (Hover) isTextDocumentHoverResult() {}
-
-//////////////////////////////////
-/// TextDocumentImplementation ///
-//////////////////////////////////
-
-type TextDocumentImplementationHandler interface {
-	HandleTextDocumentImplementation(context.Context, ImplementationParams) (TextDocumentImplementationResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentImplementationResult interface {
-	isTextDocumentImplementationResult()
-}
-
-func (DefinitionLinkArray) isTextDocumentImplementationResult() {}
-
-/////////////////////////////
-/// TextDocumentInlayHint ///
-/////////////////////////////
-
-type TextDocumentInlayHintHandler interface {
-	HandleTextDocumentInlayHint(context.Context, InlayHintParams) (TextDocumentInlayHintResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentInlayHintResult interface {
-	isTextDocumentInlayHintResult()
-}
-
-func (InlayHintArray) isTextDocumentInlayHintResult() {}
-
-// Generated from an LSP 'array' type.
-type InlayHintArray []InlayHint
-
-///////////////////////////////
-/// TextDocumentInlineValue ///
-///////////////////////////////
-
-type TextDocumentInlineValueHandler interface {
-	HandleTextDocumentInlineValue(context.Context, InlineValueParams) (TextDocumentInlineValueResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentInlineValueResult interface {
-	isTextDocumentInlineValueResult()
-}
-
-func (InlineValueArray) isTextDocumentInlineValueResult() {}
-
-// Generated from an LSP 'array' type.
-type InlineValueArray []InlineValue
-
-//////////////////////////////////////
-/// TextDocumentLinkedEditingRange ///
-//////////////////////////////////////
-
-type TextDocumentLinkedEditingRangeHandler interface {
-	HandleTextDocumentLinkedEditingRange(context.Context, LinkedEditingRangeParams) (TextDocumentLinkedEditingRangeResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentLinkedEditingRangeResult interface {
-	isTextDocumentLinkedEditingRangeResult()
-}
-
-func (LinkedEditingRanges) isTextDocumentLinkedEditingRangeResult() {}
-
-///////////////////////////
-/// TextDocumentMoniker ///
-///////////////////////////
-
-type TextDocumentMonikerHandler interface {
-	HandleTextDocumentMoniker(context.Context, MonikerParams) (TextDocumentMonikerResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentMonikerResult interface {
-	isTextDocumentMonikerResult()
-}
-
-func (MonikerArray) isTextDocumentMonikerResult() {}
-
-// Generated from an LSP 'array' type.
-type MonikerArray []Moniker
-
-////////////////////////////////////
-/// TextDocumentOnTypeFormatting ///
-////////////////////////////////////
-
-type TextDocumentOnTypeFormattingHandler interface {
-	HandleTextDocumentOnTypeFormatting(context.Context, DocumentOnTypeFormattingParams) (TextDocumentOnTypeFormattingResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentOnTypeFormattingResult interface {
-	isTextDocumentOnTypeFormattingResult()
-}
-
-func (TextEditArray) isTextDocumentOnTypeFormattingResult() {}
-
-////////////////////////////////////////
-/// TextDocumentPrepareCallHierarchy ///
-////////////////////////////////////////
-
-type TextDocumentPrepareCallHierarchyHandler interface {
-	HandleTextDocumentPrepareCallHierarchy(context.Context, CallHierarchyPrepareParams) (TextDocumentPrepareCallHierarchyResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentPrepareCallHierarchyResult interface {
-	isTextDocumentPrepareCallHierarchyResult()
-}
-
-func (CallHierarchyItemArray) isTextDocumentPrepareCallHierarchyResult() {}
-
-// Generated from an LSP 'array' type.
-type CallHierarchyItemArray []CallHierarchyItem
-
-/////////////////////////////////
-/// TextDocumentPrepareRename ///
-/////////////////////////////////
-
-type TextDocumentPrepareRenameHandler interface {
-	HandleTextDocumentPrepareRename(context.Context, PrepareRenameParams) (TextDocumentPrepareRenameResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentPrepareRenameResult interface {
-	isTextDocumentPrepareRenameResult()
-}
-
-////////////////////////////////////////
-/// TextDocumentPrepareTypeHierarchy ///
-////////////////////////////////////////
-
-type TextDocumentPrepareTypeHierarchyHandler interface {
-	HandleTextDocumentPrepareTypeHierarchy(context.Context, TypeHierarchyPrepareParams) (TextDocumentPrepareTypeHierarchyResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentPrepareTypeHierarchyResult interface {
-	isTextDocumentPrepareTypeHierarchyResult()
-}
-
-func (TypeHierarchyItemArray) isTextDocumentPrepareTypeHierarchyResult() {}
-
-// Generated from an LSP 'array' type.
-type TypeHierarchyItemArray []TypeHierarchyItem
-
-//////////////////////////////////////
-/// TextDocumentPublishDiagnostics ///
-//////////////////////////////////////
-
-func (c *Client) TextDocumentPublishDiagnostics(ctx context.Context, p PublishDiagnosticsParams) error {
-	panic("not implemented")
-}
-
-///////////////////////////////////
-/// TextDocumentRangeFormatting ///
-///////////////////////////////////
-
-type TextDocumentRangeFormattingHandler interface {
-	HandleTextDocumentRangeFormatting(context.Context, DocumentRangeFormattingParams) (TextDocumentRangeFormattingResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentRangeFormattingResult interface {
-	isTextDocumentRangeFormattingResult()
-}
-
-func (TextEditArray) isTextDocumentRangeFormattingResult() {}
-
-//////////////////////////////
-/// TextDocumentReferences ///
-//////////////////////////////
-
-type TextDocumentReferencesHandler interface {
-	HandleTextDocumentReferences(context.Context, ReferenceParams) (TextDocumentReferencesResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentReferencesResult interface {
-	isTextDocumentReferencesResult()
-}
-
-func (LocationArray) isTextDocumentReferencesResult() {}
-
-//////////////////////////
-/// TextDocumentRename ///
-//////////////////////////
-
-type TextDocumentRenameHandler interface {
-	HandleTextDocumentRename(context.Context, RenameParams) (TextDocumentRenameResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentRenameResult interface {
-	isTextDocumentRenameResult()
-}
-
-func (WorkspaceEdit) isTextDocumentRenameResult() {}
-
-//////////////////////////////////
-/// TextDocumentSelectionRange ///
-//////////////////////////////////
-
-type TextDocumentSelectionRangeHandler interface {
-	HandleTextDocumentSelectionRange(context.Context, SelectionRangeParams) (TextDocumentSelectionRangeResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentSelectionRangeResult interface {
-	isTextDocumentSelectionRangeResult()
-}
-
-func (SelectionRangeArray) isTextDocumentSelectionRangeResult() {}
-
-// Generated from an LSP 'array' type.
-type SelectionRangeArray []SelectionRange
-
-//////////////////////////////////////
-/// TextDocumentSemanticTokensFull ///
-//////////////////////////////////////
-
-type TextDocumentSemanticTokensFullHandler interface {
-	HandleTextDocumentSemanticTokensFull(context.Context, SemanticTokensParams) (TextDocumentSemanticTokensFullResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentSemanticTokensFullResult interface {
-	isTextDocumentSemanticTokensFullResult()
-}
-
-func (SemanticTokens) isTextDocumentSemanticTokensFullResult() {}
-
-///////////////////////////////////////////
-/// TextDocumentSemanticTokensFullDelta ///
-///////////////////////////////////////////
-
-type TextDocumentSemanticTokensFullDeltaHandler interface {
-	HandleTextDocumentSemanticTokensFullDelta(context.Context, SemanticTokensDeltaParams) (TextDocumentSemanticTokensFullDeltaResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentSemanticTokensFullDeltaResult interface {
-	isTextDocumentSemanticTokensFullDeltaResult()
-}
-
-func (SemanticTokens) isTextDocumentSemanticTokensFullDeltaResult()      {}
-func (SemanticTokensDelta) isTextDocumentSemanticTokensFullDeltaResult() {}
-
-///////////////////////////////////////
-/// TextDocumentSemanticTokensRange ///
-///////////////////////////////////////
-
-type TextDocumentSemanticTokensRangeHandler interface {
-	HandleTextDocumentSemanticTokensRange(context.Context, SemanticTokensRangeParams) (TextDocumentSemanticTokensRangeResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentSemanticTokensRangeResult interface {
-	isTextDocumentSemanticTokensRangeResult()
-}
-
-func (SemanticTokens) isTextDocumentSemanticTokensRangeResult() {}
-
-/////////////////////////////////
-/// TextDocumentSignatureHelp ///
-/////////////////////////////////
-
-type TextDocumentSignatureHelpHandler interface {
-	HandleTextDocumentSignatureHelp(context.Context, SignatureHelpParams) (TextDocumentSignatureHelpResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentSignatureHelpResult interface {
-	isTextDocumentSignatureHelpResult()
-}
-
-func (SignatureHelp) isTextDocumentSignatureHelpResult() {}
-
-//////////////////////////////////
-/// TextDocumentTypeDefinition ///
-//////////////////////////////////
-
-type TextDocumentTypeDefinitionHandler interface {
-	HandleTextDocumentTypeDefinition(context.Context, TypeDefinitionParams) (TextDocumentTypeDefinitionResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentTypeDefinitionResult interface {
-	isTextDocumentTypeDefinitionResult()
-}
-
-func (DefinitionLinkArray) isTextDocumentTypeDefinitionResult() {}
-
-////////////////////////////
-/// TextDocumentWillSave ///
-////////////////////////////
-
-type TextDocumentWillSaveHandler interface {
-	HandleTextDocumentWillSave(context.Context, WillSaveTextDocumentParams) error
-}
-
-/////////////////////////////////////
-/// TextDocumentWillSaveWaitUntil ///
-/////////////////////////////////////
-
-type TextDocumentWillSaveWaitUntilHandler interface {
-	HandleTextDocumentWillSaveWaitUntil(context.Context, WillSaveTextDocumentParams) (TextDocumentWillSaveWaitUntilResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TextDocumentWillSaveWaitUntilResult interface {
-	isTextDocumentWillSaveWaitUntilResult()
-}
-
-func (TextEditArray) isTextDocumentWillSaveWaitUntilResult() {}
-
-/////////////////////////////
-/// TypeHierarchySubtypes ///
-/////////////////////////////
-
-type TypeHierarchySubtypesHandler interface {
-	HandleTypeHierarchySubtypes(context.Context, TypeHierarchySubtypesParams) (TypeHierarchySubtypesResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TypeHierarchySubtypesResult interface {
-	isTypeHierarchySubtypesResult()
-}
-
-func (TypeHierarchyItemArray) isTypeHierarchySubtypesResult() {}
-
-///////////////////////////////
-/// TypeHierarchySupertypes ///
-///////////////////////////////
-
-type TypeHierarchySupertypesHandler interface {
-	HandleTypeHierarchySupertypes(context.Context, TypeHierarchySupertypesParams) (TypeHierarchySupertypesResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type TypeHierarchySupertypesResult interface {
-	isTypeHierarchySupertypesResult()
-}
-
-func (TypeHierarchyItemArray) isTypeHierarchySupertypesResult() {}
-
-////////////////////////
-/// WindowLogMessage ///
-////////////////////////
-
-func (c *Client) WindowLogMessage(ctx context.Context, p LogMessageParams) error {
-	panic("not implemented")
-}
-
-//////////////////////////
-/// WindowShowDocument ///
-//////////////////////////
-
-func (c *Client) WindowShowDocument(ctx context.Context, p ShowDocumentParams) (ShowDocumentResult, error) {
-	panic("not implemented")
-}
-
-/////////////////////////
-/// WindowShowMessage ///
-/////////////////////////
-
-func (c *Client) WindowShowMessage(ctx context.Context, p ShowMessageParams) error {
-	panic("not implemented")
-}
-
-////////////////////////////////
-/// WindowShowMessageRequest ///
-////////////////////////////////
-
-func (c *Client) WindowShowMessageRequest(ctx context.Context, p ShowMessageRequestParams) (WindowShowMessageRequestResult, error) {
-	panic("not implemented")
-}
-
-// Generated from an LSP 'or' type.
-type WindowShowMessageRequestResult interface {
-	isWindowShowMessageRequestResult()
-}
-
-func (MessageActionItem) isWindowShowMessageRequestResult() {}
-
-////////////////////////////////////
-/// WindowWorkDoneProgressCancel ///
-////////////////////////////////////
-
-type WindowWorkDoneProgressCancelHandler interface {
-	HandleWindowWorkDoneProgressCancel(context.Context, WorkDoneProgressCancelParams) error
-}
-
-////////////////////////////////////
-/// WindowWorkDoneProgressCreate ///
-////////////////////////////////////
-
-func (c *Client) WindowWorkDoneProgressCreate(ctx context.Context, p WorkDoneProgressCreateParams) error {
-	panic("not implemented")
-}
-
-//////////////////////////
-/// WorkspaceApplyEdit ///
-//////////////////////////
-
-func (c *Client) WorkspaceApplyEdit(ctx context.Context, p ApplyWorkspaceEditParams) (ApplyWorkspaceEditResult, error) {
-	panic("not implemented")
-}
-
-////////////////////////////////
-/// WorkspaceCodeLensRefresh ///
-////////////////////////////////
-
-func (c *Client) WorkspaceCodeLensRefresh(ctx context.Context) error {
-	panic("not implemented")
-}
-
-//////////////////////////////
-/// WorkspaceConfiguration ///
-//////////////////////////////
-
-func (c *Client) WorkspaceConfiguration(ctx context.Context, p ConfigurationParams) (LSPAnyArray, error) {
-	panic("not implemented")
-}
-
-///////////////////////////
-/// WorkspaceDiagnostic ///
-///////////////////////////
-
-type WorkspaceDiagnosticHandler interface {
-	HandleWorkspaceDiagnostic(context.Context, WorkspaceDiagnosticParams) (WorkspaceDiagnosticReport, error)
-}
-
-//////////////////////////////////
-/// WorkspaceDiagnosticRefresh ///
-//////////////////////////////////
-
-func (c *Client) WorkspaceDiagnosticRefresh(ctx context.Context) error {
-	panic("not implemented")
-}
-
-///////////////////////////////////////
-/// WorkspaceDidChangeConfiguration ///
-///////////////////////////////////////
-
-type WorkspaceDidChangeConfigurationHandler interface {
-	HandleWorkspaceDidChangeConfiguration(context.Context, DidChangeConfigurationParams) error
-}
-
-//////////////////////////////////////
-/// WorkspaceDidChangeWatchedFiles ///
-//////////////////////////////////////
-
-type WorkspaceDidChangeWatchedFilesHandler interface {
-	HandleWorkspaceDidChangeWatchedFiles(context.Context, DidChangeWatchedFilesParams) error
-}
-
-//////////////////////////////////////////
-/// WorkspaceDidChangeWorkspaceFolders ///
-//////////////////////////////////////////
-
-type WorkspaceDidChangeWorkspaceFoldersHandler interface {
-	HandleWorkspaceDidChangeWorkspaceFolders(context.Context, DidChangeWorkspaceFoldersParams) error
-}
-
-///////////////////////////////
-/// WorkspaceDidCreateFiles ///
-///////////////////////////////
-
-type WorkspaceDidCreateFilesHandler interface {
-	HandleWorkspaceDidCreateFiles(context.Context, CreateFilesParams) error
-}
-
-///////////////////////////////
-/// WorkspaceDidDeleteFiles ///
-///////////////////////////////
-
-type WorkspaceDidDeleteFilesHandler interface {
-	HandleWorkspaceDidDeleteFiles(context.Context, DeleteFilesParams) error
-}
-
-///////////////////////////////
-/// WorkspaceDidRenameFiles ///
-///////////////////////////////
-
-type WorkspaceDidRenameFilesHandler interface {
-	HandleWorkspaceDidRenameFiles(context.Context, RenameFilesParams) error
-}
-
-///////////////////////////////
-/// WorkspaceExecuteCommand ///
-///////////////////////////////
-
-type WorkspaceExecuteCommandHandler interface {
-	HandleWorkspaceExecuteCommand(context.Context, ExecuteCommandParams) (WorkspaceExecuteCommandResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type WorkspaceExecuteCommandResult interface {
-	isWorkspaceExecuteCommandResult()
-}
-
-/////////////////////////////////
-/// WorkspaceInlayHintRefresh ///
-/////////////////////////////////
-
-func (c *Client) WorkspaceInlayHintRefresh(ctx context.Context) error {
-	panic("not implemented")
-}
-
-///////////////////////////////////
-/// WorkspaceInlineValueRefresh ///
-///////////////////////////////////
-
-func (c *Client) WorkspaceInlineValueRefresh(ctx context.Context) error {
-	panic("not implemented")
-}
-
-//////////////////////////////////////
-/// WorkspaceSemanticTokensRefresh ///
-//////////////////////////////////////
-
-func (c *Client) WorkspaceSemanticTokensRefresh(ctx context.Context) error {
-	panic("not implemented")
-}
-
-///////////////////////
-/// WorkspaceSymbol ///
-///////////////////////
-
-type WorkspaceSymbolHandler interface {
-	HandleWorkspaceSymbol(context.Context, WorkspaceSymbolParams) (WorkspaceSymbolResult, error)
-}
-
-// Generated from an LSP 'or' type.
-type WorkspaceSymbolResult interface {
-	isWorkspaceSymbolResult()
-}
-
-func (SymbolInformationArray) isWorkspaceSymbolResult() {}
-func (WorkspaceSymbolArray) isWorkspaceSymbolResult()   {}
-
-// Generated from an LSP 'array' type.
+// WorkspaceSymbolArray is an array of WorkspaceSymbol elements.
 type WorkspaceSymbolArray []WorkspaceSymbol
 
-////////////////////////////////
-/// WorkspaceWillCreateFiles ///
-////////////////////////////////
+// WorkspaceSymbolClientCapabilities is a structure.
+type WorkspaceSymbolClientCapabilities struct{}
 
-type WorkspaceWillCreateFilesHandler interface {
-	HandleWorkspaceWillCreateFiles(context.Context, CreateFilesParams) (WorkspaceWillCreateFilesResult, error)
-}
+// WorkspaceSymbolClientCapabilitiesResolveSupport is a literal structure.
+type WorkspaceSymbolClientCapabilitiesResolveSupport struct{}
 
-// Generated from an LSP 'or' type.
-type WorkspaceWillCreateFilesResult interface {
-	isWorkspaceWillCreateFilesResult()
-}
+// WorkspaceSymbolClientCapabilitiesSymbolKind is a literal structure.
+type WorkspaceSymbolClientCapabilitiesSymbolKind struct{}
 
-func (WorkspaceEdit) isWorkspaceWillCreateFilesResult() {}
+// WorkspaceSymbolClientCapabilitiesTagSupport is a literal structure.
+type WorkspaceSymbolClientCapabilitiesTagSupport struct{}
 
-////////////////////////////////
-/// WorkspaceWillDeleteFiles ///
-////////////////////////////////
+// WorkspaceSymbolLocation is a union of <TODO>.
+type WorkspaceSymbolLocation interface{}
 
-type WorkspaceWillDeleteFilesHandler interface {
-	HandleWorkspaceWillDeleteFiles(context.Context, DeleteFilesParams) (WorkspaceWillDeleteFilesResult, error)
-}
+// WorkspaceSymbolLocationOption2 is a literal structure.
+type WorkspaceSymbolLocationOption2 struct{}
 
-// Generated from an LSP 'or' type.
-type WorkspaceWillDeleteFilesResult interface {
-	isWorkspaceWillDeleteFilesResult()
-}
+// WorkspaceSymbolOptions is a structure.
+type WorkspaceSymbolOptions struct{}
 
-func (WorkspaceEdit) isWorkspaceWillDeleteFilesResult() {}
+// WorkspaceSymbolParams is a structure.
+type WorkspaceSymbolParams struct{}
 
-////////////////////////////////
-/// WorkspaceWillRenameFiles ///
-////////////////////////////////
+// WorkspaceSymbolRegistrationOptions is a structure.
+type WorkspaceSymbolRegistrationOptions struct{}
 
-type WorkspaceWillRenameFilesHandler interface {
-	HandleWorkspaceWillRenameFiles(context.Context, RenameFilesParams) (WorkspaceWillRenameFilesResult, error)
-}
+// WorkspaceUnchangedDocumentDiagnosticReport is a structure.
+type WorkspaceUnchangedDocumentDiagnosticReport struct{}
 
-// Generated from an LSP 'or' type.
-type WorkspaceWillRenameFilesResult interface {
-	isWorkspaceWillRenameFilesResult()
-}
+// WorkspaceUnchangedDocumentDiagnosticReportVersion is a union of <TODO>.
+type WorkspaceUnchangedDocumentDiagnosticReportVersion interface{}
 
-func (WorkspaceEdit) isWorkspaceWillRenameFilesResult() {}
-
-/////////////////////////////////
-/// WorkspaceWorkspaceFolders ///
-/////////////////////////////////
-
-func (c *Client) WorkspaceWorkspaceFolders(ctx context.Context) (WorkspaceWorkspaceFoldersResult, error) {
-	panic("not implemented")
-}
-
-// Generated from an LSP 'or' type.
-type WorkspaceWorkspaceFoldersResult interface {
-	isWorkspaceWorkspaceFoldersResult()
-}
-
-func (WorkspaceFolderArray) isWorkspaceWorkspaceFoldersResult() {}
-
-//////////////////////////////
-/// WorkspaceSymbolResolve ///
-//////////////////////////////
-
-type WorkspaceSymbolResolveHandler interface {
-	HandleWorkspaceSymbolResolve(context.Context, WorkspaceSymbol) (WorkspaceSymbol, error)
-}
+// initializeParams is a structure.
+type initializeParams struct{}

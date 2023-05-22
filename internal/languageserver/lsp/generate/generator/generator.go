@@ -1,84 +1,168 @@
 package generator
 
 import (
-	"strings"
-
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
+	"golang.org/x/exp/maps"
 	"golang.org/x/exp/slices"
 )
 
-// Generator generates Go code from the LSP meta-model.
-type Generator struct {
-	Model *model.Model
-	File  *jen.File
-
-	scopes    [][]string
-	unreified map[string]model.Type
-	reified   map[string]struct{}
-}
-
-// Generate populates g.File.
-func (g *Generator) Generate() {
-	defs := slices.Clone(g.Model.TypeDefs)
-	slices.SortFunc(
-		defs,
-		func(a, b model.TypeDef) bool {
-			return a.Name() < b.Name()
-		},
-	)
-
-	for _, d := range defs {
-		g.emitBanner(identifier(d.Name()))
-		g.emitTypeDef(d)
-		g.emitReifiedTypes()
+// Generate produces Go representations of the given LSP model.
+func Generate(
+	m *model.Model,
+	f *jen.File,
+) {
+	g := &generator{
+		Group: f.Group,
 	}
 
-	methods := slices.Clone(g.Model.Methods)
-	slices.SortFunc(
-		methods,
-		func(a, b model.Method) bool {
-			return a.Name() < b.Name()
-		},
-	)
+	model.VisitNode(m, g)
+}
 
-	for _, m := range methods {
-		g.emitBanner(identifier(m.Name()))
-		g.emitMethod(m)
-		g.emitReifiedTypes()
+type generator struct {
+	*jen.Group
+}
+
+func (g *generator) withGroup(
+	fn func(),
+) func(*jen.Group) {
+	return func(after *jen.Group) {
+		before := g.Group
+		g.Group = after
+		fn()
+		g.Group = before
 	}
 }
 
-func (g *Generator) emitBanner(s string) {
-	n := len(s)
-	w := n + 8
+func (g *generator) VisitModel(n *model.Model) {
+	types := map[string]model.Type{}
+	for _, t := range n.Types {
+		if _, ok := t.(*model.Reference); !ok {
+			types[nameOf(t)] = t
+		}
+	}
 
-	line := strings.Repeat("/", w)
+	names := append(
+		maps.Keys(types),
+		maps.Keys(n.Defs)...,
+	)
+	slices.Sort(names)
+	names = slices.Compact(names)
 
-	g.File.
+	for _, name := range names {
+		if d, ok := n.Defs[name]; ok {
+			model.VisitNode(d, g)
+		}
+		if t, ok := types[name]; ok {
+			model.VisitNode(t, g)
+		}
+	}
+}
+
+func (g *generator) VisitCall(n *model.Call)                 {}
+func (g *generator) VisitNotification(n *model.Notification) {}
+func (g *generator) VisitReference(n *model.Reference)       {}
+
+func (g *generator) VisitArray(n *model.Array) {
+	name := nameOf(n)
+	elem := nameOf(n.ElementType)
+
+	g.
+		Commentf("%s is an array of %s elements.", name, elem).
 		Line().
-		Comment(line).
+		Type().
+		Id(name).
+		Index().
+		Id(elem)
+}
+
+func (g *generator) VisitMap(n *model.Map) {
+	name := nameOf(n)
+	key := nameOf(n.KeyType)
+	value := nameOf(n.ValueType)
+
+	g.
+		Commentf("%s is an array of %s to %s.", name, key, value).
 		Line().
-		Commentf("/// %s ///", s).
+		Type().
+		Id(name).
+		Map(jen.Id(key)).
+		Id(value)
+}
+
+func (g *generator) VisitAnd(n *model.And) {
+	name := nameOf(n)
+
+	g.
+		Commentf("%s is the intersection of several types.", name).
 		Line().
-		Comment(line).
-		Line()
+		Type().
+		Id(name).
+		Struct()
 }
 
-func (g *Generator) pushScope(n string) {
-	g.scopes = append(g.scopes, []string{n})
+func (g *generator) VisitOr(n *model.Or) {
+	name := nameOf(n)
+	var members = "<TODO>"
+
+	g.
+		Commentf("%s is a union of %s.", name, members).
+		Line().
+		Type().
+		Id(name).
+		Interface()
 }
 
-func (g *Generator) popScope() {
-	g.scopes = g.scopes[:len(g.scopes)-1]
+func (g *generator) VisitTuple(n *model.Tuple) {
+	name := nameOf(n)
+
+	g.
+		Commentf("%s is a %d-tuple.", name, len(n.Types)).
+		Line().
+		Type().
+		Id(name).
+		Struct()
 }
 
-func (g *Generator) pushNestedScope(n string) {
-	names := &g.scopes[len(g.scopes)-1]
-	*names = append(*names, n)
+func (g *generator) VisitStructLit(n *model.StructLit) {
+	name := nameOf(n)
+
+	g.
+		Commentf("%s is a literal structure.", name).
+		Line().
+		Type().
+		Id(name).
+		Struct()
 }
 
-func (g *Generator) popNestedScope() {
-	names := &g.scopes[len(g.scopes)-1]
-	*names = (*names)[:len(*names)-1]
+func (g *generator) VisitStringLit(n *model.StringLit) {}
+
+func (g *generator) VisitAlias(n *model.Alias) {
+	if n.UnderlyingType.IsAnonymous() {
+		return
+	}
+
+	name := nameOf(n)
+	underlying := nameOf(n.UnderlyingType)
+
+	g.
+		Commentf("%s is an alias for %s.", name, underlying).
+		Line().
+		Type().
+		Id(name).
+		Op("=").
+		Id(underlying)
 }
+
+func (g *generator) VisitStruct(n *model.Struct) {
+	name := nameOf(n)
+
+	g.
+		Commentf("%s is a structure.", name).
+		Line().
+		Type().
+		Id(name).
+		Struct()
+}
+
+func (g *generator) VisitProperty(n *model.Property) {}

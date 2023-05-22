@@ -32,11 +32,13 @@ func (i typeInfo) Expr() *jen.Statement {
 }
 
 func (g *Generator) typeInfo(t model.Type) typeInfo {
-	return model.TypeTo[typeInfo](t, &typeInfoX{g})
+	return typeInfo{}
+	// ?	return model.TypeTo[typeInfo](t, &typeInfoX{g})
 }
 
 func (g *Generator) typeInfoForDef(d model.TypeDef) typeInfo {
-	return model.TypeDefTo[typeInfo](d, &typeInfoX{g})
+	return typeInfo{}
+	// return model.TypeDefTo[typeInfo](d, &typeInfoX{g})
 }
 
 type typeInfoX struct {
@@ -107,7 +109,7 @@ func (g *typeInfoX) Array(t *model.Array) typeInfo {
 	return typeInfo{
 		Name: fmt.Sprintf(
 			"%sArray",
-			g.typeInfo(t.Element).Name,
+			g.typeInfo(t.ElementType).Name,
 		),
 		Kind:        reflect.Slice,
 		UseOptional: false,
@@ -119,8 +121,8 @@ func (g *typeInfoX) Map(t *model.Map) typeInfo {
 	return typeInfo{
 		Name: fmt.Sprintf(
 			"%s%sMap",
-			g.typeInfo(t.Key).Name,
-			g.typeInfo(t.Value).Name,
+			g.typeInfo(t.KeyType).Name,
+			g.typeInfo(t.ValueType).Name,
 		),
 		Kind:        reflect.Map,
 		UseOptional: false,
@@ -168,12 +170,13 @@ func (g *typeInfoX) StringLit(t *model.StringLit) typeInfo {
 }
 
 func (g *typeInfoX) Reference(t *model.Reference) typeInfo {
-	return model.TypeDefTo[typeInfo](t.Target, g)
+	return typeInfo{}
+	// return model.TypeDefTo[typeInfo](t.Target, g)
 }
 
 func (g *typeInfoX) Alias(d *model.Alias) typeInfo {
-	name := identifier(d.TypeName)
-	underlying := g.typeInfo(d.Type)
+	name := normalize(d.Name())
+	underlying := g.typeInfo(d.UnderlyingType)
 
 	return typeInfo{
 		Name:        name,
@@ -183,8 +186,8 @@ func (g *typeInfoX) Alias(d *model.Alias) typeInfo {
 }
 
 func (g *typeInfoX) Enum(d *model.Enum) typeInfo {
-	name := identifier(d.TypeName)
-	underlying := g.typeInfo(d.Type)
+	name := normalize(d.Name())
+	underlying := g.typeInfo(d.UnderlyingType)
 
 	return typeInfo{
 		Name:        name,
@@ -194,7 +197,7 @@ func (g *typeInfoX) Enum(d *model.Enum) typeInfo {
 }
 
 func (g *typeInfoX) Struct(d *model.Struct) typeInfo {
-	name := identifier(d.TypeName)
+	name := normalize(d.Name())
 
 	return typeInfo{
 		Name:        name,

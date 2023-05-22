@@ -11,9 +11,9 @@ import (
 func (g *typeDef) Enum(d *model.Enum) {
 	documentation(
 		g.File,
-		d.Documentation,
+		d.Documentation(),
 		"Generated from the LSP '%s' enumeration.",
-		d.TypeName,
+		d.Name(),
 	)
 
 	g.emitEnumType(d)
@@ -21,19 +21,19 @@ func (g *typeDef) Enum(d *model.Enum) {
 	g.File.Line()
 	g.emitEnumConstants(d)
 
-	if !d.SupportsCustomValues {
+	if d.Strict {
 		g.File.Line()
 		g.emitEnumUnmarshalMethod(d)
 	}
 }
 
-func enumMemberName(d *model.Enum, m model.EnumMember) string {
-	return identifier(m.Name, d.TypeName)
+func enumMemberName(d *model.Enum, m *model.EnumMember) string {
+	return normalize(m.Name, d.Name())
 }
 
 func (g *Generator) emitEnumType(d *model.Enum) {
 	info := g.typeInfoForDef(d)
-	underlying := g.typeInfo(d.Type)
+	underlying := g.typeInfo(d.UnderlyingType)
 
 	g.File.
 		Type().

@@ -131,36 +131,34 @@ type (
 )
 
 func (b *builder) buildType(in lowlevel.Type) (out Type) {
-	defer func() {
-		if out != nil {
-			b.model.Types = append(b.model.Types, out)
-		}
-	}()
-
 	switch in.Kind {
 	case "":
 		return nil
 	case lowlevel.Base:
-		return b.buildBaseType(in)
+		out = b.buildBaseType(in)
 	case lowlevel.Reference:
-		return b.buildReferenceType(in)
+		out = b.buildReferenceType(in)
 	case lowlevel.Literal:
-		return b.buildStructLitType(in)
+		out = b.buildStructLitType(in)
 	case lowlevel.StringLiteral:
-		return b.buildStringLitType(in)
+		out = b.buildStringLitType(in)
 	case lowlevel.Array:
-		return b.buildArrayType(in)
+		out = b.buildArrayType(in)
 	case lowlevel.Map:
-		return b.buildMapType(in)
+		out = b.buildMapType(in)
 	case lowlevel.And:
-		return b.buildAndType(in)
+		out = b.buildAndType(in)
 	case lowlevel.Or:
-		return b.buildOrType(in)
+		out = b.buildOrType(in)
 	case lowlevel.Tuple:
-		return b.buildTupleType(in)
+		out = b.buildTupleType(in)
 	default:
 		panic("unrecognized kind: " + in.Kind)
 	}
+
+	b.model.Types = append(b.model.Types, out)
+
+	return out
 }
 
 func (b *builder) buildBaseType(in lowlevel.Type) Type {

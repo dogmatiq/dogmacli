@@ -7,60 +7,60 @@ import (
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
 )
 
-func (g *Generator) emitMethod(m model.Method) {
-	g.pushScope(m.Name())
-	model.VisitMethod(m, &method{g})
-	g.popScope()
+func (g *Generator) emitMethod(m model.MethodDef) {
+	// g.pushScope(m.MethodName())
+	// model.VisitMethod(m, &method{g})
+	// g.popScope()
 }
 
 type method struct{ *Generator }
 
 func (g *method) Call(m *model.Call) {
 	params := jen.Null()
-	if m.Params != nil {
+	if m.ParamsType != nil {
 		g.pushNestedScope("Params")
-		info := g.typeInfo(m.Params)
+		info := g.typeInfo(m.ParamsType)
 		if info.Kind != reflect.Invalid {
 			params = info.Expr()
 		}
 		g.popNestedScope()
 	}
 
-	if m.RegistrationOptions != nil {
+	if m.RegistrationOptionsType != nil {
 		g.pushNestedScope("RegistrationOptions")
-		g.typeInfo(m.RegistrationOptions)
+		g.typeInfo(m.RegistrationOptionsType)
 		g.popNestedScope()
 	}
 
 	result := jen.Null()
-	if m.Result != nil {
+	if m.ResultType != nil {
 		g.pushNestedScope("Result")
-		info := g.typeInfo(m.Result)
+		info := g.typeInfo(m.ResultType)
 		if info.Kind != reflect.Invalid {
 			result = info.Expr()
 		}
 		g.popNestedScope()
 	}
 
-	if m.PartialResult != nil {
+	if m.PartialResultType != nil {
 		g.pushNestedScope("PartialResult")
-		g.typeInfo(m.PartialResult)
+		g.typeInfo(m.PartialResultType)
 		g.popNestedScope()
 	}
 
-	if m.ErrorData != nil {
+	if m.ErrorDataType != nil {
 		g.pushNestedScope("ErrorData")
-		g.typeInfo(m.ErrorData)
+		g.typeInfo(m.ErrorDataType)
 		g.popNestedScope()
 	}
 
-	if m.Direction == model.HandledByLanguageServer {
+	if m.Direction() == model.HandledByLanguageServer {
 		g.File.
 			Type().
-			Id(identifier(m.MethodName, "Handler")).
+			Id(normalize(m.Name(), "Handler")).
 			Interface(
 				jen.
-					Id(identifier("Handle", m.MethodName)).
+					Id(normalize("Handle", m.Name())).
 					Params(
 						jen.Qual("context", "Context"),
 						params,
@@ -76,10 +76,10 @@ func (g *method) Call(m *model.Call) {
 			Params(
 				jen.Id("c").Op("*").Id("Client"),
 			).
-			Id(identifier(m.MethodName)).
+			Id(normalize(m.Name())).
 			ParamsFunc(func(grp *jen.Group) {
 				grp.Id("ctx").Qual("context", "Context")
-				if m.Params != nil {
+				if m.ParamsType != nil {
 					grp.Id("p").Add(params)
 				}
 			}).
@@ -97,28 +97,28 @@ func (g *method) Call(m *model.Call) {
 
 func (g *method) Notification(m *model.Notification) {
 	params := jen.Null()
-	if m.Params != nil {
+	if m.ParamsType != nil {
 		g.pushNestedScope("Params")
-		info := g.typeInfo(m.Params)
+		info := g.typeInfo(m.ParamsType)
 		if info.Kind != reflect.Invalid {
 			params = info.Expr()
 		}
 		g.popNestedScope()
 	}
 
-	if m.RegistrationOptions != nil {
+	if m.RegistrationOptionsType != nil {
 		g.pushNestedScope("RegistrationOptions")
-		g.typeInfo(m.RegistrationOptions)
+		g.typeInfo(m.RegistrationOptionsType)
 		g.popNestedScope()
 	}
 
-	if m.Direction == model.HandledByLanguageServer {
+	if m.Direction() == model.HandledByLanguageServer {
 		g.File.
 			Type().
-			Id(identifier(m.MethodName, "Handler")).
+			Id(normalize(m.Name(), "Handler")).
 			Interface(
 				jen.
-					Id(identifier("Handle", m.MethodName)).
+					Id(normalize("Handle", m.Name())).
 					Params(
 						jen.Qual("context", "Context"),
 						params,
@@ -133,10 +133,10 @@ func (g *method) Notification(m *model.Notification) {
 			Params(
 				jen.Id("c").Op("*").Id("Client"),
 			).
-			Id(identifier(m.MethodName)).
+			Id(normalize(m.Name())).
 			ParamsFunc(func(grp *jen.Group) {
 				grp.Id("ctx").Qual("context", "Context")
-				if m.Params != nil {
+				if m.ParamsType != nil {
 					grp.Id("p").Add(params)
 				}
 			}).

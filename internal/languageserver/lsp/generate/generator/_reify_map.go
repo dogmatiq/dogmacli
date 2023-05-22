@@ -11,8 +11,8 @@ func (g *reifyType) Map(t *model.Map) {
 		"Generated from an LSP 'map' type.",
 	)
 
-	k := g.typeInfo(t.Key)
-	v := g.typeInfo(t.Value)
+	k := g.typeInfo(t.KeyType)
+	v := g.typeInfo(t.ValueType)
 
 	g.File.
 		Type().

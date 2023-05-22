@@ -6,17 +6,17 @@ import (
 
 func (g *typeDef) Alias(d *model.Alias) {
 	info := g.typeInfoForDef(d)
-	underlying := g.typeInfo(d.Type)
+	underlying := g.typeInfo(d.UnderlyingType)
 
 	documentation(
 		g.File,
-		d.Documentation,
+		d.Documentation(),
 		"Generated from the LSP '%s' type alias.",
-		d.TypeName,
+		d.Name(),
 	)
 
 	if underlying.IsReified() {
-		g.emitReifiedType(info.Name, d.Type)
+		g.emitReifiedType(info.Name, d.UnderlyingType)
 	} else {
 		g.File.
 			Type().

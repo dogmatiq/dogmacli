@@ -10,14 +10,14 @@ import (
 func (g *typeDef) Struct(d *model.Struct) {
 	documentation(
 		g.File,
-		d.Documentation,
+		d.Documentation(),
 		"Generated from the LSP '%s' structure.",
-		d.TypeName,
+		d.Name(),
 	)
 
 	g.emitStruct(
 		g.typeInfoForDef(d).Name,
-		d.Embedded,
+		d.EmbeddedTypes,
 		d.Properties,
 	)
 }
@@ -63,7 +63,7 @@ func (g *Generator) emitStructType(
 					documentation(grp, p.Documentation, "")
 
 					grp.
-						Id(identifier(p.Name)).
+						Id(normalize(p.Name)).
 						Add(expr)
 
 					grp.Line()
@@ -178,7 +178,7 @@ func (g *Generator) emitStructMarshalMethods(
 					fn = "marshalOptionalProperty"
 				}
 
-				expr := jen.Id("x").Dot(identifier(p.Name))
+				expr := jen.Id("x").Dot(normalize(p.Name))
 				if t, ok := p.Type.(*model.StringLit); ok {
 					expr = jen.Lit(t.Value)
 				}

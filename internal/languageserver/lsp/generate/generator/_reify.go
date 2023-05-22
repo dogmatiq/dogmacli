@@ -7,9 +7,9 @@ import (
 )
 
 func (g *Generator) emitReifiedType(name string, t model.Type) {
-	g.pushScope(name)
-	model.VisitType(t, &reifyType{g, name})
-	g.popScope()
+	// g.pushScope(name)
+	// model.VisitType(t, &reifyType{g, name})
+	// g.popScope()
 }
 
 func (g *Generator) emitReifiedTypes() {
@@ -27,7 +27,7 @@ func (g *Generator) emitReifiedTypes() {
 }
 
 func (g *Generator) nameFromScope() string {
-	return identifier(g.scopes[len(g.scopes)-1]...)
+	return normalize(g.scopes[len(g.scopes)-1]...)
 }
 
 func (g *Generator) reifyType(name string, t model.Type) {
