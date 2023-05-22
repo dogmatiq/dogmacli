@@ -2,7 +2,6 @@ package generator
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/dogmatiq/dogmacli/internal/languageserver/lsp/generate/model"
@@ -102,6 +101,8 @@ func (v *scoper) VisitCall(n *model.Call) {
 	default:
 		panic("child not found in parent")
 	}
+
+	v.push(ident(n.Name()))
 }
 
 func (v *scoper) VisitNotification(n *model.Notification) {
@@ -113,13 +114,19 @@ func (v *scoper) VisitNotification(n *model.Notification) {
 	default:
 		panic("child not found in parent")
 	}
+
+	v.push(ident(n.Name()))
 }
 
 func (v *scoper) VisitOr(n *model.Or) {
-	for i, t := range n.Types {
+	letter := rune('A')
+	for _, t := range n.Types {
 		if t == v.Child {
-			v.push("Option" + strconv.Itoa(i+1))
+			v.push(string(letter))
 			return
+		}
+		if t.IsAnonymous() {
+			letter++
 		}
 	}
 	panic("child not found in parent")

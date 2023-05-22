@@ -106,6 +106,14 @@ type CallHierarchyIncomingCallsParams struct {
 	Item CallHierarchyItem
 }
 
+// CallHierarchyIncomingCallsResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - CallHierarchyIncomingCallArray
+type CallHierarchyIncomingCallsResult interface {
+	isCallHierarchyIncomingCallsResult()
+}
+
 // CallHierarchyItem is a named structure definition.
 //
 // Represents programming constructs like functions or constructors in the context
@@ -174,6 +182,14 @@ type CallHierarchyOutgoingCallsParams struct {
 	Item CallHierarchyItem
 }
 
+// CallHierarchyOutgoingCallsResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - CallHierarchyOutgoingCallArray
+type CallHierarchyOutgoingCallsResult interface {
+	isCallHierarchyOutgoingCallsResult()
+}
+
 // CallHierarchyPrepareParams is a named structure definition.
 //
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -201,8 +217,14 @@ type CancelParams struct {
 	ID CancelParamsID
 }
 
-// CancelParamsID is a union of <TODO>.
-type CancelParamsID interface{}
+// CancelParamsID is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Int
+//   - String
+type CancelParamsID interface {
+	isCancelParamsID()
+}
 
 // ChangeAnnotation is a named structure definition.
 //
@@ -226,7 +248,7 @@ type ChangeAnnotation struct {
 // An identifier to refer to a change annotation stored with a workspace edit.
 type ChangeAnnotationIdentifier String
 
-// ChangeAnnotationMap is an array of ChangeAnnotationIdentifier to ChangeAnnotation.
+// ChangeAnnotationMap is a map of ChangeAnnotationIdentifier to ChangeAnnotation.
 type ChangeAnnotationMap map[ChangeAnnotationIdentifier]ChangeAnnotation
 
 // ClientCapabilities is a named structure definition.
@@ -860,8 +882,14 @@ type CompletionItem struct {
 // CompletionItemArray is an array of CompletionItem elements.
 type CompletionItemArray []CompletionItem
 
-// CompletionItemDocumentation is a union of <TODO>.
-type CompletionItemDocumentation interface{}
+// CompletionItemDocumentation is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - MarkupContent
+type CompletionItemDocumentation interface {
+	isCompletionItemDocumentation()
+}
 
 // CompletionItemKind is an enumeration of UInt values.
 //
@@ -956,8 +984,14 @@ const (
 // CompletionItemTagArray is an array of CompletionItemTag elements.
 type CompletionItemTagArray []CompletionItemTag
 
-// CompletionItemTextEdit is a union of <TODO>.
-type CompletionItemTextEdit interface{}
+// CompletionItemTextEdit is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextEdit
+//   - InsertReplaceEdit
+type CompletionItemTextEdit interface {
+	isCompletionItemTextEdit()
+}
 
 // CompletionList is a named structure definition.
 //
@@ -990,11 +1024,17 @@ type CompletionList struct {
 // CompletionListItemDefaults is a literal structure.
 type CompletionListItemDefaults struct{}
 
-// CompletionListItemDefaultsEditRange is a union of <TODO>.
-type CompletionListItemDefaultsEditRange interface{}
+// CompletionListItemDefaultsEditRange is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Range
+//   - CompletionListItemDefaultsEditRangeA
+type CompletionListItemDefaultsEditRange interface {
+	isCompletionListItemDefaultsEditRange()
+}
 
-// CompletionListItemDefaultsEditRangeOption2 is a literal structure.
-type CompletionListItemDefaultsEditRangeOption2 struct{}
+// CompletionListItemDefaultsEditRangeA is a literal structure.
+type CompletionListItemDefaultsEditRangeA struct{}
 
 // CompletionOptions is a named structure definition.
 //
@@ -1130,8 +1170,14 @@ type CreateFilesParams struct {
 // Decimal is the LSP decimal type.
 type Decimal float64
 
-// Declaration is a union of <TODO>.
-type Declaration interface{}
+// Declaration is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Location
+//   - LocationArray
+type Declaration interface {
+	isDeclaration()
+}
 
 // DeclarationClientCapabilities is a named structure definition.
 //
@@ -1178,8 +1224,14 @@ type DeclarationRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
-// Definition is a union of <TODO>.
-type Definition interface{}
+// Definition is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Location
+//   - LocationArray
+type Definition interface {
+	isDefinition()
+}
 
 // DefinitionClientCapabilities is a named structure definition.
 //
@@ -1315,8 +1367,14 @@ type DiagnosticClientCapabilities struct {
 	RelatedDocumentSupport Optional[Bool]
 }
 
-// DiagnosticCode is a union of <TODO>.
-type DiagnosticCode interface{}
+// DiagnosticCode is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Int
+//   - String
+type DiagnosticCode interface {
+	isDiagnosticCode()
+}
 
 // DiagnosticOptions is a named structure definition.
 //
@@ -1458,8 +1516,14 @@ type DidChangeConfigurationRegistrationOptions struct {
 	Section Optional[DidChangeConfigurationRegistrationOptionsSection]
 }
 
-// DidChangeConfigurationRegistrationOptionsSection is a union of <TODO>.
-type DidChangeConfigurationRegistrationOptionsSection interface{}
+// DidChangeConfigurationRegistrationOptionsSection is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - StringArray
+type DidChangeConfigurationRegistrationOptionsSection interface {
+	isDidChangeConfigurationRegistrationOptionsSection()
+}
 
 // DidChangeNotebookDocumentParams is a named structure definition.
 //
@@ -1658,8 +1722,14 @@ type DocumentDiagnosticParams struct {
 	PreviousResultID Optional[String]
 }
 
-// DocumentDiagnosticReport is a union of <TODO>.
-type DocumentDiagnosticReport interface{}
+// DocumentDiagnosticReport is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - RelatedFullDocumentDiagnosticReport
+//   - RelatedUnchangedDocumentDiagnosticReport
+type DocumentDiagnosticReport interface {
+	isDocumentDiagnosticReport()
+}
 
 // DocumentDiagnosticReportKind is an enumeration of String values.
 //
@@ -1690,14 +1760,26 @@ type DocumentDiagnosticReportPartialResult struct {
 	RelatedDocuments DocumentDiagnosticReportPartialResultRelatedDocumentsMap
 }
 
-// DocumentDiagnosticReportPartialResultRelatedDocuments is a union of <TODO>.
-type DocumentDiagnosticReportPartialResultRelatedDocuments interface{}
+// DocumentDiagnosticReportPartialResultRelatedDocuments is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - FullDocumentDiagnosticReport
+//   - UnchangedDocumentDiagnosticReport
+type DocumentDiagnosticReportPartialResultRelatedDocuments interface {
+	isDocumentDiagnosticReportPartialResultRelatedDocuments()
+}
 
-// DocumentDiagnosticReportPartialResultRelatedDocumentsMap is an array of DocumentURI to DocumentDiagnosticReportPartialResultRelatedDocuments.
+// DocumentDiagnosticReportPartialResultRelatedDocumentsMap is a map of DocumentURI to DocumentDiagnosticReportPartialResultRelatedDocuments.
 type DocumentDiagnosticReportPartialResultRelatedDocumentsMap map[DocumentURI]DocumentDiagnosticReportPartialResultRelatedDocuments
 
-// DocumentFilter is a union of <TODO>.
-type DocumentFilter interface{}
+// DocumentFilter is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextDocumentFilter
+//   - NotebookCellTextDocumentFilter
+type DocumentFilter interface {
+	isDocumentFilter()
+}
 
 // DocumentFormattingClientCapabilities is a named structure definition.
 //
@@ -2555,8 +2637,14 @@ type GeneralClientCapabilities struct {
 // GeneralClientCapabilitiesStaleRequestSupport is a literal structure.
 type GeneralClientCapabilitiesStaleRequestSupport struct{}
 
-// GlobPattern is a union of <TODO>.
-type GlobPattern interface{}
+// GlobPattern is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Pattern
+//   - RelativePattern
+type GlobPattern interface {
+	isGlobPattern()
+}
 
 // Hover is a named structure definition.
 //
@@ -2578,8 +2666,15 @@ type HoverClientCapabilities struct {
 	ContentFormat Optional[MarkupKindArray]
 }
 
-// HoverContents is a union of <TODO>.
-type HoverContents interface{}
+// HoverContents is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - MarkupContent
+//   - MarkedString
+//   - MarkedStringArray
+type HoverContents interface {
+	isHoverContents()
+}
 
 // HoverOptions is a named structure definition.
 //
@@ -2658,14 +2753,29 @@ type InitializeParams struct {
 // InitializeParamsClientInfo is a literal structure.
 type InitializeParamsClientInfo struct{}
 
-// InitializeParamsProcessID is a union of <TODO>.
-type InitializeParamsProcessID interface{}
+// InitializeParamsProcessID is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Int
+type InitializeParamsProcessID interface {
+	isInitializeParamsProcessID()
+}
 
-// InitializeParamsRootPath is a union of <TODO>.
-type InitializeParamsRootPath interface{}
+// InitializeParamsRootPath is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+type InitializeParamsRootPath interface {
+	isInitializeParamsRootPath()
+}
 
-// InitializeParamsRootURI is a union of <TODO>.
-type InitializeParamsRootURI interface{}
+// InitializeParamsRootURI is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - DocumentURI
+type InitializeParamsRootURI interface {
+	isInitializeParamsRootURI()
+}
 
 // InitializeResult is a named structure definition.
 //
@@ -2763,8 +2873,14 @@ const (
 	ParameterInlayHintKind InlayHintKind = 2
 )
 
-// InlayHintLabel is a union of <TODO>.
-type InlayHintLabel interface{}
+// InlayHintLabel is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - InlayHintLabelPartArray
+type InlayHintLabel interface {
+	isInlayHintLabel()
+}
 
 // InlayHintLabelPart is a named structure definition.
 //
@@ -2801,8 +2917,14 @@ type InlayHintLabelPart struct {
 // InlayHintLabelPartArray is an array of InlayHintLabelPart elements.
 type InlayHintLabelPartArray []InlayHintLabelPart
 
-// InlayHintLabelPartTooltip is a union of <TODO>.
-type InlayHintLabelPartTooltip interface{}
+// InlayHintLabelPartTooltip is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - MarkupContent
+type InlayHintLabelPartTooltip interface {
+	isInlayHintLabelPartTooltip()
+}
 
 // InlayHintOptions is a named structure definition.
 //
@@ -2842,8 +2964,14 @@ type InlayHintRegistrationOptions struct {
 	StaticRegistrationOptions
 }
 
-// InlayHintTooltip is a union of <TODO>.
-type InlayHintTooltip interface{}
+// InlayHintTooltip is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - MarkupContent
+type InlayHintTooltip interface {
+	isInlayHintTooltip()
+}
 
 // InlayHintWorkspaceClientCapabilities is a named structure definition.
 //
@@ -2861,8 +2989,15 @@ type InlayHintWorkspaceClientCapabilities struct {
 	RefreshSupport Optional[Bool]
 }
 
-// InlineValue is a union of <TODO>.
-type InlineValue interface{}
+// InlineValue is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - InlineValueText
+//   - InlineValueVariableLookup
+//   - InlineValueEvaluatableExpression
+type InlineValue interface {
+	isInlineValue()
+}
 
 // InlineValueArray is an array of InlineValue elements.
 type InlineValueArray []InlineValue
@@ -3058,8 +3193,19 @@ type InsertTextModeArray []InsertTextMode
 // Int is the LSP signed integer type.
 type Int int32
 
-// LSPAny is a union of <TODO>.
-type LSPAny interface{}
+// LSPAny is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LSPObject
+//   - LSPArray
+//   - String
+//   - Int
+//   - UInt
+//   - Decimal
+//   - Bool
+type LSPAny interface {
+	isLSPAny()
+}
 
 // LSPAnyArray is an array of LSPAny elements.
 type LSPAnyArray []LSPAny
@@ -3106,7 +3252,7 @@ const (
 	RequestCancelledLSPErrorCodes LSPErrorCodes = -32800
 )
 
-// LSPObject is an array of String to LSPAny.
+// LSPObject is a map of String to LSPAny.
 type LSPObject map[String]LSPAny
 
 // LinkedEditingRangeClientCapabilities is a named structure definition.
@@ -3220,14 +3366,20 @@ type MarkdownClientCapabilities struct {
 	AllowedTags Optional[StringArray]
 }
 
-// MarkedString is a union of <TODO>.
-type MarkedString interface{}
+// MarkedString is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - MarkedStringA
+type MarkedString interface {
+	isMarkedString()
+}
+
+// MarkedStringA is a literal structure.
+type MarkedStringA struct{}
 
 // MarkedStringArray is an array of MarkedString elements.
 type MarkedStringArray []MarkedString
-
-// MarkedStringOption2 is a literal structure.
-type MarkedStringOption2 struct{}
 
 // MarkupContent is a named structure definition.
 //
@@ -3470,8 +3622,14 @@ type NotebookCellTextDocumentFilter struct {
 	Language Optional[String]
 }
 
-// NotebookCellTextDocumentFilterNotebook is a union of <TODO>.
-type NotebookCellTextDocumentFilterNotebook interface{}
+// NotebookCellTextDocumentFilterNotebook is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - NotebookDocumentFilter
+type NotebookCellTextDocumentFilterNotebook interface {
+	isNotebookCellTextDocumentFilterNotebook()
+}
 
 // NotebookDocument is a named structure definition.
 //
@@ -3533,17 +3691,24 @@ type NotebookDocumentClientCapabilities struct {
 	Synchronization NotebookDocumentSyncClientCapabilities
 }
 
-// NotebookDocumentFilter is a union of <TODO>.
-type NotebookDocumentFilter interface{}
+// NotebookDocumentFilter is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - NotebookDocumentFilterA
+//   - NotebookDocumentFilterB
+//   - NotebookDocumentFilterC
+type NotebookDocumentFilter interface {
+	isNotebookDocumentFilter()
+}
 
-// NotebookDocumentFilterOption1 is a literal structure.
-type NotebookDocumentFilterOption1 struct{}
+// NotebookDocumentFilterA is a literal structure.
+type NotebookDocumentFilterA struct{}
 
-// NotebookDocumentFilterOption2 is a literal structure.
-type NotebookDocumentFilterOption2 struct{}
+// NotebookDocumentFilterB is a literal structure.
+type NotebookDocumentFilterB struct{}
 
-// NotebookDocumentFilterOption3 is a literal structure.
-type NotebookDocumentFilterOption3 struct{}
+// NotebookDocumentFilterC is a literal structure.
+type NotebookDocumentFilterC struct{}
 
 // NotebookDocumentIdentifier is a named structure definition.
 //
@@ -3593,35 +3758,53 @@ type NotebookDocumentSyncOptions struct {
 	Save Optional[Bool]
 }
 
-// NotebookDocumentSyncOptionsNotebookSelector is a union of <TODO>.
-type NotebookDocumentSyncOptionsNotebookSelector interface{}
+// NotebookDocumentSyncOptionsNotebookSelector is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - NotebookDocumentSyncOptionsNotebookSelectorA
+//   - NotebookDocumentSyncOptionsNotebookSelectorB
+type NotebookDocumentSyncOptionsNotebookSelector interface {
+	isNotebookDocumentSyncOptionsNotebookSelector()
+}
+
+// NotebookDocumentSyncOptionsNotebookSelectorA is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorA struct{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorACells is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorACells struct{}
+
+// NotebookDocumentSyncOptionsNotebookSelectorACellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorACells elements.
+type NotebookDocumentSyncOptionsNotebookSelectorACellsArray []NotebookDocumentSyncOptionsNotebookSelectorACells
+
+// NotebookDocumentSyncOptionsNotebookSelectorANotebook is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - NotebookDocumentFilter
+type NotebookDocumentSyncOptionsNotebookSelectorANotebook interface {
+	isNotebookDocumentSyncOptionsNotebookSelectorANotebook()
+}
 
 // NotebookDocumentSyncOptionsNotebookSelectorArray is an array of NotebookDocumentSyncOptionsNotebookSelector elements.
 type NotebookDocumentSyncOptionsNotebookSelectorArray []NotebookDocumentSyncOptionsNotebookSelector
 
-// NotebookDocumentSyncOptionsNotebookSelectorOption1 is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorOption1 struct{}
+// NotebookDocumentSyncOptionsNotebookSelectorB is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorB struct{}
 
-// NotebookDocumentSyncOptionsNotebookSelectorOption1Cells is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorOption1Cells struct{}
+// NotebookDocumentSyncOptionsNotebookSelectorBCells is a literal structure.
+type NotebookDocumentSyncOptionsNotebookSelectorBCells struct{}
 
-// NotebookDocumentSyncOptionsNotebookSelectorOption1CellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorOption1Cells elements.
-type NotebookDocumentSyncOptionsNotebookSelectorOption1CellsArray []NotebookDocumentSyncOptionsNotebookSelectorOption1Cells
+// NotebookDocumentSyncOptionsNotebookSelectorBCellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorBCells elements.
+type NotebookDocumentSyncOptionsNotebookSelectorBCellsArray []NotebookDocumentSyncOptionsNotebookSelectorBCells
 
-// NotebookDocumentSyncOptionsNotebookSelectorOption1Notebook is a union of <TODO>.
-type NotebookDocumentSyncOptionsNotebookSelectorOption1Notebook interface{}
-
-// NotebookDocumentSyncOptionsNotebookSelectorOption2 is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorOption2 struct{}
-
-// NotebookDocumentSyncOptionsNotebookSelectorOption2Cells is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorOption2Cells struct{}
-
-// NotebookDocumentSyncOptionsNotebookSelectorOption2CellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorOption2Cells elements.
-type NotebookDocumentSyncOptionsNotebookSelectorOption2CellsArray []NotebookDocumentSyncOptionsNotebookSelectorOption2Cells
-
-// NotebookDocumentSyncOptionsNotebookSelectorOption2Notebook is a union of <TODO>.
-type NotebookDocumentSyncOptionsNotebookSelectorOption2Notebook interface{}
+// NotebookDocumentSyncOptionsNotebookSelectorBNotebook is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - NotebookDocumentFilter
+type NotebookDocumentSyncOptionsNotebookSelectorBNotebook interface {
+	isNotebookDocumentSyncOptionsNotebookSelectorBNotebook()
+}
 
 // NotebookDocumentSyncRegistrationOptions is a named structure definition.
 //
@@ -3647,8 +3830,13 @@ type OptionalVersionedTextDocumentIdentifier struct {
 	Version OptionalVersionedTextDocumentIdentifierVersion
 }
 
-// OptionalVersionedTextDocumentIdentifierVersion is a union of <TODO>.
-type OptionalVersionedTextDocumentIdentifierVersion interface{}
+// OptionalVersionedTextDocumentIdentifierVersion is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Int
+type OptionalVersionedTextDocumentIdentifierVersion interface {
+	isOptionalVersionedTextDocumentIdentifierVersion()
+}
 
 // ParameterInformation is a named structure definition.
 //
@@ -3672,20 +3860,26 @@ type ParameterInformation struct {
 // ParameterInformationArray is an array of ParameterInformation elements.
 type ParameterInformationArray []ParameterInformation
 
-// ParameterInformationDocumentation is a union of <TODO>.
-type ParameterInformationDocumentation interface{}
+// ParameterInformationDocumentation is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - MarkupContent
+type ParameterInformationDocumentation interface {
+	isParameterInformationDocumentation()
+}
 
-// ParameterInformationLabel is a union of <TODO>.
-type ParameterInformationLabel interface{}
+// ParameterInformationLabel is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - ParameterInformationLabelA
+type ParameterInformationLabel interface {
+	isParameterInformationLabel()
+}
 
-// ParameterInformationLabelOption2 is a 2-tuple.
-type ParameterInformationLabelOption2 struct{}
-
-// PartialResult is a union of <TODO>.
-type PartialResult interface{}
-
-// PartialResultArray is an array of PartialResult elements.
-type PartialResultArray []PartialResult
+// ParameterInformationLabelA is a 2-tuple of UInt.
+type ParameterInformationLabelA [2]UInt
 
 // PartialResultParams is a named structure definition.
 type PartialResultParams struct {
@@ -3793,14 +3987,21 @@ type PrepareRenameParams struct {
 	WorkDoneProgressParams
 }
 
-// PrepareRenameResult is a union of <TODO>.
-type PrepareRenameResult interface{}
+// PrepareRenameResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Range
+//   - PrepareRenameResultA
+//   - PrepareRenameResultB
+type PrepareRenameResult interface {
+	isPrepareRenameResult()
+}
 
-// PrepareRenameResultOption2 is a literal structure.
-type PrepareRenameResultOption2 struct{}
+// PrepareRenameResultA is a literal structure.
+type PrepareRenameResultA struct{}
 
-// PrepareRenameResultOption3 is a literal structure.
-type PrepareRenameResultOption3 struct{}
+// PrepareRenameResultB is a literal structure.
+type PrepareRenameResultB struct{}
 
 // PrepareSupportDefaultBehavior is an enumeration of UInt values.
 type PrepareSupportDefaultBehavior UInt
@@ -3837,8 +4038,14 @@ type ProgressParams struct {
 	Value LSPAny
 }
 
-// ProgressToken is a union of <TODO>.
-type ProgressToken interface{}
+// ProgressToken is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Int
+//   - String
+type ProgressToken interface {
+	isProgressToken()
+}
 
 // PublishDiagnosticsClientCapabilities is a named structure definition.
 //
@@ -3969,9 +4176,6 @@ type Registration struct {
 // RegistrationArray is an array of Registration elements.
 type RegistrationArray []Registration
 
-// RegistrationOptions is the intersection of several types.
-type RegistrationOptions struct{}
-
 // RegistrationParams is a named structure definition.
 type RegistrationParams struct {
 	Registrations RegistrationArray
@@ -4007,10 +4211,16 @@ type RelatedFullDocumentDiagnosticReport struct {
 	RelatedDocuments Optional[RelatedFullDocumentDiagnosticReportRelatedDocumentsMap]
 }
 
-// RelatedFullDocumentDiagnosticReportRelatedDocuments is a union of <TODO>.
-type RelatedFullDocumentDiagnosticReportRelatedDocuments interface{}
+// RelatedFullDocumentDiagnosticReportRelatedDocuments is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - FullDocumentDiagnosticReport
+//   - UnchangedDocumentDiagnosticReport
+type RelatedFullDocumentDiagnosticReportRelatedDocuments interface {
+	isRelatedFullDocumentDiagnosticReportRelatedDocuments()
+}
 
-// RelatedFullDocumentDiagnosticReportRelatedDocumentsMap is an array of DocumentURI to RelatedFullDocumentDiagnosticReportRelatedDocuments.
+// RelatedFullDocumentDiagnosticReportRelatedDocumentsMap is a map of DocumentURI to RelatedFullDocumentDiagnosticReportRelatedDocuments.
 type RelatedFullDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedFullDocumentDiagnosticReportRelatedDocuments
 
 // RelatedUnchangedDocumentDiagnosticReport is a named structure definition.
@@ -4031,10 +4241,16 @@ type RelatedUnchangedDocumentDiagnosticReport struct {
 	RelatedDocuments Optional[RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap]
 }
 
-// RelatedUnchangedDocumentDiagnosticReportRelatedDocuments is a union of <TODO>.
-type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments interface{}
+// RelatedUnchangedDocumentDiagnosticReportRelatedDocuments is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - FullDocumentDiagnosticReport
+//   - UnchangedDocumentDiagnosticReport
+type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments interface {
+	isRelatedUnchangedDocumentDiagnosticReportRelatedDocuments()
+}
 
-// RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap is an array of DocumentURI to RelatedUnchangedDocumentDiagnosticReportRelatedDocuments.
+// RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap is a map of DocumentURI to RelatedUnchangedDocumentDiagnosticReportRelatedDocuments.
 type RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedUnchangedDocumentDiagnosticReportRelatedDocuments
 
 // RelativePattern is a named structure definition.
@@ -4052,8 +4268,14 @@ type RelativePattern struct {
 	Pattern Pattern
 }
 
-// RelativePatternBaseURI is a union of <TODO>.
-type RelativePatternBaseURI interface{}
+// RelativePatternBaseURI is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceFolder
+//   - URI
+type RelativePatternBaseURI interface {
+	isRelativePatternBaseURI()
+}
 
 // RenameClientCapabilities is a named structure definition.
 type RenameClientCapabilities struct {
@@ -4185,15 +4407,6 @@ const (
 
 // ResourceOperationKindArray is an array of ResourceOperationKind elements.
 type ResourceOperationKindArray []ResourceOperationKind
-
-// Result is a union of <TODO>.
-type Result interface{}
-
-// ResultOption1 is a union of <TODO>.
-type ResultOption1 interface{}
-
-// ResultOption1Array is an array of ResultOption1 elements.
-type ResultOption1Array []ResultOption1
 
 // SaveOptions is a named structure definition.
 //
@@ -4408,17 +4621,29 @@ type SemanticTokensClientCapabilities struct {
 // SemanticTokensClientCapabilitiesRequests is a literal structure.
 type SemanticTokensClientCapabilitiesRequests struct{}
 
-// SemanticTokensClientCapabilitiesRequestsFull is a union of <TODO>.
-type SemanticTokensClientCapabilitiesRequestsFull interface{}
+// SemanticTokensClientCapabilitiesRequestsFull is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - SemanticTokensClientCapabilitiesRequestsFullA
+type SemanticTokensClientCapabilitiesRequestsFull interface {
+	isSemanticTokensClientCapabilitiesRequestsFull()
+}
 
-// SemanticTokensClientCapabilitiesRequestsFullOption2 is a literal structure.
-type SemanticTokensClientCapabilitiesRequestsFullOption2 struct{}
+// SemanticTokensClientCapabilitiesRequestsFullA is a literal structure.
+type SemanticTokensClientCapabilitiesRequestsFullA struct{}
 
-// SemanticTokensClientCapabilitiesRequestsRange is a union of <TODO>.
-type SemanticTokensClientCapabilitiesRequestsRange interface{}
+// SemanticTokensClientCapabilitiesRequestsRange is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - SemanticTokensClientCapabilitiesRequestsRangeA
+type SemanticTokensClientCapabilitiesRequestsRange interface {
+	isSemanticTokensClientCapabilitiesRequestsRange()
+}
 
-// SemanticTokensClientCapabilitiesRequestsRangeOption2 is a literal structure.
-type SemanticTokensClientCapabilitiesRequestsRangeOption2 struct{}
+// SemanticTokensClientCapabilitiesRequestsRangeA is a literal structure.
+type SemanticTokensClientCapabilitiesRequestsRangeA struct{}
 
 // SemanticTokensDelta is a named structure definition.
 //
@@ -4490,17 +4715,29 @@ type SemanticTokensOptions struct {
 	Full Optional[SemanticTokensOptionsFull]
 }
 
-// SemanticTokensOptionsFull is a union of <TODO>.
-type SemanticTokensOptionsFull interface{}
+// SemanticTokensOptionsFull is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - SemanticTokensOptionsFullA
+type SemanticTokensOptionsFull interface {
+	isSemanticTokensOptionsFull()
+}
 
-// SemanticTokensOptionsFullOption2 is a literal structure.
-type SemanticTokensOptionsFullOption2 struct{}
+// SemanticTokensOptionsFullA is a literal structure.
+type SemanticTokensOptionsFullA struct{}
 
-// SemanticTokensOptionsRange is a union of <TODO>.
-type SemanticTokensOptionsRange interface{}
+// SemanticTokensOptionsRange is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - SemanticTokensOptionsRangeA
+type SemanticTokensOptionsRange interface {
+	isSemanticTokensOptionsRange()
+}
 
-// SemanticTokensOptionsRangeOption2 is a literal structure.
-type SemanticTokensOptionsRangeOption2 struct{}
+// SemanticTokensOptionsRangeA is a literal structure.
+type SemanticTokensOptionsRangeA struct{}
 
 // SemanticTokensParams is a named structure definition.
 //
@@ -4665,86 +4902,254 @@ type ServerCapabilities struct {
 	Experimental Optional[LSPAny]
 }
 
-// ServerCapabilitiesCallHierarchyProvider is a union of <TODO>.
-type ServerCapabilitiesCallHierarchyProvider interface{}
+// ServerCapabilitiesCallHierarchyProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - CallHierarchyOptions
+//   - CallHierarchyRegistrationOptions
+type ServerCapabilitiesCallHierarchyProvider interface {
+	isServerCapabilitiesCallHierarchyProvider()
+}
 
-// ServerCapabilitiesCodeActionProvider is a union of <TODO>.
-type ServerCapabilitiesCodeActionProvider interface{}
+// ServerCapabilitiesCodeActionProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - CodeActionOptions
+type ServerCapabilitiesCodeActionProvider interface {
+	isServerCapabilitiesCodeActionProvider()
+}
 
-// ServerCapabilitiesColorProvider is a union of <TODO>.
-type ServerCapabilitiesColorProvider interface{}
+// ServerCapabilitiesColorProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - DocumentColorOptions
+//   - DocumentColorRegistrationOptions
+type ServerCapabilitiesColorProvider interface {
+	isServerCapabilitiesColorProvider()
+}
 
-// ServerCapabilitiesDeclarationProvider is a union of <TODO>.
-type ServerCapabilitiesDeclarationProvider interface{}
+// ServerCapabilitiesDeclarationProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - DeclarationOptions
+//   - DeclarationRegistrationOptions
+type ServerCapabilitiesDeclarationProvider interface {
+	isServerCapabilitiesDeclarationProvider()
+}
 
-// ServerCapabilitiesDefinitionProvider is a union of <TODO>.
-type ServerCapabilitiesDefinitionProvider interface{}
+// ServerCapabilitiesDefinitionProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - DefinitionOptions
+type ServerCapabilitiesDefinitionProvider interface {
+	isServerCapabilitiesDefinitionProvider()
+}
 
-// ServerCapabilitiesDiagnosticProvider is a union of <TODO>.
-type ServerCapabilitiesDiagnosticProvider interface{}
+// ServerCapabilitiesDiagnosticProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - DiagnosticOptions
+//   - DiagnosticRegistrationOptions
+type ServerCapabilitiesDiagnosticProvider interface {
+	isServerCapabilitiesDiagnosticProvider()
+}
 
-// ServerCapabilitiesDocumentFormattingProvider is a union of <TODO>.
-type ServerCapabilitiesDocumentFormattingProvider interface{}
+// ServerCapabilitiesDocumentFormattingProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - DocumentFormattingOptions
+type ServerCapabilitiesDocumentFormattingProvider interface {
+	isServerCapabilitiesDocumentFormattingProvider()
+}
 
-// ServerCapabilitiesDocumentHighlightProvider is a union of <TODO>.
-type ServerCapabilitiesDocumentHighlightProvider interface{}
+// ServerCapabilitiesDocumentHighlightProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - DocumentHighlightOptions
+type ServerCapabilitiesDocumentHighlightProvider interface {
+	isServerCapabilitiesDocumentHighlightProvider()
+}
 
-// ServerCapabilitiesDocumentRangeFormattingProvider is a union of <TODO>.
-type ServerCapabilitiesDocumentRangeFormattingProvider interface{}
+// ServerCapabilitiesDocumentRangeFormattingProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - DocumentRangeFormattingOptions
+type ServerCapabilitiesDocumentRangeFormattingProvider interface {
+	isServerCapabilitiesDocumentRangeFormattingProvider()
+}
 
-// ServerCapabilitiesDocumentSymbolProvider is a union of <TODO>.
-type ServerCapabilitiesDocumentSymbolProvider interface{}
+// ServerCapabilitiesDocumentSymbolProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - DocumentSymbolOptions
+type ServerCapabilitiesDocumentSymbolProvider interface {
+	isServerCapabilitiesDocumentSymbolProvider()
+}
 
-// ServerCapabilitiesFoldingRangeProvider is a union of <TODO>.
-type ServerCapabilitiesFoldingRangeProvider interface{}
+// ServerCapabilitiesFoldingRangeProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - FoldingRangeOptions
+//   - FoldingRangeRegistrationOptions
+type ServerCapabilitiesFoldingRangeProvider interface {
+	isServerCapabilitiesFoldingRangeProvider()
+}
 
-// ServerCapabilitiesHoverProvider is a union of <TODO>.
-type ServerCapabilitiesHoverProvider interface{}
+// ServerCapabilitiesHoverProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - HoverOptions
+type ServerCapabilitiesHoverProvider interface {
+	isServerCapabilitiesHoverProvider()
+}
 
-// ServerCapabilitiesImplementationProvider is a union of <TODO>.
-type ServerCapabilitiesImplementationProvider interface{}
+// ServerCapabilitiesImplementationProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - ImplementationOptions
+//   - ImplementationRegistrationOptions
+type ServerCapabilitiesImplementationProvider interface {
+	isServerCapabilitiesImplementationProvider()
+}
 
-// ServerCapabilitiesInlayHintProvider is a union of <TODO>.
-type ServerCapabilitiesInlayHintProvider interface{}
+// ServerCapabilitiesInlayHintProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - InlayHintOptions
+//   - InlayHintRegistrationOptions
+type ServerCapabilitiesInlayHintProvider interface {
+	isServerCapabilitiesInlayHintProvider()
+}
 
-// ServerCapabilitiesInlineValueProvider is a union of <TODO>.
-type ServerCapabilitiesInlineValueProvider interface{}
+// ServerCapabilitiesInlineValueProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - InlineValueOptions
+//   - InlineValueRegistrationOptions
+type ServerCapabilitiesInlineValueProvider interface {
+	isServerCapabilitiesInlineValueProvider()
+}
 
-// ServerCapabilitiesLinkedEditingRangeProvider is a union of <TODO>.
-type ServerCapabilitiesLinkedEditingRangeProvider interface{}
+// ServerCapabilitiesLinkedEditingRangeProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - LinkedEditingRangeOptions
+//   - LinkedEditingRangeRegistrationOptions
+type ServerCapabilitiesLinkedEditingRangeProvider interface {
+	isServerCapabilitiesLinkedEditingRangeProvider()
+}
 
-// ServerCapabilitiesMonikerProvider is a union of <TODO>.
-type ServerCapabilitiesMonikerProvider interface{}
+// ServerCapabilitiesMonikerProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - MonikerOptions
+//   - MonikerRegistrationOptions
+type ServerCapabilitiesMonikerProvider interface {
+	isServerCapabilitiesMonikerProvider()
+}
 
-// ServerCapabilitiesNotebookDocumentSync is a union of <TODO>.
-type ServerCapabilitiesNotebookDocumentSync interface{}
+// ServerCapabilitiesNotebookDocumentSync is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - NotebookDocumentSyncOptions
+//   - NotebookDocumentSyncRegistrationOptions
+type ServerCapabilitiesNotebookDocumentSync interface {
+	isServerCapabilitiesNotebookDocumentSync()
+}
 
-// ServerCapabilitiesReferencesProvider is a union of <TODO>.
-type ServerCapabilitiesReferencesProvider interface{}
+// ServerCapabilitiesReferencesProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - ReferenceOptions
+type ServerCapabilitiesReferencesProvider interface {
+	isServerCapabilitiesReferencesProvider()
+}
 
-// ServerCapabilitiesRenameProvider is a union of <TODO>.
-type ServerCapabilitiesRenameProvider interface{}
+// ServerCapabilitiesRenameProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - RenameOptions
+type ServerCapabilitiesRenameProvider interface {
+	isServerCapabilitiesRenameProvider()
+}
 
-// ServerCapabilitiesSelectionRangeProvider is a union of <TODO>.
-type ServerCapabilitiesSelectionRangeProvider interface{}
+// ServerCapabilitiesSelectionRangeProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - SelectionRangeOptions
+//   - SelectionRangeRegistrationOptions
+type ServerCapabilitiesSelectionRangeProvider interface {
+	isServerCapabilitiesSelectionRangeProvider()
+}
 
-// ServerCapabilitiesSemanticTokensProvider is a union of <TODO>.
-type ServerCapabilitiesSemanticTokensProvider interface{}
+// ServerCapabilitiesSemanticTokensProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SemanticTokensOptions
+//   - SemanticTokensRegistrationOptions
+type ServerCapabilitiesSemanticTokensProvider interface {
+	isServerCapabilitiesSemanticTokensProvider()
+}
 
-// ServerCapabilitiesTextDocumentSync is a union of <TODO>.
-type ServerCapabilitiesTextDocumentSync interface{}
+// ServerCapabilitiesTextDocumentSync is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextDocumentSyncOptions
+//   - TextDocumentSyncKind
+type ServerCapabilitiesTextDocumentSync interface {
+	isServerCapabilitiesTextDocumentSync()
+}
 
-// ServerCapabilitiesTypeDefinitionProvider is a union of <TODO>.
-type ServerCapabilitiesTypeDefinitionProvider interface{}
+// ServerCapabilitiesTypeDefinitionProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - TypeDefinitionOptions
+//   - TypeDefinitionRegistrationOptions
+type ServerCapabilitiesTypeDefinitionProvider interface {
+	isServerCapabilitiesTypeDefinitionProvider()
+}
 
-// ServerCapabilitiesTypeHierarchyProvider is a union of <TODO>.
-type ServerCapabilitiesTypeHierarchyProvider interface{}
+// ServerCapabilitiesTypeHierarchyProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - TypeHierarchyOptions
+//   - TypeHierarchyRegistrationOptions
+type ServerCapabilitiesTypeHierarchyProvider interface {
+	isServerCapabilitiesTypeHierarchyProvider()
+}
 
 // ServerCapabilitiesWorkspace is a literal structure.
 type ServerCapabilitiesWorkspace struct{}
 
-// ServerCapabilitiesWorkspaceSymbolProvider is a union of <TODO>.
-type ServerCapabilitiesWorkspaceSymbolProvider interface{}
+// ServerCapabilitiesWorkspaceSymbolProvider is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - WorkspaceSymbolOptions
+type ServerCapabilitiesWorkspaceSymbolProvider interface {
+	isServerCapabilitiesWorkspaceSymbolProvider()
+}
 
 // SetTraceParams is a named structure definition.
 type SetTraceParams struct {
@@ -4989,8 +5394,14 @@ type SignatureInformation struct {
 // SignatureInformationArray is an array of SignatureInformation elements.
 type SignatureInformationArray []SignatureInformation
 
-// SignatureInformationDocumentation is a union of <TODO>.
-type SignatureInformationDocumentation interface{}
+// SignatureInformationDocumentation is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - MarkupContent
+type SignatureInformationDocumentation interface {
+	isSignatureInformationDocumentation()
+}
 
 // StaticRegistrationOptions is a named structure definition.
 //
@@ -5221,17 +5632,148 @@ type TextDocumentClientCapabilities struct {
 	Diagnostic Optional[DiagnosticClientCapabilities]
 }
 
-// TextDocumentContentChangeEvent is a union of <TODO>.
-type TextDocumentContentChangeEvent interface{}
+// TextDocumentCodeActionPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Command
+//   - CodeAction
+type TextDocumentCodeActionPartialResult interface {
+	isTextDocumentCodeActionPartialResult()
+}
+
+// TextDocumentCodeActionPartialResultArray is an array of TextDocumentCodeActionPartialResult elements.
+type TextDocumentCodeActionPartialResultArray []TextDocumentCodeActionPartialResult
+
+// TextDocumentCodeActionResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextDocumentCodeActionResultAArray
+type TextDocumentCodeActionResult interface {
+	isTextDocumentCodeActionResult()
+}
+
+// TextDocumentCodeActionResultA is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Command
+//   - CodeAction
+type TextDocumentCodeActionResultA interface {
+	isTextDocumentCodeActionResultA()
+}
+
+// TextDocumentCodeActionResultAArray is an array of TextDocumentCodeActionResultA elements.
+type TextDocumentCodeActionResultAArray []TextDocumentCodeActionResultA
+
+// TextDocumentCodeLensResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - CodeLensArray
+type TextDocumentCodeLensResult interface {
+	isTextDocumentCodeLensResult()
+}
+
+// TextDocumentColorPresentationRegistrationOptions is an intersection (aka 'and') of several other types.
+type TextDocumentColorPresentationRegistrationOptions struct {
+	WorkDoneProgressOptions
+	TextDocumentRegistrationOptions
+}
+
+// TextDocumentCompletionResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - CompletionItemArray
+//   - CompletionList
+type TextDocumentCompletionResult interface {
+	isTextDocumentCompletionResult()
+}
+
+// TextDocumentContentChangeEvent is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextDocumentContentChangeEventA
+//   - TextDocumentContentChangeEventB
+type TextDocumentContentChangeEvent interface {
+	isTextDocumentContentChangeEvent()
+}
+
+// TextDocumentContentChangeEventA is a literal structure.
+type TextDocumentContentChangeEventA struct{}
 
 // TextDocumentContentChangeEventArray is an array of TextDocumentContentChangeEvent elements.
 type TextDocumentContentChangeEventArray []TextDocumentContentChangeEvent
 
-// TextDocumentContentChangeEventOption1 is a literal structure.
-type TextDocumentContentChangeEventOption1 struct{}
+// TextDocumentContentChangeEventB is a literal structure.
+type TextDocumentContentChangeEventB struct{}
 
-// TextDocumentContentChangeEventOption2 is a literal structure.
-type TextDocumentContentChangeEventOption2 struct{}
+// TextDocumentDeclarationPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LocationArray
+//   - DeclarationLinkArray
+type TextDocumentDeclarationPartialResult interface {
+	isTextDocumentDeclarationPartialResult()
+}
+
+// TextDocumentDeclarationResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Declaration
+//   - DeclarationLinkArray
+type TextDocumentDeclarationResult interface {
+	isTextDocumentDeclarationResult()
+}
+
+// TextDocumentDefinitionPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LocationArray
+//   - DefinitionLinkArray
+type TextDocumentDefinitionPartialResult interface {
+	isTextDocumentDefinitionPartialResult()
+}
+
+// TextDocumentDefinitionResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Definition
+//   - DefinitionLinkArray
+type TextDocumentDefinitionResult interface {
+	isTextDocumentDefinitionResult()
+}
+
+// TextDocumentDocumentHighlightResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - DocumentHighlightArray
+type TextDocumentDocumentHighlightResult interface {
+	isTextDocumentDocumentHighlightResult()
+}
+
+// TextDocumentDocumentLinkResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - DocumentLinkArray
+type TextDocumentDocumentLinkResult interface {
+	isTextDocumentDocumentLinkResult()
+}
+
+// TextDocumentDocumentSymbolPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SymbolInformationArray
+//   - DocumentSymbolArray
+type TextDocumentDocumentSymbolPartialResult interface {
+	isTextDocumentDocumentSymbolPartialResult()
+}
+
+// TextDocumentDocumentSymbolResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SymbolInformationArray
+//   - DocumentSymbolArray
+type TextDocumentDocumentSymbolResult interface {
+	isTextDocumentDocumentSymbolResult()
+}
 
 // TextDocumentEdit is a named structure definition.
 //
@@ -5249,23 +5791,60 @@ type TextDocumentEdit struct {
 	Edits TextDocumentEditEditsArray
 }
 
-// TextDocumentEditEdits is a union of <TODO>.
-type TextDocumentEditEdits interface{}
+// TextDocumentEditEdits is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextEdit
+//   - AnnotatedTextEdit
+type TextDocumentEditEdits interface {
+	isTextDocumentEditEdits()
+}
 
 // TextDocumentEditEditsArray is an array of TextDocumentEditEdits elements.
 type TextDocumentEditEditsArray []TextDocumentEditEdits
 
-// TextDocumentFilter is a union of <TODO>.
-type TextDocumentFilter interface{}
+// TextDocumentFilter is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextDocumentFilterA
+//   - TextDocumentFilterB
+//   - TextDocumentFilterC
+type TextDocumentFilter interface {
+	isTextDocumentFilter()
+}
 
-// TextDocumentFilterOption1 is a literal structure.
-type TextDocumentFilterOption1 struct{}
+// TextDocumentFilterA is a literal structure.
+type TextDocumentFilterA struct{}
 
-// TextDocumentFilterOption2 is a literal structure.
-type TextDocumentFilterOption2 struct{}
+// TextDocumentFilterB is a literal structure.
+type TextDocumentFilterB struct{}
 
-// TextDocumentFilterOption3 is a literal structure.
-type TextDocumentFilterOption3 struct{}
+// TextDocumentFilterC is a literal structure.
+type TextDocumentFilterC struct{}
+
+// TextDocumentFoldingRangeResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - FoldingRangeArray
+type TextDocumentFoldingRangeResult interface {
+	isTextDocumentFoldingRangeResult()
+}
+
+// TextDocumentFormattingResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextEditArray
+type TextDocumentFormattingResult interface {
+	isTextDocumentFormattingResult()
+}
+
+// TextDocumentHoverResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Hover
+type TextDocumentHoverResult interface {
+	isTextDocumentHoverResult()
+}
 
 // TextDocumentIdentifier is a named structure definition.
 //
@@ -5277,6 +5856,40 @@ type TextDocumentIdentifier struct {
 
 // TextDocumentIdentifierArray is an array of TextDocumentIdentifier elements.
 type TextDocumentIdentifierArray []TextDocumentIdentifier
+
+// TextDocumentImplementationPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LocationArray
+//   - DefinitionLinkArray
+type TextDocumentImplementationPartialResult interface {
+	isTextDocumentImplementationPartialResult()
+}
+
+// TextDocumentImplementationResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Definition
+//   - DefinitionLinkArray
+type TextDocumentImplementationResult interface {
+	isTextDocumentImplementationResult()
+}
+
+// TextDocumentInlayHintResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - InlayHintArray
+type TextDocumentInlayHintResult interface {
+	isTextDocumentInlayHintResult()
+}
+
+// TextDocumentInlineValueResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - InlineValueArray
+type TextDocumentInlineValueResult interface {
+	isTextDocumentInlineValueResult()
+}
 
 // TextDocumentItem is a named structure definition.
 //
@@ -5297,6 +5910,30 @@ type TextDocumentItem struct {
 // TextDocumentItemArray is an array of TextDocumentItem elements.
 type TextDocumentItemArray []TextDocumentItem
 
+// TextDocumentLinkedEditingRangeResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LinkedEditingRanges
+type TextDocumentLinkedEditingRangeResult interface {
+	isTextDocumentLinkedEditingRangeResult()
+}
+
+// TextDocumentMonikerResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - MonikerArray
+type TextDocumentMonikerResult interface {
+	isTextDocumentMonikerResult()
+}
+
+// TextDocumentOnTypeFormattingResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextEditArray
+type TextDocumentOnTypeFormattingResult interface {
+	isTextDocumentOnTypeFormattingResult()
+}
+
 // TextDocumentPositionParams is a named structure definition.
 //
 // A parameter literal used in requests to pass a text document and a position inside that
@@ -5308,6 +5945,46 @@ type TextDocumentPositionParams struct {
 	Position Position
 }
 
+// TextDocumentPrepareCallHierarchyResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - CallHierarchyItemArray
+type TextDocumentPrepareCallHierarchyResult interface {
+	isTextDocumentPrepareCallHierarchyResult()
+}
+
+// TextDocumentPrepareRenameResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - PrepareRenameResult
+type TextDocumentPrepareRenameResult interface {
+	isTextDocumentPrepareRenameResult()
+}
+
+// TextDocumentPrepareTypeHierarchyResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TypeHierarchyItemArray
+type TextDocumentPrepareTypeHierarchyResult interface {
+	isTextDocumentPrepareTypeHierarchyResult()
+}
+
+// TextDocumentRangeFormattingResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextEditArray
+type TextDocumentRangeFormattingResult interface {
+	isTextDocumentRangeFormattingResult()
+}
+
+// TextDocumentReferencesResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LocationArray
+type TextDocumentReferencesResult interface {
+	isTextDocumentReferencesResult()
+}
+
 // TextDocumentRegistrationOptions is a named structure definition.
 //
 // General text document registration options.
@@ -5317,8 +5994,21 @@ type TextDocumentRegistrationOptions struct {
 	DocumentSelector TextDocumentRegistrationOptionsDocumentSelector
 }
 
-// TextDocumentRegistrationOptionsDocumentSelector is a union of <TODO>.
-type TextDocumentRegistrationOptionsDocumentSelector interface{}
+// TextDocumentRegistrationOptionsDocumentSelector is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - DocumentSelector
+type TextDocumentRegistrationOptionsDocumentSelector interface {
+	isTextDocumentRegistrationOptionsDocumentSelector()
+}
+
+// TextDocumentRenameResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceEdit
+type TextDocumentRenameResult interface {
+	isTextDocumentRenameResult()
+}
 
 // TextDocumentSaveReason is an enumeration of UInt values.
 //
@@ -5347,6 +6037,56 @@ const (
 type TextDocumentSaveRegistrationOptions struct {
 	TextDocumentRegistrationOptions
 	SaveOptions
+}
+
+// TextDocumentSelectionRangeResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SelectionRangeArray
+type TextDocumentSelectionRangeResult interface {
+	isTextDocumentSelectionRangeResult()
+}
+
+// TextDocumentSemanticTokensFullDeltaPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SemanticTokensPartialResult
+//   - SemanticTokensDeltaPartialResult
+type TextDocumentSemanticTokensFullDeltaPartialResult interface {
+	isTextDocumentSemanticTokensFullDeltaPartialResult()
+}
+
+// TextDocumentSemanticTokensFullDeltaResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SemanticTokens
+//   - SemanticTokensDelta
+type TextDocumentSemanticTokensFullDeltaResult interface {
+	isTextDocumentSemanticTokensFullDeltaResult()
+}
+
+// TextDocumentSemanticTokensFullResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SemanticTokens
+type TextDocumentSemanticTokensFullResult interface {
+	isTextDocumentSemanticTokensFullResult()
+}
+
+// TextDocumentSemanticTokensRangeResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SemanticTokens
+type TextDocumentSemanticTokensRangeResult interface {
+	isTextDocumentSemanticTokensRangeResult()
+}
+
+// TextDocumentSignatureHelpResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SignatureHelp
+type TextDocumentSignatureHelpResult interface {
+	isTextDocumentSignatureHelpResult()
 }
 
 // TextDocumentSyncClientCapabilities is a named structure definition.
@@ -5406,8 +6146,40 @@ type TextDocumentSyncOptions struct {
 	Save Optional[TextDocumentSyncOptionsSave]
 }
 
-// TextDocumentSyncOptionsSave is a union of <TODO>.
-type TextDocumentSyncOptionsSave interface{}
+// TextDocumentSyncOptionsSave is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Bool
+//   - SaveOptions
+type TextDocumentSyncOptionsSave interface {
+	isTextDocumentSyncOptionsSave()
+}
+
+// TextDocumentTypeDefinitionPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LocationArray
+//   - DefinitionLinkArray
+type TextDocumentTypeDefinitionPartialResult interface {
+	isTextDocumentTypeDefinitionPartialResult()
+}
+
+// TextDocumentTypeDefinitionResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Definition
+//   - DefinitionLinkArray
+type TextDocumentTypeDefinitionResult interface {
+	isTextDocumentTypeDefinitionResult()
+}
+
+// TextDocumentWillSaveWaitUntilResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextEditArray
+type TextDocumentWillSaveWaitUntilResult interface {
+	isTextDocumentWillSaveWaitUntilResult()
+}
 
 // TextEdit is a named structure definition.
 //
@@ -5424,7 +6196,7 @@ type TextEdit struct {
 // TextEditArray is an array of TextEdit elements.
 type TextEditArray []TextEdit
 
-// TextEditArrayMap is an array of DocumentURI to TextEditArray.
+// TextEditArrayMap is a map of DocumentURI to TextEditArray.
 type TextEditArrayMap map[DocumentURI]TextEditArray
 
 // TokenFormat is an enumeration of String values.
@@ -5572,6 +6344,14 @@ type TypeHierarchySubtypesParams struct {
 	Item TypeHierarchyItem
 }
 
+// TypeHierarchySubtypesResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TypeHierarchyItemArray
+type TypeHierarchySubtypesResult interface {
+	isTypeHierarchySubtypesResult()
+}
+
 // TypeHierarchySupertypesParams is a named structure definition.
 //
 // The parameter of a `typeHierarchy/supertypes` request.
@@ -5582,6 +6362,14 @@ type TypeHierarchySupertypesParams struct {
 	PartialResultParams
 
 	Item TypeHierarchyItem
+}
+
+// TypeHierarchySupertypesResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TypeHierarchyItemArray
+type TypeHierarchySupertypesResult interface {
+	isTypeHierarchySupertypesResult()
 }
 
 // UInt is the LSP unsigned integer type.
@@ -5724,6 +6512,14 @@ type WindowClientCapabilities struct {
 	//
 	// @since 3.16.0
 	ShowDocument Optional[ShowDocumentClientCapabilities]
+}
+
+// WindowShowMessageRequestResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - MessageActionItem
+type WindowShowMessageRequestResult interface {
+	isWindowShowMessageRequestResult()
 }
 
 // WorkDoneProgressBegin is a named structure definition.
@@ -5895,8 +6691,14 @@ type WorkspaceDiagnosticReportPartialResult struct {
 	Items WorkspaceDocumentDiagnosticReportArray
 }
 
-// WorkspaceDocumentDiagnosticReport is a union of <TODO>.
-type WorkspaceDocumentDiagnosticReport interface{}
+// WorkspaceDocumentDiagnosticReport is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceFullDocumentDiagnosticReport
+//   - WorkspaceUnchangedDocumentDiagnosticReport
+type WorkspaceDocumentDiagnosticReport interface {
+	isWorkspaceDocumentDiagnosticReport()
+}
 
 // WorkspaceDocumentDiagnosticReportArray is an array of WorkspaceDocumentDiagnosticReport elements.
 type WorkspaceDocumentDiagnosticReportArray []WorkspaceDocumentDiagnosticReport
@@ -5970,11 +6772,27 @@ type WorkspaceEditClientCapabilities struct {
 // WorkspaceEditClientCapabilitiesChangeAnnotationSupport is a literal structure.
 type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct{}
 
-// WorkspaceEditDocumentChanges is a union of <TODO>.
-type WorkspaceEditDocumentChanges interface{}
+// WorkspaceEditDocumentChanges is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - TextDocumentEdit
+//   - CreateFile
+//   - RenameFile
+//   - DeleteFile
+type WorkspaceEditDocumentChanges interface {
+	isWorkspaceEditDocumentChanges()
+}
 
 // WorkspaceEditDocumentChangesArray is an array of WorkspaceEditDocumentChanges elements.
 type WorkspaceEditDocumentChangesArray []WorkspaceEditDocumentChanges
+
+// WorkspaceExecuteCommandResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - LSPAny
+type WorkspaceExecuteCommandResult interface {
+	isWorkspaceExecuteCommandResult()
+}
 
 // WorkspaceFolder is a named structure definition.
 //
@@ -6012,8 +6830,13 @@ type WorkspaceFoldersInitializeParams struct {
 	WorkspaceFolders Optional[WorkspaceFoldersInitializeParamsWorkspaceFolders]
 }
 
-// WorkspaceFoldersInitializeParamsWorkspaceFolders is a union of <TODO>.
-type WorkspaceFoldersInitializeParamsWorkspaceFolders interface{}
+// WorkspaceFoldersInitializeParamsWorkspaceFolders is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceFolderArray
+type WorkspaceFoldersInitializeParamsWorkspaceFolders interface {
+	isWorkspaceFoldersInitializeParamsWorkspaceFolders()
+}
 
 // WorkspaceFoldersServerCapabilities is a named structure definition.
 type WorkspaceFoldersServerCapabilities struct {
@@ -6029,8 +6852,14 @@ type WorkspaceFoldersServerCapabilities struct {
 	ChangeNotifications Optional[WorkspaceFoldersServerCapabilitiesChangeNotifications]
 }
 
-// WorkspaceFoldersServerCapabilitiesChangeNotifications is a union of <TODO>.
-type WorkspaceFoldersServerCapabilitiesChangeNotifications interface{}
+// WorkspaceFoldersServerCapabilitiesChangeNotifications is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - String
+//   - Bool
+type WorkspaceFoldersServerCapabilitiesChangeNotifications interface {
+	isWorkspaceFoldersServerCapabilitiesChangeNotifications()
+}
 
 // WorkspaceFullDocumentDiagnosticReport is a named structure definition.
 //
@@ -6047,8 +6876,13 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 	Version WorkspaceFullDocumentDiagnosticReportVersion
 }
 
-// WorkspaceFullDocumentDiagnosticReportVersion is a union of <TODO>.
-type WorkspaceFullDocumentDiagnosticReportVersion interface{}
+// WorkspaceFullDocumentDiagnosticReportVersion is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Int
+type WorkspaceFullDocumentDiagnosticReportVersion interface {
+	isWorkspaceFullDocumentDiagnosticReportVersion()
+}
 
 // WorkspaceSymbol is a named structure definition.
 //
@@ -6104,11 +6938,17 @@ type WorkspaceSymbolClientCapabilitiesSymbolKind struct{}
 // WorkspaceSymbolClientCapabilitiesTagSupport is a literal structure.
 type WorkspaceSymbolClientCapabilitiesTagSupport struct{}
 
-// WorkspaceSymbolLocation is a union of <TODO>.
-type WorkspaceSymbolLocation interface{}
+// WorkspaceSymbolLocation is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Location
+//   - WorkspaceSymbolLocationA
+type WorkspaceSymbolLocation interface {
+	isWorkspaceSymbolLocation()
+}
 
-// WorkspaceSymbolLocationOption2 is a literal structure.
-type WorkspaceSymbolLocationOption2 struct{}
+// WorkspaceSymbolLocationA is a literal structure.
+type WorkspaceSymbolLocationA struct{}
 
 // WorkspaceSymbolOptions is a named structure definition.
 //
@@ -6135,11 +6975,29 @@ type WorkspaceSymbolParams struct {
 	Query String
 }
 
+// WorkspaceSymbolPartialResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SymbolInformationArray
+//   - WorkspaceSymbolArray
+type WorkspaceSymbolPartialResult interface {
+	isWorkspaceSymbolPartialResult()
+}
+
 // WorkspaceSymbolRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link WorkspaceSymbolRequest}.
 type WorkspaceSymbolRegistrationOptions struct {
 	WorkspaceSymbolOptions
+}
+
+// WorkspaceSymbolResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - SymbolInformationArray
+//   - WorkspaceSymbolArray
+type WorkspaceSymbolResult interface {
+	isWorkspaceSymbolResult()
 }
 
 // WorkspaceUnchangedDocumentDiagnosticReport is a named structure definition.
@@ -6157,8 +7015,45 @@ type WorkspaceUnchangedDocumentDiagnosticReport struct {
 	Version WorkspaceUnchangedDocumentDiagnosticReportVersion
 }
 
-// WorkspaceUnchangedDocumentDiagnosticReportVersion is a union of <TODO>.
-type WorkspaceUnchangedDocumentDiagnosticReportVersion interface{}
+// WorkspaceUnchangedDocumentDiagnosticReportVersion is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - Int
+type WorkspaceUnchangedDocumentDiagnosticReportVersion interface {
+	isWorkspaceUnchangedDocumentDiagnosticReportVersion()
+}
+
+// WorkspaceWillCreateFilesResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceEdit
+type WorkspaceWillCreateFilesResult interface {
+	isWorkspaceWillCreateFilesResult()
+}
+
+// WorkspaceWillDeleteFilesResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceEdit
+type WorkspaceWillDeleteFilesResult interface {
+	isWorkspaceWillDeleteFilesResult()
+}
+
+// WorkspaceWillRenameFilesResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceEdit
+type WorkspaceWillRenameFilesResult interface {
+	isWorkspaceWillRenameFilesResult()
+}
+
+// WorkspaceWorkspaceFoldersResult is a union (aka 'or') of several other types.
+//
+// It may be one of the following types:
+//   - WorkspaceFolderArray
+type WorkspaceWorkspaceFoldersResult interface {
+	isWorkspaceWorkspaceFoldersResult()
+}
 
 // initializeParams is a named structure definition.
 //
