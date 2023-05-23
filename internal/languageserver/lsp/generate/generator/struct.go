@@ -15,20 +15,32 @@ func (g *generator) VisitStruct(n *model.Struct) {
 		name,
 	)
 
+	g.emitStruct(
+		name,
+		n.EmbeddedTypes,
+		n.Properties,
+	)
+}
+
+func (g *generator) emitStruct(
+	name string,
+	embedded []model.Type,
+	properties []*model.Property,
+) {
 	g.
 		Type().
 		Id(name).
 		StructFunc(
 			g.withGroup(func() {
-				for _, t := range n.EmbeddedTypes {
+				for _, t := range embedded {
 					g.Id(nameOf(t))
 				}
 
-				if len(n.EmbeddedTypes) > 0 && len(n.Properties) > 0 {
+				if len(embedded) > 0 && len(properties) > 0 {
 					g.Line()
 				}
 
-				for _, p := range n.Properties {
+				for _, p := range properties {
 					model.VisitNode(p, g)
 				}
 			}),

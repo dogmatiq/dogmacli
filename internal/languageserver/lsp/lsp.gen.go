@@ -375,13 +375,26 @@ type CodeActionClientCapabilities struct {
 }
 
 // CodeActionClientCapabilitiesCodeActionLiteralSupport is a literal structure.
-type CodeActionClientCapabilitiesCodeActionLiteralSupport struct{}
+type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
+	// The code action kind is support with the following value
+	// set.
+	CodeActionKind CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind
+}
 
 // CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind is a literal structure.
-type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct{}
+type CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind struct {
+	// The code action kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	ValueSet CodeActionKindArray
+}
 
 // CodeActionClientCapabilitiesResolveSupport is a literal structure.
-type CodeActionClientCapabilitiesResolveSupport struct{}
+type CodeActionClientCapabilitiesResolveSupport struct {
+	// The properties that a client can resolve lazily.
+	Properties StringArray
+}
 
 // CodeActionContext is a named structure definition.
 //
@@ -406,7 +419,12 @@ type CodeActionContext struct {
 }
 
 // CodeActionDisabled is a literal structure.
-type CodeActionDisabled struct{}
+type CodeActionDisabled struct {
+	// Human readable description of why the code action is currently disabled.
+	//
+	// This is displayed in the code actions UI.
+	Reason String
+}
 
 // CodeActionKind is an enumeration of String values.
 //
@@ -733,22 +751,96 @@ type CompletionClientCapabilities struct {
 }
 
 // CompletionClientCapabilitiesCompletionItem is a literal structure.
-type CompletionClientCapabilitiesCompletionItem struct{}
+type CompletionClientCapabilitiesCompletionItem struct {
+	// Client supports snippets as insert text.
+	//
+	// A snippet can define tab stops and placeholders with `$1`, `$2`
+	// and `${3:foo}`. `$0` defines the final tab stop, it defaults to
+	// the end of the snippet. Placeholders with equal identifiers are linked,
+	// that is typing in one will update others too.
+	SnippetSupport Optional[Bool]
+	// Client supports commit characters on a completion item.
+	CommitCharactersSupport Optional[Bool]
+	// Client supports the following content formats for the documentation
+	// property. The order describes the preferred format of the client.
+	DocumentationFormat Optional[MarkupKindArray]
+	// Client supports the deprecated property on a completion item.
+	DeprecatedSupport Optional[Bool]
+	// Client supports the preselect property on a completion item.
+	PreselectSupport Optional[Bool]
+	// Client supports the tag property on a completion item. Clients supporting
+	// tags have to handle unknown tags gracefully. Clients especially need to
+	// preserve unknown tags when sending a completion item back to the server in
+	// a resolve call.
+	//
+	// @since 3.15.0
+	TagSupport Optional[CompletionClientCapabilitiesCompletionItemTagSupport]
+	// Client support insert replace edit to control different behavior if a
+	// completion item is inserted in the text or should replace text.
+	//
+	// @since 3.16.0
+	InsertReplaceSupport Optional[Bool]
+	// Indicates which properties a client can resolve lazily on a completion
+	// item. Before version 3.16.0 only the predefined properties `documentation`
+	// and `details` could be resolved lazily.
+	//
+	// @since 3.16.0
+	ResolveSupport Optional[CompletionClientCapabilitiesCompletionItemResolveSupport]
+	// The client supports the `insertTextMode` property on
+	// a completion item to override the whitespace handling mode
+	// as defined by the client (see `insertTextMode`).
+	//
+	// @since 3.16.0
+	InsertTextModeSupport Optional[CompletionClientCapabilitiesCompletionItemInsertTextModeSupport]
+	// The client has support for completion item label
+	// details (see also `CompletionItemLabelDetails`).
+	//
+	// @since 3.17.0
+	LabelDetailsSupport Optional[Bool]
+}
 
 // CompletionClientCapabilitiesCompletionItemInsertTextModeSupport is a literal structure.
-type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct{}
+type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
+	ValueSet InsertTextModeArray
+}
 
 // CompletionClientCapabilitiesCompletionItemKind is a literal structure.
-type CompletionClientCapabilitiesCompletionItemKind struct{}
+type CompletionClientCapabilitiesCompletionItemKind struct {
+	// The completion item kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	//
+	// If this property is not present the client only supports
+	// the completion items kinds from `Text` to `Reference` as defined in
+	// the initial version of the protocol.
+	ValueSet Optional[CompletionItemKindArray]
+}
 
 // CompletionClientCapabilitiesCompletionItemResolveSupport is a literal structure.
-type CompletionClientCapabilitiesCompletionItemResolveSupport struct{}
+type CompletionClientCapabilitiesCompletionItemResolveSupport struct {
+	// The properties that a client can resolve lazily.
+	Properties StringArray
+}
 
 // CompletionClientCapabilitiesCompletionItemTagSupport is a literal structure.
-type CompletionClientCapabilitiesCompletionItemTagSupport struct{}
+type CompletionClientCapabilitiesCompletionItemTagSupport struct {
+	// The tags supported by the client.
+	ValueSet CompletionItemTagArray
+}
 
 // CompletionClientCapabilitiesCompletionList is a literal structure.
-type CompletionClientCapabilitiesCompletionList struct{}
+type CompletionClientCapabilitiesCompletionList struct {
+	// The client supports the following itemDefaults on
+	// a completion list.
+	//
+	// The value lists the supported property names of the
+	// `CompletionList.itemDefaults` object. If omitted
+	// no properties are supported.
+	//
+	// @since 3.17.0
+	ItemDefaults Optional[StringArray]
+}
 
 // CompletionContext is a named structure definition.
 //
@@ -1038,7 +1130,28 @@ type CompletionList struct {
 }
 
 // CompletionListItemDefaults is a literal structure.
-type CompletionListItemDefaults struct{}
+type CompletionListItemDefaults struct {
+	// A default commit character set.
+	//
+	// @since 3.17.0
+	CommitCharacters Optional[StringArray]
+	// A default edit range.
+	//
+	// @since 3.17.0
+	EditRange Optional[CompletionListItemDefaultsEditRange]
+	// A default insert text format.
+	//
+	// @since 3.17.0
+	InsertTextFormat Optional[InsertTextFormat]
+	// A default insert text mode.
+	//
+	// @since 3.17.0
+	InsertTextMode Optional[InsertTextMode]
+	// A default data value.
+	//
+	// @since 3.17.0
+	Data Optional[LSPAny]
+}
 
 // CompletionListItemDefaultsEditRange is a union (aka 'or') of several other types.
 //
@@ -1054,7 +1167,10 @@ func (CompletionListItemDefaultsEditRangeA) isCompletionListItemDefaultsEditRang
 func (Range) isCompletionListItemDefaultsEditRange() {}
 
 // CompletionListItemDefaultsEditRangeA is a literal structure.
-type CompletionListItemDefaultsEditRangeA struct{}
+type CompletionListItemDefaultsEditRangeA struct {
+	Insert Range
+	Replace Range
+}
 
 // CompletionOptions is a named structure definition.
 //
@@ -1091,7 +1207,14 @@ type CompletionOptions struct {
 }
 
 // CompletionOptionsCompletionItem is a literal structure.
-type CompletionOptionsCompletionItem struct{}
+type CompletionOptionsCompletionItem struct {
+	// The server has support for completion item label
+	// details (see also `CompletionItemLabelDetails`) when
+	// receiving a completion item in a resolve call.
+	//
+	// @since 3.17.0
+	LabelDetailsSupport Optional[Bool]
+}
 
 // CompletionParams is a named structure definition.
 //
@@ -2155,10 +2278,23 @@ type DocumentSymbolClientCapabilities struct {
 }
 
 // DocumentSymbolClientCapabilitiesSymbolKind is a literal structure.
-type DocumentSymbolClientCapabilitiesSymbolKind struct{}
+type DocumentSymbolClientCapabilitiesSymbolKind struct {
+	// The symbol kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	//
+	// If this property is not present the client only supports
+	// the symbol kinds from `File` to `Array` as defined in
+	// the initial version of the protocol.
+	ValueSet Optional[SymbolKindArray]
+}
 
 // DocumentSymbolClientCapabilitiesTagSupport is a literal structure.
-type DocumentSymbolClientCapabilitiesTagSupport struct{}
+type DocumentSymbolClientCapabilitiesTagSupport struct {
+	// The tags supported by the client.
+	ValueSet SymbolTagArray
+}
 
 // DocumentSymbolOptions is a named structure definition.
 //
@@ -2563,10 +2699,22 @@ type FoldingRangeClientCapabilities struct {
 }
 
 // FoldingRangeClientCapabilitiesFoldingRange is a literal structure.
-type FoldingRangeClientCapabilitiesFoldingRange struct{}
+type FoldingRangeClientCapabilitiesFoldingRange struct {
+	// If set, the client signals that it supports setting collapsedText on
+	// folding ranges to display custom labels instead of the default text.
+	//
+	// @since 3.17.0
+	CollapsedText Optional[Bool]
+}
 
 // FoldingRangeClientCapabilitiesFoldingRangeKind is a literal structure.
-type FoldingRangeClientCapabilitiesFoldingRangeKind struct{}
+type FoldingRangeClientCapabilitiesFoldingRangeKind struct {
+	// The folding range kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	ValueSet Optional[FoldingRangeKindArray]
+}
 
 // FoldingRangeKind is an enumeration of String values.
 //
@@ -2693,7 +2841,14 @@ type GeneralClientCapabilities struct {
 }
 
 // GeneralClientCapabilitiesStaleRequestSupport is a literal structure.
-type GeneralClientCapabilitiesStaleRequestSupport struct{}
+type GeneralClientCapabilitiesStaleRequestSupport struct {
+	// The client will actively cancel the request.
+	Cancel Bool
+	// The list of requests for which the client
+	// will retry the request if it receives a
+	// response with error code `ContentModified`
+	RetryOnContentModified StringArray
+}
 
 // GlobPattern is a union (aka 'or') of several other types.
 //
@@ -2817,7 +2972,12 @@ type InitializeParams struct {
 }
 
 // InitializeParamsClientInfo is a literal structure.
-type InitializeParamsClientInfo struct{}
+type InitializeParamsClientInfo struct {
+	// The name of the client as defined by the client.
+	Name String
+	// The client's version as defined by the client.
+	Version Optional[String]
+}
 
 // InitializeParamsProcessID is a union (aka 'or') of several other types.
 //
@@ -2862,7 +3022,12 @@ type InitializeResult struct {
 }
 
 // InitializeResultServerInfo is a literal structure.
-type InitializeResultServerInfo struct{}
+type InitializeResultServerInfo struct {
+	// The name of the server as defined by the server.
+	Name String
+	// The server's version as defined by the server.
+	Version Optional[String]
+}
 
 // InitializedParams is a named structure definition.
 type InitializedParams struct{}
@@ -2925,7 +3090,10 @@ type InlayHintClientCapabilities struct {
 }
 
 // InlayHintClientCapabilitiesResolveSupport is a literal structure.
-type InlayHintClientCapabilitiesResolveSupport struct{}
+type InlayHintClientCapabilitiesResolveSupport struct {
+	// The properties that a client can resolve lazily.
+	Properties StringArray
+}
 
 // InlayHintKind is an enumeration of UInt values.
 //
@@ -3495,7 +3663,10 @@ func (String) isMarkedString()  {}
 func (String) isHoverContents() {}
 
 // MarkedStringA is a literal structure.
-type MarkedStringA struct{}
+type MarkedStringA struct {
+	Language String
+	Value String
+}
 
 // MarkedStringArray is an array of MarkedString elements.
 type MarkedStringArray []MarkedString
@@ -3789,13 +3960,32 @@ type NotebookDocumentChangeEvent struct {
 }
 
 // NotebookDocumentChangeEventCells is a literal structure.
-type NotebookDocumentChangeEventCells struct{}
+type NotebookDocumentChangeEventCells struct {
+	// Changes to the cell structure to add or
+	// remove cells.
+	Structure Optional[NotebookDocumentChangeEventCellsStructure]
+	// Changes to notebook cells properties like its
+	// kind, execution summary or metadata.
+	Data Optional[NotebookCellArray]
+	// Changes to the text content of notebook cells.
+	TextContent Optional[NotebookDocumentChangeEventCellsTextContentArray]
+}
 
 // NotebookDocumentChangeEventCellsStructure is a literal structure.
-type NotebookDocumentChangeEventCellsStructure struct{}
+type NotebookDocumentChangeEventCellsStructure struct {
+	// The change to the cell array.
+	Array NotebookCellArrayChange
+	// Additional opened cell text documents.
+	DidOpen Optional[TextDocumentItemArray]
+	// Additional closed cell text documents.
+	DidClose Optional[TextDocumentIdentifierArray]
+}
 
 // NotebookDocumentChangeEventCellsTextContent is a literal structure.
-type NotebookDocumentChangeEventCellsTextContent struct{}
+type NotebookDocumentChangeEventCellsTextContent struct {
+	Document VersionedTextDocumentIdentifier
+	Changes TextDocumentContentChangeEventArray
+}
 
 // NotebookDocumentChangeEventCellsTextContentArray is an array of NotebookDocumentChangeEventCellsTextContent elements.
 type NotebookDocumentChangeEventCellsTextContentArray []NotebookDocumentChangeEventCellsTextContent
@@ -3841,13 +4031,34 @@ func (NotebookDocumentFilterC) isNotebookDocumentSyncOptionsNotebookSelectorANot
 func (NotebookDocumentFilterC) isNotebookDocumentSyncOptionsNotebookSelectorBNotebook() {}
 
 // NotebookDocumentFilterA is a literal structure.
-type NotebookDocumentFilterA struct{}
+type NotebookDocumentFilterA struct {
+	// The type of the enclosing notebook.
+	NotebookType String
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme Optional[String]
+	// A glob pattern.
+	Pattern Optional[String]
+}
 
 // NotebookDocumentFilterB is a literal structure.
-type NotebookDocumentFilterB struct{}
+type NotebookDocumentFilterB struct {
+	// The type of the enclosing notebook.
+	NotebookType Optional[String]
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+	// A glob pattern.
+	Pattern Optional[String]
+}
 
 // NotebookDocumentFilterC is a literal structure.
-type NotebookDocumentFilterC struct{}
+type NotebookDocumentFilterC struct {
+	// The type of the enclosing notebook.
+	NotebookType Optional[String]
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme Optional[String]
+	// A glob pattern.
+	Pattern String
+}
 
 // NotebookDocumentIdentifier is a named structure definition.
 //
@@ -3911,10 +4122,19 @@ func (NotebookDocumentSyncOptionsNotebookSelectorA) isNotebookDocumentSyncOption
 func (NotebookDocumentSyncOptionsNotebookSelectorB) isNotebookDocumentSyncOptionsNotebookSelector() {}
 
 // NotebookDocumentSyncOptionsNotebookSelectorA is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorA struct{}
+type NotebookDocumentSyncOptionsNotebookSelectorA struct {
+	// The notebook to be synced If a string
+	// value is provided it matches against the
+	// notebook type. '*' matches every notebook.
+	Notebook NotebookDocumentSyncOptionsNotebookSelectorANotebook
+	// The cells of the matching notebook to be synced.
+	Cells Optional[NotebookDocumentSyncOptionsNotebookSelectorACellsArray]
+}
 
 // NotebookDocumentSyncOptionsNotebookSelectorACells is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorACells struct{}
+type NotebookDocumentSyncOptionsNotebookSelectorACells struct {
+	Language String
+}
 
 // NotebookDocumentSyncOptionsNotebookSelectorACellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorACells elements.
 type NotebookDocumentSyncOptionsNotebookSelectorACellsArray []NotebookDocumentSyncOptionsNotebookSelectorACells
@@ -3934,10 +4154,19 @@ func (String) isNotebookDocumentSyncOptionsNotebookSelectorANotebook() {}
 type NotebookDocumentSyncOptionsNotebookSelectorArray []NotebookDocumentSyncOptionsNotebookSelector
 
 // NotebookDocumentSyncOptionsNotebookSelectorB is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorB struct{}
+type NotebookDocumentSyncOptionsNotebookSelectorB struct {
+	// The notebook to be synced If a string
+	// value is provided it matches against the
+	// notebook type. '*' matches every notebook.
+	Notebook Optional[NotebookDocumentSyncOptionsNotebookSelectorBNotebook]
+	// The cells of the matching notebook to be synced.
+	Cells NotebookDocumentSyncOptionsNotebookSelectorBCellsArray
+}
 
 // NotebookDocumentSyncOptionsNotebookSelectorBCells is a literal structure.
-type NotebookDocumentSyncOptionsNotebookSelectorBCells struct{}
+type NotebookDocumentSyncOptionsNotebookSelectorBCells struct {
+	Language String
+}
 
 // NotebookDocumentSyncOptionsNotebookSelectorBCellsArray is an array of NotebookDocumentSyncOptionsNotebookSelectorBCells elements.
 type NotebookDocumentSyncOptionsNotebookSelectorBCellsArray []NotebookDocumentSyncOptionsNotebookSelectorBCells
@@ -4165,10 +4394,15 @@ func (Range) isPrepareRenameResult()             {}
 func (Range) isTextDocumentPrepareRenameResult() {}
 
 // PrepareRenameResultA is a literal structure.
-type PrepareRenameResultA struct{}
+type PrepareRenameResultA struct {
+	Range Range
+	Placeholder String
+}
 
 // PrepareRenameResultB is a literal structure.
-type PrepareRenameResultB struct{}
+type PrepareRenameResultB struct {
+	DefaultBehavior Bool
+}
 
 // PrepareSupportDefaultBehavior is an enumeration of UInt values.
 type PrepareSupportDefaultBehavior UInt
@@ -4247,7 +4481,10 @@ type PublishDiagnosticsClientCapabilities struct {
 }
 
 // PublishDiagnosticsClientCapabilitiesTagSupport is a literal structure.
-type PublishDiagnosticsClientCapabilitiesTagSupport struct{}
+type PublishDiagnosticsClientCapabilitiesTagSupport struct {
+	// The tags supported by the client.
+	ValueSet DiagnosticTagArray
+}
 
 // PublishDiagnosticsParams is a named structure definition.
 //
@@ -4803,7 +5040,14 @@ type SemanticTokensClientCapabilities struct {
 }
 
 // SemanticTokensClientCapabilitiesRequests is a literal structure.
-type SemanticTokensClientCapabilitiesRequests struct{}
+type SemanticTokensClientCapabilitiesRequests struct {
+	// The client will send the `textDocument/semanticTokens/range` request if
+	// the server provides a corresponding handler.
+	Range Optional[SemanticTokensClientCapabilitiesRequestsRange]
+	// The client will send the `textDocument/semanticTokens/full` request if
+	// the server provides a corresponding handler.
+	Full Optional[SemanticTokensClientCapabilitiesRequestsFull]
+}
 
 // SemanticTokensClientCapabilitiesRequestsFull is a union (aka 'or') of several other types.
 //
@@ -4820,7 +5064,11 @@ func (SemanticTokensClientCapabilitiesRequestsFullA) isSemanticTokensClientCapab
 }
 
 // SemanticTokensClientCapabilitiesRequestsFullA is a literal structure.
-type SemanticTokensClientCapabilitiesRequestsFullA struct{}
+type SemanticTokensClientCapabilitiesRequestsFullA struct {
+	// The client will send the `textDocument/semanticTokens/full/delta` request if
+	// the server provides a corresponding handler.
+	Delta Optional[Bool]
+}
 
 // SemanticTokensClientCapabilitiesRequestsRange is a union (aka 'or') of several other types.
 //
@@ -4923,7 +5171,10 @@ func (Bool) isSemanticTokensOptionsFull() {}
 func (SemanticTokensOptionsFullA) isSemanticTokensOptionsFull() {}
 
 // SemanticTokensOptionsFullA is a literal structure.
-type SemanticTokensOptionsFullA struct{}
+type SemanticTokensOptionsFullA struct {
+	// The server supports deltas for full documents.
+	Delta Optional[Bool]
+}
 
 // SemanticTokensOptionsRange is a union (aka 'or') of several other types.
 //
@@ -5466,7 +5717,16 @@ func (TypeHierarchyOptions) isServerCapabilitiesTypeHierarchyProvider() {}
 func (TypeHierarchyRegistrationOptions) isServerCapabilitiesTypeHierarchyProvider() {}
 
 // ServerCapabilitiesWorkspace is a literal structure.
-type ServerCapabilitiesWorkspace struct{}
+type ServerCapabilitiesWorkspace struct {
+	// The server supports workspace folder.
+	//
+	// @since 3.6.0
+	WorkspaceFolders Optional[WorkspaceFoldersServerCapabilities]
+	// The server is interested in notifications/requests for operations on files.
+	//
+	// @since 3.16.0
+	FileOperations Optional[FileOperationOptions]
+}
 
 // ServerCapabilitiesWorkspaceSymbolProvider is a union (aka 'or') of several other types.
 //
@@ -5550,7 +5810,12 @@ type ShowMessageRequestClientCapabilities struct {
 }
 
 // ShowMessageRequestClientCapabilitiesMessageActionItem is a literal structure.
-type ShowMessageRequestClientCapabilitiesMessageActionItem struct{}
+type ShowMessageRequestClientCapabilitiesMessageActionItem struct {
+	// Whether the client supports additional attributes which
+	// are preserved and send back to the server in the
+	// request's response.
+	AdditionalPropertiesSupport Optional[Bool]
+}
 
 // ShowMessageRequestParams is a named structure definition.
 type ShowMessageRequestParams struct {
@@ -5609,10 +5874,27 @@ type SignatureHelpClientCapabilities struct {
 }
 
 // SignatureHelpClientCapabilitiesSignatureInformation is a literal structure.
-type SignatureHelpClientCapabilitiesSignatureInformation struct{}
+type SignatureHelpClientCapabilitiesSignatureInformation struct {
+	// Client supports the following content formats for the documentation
+	// property. The order describes the preferred format of the client.
+	DocumentationFormat Optional[MarkupKindArray]
+	// Client capabilities specific to parameter information.
+	ParameterInformation Optional[SignatureHelpClientCapabilitiesSignatureInformationParameterInformation]
+	// The client supports the `activeParameter` property on `SignatureInformation`
+	// literal.
+	//
+	// @since 3.16.0
+	ActiveParameterSupport Optional[Bool]
+}
 
 // SignatureHelpClientCapabilitiesSignatureInformationParameterInformation is a literal structure.
-type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct{}
+type SignatureHelpClientCapabilitiesSignatureInformationParameterInformation struct {
+	// The client supports processing label offsets instead of a
+	// simple label string.
+	//
+	// @since 3.14.0
+	LabelOffsetSupport Optional[Bool]
+}
 
 // SignatureHelpContext is a named structure definition.
 //
@@ -6051,13 +6333,25 @@ func (TextDocumentContentChangeEventA) isTextDocumentContentChangeEvent() {}
 func (TextDocumentContentChangeEventB) isTextDocumentContentChangeEvent() {}
 
 // TextDocumentContentChangeEventA is a literal structure.
-type TextDocumentContentChangeEventA struct{}
+type TextDocumentContentChangeEventA struct {
+	// The range of the document that changed.
+	Range Range
+	// The optional length of the range that got replaced.
+	//
+	// @deprecated use range instead.
+	RangeLength Optional[UInt]
+	// The new text for the provided range.
+	Text String
+}
 
 // TextDocumentContentChangeEventArray is an array of TextDocumentContentChangeEvent elements.
 type TextDocumentContentChangeEventArray []TextDocumentContentChangeEvent
 
 // TextDocumentContentChangeEventB is a literal structure.
-type TextDocumentContentChangeEventB struct{}
+type TextDocumentContentChangeEventB struct {
+	// The new text of the whole document.
+	Text String
+}
 
 // TextDocumentDeclarationPartialResult is a union (aka 'or') of several other types.
 //
@@ -6206,13 +6500,34 @@ func (TextDocumentFilterC) isTextDocumentFilter() {}
 func (TextDocumentFilterC) isDocumentFilter()     {}
 
 // TextDocumentFilterA is a literal structure.
-type TextDocumentFilterA struct{}
+type TextDocumentFilterA struct {
+	// A language id, like `typescript`.
+	Language String
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme Optional[String]
+	// A glob pattern, like `*.{ts,js}`.
+	Pattern Optional[String]
+}
 
 // TextDocumentFilterB is a literal structure.
-type TextDocumentFilterB struct{}
+type TextDocumentFilterB struct {
+	// A language id, like `typescript`.
+	Language Optional[String]
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme String
+	// A glob pattern, like `*.{ts,js}`.
+	Pattern Optional[String]
+}
 
 // TextDocumentFilterC is a literal structure.
-type TextDocumentFilterC struct{}
+type TextDocumentFilterC struct {
+	// A language id, like `typescript`.
+	Language Optional[String]
+	// A Uri {@link Uri.scheme scheme}, like `file` or `untitled`.
+	Scheme Optional[String]
+	// A glob pattern, like `*.{ts,js}`.
+	Pattern String
+}
 
 // TextDocumentFoldingRangeResult is a union (aka 'or') of several other types.
 //
@@ -7234,7 +7549,12 @@ type WorkspaceEditClientCapabilities struct {
 }
 
 // WorkspaceEditClientCapabilitiesChangeAnnotationSupport is a literal structure.
-type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct{}
+type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
+	// Whether the client groups edits with equal labels into tree nodes,
+	// for instance all edits labelled with "Changes in Strings" would
+	// be a tree node.
+	GroupsOnLabel Optional[Bool]
+}
 
 // WorkspaceEditDocumentChanges is a union (aka 'or') of several other types.
 //
@@ -7410,13 +7730,30 @@ type WorkspaceSymbolClientCapabilities struct {
 }
 
 // WorkspaceSymbolClientCapabilitiesResolveSupport is a literal structure.
-type WorkspaceSymbolClientCapabilitiesResolveSupport struct{}
+type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
+	// The properties that a client can resolve lazily. Usually
+	// `location.range`
+	Properties StringArray
+}
 
 // WorkspaceSymbolClientCapabilitiesSymbolKind is a literal structure.
-type WorkspaceSymbolClientCapabilitiesSymbolKind struct{}
+type WorkspaceSymbolClientCapabilitiesSymbolKind struct {
+	// The symbol kind values the client supports. When this
+	// property exists the client also guarantees that it will
+	// handle values outside its set gracefully and falls back
+	// to a default value when unknown.
+	//
+	// If this property is not present the client only supports
+	// the symbol kinds from `File` to `Array` as defined in
+	// the initial version of the protocol.
+	ValueSet Optional[SymbolKindArray]
+}
 
 // WorkspaceSymbolClientCapabilitiesTagSupport is a literal structure.
-type WorkspaceSymbolClientCapabilitiesTagSupport struct{}
+type WorkspaceSymbolClientCapabilitiesTagSupport struct {
+	// The tags supported by the client.
+	ValueSet SymbolTagArray
+}
 
 // WorkspaceSymbolLocation is a union (aka 'or') of several other types.
 //
@@ -7432,7 +7769,9 @@ func (Location) isWorkspaceSymbolLocation() {}
 func (WorkspaceSymbolLocationA) isWorkspaceSymbolLocation() {}
 
 // WorkspaceSymbolLocationA is a literal structure.
-type WorkspaceSymbolLocationA struct{}
+type WorkspaceSymbolLocationA struct {
+	URI DocumentURI
+}
 
 // WorkspaceSymbolOptions is a named structure definition.
 //
