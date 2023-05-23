@@ -4,6 +4,9 @@ package lsp
 
 import (
 	"bytes"
+	"encoding/json"
+	"errors"
+	"fmt"
 	"net/url"
 )
 
@@ -27,7 +30,7 @@ func (x AnnotatedTextEdit) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("AnnotatedTextEdit: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -39,6 +42,30 @@ func (x AnnotatedTextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "annotationId", x.AnnotationID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *AnnotatedTextEdit) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("AnnotatedTextEdit: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("AnnotatedTextEdit: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("AnnotatedTextEdit: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *AnnotatedTextEdit) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextEdit.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "annotationId", &x.AnnotationID); err != nil {
 		return err
 	}
 	return nil
@@ -64,7 +91,7 @@ func (x ApplyWorkspaceEditParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ApplyWorkspaceEditParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -76,6 +103,30 @@ func (x ApplyWorkspaceEditParams) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := marshalProperty(w, n, "edit", x.Edit); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ApplyWorkspaceEditParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ApplyWorkspaceEditParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ApplyWorkspaceEditParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ApplyWorkspaceEditParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ApplyWorkspaceEditParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "label", &x.Label); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "edit", &x.Edit); err != nil {
 		return err
 	}
 	return nil
@@ -107,7 +158,7 @@ func (x ApplyWorkspaceEditResult) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ApplyWorkspaceEditResult: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -122,6 +173,33 @@ func (x ApplyWorkspaceEditResult) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "failedChange", x.FailedChange); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ApplyWorkspaceEditResult) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ApplyWorkspaceEditResult: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ApplyWorkspaceEditResult: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ApplyWorkspaceEditResult: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ApplyWorkspaceEditResult) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "applied", &x.Applied); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "failureReason", &x.FailureReason); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "failedChange", &x.FailedChange); err != nil {
 		return err
 	}
 	return nil
@@ -154,7 +232,7 @@ func (x BaseSymbolInformation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("BaseSymbolInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -172,6 +250,36 @@ func (x BaseSymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error 
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "containerName", x.ContainerName); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *BaseSymbolInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("BaseSymbolInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("BaseSymbolInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("BaseSymbolInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *BaseSymbolInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "name", &x.Name); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tags", &x.Tags); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "containerName", &x.ContainerName); err != nil {
 		return err
 	}
 	return nil
@@ -198,7 +306,7 @@ func (x CallHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -207,6 +315,27 @@ func (x CallHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x CallHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CallHierarchyClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -233,7 +362,7 @@ func (x CallHierarchyIncomingCall) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyIncomingCall: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -245,6 +374,30 @@ func (x CallHierarchyIncomingCall) marshalProperties(w *bytes.Buffer, n *int) er
 		return err
 	}
 	if err := marshalProperty(w, n, "fromRanges", x.FromRanges); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CallHierarchyIncomingCall) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyIncomingCall: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyIncomingCall: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyIncomingCall: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyIncomingCall) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "from", &x.From); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "fromRanges", &x.FromRanges); err != nil {
 		return err
 	}
 	return nil
@@ -273,7 +426,7 @@ func (x CallHierarchyIncomingCallsParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyIncomingCallsParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -293,12 +446,53 @@ func (x CallHierarchyIncomingCallsParams) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+func (x *CallHierarchyIncomingCallsParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyIncomingCallsParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyIncomingCallsParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyIncomingCallsParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyIncomingCallsParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "item", &x.Item); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CallHierarchyIncomingCallsResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - CallHierarchyIncomingCallArray
 type CallHierarchyIncomingCallsResult interface {
 	isCallHierarchyIncomingCallsResult()
+}
+
+func unmarshalCallHierarchyIncomingCallsResult(data []byte, v *CallHierarchyIncomingCallsResult) error {
+	var err error
+	{
+		var candidate CallHierarchyIncomingCallArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CallHierarchyIncomingCallArray) isCallHierarchyIncomingCallsResult() {}
@@ -338,7 +532,7 @@ func (x CallHierarchyItem) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -373,6 +567,48 @@ func (x CallHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *CallHierarchyItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "name", &x.Name); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tags", &x.Tags); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "detail", &x.Detail); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "selectionRange", &x.SelectionRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CallHierarchyItemArray is an array of CallHierarchyItem elements.
 type CallHierarchyItemArray []CallHierarchyItem
 
@@ -393,7 +629,7 @@ func (x CallHierarchyOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -402,6 +638,27 @@ func (x CallHierarchyOptions) MarshalJSON() ([]byte, error) {
 
 func (x CallHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CallHierarchyOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -429,7 +686,7 @@ func (x CallHierarchyOutgoingCall) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyOutgoingCall: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -441,6 +698,30 @@ func (x CallHierarchyOutgoingCall) marshalProperties(w *bytes.Buffer, n *int) er
 		return err
 	}
 	if err := marshalProperty(w, n, "fromRanges", x.FromRanges); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CallHierarchyOutgoingCall) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyOutgoingCall: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyOutgoingCall: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyOutgoingCall: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyOutgoingCall) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "to", &x.To); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "fromRanges", &x.FromRanges); err != nil {
 		return err
 	}
 	return nil
@@ -469,7 +750,7 @@ func (x CallHierarchyOutgoingCallsParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyOutgoingCallsParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -489,12 +770,53 @@ func (x CallHierarchyOutgoingCallsParams) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+func (x *CallHierarchyOutgoingCallsParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyOutgoingCallsParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyOutgoingCallsParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyOutgoingCallsParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyOutgoingCallsParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "item", &x.Item); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CallHierarchyOutgoingCallsResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - CallHierarchyOutgoingCallArray
 type CallHierarchyOutgoingCallsResult interface {
 	isCallHierarchyOutgoingCallsResult()
+}
+
+func unmarshalCallHierarchyOutgoingCallsResult(data []byte, v *CallHierarchyOutgoingCallsResult) error {
+	var err error
+	{
+		var candidate CallHierarchyOutgoingCallArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CallHierarchyOutgoingCallArray) isCallHierarchyOutgoingCallsResult() {}
@@ -517,7 +839,7 @@ func (x CallHierarchyPrepareParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyPrepareParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -529,6 +851,30 @@ func (x CallHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) e
 		return err
 	}
 	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CallHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyPrepareParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyPrepareParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyPrepareParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyPrepareParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -553,7 +899,7 @@ func (x CallHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CallHierarchyRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -573,6 +919,33 @@ func (x CallHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+func (x *CallHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CallHierarchyRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CallHierarchyRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CallHierarchyRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CallHierarchyRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.CallHierarchyOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CancelParams is a named structure definition.
 type CancelParams struct {
 	// The request id to cancel.
@@ -587,7 +960,7 @@ func (x CancelParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CancelParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -601,6 +974,27 @@ func (x CancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *CancelParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CancelParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CancelParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CancelParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CancelParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "id", &x.ID, unmarshalCancelParamsID); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CancelParamsID is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -608,6 +1002,29 @@ func (x CancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
 //   - String
 type CancelParamsID interface {
 	isCancelParamsID()
+}
+
+func unmarshalCancelParamsID(data []byte, v *CancelParamsID) error {
+	var err error
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Int) isCancelParamsID() {}
@@ -639,7 +1056,7 @@ func (x ChangeAnnotation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ChangeAnnotation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -659,10 +1076,37 @@ func (x ChangeAnnotation) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *ChangeAnnotation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ChangeAnnotation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ChangeAnnotation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ChangeAnnotation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ChangeAnnotation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "label", &x.Label); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "needsConfirmation", &x.NeedsConfirmation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "description", &x.Description); err != nil {
+		return err
+	}
+	return nil
+}
+
 // ChangeAnnotationIdentifier is an alias for String.
 //
 // An identifier to refer to a change annotation stored with a workspace edit.
-type ChangeAnnotationIdentifier String
+type ChangeAnnotationIdentifier = String
 
 // ChangeAnnotationMap is a map of ChangeAnnotationIdentifier to ChangeAnnotation.
 type ChangeAnnotationMap map[ChangeAnnotationIdentifier]ChangeAnnotation
@@ -697,7 +1141,7 @@ func (x ClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -721,6 +1165,42 @@ func (x ClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "experimental", x.Experimental); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "workspace", &x.Workspace); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "notebookDocument", &x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "window", &x.Window); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "general", &x.General); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "experimental", &x.Experimental, unmarshalLSPAny); err != nil {
 		return err
 	}
 	return nil
@@ -786,7 +1266,7 @@ func (x CodeAction) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeAction: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -816,6 +1296,48 @@ func (x CodeAction) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeAction) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeAction: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeAction: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeAction: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeAction) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "title", &x.Title); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "diagnostics", &x.Diagnostics); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "isPreferred", &x.IsPreferred); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "disabled", &x.Disabled); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "edit", &x.Edit); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "command", &x.Command); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
 		return err
 	}
 	return nil
@@ -870,7 +1392,7 @@ func (x CodeActionClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -902,6 +1424,45 @@ func (x CodeActionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 	return nil
 }
 
+func (x *CodeActionClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeActionLiteralSupport", &x.CodeActionLiteralSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "isPreferredSupport", &x.IsPreferredSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "disabledSupport", &x.DisabledSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "dataSupport", &x.DataSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveSupport", &x.ResolveSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "honorsChangeAnnotations", &x.HonorsChangeAnnotations); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CodeActionClientCapabilitiesCodeActionLiteralSupport is a literal structure.
 type CodeActionClientCapabilitiesCodeActionLiteralSupport struct {
 	// The code action kind is support with the following value
@@ -917,7 +1478,7 @@ func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) MarshalJSON() ([]b
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -926,6 +1487,27 @@ func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) MarshalJSON() ([]b
 
 func (x CodeActionClientCapabilitiesCodeActionLiteralSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "codeActionKind", x.CodeActionKind); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeActionClientCapabilitiesCodeActionLiteralSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionClientCapabilitiesCodeActionLiteralSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "codeActionKind", &x.CodeActionKind); err != nil {
 		return err
 	}
 	return nil
@@ -948,7 +1530,7 @@ func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) Mars
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -957,6 +1539,27 @@ func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) Mars
 
 func (x CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionClientCapabilitiesCodeActionLiteralSupportCodeActionKind) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -976,7 +1579,7 @@ func (x CodeActionClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionClientCapabilitiesResolveSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -985,6 +1588,27 @@ func (x CodeActionClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error
 
 func (x CodeActionClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeActionClientCapabilitiesResolveSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilitiesResolveSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionClientCapabilitiesResolveSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionClientCapabilitiesResolveSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionClientCapabilitiesResolveSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "properties", &x.Properties); err != nil {
 		return err
 	}
 	return nil
@@ -1020,7 +1644,7 @@ func (x CodeActionContext) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionContext: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1035,6 +1659,33 @@ func (x CodeActionContext) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "triggerKind", x.TriggerKind); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeActionContext) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionContext: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionContext: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionContext: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionContext) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "diagnostics", &x.Diagnostics); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "only", &x.Only); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "triggerKind", &x.TriggerKind); err != nil {
 		return err
 	}
 	return nil
@@ -1056,7 +1707,7 @@ func (x CodeActionDisabled) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionDisabled: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1065,6 +1716,27 @@ func (x CodeActionDisabled) MarshalJSON() ([]byte, error) {
 
 func (x CodeActionDisabled) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "reason", x.Reason); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeActionDisabled) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionDisabled: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionDisabled: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionDisabled: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionDisabled) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "reason", &x.Reason); err != nil {
 		return err
 	}
 	return nil
@@ -1174,7 +1846,7 @@ func (x CodeActionOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1189,6 +1861,33 @@ func (x CodeActionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeActionOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeActionKinds", &x.CodeActionKinds); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveProvider", &x.ResolveProvider); err != nil {
 		return err
 	}
 	return nil
@@ -1217,7 +1916,7 @@ func (x CodeActionParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1243,6 +1942,39 @@ func (x CodeActionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *CodeActionParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "context", &x.Context); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CodeActionRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link CodeActionRequest}.
@@ -1259,7 +1991,7 @@ func (x CodeActionRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeActionRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1271,6 +2003,30 @@ func (x CodeActionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 		return err
 	}
 	if err := x.CodeActionOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeActionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeActionRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeActionRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeActionRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeActionRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.CodeActionOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -1315,7 +2071,7 @@ func (x CodeDescription) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeDescription: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1324,6 +2080,27 @@ func (x CodeDescription) MarshalJSON() ([]byte, error) {
 
 func (x CodeDescription) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "href", x.Href); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeDescription) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeDescription: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeDescription: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeDescription: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeDescription) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "href", &x.Href); err != nil {
 		return err
 	}
 	return nil
@@ -1355,7 +2132,7 @@ func (x CodeLens) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeLens: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1370,6 +2147,33 @@ func (x CodeLens) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeLens) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeLens: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeLens: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeLens: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeLens) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "command", &x.Command); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
 		return err
 	}
 	return nil
@@ -1394,7 +2198,7 @@ func (x CodeLensClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeLensClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1403,6 +2207,27 @@ func (x CodeLensClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x CodeLensClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeLensClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeLensClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeLensClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeLensClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeLensClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -1426,7 +2251,7 @@ func (x CodeLensOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeLensOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1438,6 +2263,30 @@ func (x CodeLensOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeLensOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeLensOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeLensOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeLensOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeLensOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveProvider", &x.ResolveProvider); err != nil {
 		return err
 	}
 	return nil
@@ -1462,7 +2311,7 @@ func (x CodeLensParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeLensParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1477,6 +2326,33 @@ func (x CodeLensParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeLensParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeLensParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeLensParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeLensParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeLensParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -1498,7 +2374,7 @@ func (x CodeLensRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeLensRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1510,6 +2386,30 @@ func (x CodeLensRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) 
 		return err
 	}
 	if err := x.CodeLensOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeLensRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeLensRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeLensRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeLensRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeLensRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.CodeLensOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -1537,7 +2437,7 @@ func (x CodeLensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CodeLensWorkspaceClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1546,6 +2446,27 @@ func (x CodeLensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x CodeLensWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CodeLensWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CodeLensWorkspaceClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CodeLensWorkspaceClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CodeLensWorkspaceClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CodeLensWorkspaceClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "refreshSupport", &x.RefreshSupport); err != nil {
 		return err
 	}
 	return nil
@@ -1573,7 +2494,7 @@ func (x Color) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Color: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1591,6 +2512,36 @@ func (x Color) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "alpha", x.Alpha); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Color) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Color: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Color: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Color: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Color) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "red", &x.Red); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "green", &x.Green); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "blue", &x.Blue); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "alpha", &x.Alpha); err != nil {
 		return err
 	}
 	return nil
@@ -1614,7 +2565,7 @@ func (x ColorInformation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ColorInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1626,6 +2577,30 @@ func (x ColorInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "color", x.Color); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ColorInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ColorInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ColorInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ColorInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ColorInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "color", &x.Color); err != nil {
 		return err
 	}
 	return nil
@@ -1657,7 +2632,7 @@ func (x ColorPresentation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ColorPresentation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1672,6 +2647,33 @@ func (x ColorPresentation) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "additionalTextEdits", x.AdditionalTextEdits); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ColorPresentation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ColorPresentation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ColorPresentation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ColorPresentation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ColorPresentation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "label", &x.Label); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "textEdit", &x.TextEdit); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "additionalTextEdits", &x.AdditionalTextEdits); err != nil {
 		return err
 	}
 	return nil
@@ -1703,7 +2705,7 @@ func (x ColorPresentationParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ColorPresentationParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1724,6 +2726,39 @@ func (x ColorPresentationParams) marshalProperties(w *bytes.Buffer, n *int) erro
 		return err
 	}
 	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ColorPresentationParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ColorPresentationParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ColorPresentationParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ColorPresentationParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ColorPresentationParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "color", &x.Color); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
 		return err
 	}
 	return nil
@@ -1753,7 +2788,7 @@ func (x Command) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Command: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1768,6 +2803,33 @@ func (x Command) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "arguments", x.Arguments); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Command) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Command: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Command: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Command: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Command) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "title", &x.Title); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "command", &x.Command); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "arguments", &x.Arguments); err != nil {
 		return err
 	}
 	return nil
@@ -1807,7 +2869,7 @@ func (x CompletionClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1831,6 +2893,42 @@ func (x CompletionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "completionList", x.CompletionList); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "completionItem", &x.CompletionItem); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "completionItemKind", &x.CompletionItemKind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertTextMode", &x.InsertTextMode); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "contextSupport", &x.ContextSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "completionList", &x.CompletionList); err != nil {
 		return err
 	}
 	return nil
@@ -1893,7 +2991,7 @@ func (x CompletionClientCapabilitiesCompletionItem) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionClientCapabilitiesCompletionItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1934,6 +3032,54 @@ func (x CompletionClientCapabilitiesCompletionItem) marshalProperties(w *bytes.B
 	return nil
 }
 
+func (x *CompletionClientCapabilitiesCompletionItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "snippetSupport", &x.SnippetSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "commitCharactersSupport", &x.CommitCharactersSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "documentationFormat", &x.DocumentationFormat); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "deprecatedSupport", &x.DeprecatedSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "preselectSupport", &x.PreselectSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tagSupport", &x.TagSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertReplaceSupport", &x.InsertReplaceSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveSupport", &x.ResolveSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertTextModeSupport", &x.InsertTextModeSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "labelDetailsSupport", &x.LabelDetailsSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CompletionClientCapabilitiesCompletionItemInsertTextModeSupport is a literal structure.
 type CompletionClientCapabilitiesCompletionItemInsertTextModeSupport struct {
 	ValueSet InsertTextModeArray
@@ -1947,7 +3093,7 @@ func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) Marshal
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionClientCapabilitiesCompletionItemInsertTextModeSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1956,6 +3102,27 @@ func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) Marshal
 
 func (x CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemInsertTextModeSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemInsertTextModeSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemInsertTextModeSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemInsertTextModeSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -1982,7 +3149,7 @@ func (x CompletionClientCapabilitiesCompletionItemKind) MarshalJSON() ([]byte, e
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionClientCapabilitiesCompletionItemKind: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -1991,6 +3158,27 @@ func (x CompletionClientCapabilitiesCompletionItemKind) MarshalJSON() ([]byte, e
 
 func (x CompletionClientCapabilitiesCompletionItemKind) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemKind) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemKind: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemKind: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemKind: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemKind) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -2010,7 +3198,7 @@ func (x CompletionClientCapabilitiesCompletionItemResolveSupport) MarshalJSON() 
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionClientCapabilitiesCompletionItemResolveSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2019,6 +3207,27 @@ func (x CompletionClientCapabilitiesCompletionItemResolveSupport) MarshalJSON() 
 
 func (x CompletionClientCapabilitiesCompletionItemResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemResolveSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemResolveSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemResolveSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemResolveSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemResolveSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "properties", &x.Properties); err != nil {
 		return err
 	}
 	return nil
@@ -2038,7 +3247,7 @@ func (x CompletionClientCapabilitiesCompletionItemTagSupport) MarshalJSON() ([]b
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionClientCapabilitiesCompletionItemTagSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2047,6 +3256,27 @@ func (x CompletionClientCapabilitiesCompletionItemTagSupport) MarshalJSON() ([]b
 
 func (x CompletionClientCapabilitiesCompletionItemTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemTagSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemTagSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemTagSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionItemTagSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionItemTagSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -2073,7 +3303,7 @@ func (x CompletionClientCapabilitiesCompletionList) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionClientCapabilitiesCompletionList: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2082,6 +3312,27 @@ func (x CompletionClientCapabilitiesCompletionList) MarshalJSON() ([]byte, error
 
 func (x CompletionClientCapabilitiesCompletionList) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "itemDefaults", x.ItemDefaults); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionList) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionList: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionList: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionClientCapabilitiesCompletionList: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionClientCapabilitiesCompletionList) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "itemDefaults", &x.ItemDefaults); err != nil {
 		return err
 	}
 	return nil
@@ -2106,7 +3357,7 @@ func (x CompletionContext) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionContext: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2118,6 +3369,30 @@ func (x CompletionContext) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "triggerCharacter", x.TriggerCharacter); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionContext) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionContext: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionContext: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionContext: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionContext) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "triggerKind", &x.TriggerKind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "triggerCharacter", &x.TriggerCharacter); err != nil {
 		return err
 	}
 	return nil
@@ -2257,7 +3532,7 @@ func (x CompletionItem) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2325,6 +3600,81 @@ func (x CompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *CompletionItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "label", &x.Label); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "labelDetails", &x.LabelDetails); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tags", &x.Tags); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "detail", &x.Detail); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "documentation", &x.Documentation, unmarshalCompletionItemDocumentation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "deprecated", &x.Deprecated); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "preselect", &x.Preselect); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "sortText", &x.SortText); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "filterText", &x.FilterText); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertText", &x.InsertText); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertTextFormat", &x.InsertTextFormat); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertTextMode", &x.InsertTextMode); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "textEdit", &x.TextEdit, unmarshalCompletionItemTextEdit); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "textEditText", &x.TextEditText); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "additionalTextEdits", &x.AdditionalTextEdits); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "commitCharacters", &x.CommitCharacters); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "command", &x.Command); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CompletionItemArray is an array of CompletionItem elements.
 type CompletionItemArray []CompletionItem
 
@@ -2335,6 +3685,29 @@ type CompletionItemArray []CompletionItem
 //   - MarkupContent
 type CompletionItemDocumentation interface {
 	isCompletionItemDocumentation()
+}
+
+func unmarshalCompletionItemDocumentation(data []byte, v *CompletionItemDocumentation) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkupContent
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (MarkupContent) isCompletionItemDocumentation() {}
@@ -2424,7 +3797,7 @@ func (x CompletionItemLabelDetails) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionItemLabelDetails: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2436,6 +3809,30 @@ func (x CompletionItemLabelDetails) marshalProperties(w *bytes.Buffer, n *int) e
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "description", x.Description); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionItemLabelDetails) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionItemLabelDetails: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionItemLabelDetails: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionItemLabelDetails: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionItemLabelDetails) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "detail", &x.Detail); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "description", &x.Description); err != nil {
 		return err
 	}
 	return nil
@@ -2466,6 +3863,29 @@ type CompletionItemTagArray []CompletionItemTag
 //   - InsertReplaceEdit
 type CompletionItemTextEdit interface {
 	isCompletionItemTextEdit()
+}
+
+func unmarshalCompletionItemTextEdit(data []byte, v *CompletionItemTextEdit) error {
+	var err error
+	{
+		var candidate TextEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InsertReplaceEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (InsertReplaceEdit) isCompletionItemTextEdit() {}
@@ -2508,7 +3928,7 @@ func (x CompletionList) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionList: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2523,6 +3943,33 @@ func (x CompletionList) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionList) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionList: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionList: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionList: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionList) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "isIncomplete", &x.IsIncomplete); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "itemDefaults", &x.ItemDefaults); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "items", &x.Items); err != nil {
 		return err
 	}
 	return nil
@@ -2560,7 +4007,7 @@ func (x CompletionListItemDefaults) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionListItemDefaults: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2586,6 +4033,39 @@ func (x CompletionListItemDefaults) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+func (x *CompletionListItemDefaults) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionListItemDefaults: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionListItemDefaults: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionListItemDefaults: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionListItemDefaults) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "commitCharacters", &x.CommitCharacters); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "editRange", &x.EditRange, unmarshalCompletionListItemDefaultsEditRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertTextFormat", &x.InsertTextFormat); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertTextMode", &x.InsertTextMode); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CompletionListItemDefaultsEditRange is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -2593,6 +4073,29 @@ func (x CompletionListItemDefaults) marshalProperties(w *bytes.Buffer, n *int) e
 //   - CompletionListItemDefaultsEditRangeA
 type CompletionListItemDefaultsEditRange interface {
 	isCompletionListItemDefaultsEditRange()
+}
+
+func unmarshalCompletionListItemDefaultsEditRange(data []byte, v *CompletionListItemDefaultsEditRange) error {
+	var err error
+	{
+		var candidate Range
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CompletionListItemDefaultsEditRangeA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CompletionListItemDefaultsEditRangeA) isCompletionListItemDefaultsEditRange() {}
@@ -2613,7 +4116,7 @@ func (x CompletionListItemDefaultsEditRangeA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionListItemDefaultsEditRangeA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2625,6 +4128,30 @@ func (x CompletionListItemDefaultsEditRangeA) marshalProperties(w *bytes.Buffer,
 		return err
 	}
 	if err := marshalProperty(w, n, "replace", x.Replace); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionListItemDefaultsEditRangeA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionListItemDefaultsEditRangeA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionListItemDefaultsEditRangeA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionListItemDefaultsEditRangeA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionListItemDefaultsEditRangeA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "insert", &x.Insert); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "replace", &x.Replace); err != nil {
 		return err
 	}
 	return nil
@@ -2672,7 +4199,7 @@ func (x CompletionOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2698,6 +4225,39 @@ func (x CompletionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *CompletionOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "triggerCharacters", &x.TriggerCharacters); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "allCommitCharacters", &x.AllCommitCharacters); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveProvider", &x.ResolveProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "completionItem", &x.CompletionItem); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CompletionOptionsCompletionItem is a literal structure.
 type CompletionOptionsCompletionItem struct {
 	// The server has support for completion item label
@@ -2716,7 +4276,7 @@ func (x CompletionOptionsCompletionItem) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionOptionsCompletionItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2725,6 +4285,27 @@ func (x CompletionOptionsCompletionItem) MarshalJSON() ([]byte, error) {
 
 func (x CompletionOptionsCompletionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "labelDetailsSupport", x.LabelDetailsSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionOptionsCompletionItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionOptionsCompletionItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionOptionsCompletionItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionOptionsCompletionItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionOptionsCompletionItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "labelDetailsSupport", &x.LabelDetailsSupport); err != nil {
 		return err
 	}
 	return nil
@@ -2751,7 +4332,7 @@ func (x CompletionParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2774,6 +4355,36 @@ func (x CompletionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *CompletionParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "context", &x.Context); err != nil {
+		return err
+	}
+	return nil
+}
+
 // CompletionRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link CompletionRequest}.
@@ -2790,7 +4401,7 @@ func (x CompletionRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CompletionRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2802,6 +4413,30 @@ func (x CompletionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 		return err
 	}
 	if err := x.CompletionOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CompletionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CompletionRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CompletionRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CompletionRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CompletionRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.CompletionOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -2845,7 +4480,7 @@ func (x ConfigurationItem) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ConfigurationItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2857,6 +4492,30 @@ func (x ConfigurationItem) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "section", x.Section); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ConfigurationItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ConfigurationItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ConfigurationItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ConfigurationItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ConfigurationItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "scopeUri", &x.ScopeURI); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "section", &x.Section); err != nil {
 		return err
 	}
 	return nil
@@ -2880,7 +4539,7 @@ func (x ConfigurationParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ConfigurationParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2889,6 +4548,27 @@ func (x ConfigurationParams) MarshalJSON() ([]byte, error) {
 
 func (x ConfigurationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ConfigurationParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ConfigurationParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ConfigurationParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ConfigurationParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ConfigurationParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "items", &x.Items); err != nil {
 		return err
 	}
 	return nil
@@ -2914,7 +4594,7 @@ func (x CreateFile) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CreateFile: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2932,6 +4612,36 @@ func (x CreateFile) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CreateFile) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CreateFile: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CreateFile: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CreateFile: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CreateFile) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.ResourceOperation.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalLiteralProperty(properties, "kind", "create"); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "options", &x.Options); err != nil {
 		return err
 	}
 	return nil
@@ -2955,7 +4665,7 @@ func (x CreateFileOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CreateFileOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -2967,6 +4677,30 @@ func (x CreateFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "ignoreIfExists", x.IgnoreIfExists); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CreateFileOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CreateFileOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CreateFileOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CreateFileOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CreateFileOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "overwrite", &x.Overwrite); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "ignoreIfExists", &x.IgnoreIfExists); err != nil {
 		return err
 	}
 	return nil
@@ -2991,7 +4725,7 @@ func (x CreateFilesParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("CreateFilesParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3000,6 +4734,27 @@ func (x CreateFilesParams) MarshalJSON() ([]byte, error) {
 
 func (x CreateFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "files", x.Files); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *CreateFilesParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("CreateFilesParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("CreateFilesParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("CreateFilesParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *CreateFilesParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "files", &x.Files); err != nil {
 		return err
 	}
 	return nil
@@ -3016,6 +4771,29 @@ type Decimal float64
 type Declaration interface {
 	isDeclaration()
 	isTextDocumentDeclarationResult()
+}
+
+func unmarshalDeclaration(data []byte, v *Declaration) error {
+	var err error
+	{
+		var candidate Location
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate LocationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Location) isDeclaration()                   {}
@@ -3044,7 +4822,7 @@ func (x DeclarationClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DeclarationClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3061,6 +4839,30 @@ func (x DeclarationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int
 	return nil
 }
 
+func (x *DeclarationClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DeclarationClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DeclarationClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DeclarationClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DeclarationClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "linkSupport", &x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DeclarationLink is an alias for LocationLink.
 //
 // Information about where a symbol is declared.
@@ -3070,7 +4872,7 @@ func (x DeclarationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int
 //
 // Servers should prefer returning `DeclarationLink` over `Declaration` if supported
 // by the client.
-type DeclarationLink LocationLink
+type DeclarationLink = LocationLink
 
 // DeclarationLinkArray is an array of DeclarationLink elements.
 type DeclarationLinkArray []DeclarationLink
@@ -3088,7 +4890,7 @@ func (x DeclarationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DeclarationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3097,6 +4899,27 @@ func (x DeclarationOptions) MarshalJSON() ([]byte, error) {
 
 func (x DeclarationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DeclarationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DeclarationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DeclarationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DeclarationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DeclarationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -3117,7 +4940,7 @@ func (x DeclarationParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DeclarationParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3132,6 +4955,33 @@ func (x DeclarationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DeclarationParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DeclarationParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DeclarationParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DeclarationParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DeclarationParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -3152,7 +5002,7 @@ func (x DeclarationRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DeclarationRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3172,6 +5022,33 @@ func (x DeclarationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
+func (x *DeclarationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DeclarationRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DeclarationRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DeclarationRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DeclarationRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.DeclarationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // Definition is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -3182,6 +5059,29 @@ type Definition interface {
 	isTextDocumentDefinitionResult()
 	isTextDocumentImplementationResult()
 	isTextDocumentTypeDefinitionResult()
+}
+
+func unmarshalDefinition(data []byte, v *Definition) error {
+	var err error
+	{
+		var candidate Location
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate LocationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Location) isDefinition()                       {}
@@ -3214,7 +5114,7 @@ func (x DefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DefinitionClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3231,13 +5131,37 @@ func (x DefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 	return nil
 }
 
+func (x *DefinitionClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DefinitionClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DefinitionClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DefinitionClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DefinitionClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "linkSupport", &x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DefinitionLink is an alias for LocationLink.
 //
 // Information about where a symbol is defined.
 //
 // Provides additional metadata over normal {@link Location location} definitions, including the range of
 // the defining symbol
-type DefinitionLink LocationLink
+type DefinitionLink = LocationLink
 
 // DefinitionLinkArray is an array of DefinitionLink elements.
 type DefinitionLinkArray []DefinitionLink
@@ -3257,7 +5181,7 @@ func (x DefinitionOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DefinitionOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3266,6 +5190,27 @@ func (x DefinitionOptions) MarshalJSON() ([]byte, error) {
 
 func (x DefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DefinitionOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DefinitionOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DefinitionOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DefinitionOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DefinitionOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -3288,7 +5233,7 @@ func (x DefinitionParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DefinitionParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3303,6 +5248,33 @@ func (x DefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DefinitionParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DefinitionParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DefinitionParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DefinitionParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DefinitionParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -3324,7 +5296,7 @@ func (x DefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DefinitionRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3336,6 +5308,30 @@ func (x DefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 		return err
 	}
 	if err := x.DefinitionOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DefinitionRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DefinitionRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DefinitionRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DefinitionRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DefinitionOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -3361,7 +5357,7 @@ func (x DeleteFile) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DeleteFile: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3379,6 +5375,36 @@ func (x DeleteFile) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DeleteFile) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DeleteFile: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DeleteFile: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DeleteFile: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DeleteFile) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.ResourceOperation.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalLiteralProperty(properties, "kind", "delete"); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "options", &x.Options); err != nil {
 		return err
 	}
 	return nil
@@ -3402,7 +5428,7 @@ func (x DeleteFileOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DeleteFileOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3414,6 +5440,30 @@ func (x DeleteFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "ignoreIfNotExists", x.IgnoreIfNotExists); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DeleteFileOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DeleteFileOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DeleteFileOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DeleteFileOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DeleteFileOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "recursive", &x.Recursive); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "ignoreIfNotExists", &x.IgnoreIfNotExists); err != nil {
 		return err
 	}
 	return nil
@@ -3438,7 +5488,7 @@ func (x DeleteFilesParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DeleteFilesParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3447,6 +5497,27 @@ func (x DeleteFilesParams) MarshalJSON() ([]byte, error) {
 
 func (x DeleteFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "files", x.Files); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DeleteFilesParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DeleteFilesParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DeleteFilesParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DeleteFilesParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DeleteFilesParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "files", &x.Files); err != nil {
 		return err
 	}
 	return nil
@@ -3497,7 +5568,7 @@ func (x Diagnostic) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Diagnostic: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3535,6 +5606,51 @@ func (x Diagnostic) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *Diagnostic) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Diagnostic: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Diagnostic: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Diagnostic: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Diagnostic) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "severity", &x.Severity); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "code", &x.Code, unmarshalDiagnosticCode); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeDescription", &x.CodeDescription); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "source", &x.Source); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "message", &x.Message); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tags", &x.Tags); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "relatedInformation", &x.RelatedInformation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DiagnosticArray is an array of Diagnostic elements.
 type DiagnosticArray []Diagnostic
 
@@ -3560,7 +5676,7 @@ func (x DiagnosticClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DiagnosticClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3577,6 +5693,30 @@ func (x DiagnosticClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 	return nil
 }
 
+func (x *DiagnosticClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DiagnosticClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DiagnosticClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DiagnosticClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DiagnosticClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "relatedDocumentSupport", &x.RelatedDocumentSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DiagnosticCode is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -3584,6 +5724,29 @@ func (x DiagnosticClientCapabilities) marshalProperties(w *bytes.Buffer, n *int)
 //   - String
 type DiagnosticCode interface {
 	isDiagnosticCode()
+}
+
+func unmarshalDiagnosticCode(data []byte, v *DiagnosticCode) error {
+	var err error
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Int) isDiagnosticCode() {}
@@ -3618,7 +5781,7 @@ func (x DiagnosticOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DiagnosticOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3636,6 +5799,36 @@ func (x DiagnosticOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "workspaceDiagnostics", x.WorkspaceDiagnostics); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DiagnosticOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DiagnosticOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DiagnosticOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DiagnosticOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DiagnosticOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "identifier", &x.Identifier); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "interFileDependencies", &x.InterFileDependencies); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "workspaceDiagnostics", &x.WorkspaceDiagnostics); err != nil {
 		return err
 	}
 	return nil
@@ -3660,7 +5853,7 @@ func (x DiagnosticRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DiagnosticRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3675,6 +5868,33 @@ func (x DiagnosticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DiagnosticRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DiagnosticRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DiagnosticRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DiagnosticRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DiagnosticRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DiagnosticOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -3700,7 +5920,7 @@ func (x DiagnosticRelatedInformation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DiagnosticRelatedInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3712,6 +5932,30 @@ func (x DiagnosticRelatedInformation) marshalProperties(w *bytes.Buffer, n *int)
 		return err
 	}
 	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DiagnosticRelatedInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DiagnosticRelatedInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DiagnosticRelatedInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DiagnosticRelatedInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DiagnosticRelatedInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "location", &x.Location); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "message", &x.Message); err != nil {
 		return err
 	}
 	return nil
@@ -3737,7 +5981,7 @@ func (x DiagnosticServerCancellationData) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DiagnosticServerCancellationData: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3746,6 +5990,27 @@ func (x DiagnosticServerCancellationData) MarshalJSON() ([]byte, error) {
 
 func (x DiagnosticServerCancellationData) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "retriggerRequest", x.RetriggerRequest); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DiagnosticServerCancellationData) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DiagnosticServerCancellationData: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DiagnosticServerCancellationData: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DiagnosticServerCancellationData: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DiagnosticServerCancellationData) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "retriggerRequest", &x.RetriggerRequest); err != nil {
 		return err
 	}
 	return nil
@@ -3825,7 +6090,7 @@ func (x DiagnosticWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DiagnosticWorkspaceClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3834,6 +6099,27 @@ func (x DiagnosticWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x DiagnosticWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DiagnosticWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DiagnosticWorkspaceClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DiagnosticWorkspaceClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DiagnosticWorkspaceClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DiagnosticWorkspaceClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "refreshSupport", &x.RefreshSupport); err != nil {
 		return err
 	}
 	return nil
@@ -3853,7 +6139,7 @@ func (x DidChangeConfigurationClientCapabilities) MarshalJSON() ([]byte, error) 
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeConfigurationClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3862,6 +6148,27 @@ func (x DidChangeConfigurationClientCapabilities) MarshalJSON() ([]byte, error) 
 
 func (x DidChangeConfigurationClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeConfigurationClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeConfigurationClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeConfigurationClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeConfigurationClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeConfigurationClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -3883,7 +6190,7 @@ func (x DidChangeConfigurationParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeConfigurationParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3892,6 +6199,27 @@ func (x DidChangeConfigurationParams) MarshalJSON() ([]byte, error) {
 
 func (x DidChangeConfigurationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "settings", x.Settings); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeConfigurationParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeConfigurationParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeConfigurationParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeConfigurationParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeConfigurationParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "settings", &x.Settings, unmarshalLSPAny); err != nil {
 		return err
 	}
 	return nil
@@ -3910,7 +6238,7 @@ func (x DidChangeConfigurationRegistrationOptions) MarshalJSON() ([]byte, error)
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeConfigurationRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3924,6 +6252,27 @@ func (x DidChangeConfigurationRegistrationOptions) marshalProperties(w *bytes.Bu
 	return nil
 }
 
+func (x *DidChangeConfigurationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeConfigurationRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeConfigurationRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeConfigurationRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeConfigurationRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalPropertyUsing(properties, "section", &x.Section, unmarshalDidChangeConfigurationRegistrationOptionsSection); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DidChangeConfigurationRegistrationOptionsSection is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -3931,6 +6280,29 @@ func (x DidChangeConfigurationRegistrationOptions) marshalProperties(w *bytes.Bu
 //   - StringArray
 type DidChangeConfigurationRegistrationOptionsSection interface {
 	isDidChangeConfigurationRegistrationOptionsSection()
+}
+
+func unmarshalDidChangeConfigurationRegistrationOptionsSection(data []byte, v *DidChangeConfigurationRegistrationOptionsSection) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate StringArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (String) isDidChangeConfigurationRegistrationOptionsSection() {}
@@ -3972,7 +6344,7 @@ func (x DidChangeNotebookDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeNotebookDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -3984,6 +6356,30 @@ func (x DidChangeNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *i
 		return err
 	}
 	if err := marshalProperty(w, n, "change", x.Change); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeNotebookDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeNotebookDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeNotebookDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeNotebookDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "notebookDocument", &x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "change", &x.Change); err != nil {
 		return err
 	}
 	return nil
@@ -4019,7 +6415,7 @@ func (x DidChangeTextDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeTextDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4031,6 +6427,30 @@ func (x DidChangeTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) 
 		return err
 	}
 	if err := marshalProperty(w, n, "contentChanges", x.ContentChanges); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeTextDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeTextDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeTextDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeTextDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeTextDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "contentChanges", &x.ContentChanges); err != nil {
 		return err
 	}
 	return nil
@@ -4057,7 +6477,7 @@ func (x DidChangeWatchedFilesClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeWatchedFilesClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4069,6 +6489,30 @@ func (x DidChangeWatchedFilesClientCapabilities) marshalProperties(w *bytes.Buff
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "relativePatternSupport", x.RelativePatternSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeWatchedFilesClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeWatchedFilesClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeWatchedFilesClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeWatchedFilesClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeWatchedFilesClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "relativePatternSupport", &x.RelativePatternSupport); err != nil {
 		return err
 	}
 	return nil
@@ -4090,7 +6534,7 @@ func (x DidChangeWatchedFilesParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeWatchedFilesParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4099,6 +6543,27 @@ func (x DidChangeWatchedFilesParams) MarshalJSON() ([]byte, error) {
 
 func (x DidChangeWatchedFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "changes", x.Changes); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeWatchedFilesParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeWatchedFilesParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeWatchedFilesParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeWatchedFilesParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeWatchedFilesParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "changes", &x.Changes); err != nil {
 		return err
 	}
 	return nil
@@ -4120,7 +6585,7 @@ func (x DidChangeWatchedFilesRegistrationOptions) MarshalJSON() ([]byte, error) 
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeWatchedFilesRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4129,6 +6594,27 @@ func (x DidChangeWatchedFilesRegistrationOptions) MarshalJSON() ([]byte, error) 
 
 func (x DidChangeWatchedFilesRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "watchers", x.Watchers); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeWatchedFilesRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeWatchedFilesRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeWatchedFilesRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeWatchedFilesRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeWatchedFilesRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "watchers", &x.Watchers); err != nil {
 		return err
 	}
 	return nil
@@ -4150,7 +6636,7 @@ func (x DidChangeWorkspaceFoldersParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidChangeWorkspaceFoldersParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4159,6 +6645,27 @@ func (x DidChangeWorkspaceFoldersParams) MarshalJSON() ([]byte, error) {
 
 func (x DidChangeWorkspaceFoldersParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "event", x.Event); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidChangeWorkspaceFoldersParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidChangeWorkspaceFoldersParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidChangeWorkspaceFoldersParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidChangeWorkspaceFoldersParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidChangeWorkspaceFoldersParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "event", &x.Event); err != nil {
 		return err
 	}
 	return nil
@@ -4185,7 +6692,7 @@ func (x DidCloseNotebookDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidCloseNotebookDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4197,6 +6704,30 @@ func (x DidCloseNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *in
 		return err
 	}
 	if err := marshalProperty(w, n, "cellTextDocuments", x.CellTextDocuments); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidCloseNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidCloseNotebookDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidCloseNotebookDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidCloseNotebookDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidCloseNotebookDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "notebookDocument", &x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "cellTextDocuments", &x.CellTextDocuments); err != nil {
 		return err
 	}
 	return nil
@@ -4218,7 +6749,7 @@ func (x DidCloseTextDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidCloseTextDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4227,6 +6758,27 @@ func (x DidCloseTextDocumentParams) MarshalJSON() ([]byte, error) {
 
 func (x DidCloseTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidCloseTextDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidCloseTextDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidCloseTextDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidCloseTextDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidCloseTextDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -4253,7 +6805,7 @@ func (x DidOpenNotebookDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidOpenNotebookDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4265,6 +6817,30 @@ func (x DidOpenNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int
 		return err
 	}
 	if err := marshalProperty(w, n, "cellTextDocuments", x.CellTextDocuments); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidOpenNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidOpenNotebookDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidOpenNotebookDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidOpenNotebookDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidOpenNotebookDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "notebookDocument", &x.NotebookDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "cellTextDocuments", &x.CellTextDocuments); err != nil {
 		return err
 	}
 	return nil
@@ -4286,7 +6862,7 @@ func (x DidOpenTextDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidOpenTextDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4295,6 +6871,27 @@ func (x DidOpenTextDocumentParams) MarshalJSON() ([]byte, error) {
 
 func (x DidOpenTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidOpenTextDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidOpenTextDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidOpenTextDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidOpenTextDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidOpenTextDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -4318,7 +6915,7 @@ func (x DidSaveNotebookDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidSaveNotebookDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4327,6 +6924,27 @@ func (x DidSaveNotebookDocumentParams) MarshalJSON() ([]byte, error) {
 
 func (x DidSaveNotebookDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "notebookDocument", x.NotebookDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidSaveNotebookDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidSaveNotebookDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidSaveNotebookDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidSaveNotebookDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidSaveNotebookDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "notebookDocument", &x.NotebookDocument); err != nil {
 		return err
 	}
 	return nil
@@ -4351,7 +6969,7 @@ func (x DidSaveTextDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DidSaveTextDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4363,6 +6981,30 @@ func (x DidSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) er
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DidSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DidSaveTextDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DidSaveTextDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DidSaveTextDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DidSaveTextDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "text", &x.Text); err != nil {
 		return err
 	}
 	return nil
@@ -4384,7 +7026,7 @@ func (x DocumentColorClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentColorClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4393,6 +7035,27 @@ func (x DocumentColorClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x DocumentColorClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentColorClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentColorClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentColorClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentColorClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentColorClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -4411,7 +7074,7 @@ func (x DocumentColorOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentColorOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4420,6 +7083,27 @@ func (x DocumentColorOptions) MarshalJSON() ([]byte, error) {
 
 func (x DocumentColorOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentColorOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentColorOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentColorOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentColorOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentColorOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -4444,7 +7128,7 @@ func (x DocumentColorParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentColorParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4459,6 +7143,33 @@ func (x DocumentColorParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentColorParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentColorParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentColorParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentColorParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentColorParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -4479,7 +7190,7 @@ func (x DocumentColorRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentColorRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4494,6 +7205,33 @@ func (x DocumentColorRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentColorRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentColorRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentColorRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentColorRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentColorRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DocumentColorOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -4524,7 +7262,7 @@ func (x DocumentDiagnosticParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentDiagnosticParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4550,6 +7288,39 @@ func (x DocumentDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) err
 	return nil
 }
 
+func (x *DocumentDiagnosticParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentDiagnosticParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentDiagnosticParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentDiagnosticParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentDiagnosticParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "identifier", &x.Identifier); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "previousResultId", &x.PreviousResultID); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DocumentDiagnosticReport is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4557,6 +7328,29 @@ func (x DocumentDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) err
 //   - RelatedUnchangedDocumentDiagnosticReport
 type DocumentDiagnosticReport interface {
 	isDocumentDiagnosticReport()
+}
+
+func unmarshalDocumentDiagnosticReport(data []byte, v *DocumentDiagnosticReport) error {
+	var err error
+	{
+		var candidate RelatedFullDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate RelatedUnchangedDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (RelatedFullDocumentDiagnosticReport) isDocumentDiagnosticReport() {}
@@ -4600,7 +7394,7 @@ func (x DocumentDiagnosticReportPartialResult) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentDiagnosticReportPartialResult: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4614,6 +7408,27 @@ func (x DocumentDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer
 	return nil
 }
 
+func (x *DocumentDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentDiagnosticReportPartialResult: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentDiagnosticReportPartialResult: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentDiagnosticReportPartialResult: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentDiagnosticReportPartialResult) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "relatedDocuments", &x.RelatedDocuments); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DocumentDiagnosticReportPartialResultRelatedDocuments is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4621,6 +7436,29 @@ func (x DocumentDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffer
 //   - UnchangedDocumentDiagnosticReport
 type DocumentDiagnosticReportPartialResultRelatedDocuments interface {
 	isDocumentDiagnosticReportPartialResultRelatedDocuments()
+}
+
+func unmarshalDocumentDiagnosticReportPartialResultRelatedDocuments(data []byte, v *DocumentDiagnosticReportPartialResultRelatedDocuments) error {
+	var err error
+	{
+		var candidate FullDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate UnchangedDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (FullDocumentDiagnosticReport) isDocumentDiagnosticReportPartialResultRelatedDocuments() {}
@@ -4637,6 +7475,29 @@ type DocumentDiagnosticReportPartialResultRelatedDocumentsMap map[DocumentURI]Do
 //   - NotebookCellTextDocumentFilter
 type DocumentFilter interface {
 	isDocumentFilter()
+}
+
+func unmarshalDocumentFilter(data []byte, v *DocumentFilter) error {
+	var err error
+	{
+		var candidate TextDocumentFilter
+		err := unmarshalTextDocumentFilter(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookCellTextDocumentFilter
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (NotebookCellTextDocumentFilter) isDocumentFilter() {}
@@ -4657,7 +7518,7 @@ func (x DocumentFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentFormattingClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4666,6 +7527,27 @@ func (x DocumentFormattingClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x DocumentFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentFormattingClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentFormattingClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentFormattingClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentFormattingClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentFormattingClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -4686,7 +7568,7 @@ func (x DocumentFormattingOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentFormattingOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4695,6 +7577,27 @@ func (x DocumentFormattingOptions) MarshalJSON() ([]byte, error) {
 
 func (x DocumentFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentFormattingOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentFormattingOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentFormattingOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentFormattingOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentFormattingOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -4720,7 +7623,7 @@ func (x DocumentFormattingParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentFormattingParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4735,6 +7638,33 @@ func (x DocumentFormattingParams) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := marshalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentFormattingParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentFormattingParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentFormattingParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentFormattingParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentFormattingParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "options", &x.Options); err != nil {
 		return err
 	}
 	return nil
@@ -4756,7 +7686,7 @@ func (x DocumentFormattingRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentFormattingRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4768,6 +7698,30 @@ func (x DocumentFormattingRegistrationOptions) marshalProperties(w *bytes.Buffer
 		return err
 	}
 	if err := x.DocumentFormattingOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentFormattingRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentFormattingRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentFormattingRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentFormattingRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DocumentFormattingOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -4793,7 +7747,7 @@ func (x DocumentHighlight) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentHighlight: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4805,6 +7759,30 @@ func (x DocumentHighlight) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentHighlight) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentHighlight: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentHighlight: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentHighlight: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentHighlight) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "kind", &x.Kind); err != nil {
 		return err
 	}
 	return nil
@@ -4829,7 +7807,7 @@ func (x DocumentHighlightClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentHighlightClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4838,6 +7816,27 @@ func (x DocumentHighlightClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x DocumentHighlightClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentHighlightClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentHighlightClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentHighlightClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentHighlightClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentHighlightClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -4878,7 +7877,7 @@ func (x DocumentHighlightOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentHighlightOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4887,6 +7886,27 @@ func (x DocumentHighlightOptions) MarshalJSON() ([]byte, error) {
 
 func (x DocumentHighlightOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentHighlightOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentHighlightOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentHighlightOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentHighlightOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentHighlightOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -4909,7 +7929,7 @@ func (x DocumentHighlightParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentHighlightParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4924,6 +7944,33 @@ func (x DocumentHighlightParams) marshalProperties(w *bytes.Buffer, n *int) erro
 		return err
 	}
 	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentHighlightParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentHighlightParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentHighlightParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentHighlightParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentHighlightParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -4945,7 +7992,7 @@ func (x DocumentHighlightRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentHighlightRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -4957,6 +8004,30 @@ func (x DocumentHighlightRegistrationOptions) marshalProperties(w *bytes.Buffer,
 		return err
 	}
 	if err := x.DocumentHighlightOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentHighlightRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentHighlightRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentHighlightRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentHighlightRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentHighlightRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DocumentHighlightOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -4992,7 +8063,7 @@ func (x DocumentLink) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentLink: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5010,6 +8081,36 @@ func (x DocumentLink) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentLink) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentLink: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentLink: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentLink: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentLink) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "target", &x.Target); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tooltip", &x.Tooltip); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
 		return err
 	}
 	return nil
@@ -5038,7 +8139,7 @@ func (x DocumentLinkClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentLinkClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5050,6 +8151,30 @@ func (x DocumentLinkClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "tooltipSupport", x.TooltipSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentLinkClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentLinkClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentLinkClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentLinkClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentLinkClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tooltipSupport", &x.TooltipSupport); err != nil {
 		return err
 	}
 	return nil
@@ -5073,7 +8198,7 @@ func (x DocumentLinkOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentLinkOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5085,6 +8210,30 @@ func (x DocumentLinkOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentLinkOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentLinkOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentLinkOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentLinkOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentLinkOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveProvider", &x.ResolveProvider); err != nil {
 		return err
 	}
 	return nil
@@ -5109,7 +8258,7 @@ func (x DocumentLinkParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentLinkParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5124,6 +8273,33 @@ func (x DocumentLinkParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentLinkParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentLinkParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentLinkParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentLinkParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentLinkParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -5145,7 +8321,7 @@ func (x DocumentLinkRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentLinkRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5157,6 +8333,30 @@ func (x DocumentLinkRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 		return err
 	}
 	if err := x.DocumentLinkOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentLinkRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentLinkRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentLinkRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentLinkRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentLinkRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DocumentLinkOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -5178,7 +8378,7 @@ func (x DocumentOnTypeFormattingClientCapabilities) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentOnTypeFormattingClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5187,6 +8387,27 @@ func (x DocumentOnTypeFormattingClientCapabilities) MarshalJSON() ([]byte, error
 
 func (x DocumentOnTypeFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentOnTypeFormattingClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentOnTypeFormattingClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentOnTypeFormattingClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -5210,7 +8431,7 @@ func (x DocumentOnTypeFormattingOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentOnTypeFormattingOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5222,6 +8443,30 @@ func (x DocumentOnTypeFormattingOptions) marshalProperties(w *bytes.Buffer, n *i
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "moreTriggerCharacter", x.MoreTriggerCharacter); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentOnTypeFormattingOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentOnTypeFormattingOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentOnTypeFormattingOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "firstTriggerCharacter", &x.FirstTriggerCharacter); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "moreTriggerCharacter", &x.MoreTriggerCharacter); err != nil {
 		return err
 	}
 	return nil
@@ -5254,7 +8499,7 @@ func (x DocumentOnTypeFormattingParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentOnTypeFormattingParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5277,6 +8522,36 @@ func (x DocumentOnTypeFormattingParams) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
+func (x *DocumentOnTypeFormattingParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentOnTypeFormattingParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentOnTypeFormattingParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "position", &x.Position); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "ch", &x.Ch); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "options", &x.Options); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DocumentOnTypeFormattingRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link DocumentOnTypeFormattingRequest}.
@@ -5293,7 +8568,7 @@ func (x DocumentOnTypeFormattingRegistrationOptions) MarshalJSON() ([]byte, erro
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentOnTypeFormattingRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5305,6 +8580,30 @@ func (x DocumentOnTypeFormattingRegistrationOptions) marshalProperties(w *bytes.
 		return err
 	}
 	if err := x.DocumentOnTypeFormattingOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentOnTypeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentOnTypeFormattingRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentOnTypeFormattingRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentOnTypeFormattingRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DocumentOnTypeFormattingOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -5326,7 +8625,7 @@ func (x DocumentRangeFormattingClientCapabilities) MarshalJSON() ([]byte, error)
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentRangeFormattingClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5335,6 +8634,27 @@ func (x DocumentRangeFormattingClientCapabilities) MarshalJSON() ([]byte, error)
 
 func (x DocumentRangeFormattingClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentRangeFormattingClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentRangeFormattingClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentRangeFormattingClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -5355,7 +8675,7 @@ func (x DocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentRangeFormattingOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5364,6 +8684,27 @@ func (x DocumentRangeFormattingOptions) MarshalJSON() ([]byte, error) {
 
 func (x DocumentRangeFormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentRangeFormattingOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentRangeFormattingOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentRangeFormattingOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -5391,7 +8732,7 @@ func (x DocumentRangeFormattingParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentRangeFormattingParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5414,6 +8755,36 @@ func (x DocumentRangeFormattingParams) marshalProperties(w *bytes.Buffer, n *int
 	return nil
 }
 
+func (x *DocumentRangeFormattingParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentRangeFormattingParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentRangeFormattingParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "options", &x.Options); err != nil {
+		return err
+	}
+	return nil
+}
+
 // DocumentRangeFormattingRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link DocumentRangeFormattingRequest}.
@@ -5430,7 +8801,7 @@ func (x DocumentRangeFormattingRegistrationOptions) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentRangeFormattingRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5442,6 +8813,30 @@ func (x DocumentRangeFormattingRegistrationOptions) marshalProperties(w *bytes.B
 		return err
 	}
 	if err := x.DocumentRangeFormattingOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentRangeFormattingRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentRangeFormattingRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentRangeFormattingRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentRangeFormattingRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DocumentRangeFormattingOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -5493,7 +8888,7 @@ func (x DocumentSymbol) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentSymbol: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5523,6 +8918,48 @@ func (x DocumentSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "children", x.Children); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentSymbol) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentSymbol: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentSymbol: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentSymbol: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentSymbol) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "name", &x.Name); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "detail", &x.Detail); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tags", &x.Tags); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "deprecated", &x.Deprecated); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "selectionRange", &x.SelectionRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "children", &x.Children); err != nil {
 		return err
 	}
 	return nil
@@ -5563,7 +9000,7 @@ func (x DocumentSymbolClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentSymbolClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5584,6 +9021,39 @@ func (x DocumentSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "labelSupport", x.LabelSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentSymbolClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentSymbolClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentSymbolClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentSymbolClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentSymbolClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "symbolKind", &x.SymbolKind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "hierarchicalDocumentSymbolSupport", &x.HierarchicalDocumentSymbolSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tagSupport", &x.TagSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "labelSupport", &x.LabelSupport); err != nil {
 		return err
 	}
 	return nil
@@ -5610,7 +9080,7 @@ func (x DocumentSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentSymbolClientCapabilitiesSymbolKind: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5619,6 +9089,27 @@ func (x DocumentSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, error
 
 func (x DocumentSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentSymbolClientCapabilitiesSymbolKind) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentSymbolClientCapabilitiesSymbolKind: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentSymbolClientCapabilitiesSymbolKind: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentSymbolClientCapabilitiesSymbolKind: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentSymbolClientCapabilitiesSymbolKind) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -5638,7 +9129,7 @@ func (x DocumentSymbolClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentSymbolClientCapabilitiesTagSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5647,6 +9138,27 @@ func (x DocumentSymbolClientCapabilitiesTagSupport) MarshalJSON() ([]byte, error
 
 func (x DocumentSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentSymbolClientCapabilitiesTagSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentSymbolClientCapabilitiesTagSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentSymbolClientCapabilitiesTagSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentSymbolClientCapabilitiesTagSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentSymbolClientCapabilitiesTagSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -5673,7 +9185,7 @@ func (x DocumentSymbolOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentSymbolOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5685,6 +9197,30 @@ func (x DocumentSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "label", x.Label); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentSymbolOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentSymbolOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentSymbolOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentSymbolOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentSymbolOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "label", &x.Label); err != nil {
 		return err
 	}
 	return nil
@@ -5709,7 +9245,7 @@ func (x DocumentSymbolParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentSymbolParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5724,6 +9260,33 @@ func (x DocumentSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentSymbolParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentSymbolParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentSymbolParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentSymbolParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentSymbolParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -5745,7 +9308,7 @@ func (x DocumentSymbolRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("DocumentSymbolRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5757,6 +9320,30 @@ func (x DocumentSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 		return err
 	}
 	if err := x.DocumentSymbolOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *DocumentSymbolRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("DocumentSymbolRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("DocumentSymbolRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("DocumentSymbolRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *DocumentSymbolRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.DocumentSymbolOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -5806,7 +9393,7 @@ func (x ExecuteCommandClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ExecuteCommandClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5815,6 +9402,27 @@ func (x ExecuteCommandClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x ExecuteCommandClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ExecuteCommandClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ExecuteCommandClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ExecuteCommandClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ExecuteCommandClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ExecuteCommandClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -5838,7 +9446,7 @@ func (x ExecuteCommandOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ExecuteCommandOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5850,6 +9458,30 @@ func (x ExecuteCommandOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 		return err
 	}
 	if err := marshalProperty(w, n, "commands", x.Commands); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ExecuteCommandOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ExecuteCommandOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ExecuteCommandOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ExecuteCommandOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ExecuteCommandOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "commands", &x.Commands); err != nil {
 		return err
 	}
 	return nil
@@ -5875,7 +9507,7 @@ func (x ExecuteCommandParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ExecuteCommandParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5890,6 +9522,33 @@ func (x ExecuteCommandParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "arguments", x.Arguments); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ExecuteCommandParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ExecuteCommandParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ExecuteCommandParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ExecuteCommandParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ExecuteCommandParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "command", &x.Command); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "arguments", &x.Arguments); err != nil {
 		return err
 	}
 	return nil
@@ -5910,7 +9569,7 @@ func (x ExecuteCommandRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ExecuteCommandRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5919,6 +9578,27 @@ func (x ExecuteCommandRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 func (x ExecuteCommandRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.ExecuteCommandOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ExecuteCommandRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ExecuteCommandRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ExecuteCommandRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ExecuteCommandRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ExecuteCommandRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.ExecuteCommandOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -5943,7 +9623,7 @@ func (x ExecutionSummary) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ExecutionSummary: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -5955,6 +9635,30 @@ func (x ExecutionSummary) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "success", x.Success); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ExecutionSummary) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ExecutionSummary: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ExecutionSummary: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ExecutionSummary: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ExecutionSummary) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "executionOrder", &x.ExecutionOrder); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "success", &x.Success); err != nil {
 		return err
 	}
 	return nil
@@ -6025,7 +9729,7 @@ func (x FileCreate) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileCreate: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6034,6 +9738,27 @@ func (x FileCreate) MarshalJSON() ([]byte, error) {
 
 func (x FileCreate) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileCreate) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileCreate: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileCreate: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileCreate: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileCreate) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
 		return err
 	}
 	return nil
@@ -6060,7 +9785,7 @@ func (x FileDelete) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileDelete: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6069,6 +9794,27 @@ func (x FileDelete) MarshalJSON() ([]byte, error) {
 
 func (x FileDelete) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileDelete) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileDelete: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileDelete: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileDelete: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileDelete) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
 		return err
 	}
 	return nil
@@ -6095,7 +9841,7 @@ func (x FileEvent) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileEvent: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6107,6 +9853,30 @@ func (x FileEvent) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "type", x.Type); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileEvent) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileEvent: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileEvent: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileEvent: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileEvent) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "type", &x.Type); err != nil {
 		return err
 	}
 	return nil
@@ -6148,7 +9918,7 @@ func (x FileOperationClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileOperationClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6180,6 +9950,45 @@ func (x FileOperationClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
+func (x *FileOperationClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileOperationClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileOperationClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileOperationClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileOperationClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didCreate", &x.DidCreate); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willCreate", &x.WillCreate); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didRename", &x.DidRename); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willRename", &x.WillRename); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didDelete", &x.DidDelete); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willDelete", &x.WillDelete); err != nil {
+		return err
+	}
+	return nil
+}
+
 // FileOperationFilter is a named structure definition.
 //
 // A filter to describe in which file operation requests or notifications
@@ -6201,7 +10010,7 @@ func (x FileOperationFilter) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileOperationFilter: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6213,6 +10022,30 @@ func (x FileOperationFilter) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileOperationFilter) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileOperationFilter: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileOperationFilter: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileOperationFilter: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileOperationFilter) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "pattern", &x.Pattern); err != nil {
 		return err
 	}
 	return nil
@@ -6249,7 +10082,7 @@ func (x FileOperationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileOperationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6273,6 +10106,42 @@ func (x FileOperationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "willDelete", x.WillDelete); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileOperationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileOperationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileOperationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileOperationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileOperationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "didCreate", &x.DidCreate); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willCreate", &x.WillCreate); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didRename", &x.DidRename); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willRename", &x.WillRename); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didDelete", &x.DidDelete); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willDelete", &x.WillDelete); err != nil {
 		return err
 	}
 	return nil
@@ -6309,7 +10178,7 @@ func (x FileOperationPattern) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileOperationPattern: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6324,6 +10193,33 @@ func (x FileOperationPattern) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "options", x.Options); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileOperationPattern) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileOperationPattern: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileOperationPattern: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileOperationPattern: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileOperationPattern) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "glob", &x.Glob); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "matches", &x.Matches); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "options", &x.Options); err != nil {
 		return err
 	}
 	return nil
@@ -6366,7 +10262,7 @@ func (x FileOperationPatternOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileOperationPatternOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6375,6 +10271,27 @@ func (x FileOperationPatternOptions) MarshalJSON() ([]byte, error) {
 
 func (x FileOperationPatternOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "ignoreCase", x.IgnoreCase); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileOperationPatternOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileOperationPatternOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileOperationPatternOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileOperationPatternOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileOperationPatternOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "ignoreCase", &x.IgnoreCase); err != nil {
 		return err
 	}
 	return nil
@@ -6398,7 +10315,7 @@ func (x FileOperationRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileOperationRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6407,6 +10324,27 @@ func (x FileOperationRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 func (x FileOperationRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "filters", x.Filters); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileOperationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileOperationRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileOperationRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileOperationRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileOperationRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "filters", &x.Filters); err != nil {
 		return err
 	}
 	return nil
@@ -6432,7 +10370,7 @@ func (x FileRename) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileRename: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6444,6 +10382,30 @@ func (x FileRename) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "newUri", x.NewURI); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileRename) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileRename: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileRename: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileRename: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileRename) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "oldUri", &x.OldURI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "newUri", &x.NewURI); err != nil {
 		return err
 	}
 	return nil
@@ -6472,7 +10434,7 @@ func (x FileSystemWatcher) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FileSystemWatcher: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6484,6 +10446,30 @@ func (x FileSystemWatcher) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FileSystemWatcher) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FileSystemWatcher: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FileSystemWatcher: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FileSystemWatcher: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FileSystemWatcher) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "globPattern", &x.GlobPattern, unmarshalGlobPattern); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "kind", &x.Kind); err != nil {
 		return err
 	}
 	return nil
@@ -6527,7 +10513,7 @@ func (x FoldingRange) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FoldingRange: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6551,6 +10537,42 @@ func (x FoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "collapsedText", x.CollapsedText); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FoldingRange) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FoldingRange: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FoldingRange: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FoldingRange: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FoldingRange) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "startLine", &x.StartLine); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "startCharacter", &x.StartCharacter); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "endLine", &x.EndLine); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "endCharacter", &x.EndCharacter); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "collapsedText", &x.CollapsedText); err != nil {
 		return err
 	}
 	return nil
@@ -6592,7 +10614,7 @@ func (x FoldingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FoldingRangeClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6618,6 +10640,39 @@ func (x FoldingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
+func (x *FoldingRangeClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FoldingRangeClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FoldingRangeClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FoldingRangeClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FoldingRangeClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "rangeLimit", &x.RangeLimit); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "lineFoldingOnly", &x.LineFoldingOnly); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "foldingRangeKind", &x.FoldingRangeKind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "foldingRange", &x.FoldingRange); err != nil {
+		return err
+	}
+	return nil
+}
+
 // FoldingRangeClientCapabilitiesFoldingRange is a literal structure.
 type FoldingRangeClientCapabilitiesFoldingRange struct {
 	// If set, the client signals that it supports setting collapsedText on
@@ -6635,7 +10690,7 @@ func (x FoldingRangeClientCapabilitiesFoldingRange) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRange: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6644,6 +10699,27 @@ func (x FoldingRangeClientCapabilitiesFoldingRange) MarshalJSON() ([]byte, error
 
 func (x FoldingRangeClientCapabilitiesFoldingRange) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "collapsedText", x.CollapsedText); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FoldingRangeClientCapabilitiesFoldingRange) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRange: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRange: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRange: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FoldingRangeClientCapabilitiesFoldingRange) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "collapsedText", &x.CollapsedText); err != nil {
 		return err
 	}
 	return nil
@@ -6666,7 +10742,7 @@ func (x FoldingRangeClientCapabilitiesFoldingRangeKind) MarshalJSON() ([]byte, e
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRangeKind: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6675,6 +10751,27 @@ func (x FoldingRangeClientCapabilitiesFoldingRangeKind) MarshalJSON() ([]byte, e
 
 func (x FoldingRangeClientCapabilitiesFoldingRangeKind) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FoldingRangeClientCapabilitiesFoldingRangeKind) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRangeKind: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRangeKind: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FoldingRangeClientCapabilitiesFoldingRangeKind: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FoldingRangeClientCapabilitiesFoldingRangeKind) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -6716,7 +10813,7 @@ func (x FoldingRangeOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FoldingRangeOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6725,6 +10822,27 @@ func (x FoldingRangeOptions) MarshalJSON() ([]byte, error) {
 
 func (x FoldingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FoldingRangeOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FoldingRangeOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FoldingRangeOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FoldingRangeOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FoldingRangeOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -6749,7 +10867,7 @@ func (x FoldingRangeParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FoldingRangeParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6764,6 +10882,33 @@ func (x FoldingRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FoldingRangeParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FoldingRangeParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FoldingRangeParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FoldingRangeParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FoldingRangeParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -6784,7 +10929,7 @@ func (x FoldingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FoldingRangeRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6799,6 +10944,33 @@ func (x FoldingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FoldingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FoldingRangeRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FoldingRangeRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FoldingRangeRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FoldingRangeRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.FoldingRangeOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -6834,7 +11006,7 @@ func (x FormattingOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FormattingOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6855,6 +11027,39 @@ func (x FormattingOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "trimFinalNewlines", x.TrimFinalNewlines); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FormattingOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FormattingOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FormattingOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FormattingOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FormattingOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "tabSize", &x.TabSize); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "insertSpaces", &x.InsertSpaces); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "trimTrailingWhitespace", &x.TrimTrailingWhitespace); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "insertFinalNewline", &x.InsertFinalNewline); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "trimFinalNewlines", &x.TrimFinalNewlines); err != nil {
 		return err
 	}
 	return nil
@@ -6882,7 +11087,7 @@ func (x FullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("FullDocumentDiagnosticReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6897,6 +11102,33 @@ func (x FullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int)
 		return err
 	}
 	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *FullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("FullDocumentDiagnosticReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("FullDocumentDiagnosticReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("FullDocumentDiagnosticReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *FullDocumentDiagnosticReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalLiteralProperty(properties, "kind", "full"); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resultId", &x.ResultID); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "items", &x.Items); err != nil {
 		return err
 	}
 	return nil
@@ -6952,7 +11184,7 @@ func (x GeneralClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("GeneralClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -6970,6 +11202,36 @@ func (x GeneralClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) er
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "positionEncodings", x.PositionEncodings); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *GeneralClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("GeneralClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("GeneralClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("GeneralClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *GeneralClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "staleRequestSupport", &x.StaleRequestSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "regularExpressions", &x.RegularExpressions); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "markdown", &x.Markdown); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "positionEncodings", &x.PositionEncodings); err != nil {
 		return err
 	}
 	return nil
@@ -6993,7 +11255,7 @@ func (x GeneralClientCapabilitiesStaleRequestSupport) MarshalJSON() ([]byte, err
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("GeneralClientCapabilitiesStaleRequestSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7010,6 +11272,30 @@ func (x GeneralClientCapabilitiesStaleRequestSupport) marshalProperties(w *bytes
 	return nil
 }
 
+func (x *GeneralClientCapabilitiesStaleRequestSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("GeneralClientCapabilitiesStaleRequestSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("GeneralClientCapabilitiesStaleRequestSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("GeneralClientCapabilitiesStaleRequestSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *GeneralClientCapabilitiesStaleRequestSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "cancel", &x.Cancel); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "retryOnContentModified", &x.RetryOnContentModified); err != nil {
+		return err
+	}
+	return nil
+}
+
 // GlobPattern is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -7017,6 +11303,29 @@ func (x GeneralClientCapabilitiesStaleRequestSupport) marshalProperties(w *bytes
 //   - RelativePattern
 type GlobPattern interface {
 	isGlobPattern()
+}
+
+func unmarshalGlobPattern(data []byte, v *GlobPattern) error {
+	var err error
+	{
+		var candidate Pattern
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate RelativePattern
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Pattern) isGlobPattern() {}
@@ -7042,7 +11351,7 @@ func (x Hover) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Hover: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7054,6 +11363,30 @@ func (x Hover) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Hover) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Hover: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Hover: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Hover: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Hover) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "contents", &x.Contents, unmarshalHoverContents); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "range", &x.Range); err != nil {
 		return err
 	}
 	return nil
@@ -7076,7 +11409,7 @@ func (x HoverClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("HoverClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7093,6 +11426,30 @@ func (x HoverClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) erro
 	return nil
 }
 
+func (x *HoverClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("HoverClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("HoverClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("HoverClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *HoverClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "contentFormat", &x.ContentFormat); err != nil {
+		return err
+	}
+	return nil
+}
+
 // HoverContents is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -7101,6 +11458,38 @@ func (x HoverClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) erro
 //   - MarkedStringArray
 type HoverContents interface {
 	isHoverContents()
+}
+
+func unmarshalHoverContents(data []byte, v *HoverContents) error {
+	var err error
+	{
+		var candidate MarkupContent
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkedString
+		err := unmarshalMarkedString(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkedStringArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (MarkedStringArray) isHoverContents() {}
@@ -7122,7 +11511,7 @@ func (x HoverOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("HoverOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7131,6 +11520,27 @@ func (x HoverOptions) MarshalJSON() ([]byte, error) {
 
 func (x HoverOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *HoverOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("HoverOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("HoverOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("HoverOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *HoverOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -7152,7 +11562,7 @@ func (x HoverParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("HoverParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7164,6 +11574,30 @@ func (x HoverParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *HoverParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("HoverParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("HoverParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("HoverParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *HoverParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -7185,7 +11619,7 @@ func (x HoverRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("HoverRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7197,6 +11631,30 @@ func (x HoverRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := x.HoverOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *HoverRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("HoverRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("HoverRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("HoverRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *HoverRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.HoverOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -7224,7 +11682,7 @@ func (x ImplementationClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ImplementationClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7236,6 +11694,30 @@ func (x ImplementationClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ImplementationClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ImplementationClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ImplementationClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ImplementationClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ImplementationClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "linkSupport", &x.LinkSupport); err != nil {
 		return err
 	}
 	return nil
@@ -7254,7 +11736,7 @@ func (x ImplementationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ImplementationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7263,6 +11745,27 @@ func (x ImplementationOptions) MarshalJSON() ([]byte, error) {
 
 func (x ImplementationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ImplementationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ImplementationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ImplementationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ImplementationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ImplementationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -7283,7 +11786,7 @@ func (x ImplementationParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ImplementationParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7298,6 +11801,33 @@ func (x ImplementationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ImplementationParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ImplementationParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ImplementationParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ImplementationParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ImplementationParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -7318,7 +11848,7 @@ func (x ImplementationRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ImplementationRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7333,6 +11863,33 @@ func (x ImplementationRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ImplementationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ImplementationRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ImplementationRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ImplementationRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ImplementationRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.ImplementationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -7358,7 +11915,7 @@ func (x InitializeError) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InitializeError: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7367,6 +11924,27 @@ func (x InitializeError) MarshalJSON() ([]byte, error) {
 
 func (x InitializeError) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "retry", x.Retry); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InitializeError) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InitializeError: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InitializeError: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InitializeError: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InitializeError) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "retry", &x.Retry); err != nil {
 		return err
 	}
 	return nil
@@ -7386,7 +11964,7 @@ func (x InitializeParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InitializeParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7398,6 +11976,30 @@ func (x InitializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := x.WorkspaceFoldersInitializeParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InitializeParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InitializeParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InitializeParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InitializeParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InitializeParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.initializeParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkspaceFoldersInitializeParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -7419,7 +12021,7 @@ func (x InitializeParamsClientInfo) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InitializeParamsClientInfo: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7436,12 +12038,50 @@ func (x InitializeParamsClientInfo) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+func (x *InitializeParamsClientInfo) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InitializeParamsClientInfo: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InitializeParamsClientInfo: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InitializeParamsClientInfo: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InitializeParamsClientInfo) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "name", &x.Name); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "version", &x.Version); err != nil {
+		return err
+	}
+	return nil
+}
+
 // InitializeParamsProcessID is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - Int
 type InitializeParamsProcessID interface {
 	isInitializeParamsProcessID()
+}
+
+func unmarshalInitializeParamsProcessID(data []byte, v *InitializeParamsProcessID) error {
+	var err error
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Int) isInitializeParamsProcessID() {}
@@ -7454,6 +12094,20 @@ type InitializeParamsRootPath interface {
 	isInitializeParamsRootPath()
 }
 
+func unmarshalInitializeParamsRootPath(data []byte, v *InitializeParamsRootPath) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (String) isInitializeParamsRootPath() {}
 
 // InitializeParamsRootURI is a union (aka 'or') of several other types.
@@ -7462,6 +12116,20 @@ func (String) isInitializeParamsRootPath() {}
 //   - DocumentURI
 type InitializeParamsRootURI interface {
 	isInitializeParamsRootURI()
+}
+
+func unmarshalInitializeParamsRootURI(data []byte, v *InitializeParamsRootURI) error {
+	var err error
+	{
+		var candidate DocumentURI
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (DocumentURI) isInitializeParamsRootURI() {}
@@ -7486,7 +12154,7 @@ func (x InitializeResult) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InitializeResult: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7498,6 +12166,30 @@ func (x InitializeResult) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "serverInfo", x.ServerInfo); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InitializeResult) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InitializeResult: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InitializeResult: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InitializeResult: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InitializeResult) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "capabilities", &x.Capabilities); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "serverInfo", &x.ServerInfo); err != nil {
 		return err
 	}
 	return nil
@@ -7519,7 +12211,7 @@ func (x InitializeResultServerInfo) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InitializeResultServerInfo: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7536,6 +12228,30 @@ func (x InitializeResultServerInfo) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+func (x *InitializeResultServerInfo) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InitializeResultServerInfo: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InitializeResultServerInfo: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InitializeResultServerInfo: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InitializeResultServerInfo) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "name", &x.Name); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "version", &x.Version); err != nil {
+		return err
+	}
+	return nil
+}
+
 // InitializedParams is a named structure definition.
 type InitializedParams struct{}
 
@@ -7547,7 +12263,7 @@ func (x InitializedParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InitializedParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7555,6 +12271,24 @@ func (x InitializedParams) MarshalJSON() ([]byte, error) {
 }
 
 func (x InitializedParams) marshalProperties(w *bytes.Buffer, n *int) error {
+	return nil
+}
+
+func (x *InitializedParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InitializedParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InitializedParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InitializedParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InitializedParams) unmarshalProperties(properties map[string]json.RawMessage) error {
 	return nil
 }
 
@@ -7607,7 +12341,7 @@ func (x InlayHint) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHint: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7642,6 +12376,48 @@ func (x InlayHint) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *InlayHint) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHint: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHint: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHint: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHint) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "position", &x.Position); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "label", &x.Label, unmarshalInlayHintLabel); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "textEdits", &x.TextEdits); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "tooltip", &x.Tooltip, unmarshalInlayHintTooltip); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "paddingLeft", &x.PaddingLeft); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "paddingRight", &x.PaddingRight); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // InlayHintArray is an array of InlayHint elements.
 type InlayHintArray []InlayHint
 
@@ -7666,7 +12442,7 @@ func (x InlayHintClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHintClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7678,6 +12454,30 @@ func (x InlayHintClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) 
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "resolveSupport", x.ResolveSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlayHintClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHintClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHintClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHintClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHintClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveSupport", &x.ResolveSupport); err != nil {
 		return err
 	}
 	return nil
@@ -7697,7 +12497,7 @@ func (x InlayHintClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error)
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHintClientCapabilitiesResolveSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7706,6 +12506,27 @@ func (x InlayHintClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, error)
 
 func (x InlayHintClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlayHintClientCapabilitiesResolveSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHintClientCapabilitiesResolveSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHintClientCapabilitiesResolveSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHintClientCapabilitiesResolveSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHintClientCapabilitiesResolveSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "properties", &x.Properties); err != nil {
 		return err
 	}
 	return nil
@@ -7736,6 +12557,29 @@ const (
 //   - InlayHintLabelPartArray
 type InlayHintLabel interface {
 	isInlayHintLabel()
+}
+
+func unmarshalInlayHintLabel(data []byte, v *InlayHintLabel) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InlayHintLabelPartArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (InlayHintLabelPartArray) isInlayHintLabel() {}
@@ -7782,7 +12626,7 @@ func (x InlayHintLabelPart) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHintLabelPart: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7805,6 +12649,36 @@ func (x InlayHintLabelPart) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *InlayHintLabelPart) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHintLabelPart: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHintLabelPart: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHintLabelPart: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHintLabelPart) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "value", &x.Value); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "tooltip", &x.Tooltip, unmarshalInlayHintLabelPartTooltip); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "location", &x.Location); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "command", &x.Command); err != nil {
+		return err
+	}
+	return nil
+}
+
 // InlayHintLabelPartArray is an array of InlayHintLabelPart elements.
 type InlayHintLabelPartArray []InlayHintLabelPart
 
@@ -7815,6 +12689,29 @@ type InlayHintLabelPartArray []InlayHintLabelPart
 //   - MarkupContent
 type InlayHintLabelPartTooltip interface {
 	isInlayHintLabelPartTooltip()
+}
+
+func unmarshalInlayHintLabelPartTooltip(data []byte, v *InlayHintLabelPartTooltip) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkupContent
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (MarkupContent) isInlayHintLabelPartTooltip() {}
@@ -7842,7 +12739,7 @@ func (x InlayHintOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHintOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7854,6 +12751,30 @@ func (x InlayHintOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlayHintOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHintOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHintOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHintOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHintOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveProvider", &x.ResolveProvider); err != nil {
 		return err
 	}
 	return nil
@@ -7881,7 +12802,7 @@ func (x InlayHintParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHintParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7896,6 +12817,33 @@ func (x InlayHintParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlayHintParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHintParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHintParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHintParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHintParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
 		return err
 	}
 	return nil
@@ -7920,7 +12868,7 @@ func (x InlayHintRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHintRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7940,6 +12888,33 @@ func (x InlayHintRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int)
 	return nil
 }
 
+func (x *InlayHintRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHintRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHintRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHintRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHintRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.InlayHintOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // InlayHintTooltip is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -7947,6 +12922,29 @@ func (x InlayHintRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int)
 //   - MarkupContent
 type InlayHintTooltip interface {
 	isInlayHintTooltip()
+}
+
+func unmarshalInlayHintTooltip(data []byte, v *InlayHintTooltip) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkupContent
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (MarkupContent) isInlayHintTooltip() {}
@@ -7977,7 +12975,7 @@ func (x InlayHintWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlayHintWorkspaceClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -7991,6 +12989,27 @@ func (x InlayHintWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer,
 	return nil
 }
 
+func (x *InlayHintWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlayHintWorkspaceClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlayHintWorkspaceClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlayHintWorkspaceClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlayHintWorkspaceClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "refreshSupport", &x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // InlineValue is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -7999,6 +13018,38 @@ func (x InlayHintWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer,
 //   - InlineValueEvaluatableExpression
 type InlineValue interface {
 	isInlineValue()
+}
+
+func unmarshalInlineValue(data []byte, v *InlineValue) error {
+	var err error
+	{
+		var candidate InlineValueText
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InlineValueVariableLookup
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InlineValueEvaluatableExpression
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (InlineValueEvaluatableExpression) isInlineValue() {}
@@ -8028,7 +13079,7 @@ func (x InlineValueClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8037,6 +13088,27 @@ func (x InlineValueClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x InlineValueClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -8061,7 +13133,7 @@ func (x InlineValueContext) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueContext: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8073,6 +13145,30 @@ func (x InlineValueContext) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "stoppedLocation", x.StoppedLocation); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueContext) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueContext: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueContext: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueContext: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueContext) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "frameId", &x.FrameID); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "stoppedLocation", &x.StoppedLocation); err != nil {
 		return err
 	}
 	return nil
@@ -8101,7 +13197,7 @@ func (x InlineValueEvaluatableExpression) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueEvaluatableExpression: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8113,6 +13209,30 @@ func (x InlineValueEvaluatableExpression) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "expression", x.Expression); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueEvaluatableExpression) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueEvaluatableExpression: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueEvaluatableExpression: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueEvaluatableExpression: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueEvaluatableExpression) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "expression", &x.Expression); err != nil {
 		return err
 	}
 	return nil
@@ -8135,7 +13255,7 @@ func (x InlineValueOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8144,6 +13264,27 @@ func (x InlineValueOptions) MarshalJSON() ([]byte, error) {
 
 func (x InlineValueOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -8174,7 +13315,7 @@ func (x InlineValueParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8192,6 +13333,36 @@ func (x InlineValueParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "context", x.Context); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "context", &x.Context); err != nil {
 		return err
 	}
 	return nil
@@ -8216,7 +13387,7 @@ func (x InlineValueRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8231,6 +13402,33 @@ func (x InlineValueRegistrationOptions) marshalProperties(w *bytes.Buffer, n *in
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.InlineValueOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -8256,7 +13454,7 @@ func (x InlineValueText) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueText: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8268,6 +13466,30 @@ func (x InlineValueText) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueText) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueText: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueText: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueText: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueText) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "text", &x.Text); err != nil {
 		return err
 	}
 	return nil
@@ -8298,7 +13520,7 @@ func (x InlineValueVariableLookup) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueVariableLookup: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8313,6 +13535,33 @@ func (x InlineValueVariableLookup) marshalProperties(w *bytes.Buffer, n *int) er
 		return err
 	}
 	if err := marshalProperty(w, n, "caseSensitiveLookup", x.CaseSensitiveLookup); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueVariableLookup) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueVariableLookup: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueVariableLookup: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueVariableLookup: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueVariableLookup) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "variableName", &x.VariableName); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "caseSensitiveLookup", &x.CaseSensitiveLookup); err != nil {
 		return err
 	}
 	return nil
@@ -8342,7 +13591,7 @@ func (x InlineValueWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InlineValueWorkspaceClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8351,6 +13600,27 @@ func (x InlineValueWorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x InlineValueWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InlineValueWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InlineValueWorkspaceClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InlineValueWorkspaceClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InlineValueWorkspaceClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InlineValueWorkspaceClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "refreshSupport", &x.RefreshSupport); err != nil {
 		return err
 	}
 	return nil
@@ -8378,7 +13648,7 @@ func (x InsertReplaceEdit) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("InsertReplaceEdit: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8393,6 +13663,33 @@ func (x InsertReplaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "replace", x.Replace); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *InsertReplaceEdit) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("InsertReplaceEdit: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("InsertReplaceEdit: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("InsertReplaceEdit: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *InsertReplaceEdit) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "newText", &x.NewText); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "insert", &x.Insert); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "replace", &x.Replace); err != nil {
 		return err
 	}
 	return nil
@@ -8470,6 +13767,74 @@ type Int int32
 type LSPAny interface {
 	isLSPAny()
 	isWorkspaceExecuteCommandResult()
+}
+
+func unmarshalLSPAny(data []byte, v *LSPAny) error {
+	var err error
+	{
+		var candidate LSPObject
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate LSPArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate UInt
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate Decimal
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isLSPAny()                        {}
@@ -8561,7 +13926,7 @@ func (x LinkedEditingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LinkedEditingRangeClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8570,6 +13935,27 @@ func (x LinkedEditingRangeClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x LinkedEditingRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LinkedEditingRangeClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -8588,7 +13974,7 @@ func (x LinkedEditingRangeOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LinkedEditingRangeOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8597,6 +13983,27 @@ func (x LinkedEditingRangeOptions) MarshalJSON() ([]byte, error) {
 
 func (x LinkedEditingRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LinkedEditingRangeOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -8616,7 +14023,7 @@ func (x LinkedEditingRangeParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LinkedEditingRangeParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8628,6 +14035,30 @@ func (x LinkedEditingRangeParams) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LinkedEditingRangeParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -8648,7 +14079,7 @@ func (x LinkedEditingRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LinkedEditingRangeRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8663,6 +14094,33 @@ func (x LinkedEditingRangeRegistrationOptions) marshalProperties(w *bytes.Buffer
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LinkedEditingRangeRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LinkedEditingRangeRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LinkedEditingRangeRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.LinkedEditingRangeOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -8691,7 +14149,7 @@ func (x LinkedEditingRanges) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LinkedEditingRanges: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8703,6 +14161,30 @@ func (x LinkedEditingRanges) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "wordPattern", x.WordPattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LinkedEditingRanges) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LinkedEditingRanges: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LinkedEditingRanges: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LinkedEditingRanges: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LinkedEditingRanges) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "ranges", &x.Ranges); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "wordPattern", &x.WordPattern); err != nil {
 		return err
 	}
 	return nil
@@ -8725,7 +14207,7 @@ func (x Location) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Location: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8737,6 +14219,30 @@ func (x Location) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "range", x.Range); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Location) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Location: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Location: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Location: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Location) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
 		return err
 	}
 	return nil
@@ -8774,7 +14280,7 @@ func (x LocationLink) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LocationLink: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8792,6 +14298,36 @@ func (x LocationLink) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "targetSelectionRange", x.TargetSelectionRange); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LocationLink) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LocationLink: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LocationLink: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LocationLink: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LocationLink) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "originSelectionRange", &x.OriginSelectionRange); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "targetUri", &x.TargetURI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "targetRange", &x.TargetRange); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "targetSelectionRange", &x.TargetSelectionRange); err != nil {
 		return err
 	}
 	return nil
@@ -8815,7 +14351,7 @@ func (x LogMessageParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LogMessageParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8827,6 +14363,30 @@ func (x LogMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LogMessageParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LogMessageParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LogMessageParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LogMessageParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LogMessageParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "type", &x.Type); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "message", &x.Message); err != nil {
 		return err
 	}
 	return nil
@@ -8846,7 +14406,7 @@ func (x LogTraceParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("LogTraceParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8858,6 +14418,30 @@ func (x LogTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "verbose", x.Verbose); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *LogTraceParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("LogTraceParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("LogTraceParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("LogTraceParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *LogTraceParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "message", &x.Message); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "verbose", &x.Verbose); err != nil {
 		return err
 	}
 	return nil
@@ -8888,7 +14472,7 @@ func (x MarkdownClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MarkdownClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8908,6 +14492,33 @@ func (x MarkdownClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+func (x *MarkdownClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MarkdownClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MarkdownClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MarkdownClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MarkdownClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "parser", &x.Parser); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "version", &x.Version); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "allowedTags", &x.AllowedTags); err != nil {
+		return err
+	}
+	return nil
+}
+
 // MarkedString is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -8916,6 +14527,29 @@ func (x MarkdownClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) e
 type MarkedString interface {
 	isMarkedString()
 	isHoverContents()
+}
+
+func unmarshalMarkedString(data []byte, v *MarkedString) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkedStringA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (MarkedStringA) isMarkedString()  {}
@@ -8938,7 +14572,7 @@ func (x MarkedStringA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MarkedStringA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -8950,6 +14584,30 @@ func (x MarkedStringA) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *MarkedStringA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MarkedStringA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MarkedStringA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MarkedStringA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MarkedStringA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "language", &x.Language); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "value", &x.Value); err != nil {
 		return err
 	}
 	return nil
@@ -8999,7 +14657,7 @@ func (x MarkupContent) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MarkupContent: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9011,6 +14669,30 @@ func (x MarkupContent) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *MarkupContent) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MarkupContent: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MarkupContent: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MarkupContent: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MarkupContent) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "value", &x.Value); err != nil {
 		return err
 	}
 	return nil
@@ -9053,7 +14735,7 @@ func (x MessageActionItem) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MessageActionItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9062,6 +14744,27 @@ func (x MessageActionItem) MarshalJSON() ([]byte, error) {
 
 func (x MessageActionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "title", x.Title); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *MessageActionItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MessageActionItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MessageActionItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MessageActionItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MessageActionItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "title", &x.Title); err != nil {
 		return err
 	}
 	return nil
@@ -9119,7 +14822,7 @@ func (x Moniker) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Moniker: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9137,6 +14840,36 @@ func (x Moniker) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "kind", x.Kind); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Moniker) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Moniker: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Moniker: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Moniker: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Moniker) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "identifier", &x.Identifier); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "unique", &x.Unique); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "kind", &x.Kind); err != nil {
 		return err
 	}
 	return nil
@@ -9165,7 +14898,7 @@ func (x MonikerClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MonikerClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9174,6 +14907,27 @@ func (x MonikerClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x MonikerClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *MonikerClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MonikerClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MonikerClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MonikerClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MonikerClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -9215,7 +14969,7 @@ func (x MonikerOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MonikerOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9224,6 +14978,27 @@ func (x MonikerOptions) MarshalJSON() ([]byte, error) {
 
 func (x MonikerOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *MonikerOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MonikerOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MonikerOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MonikerOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MonikerOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -9244,7 +15019,7 @@ func (x MonikerParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MonikerParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9264,6 +15039,33 @@ func (x MonikerParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *MonikerParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MonikerParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MonikerParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MonikerParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MonikerParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // MonikerRegistrationOptions is a named structure definition.
 type MonikerRegistrationOptions struct {
 	TextDocumentRegistrationOptions
@@ -9278,7 +15080,7 @@ func (x MonikerRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("MonikerRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9290,6 +15092,30 @@ func (x MonikerRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) e
 		return err
 	}
 	if err := x.MonikerOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *MonikerRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("MonikerRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("MonikerRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("MonikerRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *MonikerRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.MonikerOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -9327,7 +15153,7 @@ func (x NotebookCell) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookCell: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9345,6 +15171,36 @@ func (x NotebookCell) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "executionSummary", x.ExecutionSummary); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookCell) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookCell: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookCell: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookCell: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookCell) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "document", &x.Document); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "metadata", &x.Metadata); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "executionSummary", &x.ExecutionSummary); err != nil {
 		return err
 	}
 	return nil
@@ -9376,7 +15232,7 @@ func (x NotebookCellArrayChange) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookCellArrayChange: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9391,6 +15247,33 @@ func (x NotebookCellArrayChange) marshalProperties(w *bytes.Buffer, n *int) erro
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookCellArrayChange) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookCellArrayChange: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookCellArrayChange: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookCellArrayChange: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookCellArrayChange) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "start", &x.Start); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "deleteCount", &x.DeleteCount); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "cells", &x.Cells); err != nil {
 		return err
 	}
 	return nil
@@ -9441,7 +15324,7 @@ func (x NotebookCellTextDocumentFilter) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookCellTextDocumentFilter: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9458,6 +15341,30 @@ func (x NotebookCellTextDocumentFilter) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
+func (x *NotebookCellTextDocumentFilter) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookCellTextDocumentFilter: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookCellTextDocumentFilter: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookCellTextDocumentFilter: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookCellTextDocumentFilter) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "notebook", &x.Notebook, unmarshalNotebookCellTextDocumentFilterNotebook); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "language", &x.Language); err != nil {
+		return err
+	}
+	return nil
+}
+
 // NotebookCellTextDocumentFilterNotebook is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -9465,6 +15372,29 @@ func (x NotebookCellTextDocumentFilter) marshalProperties(w *bytes.Buffer, n *in
 //   - NotebookDocumentFilter
 type NotebookCellTextDocumentFilterNotebook interface {
 	isNotebookCellTextDocumentFilterNotebook()
+}
+
+func unmarshalNotebookCellTextDocumentFilterNotebook(data []byte, v *NotebookCellTextDocumentFilterNotebook) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookDocumentFilter
+		err := unmarshalNotebookDocumentFilter(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (String) isNotebookCellTextDocumentFilterNotebook() {}
@@ -9499,7 +15429,7 @@ func (x NotebookDocument) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocument: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9520,6 +15450,39 @@ func (x NotebookDocument) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocument) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocument: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocument: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocument: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocument) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "notebookType", &x.NotebookType); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "version", &x.Version); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "metadata", &x.Metadata); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "cells", &x.Cells); err != nil {
 		return err
 	}
 	return nil
@@ -9547,7 +15510,7 @@ func (x NotebookDocumentChangeEvent) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentChangeEvent: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9559,6 +15522,30 @@ func (x NotebookDocumentChangeEvent) marshalProperties(w *bytes.Buffer, n *int) 
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentChangeEvent) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEvent: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEvent: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentChangeEvent: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentChangeEvent) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "metadata", &x.Metadata); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "cells", &x.Cells); err != nil {
 		return err
 	}
 	return nil
@@ -9584,7 +15571,7 @@ func (x NotebookDocumentChangeEventCells) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentChangeEventCells: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9599,6 +15586,33 @@ func (x NotebookDocumentChangeEventCells) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "textContent", x.TextContent); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentChangeEventCells) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEventCells: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEventCells: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentChangeEventCells: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentChangeEventCells) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "structure", &x.Structure); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "data", &x.Data); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "textContent", &x.TextContent); err != nil {
 		return err
 	}
 	return nil
@@ -9622,7 +15636,7 @@ func (x NotebookDocumentChangeEventCellsStructure) MarshalJSON() ([]byte, error)
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentChangeEventCellsStructure: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9642,6 +15656,33 @@ func (x NotebookDocumentChangeEventCellsStructure) marshalProperties(w *bytes.Bu
 	return nil
 }
 
+func (x *NotebookDocumentChangeEventCellsStructure) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEventCellsStructure: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEventCellsStructure: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentChangeEventCellsStructure: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentChangeEventCellsStructure) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "array", &x.Array); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didOpen", &x.DidOpen); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didClose", &x.DidClose); err != nil {
+		return err
+	}
+	return nil
+}
+
 // NotebookDocumentChangeEventCellsTextContent is a literal structure.
 type NotebookDocumentChangeEventCellsTextContent struct {
 	Document VersionedTextDocumentIdentifier
@@ -9656,7 +15697,7 @@ func (x NotebookDocumentChangeEventCellsTextContent) MarshalJSON() ([]byte, erro
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentChangeEventCellsTextContent: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9668,6 +15709,30 @@ func (x NotebookDocumentChangeEventCellsTextContent) marshalProperties(w *bytes.
 		return err
 	}
 	if err := marshalProperty(w, n, "changes", x.Changes); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentChangeEventCellsTextContent) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEventCellsTextContent: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentChangeEventCellsTextContent: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentChangeEventCellsTextContent: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentChangeEventCellsTextContent) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "document", &x.Document); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "changes", &x.Changes); err != nil {
 		return err
 	}
 	return nil
@@ -9696,7 +15761,7 @@ func (x NotebookDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9705,6 +15770,27 @@ func (x NotebookDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x NotebookDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "synchronization", x.Synchronization); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "synchronization", &x.Synchronization); err != nil {
 		return err
 	}
 	return nil
@@ -9721,6 +15807,38 @@ type NotebookDocumentFilter interface {
 	isNotebookCellTextDocumentFilterNotebook()
 	isNotebookDocumentSyncOptionsNotebookSelectorANotebook()
 	isNotebookDocumentSyncOptionsNotebookSelectorBNotebook()
+}
+
+func unmarshalNotebookDocumentFilter(data []byte, v *NotebookDocumentFilter) error {
+	var err error
+	{
+		var candidate NotebookDocumentFilterA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookDocumentFilterB
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookDocumentFilterC
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (NotebookDocumentFilterA) isNotebookDocumentFilter()                               {}
@@ -9756,7 +15874,7 @@ func (x NotebookDocumentFilterA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentFilterA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9771,6 +15889,33 @@ func (x NotebookDocumentFilterA) marshalProperties(w *bytes.Buffer, n *int) erro
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentFilterA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentFilterA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentFilterA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentFilterA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentFilterA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "notebookType", &x.NotebookType); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "pattern", &x.Pattern); err != nil {
 		return err
 	}
 	return nil
@@ -9794,7 +15939,7 @@ func (x NotebookDocumentFilterB) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentFilterB: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9809,6 +15954,33 @@ func (x NotebookDocumentFilterB) marshalProperties(w *bytes.Buffer, n *int) erro
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentFilterB) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentFilterB: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentFilterB: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentFilterB: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentFilterB) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "notebookType", &x.NotebookType); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "pattern", &x.Pattern); err != nil {
 		return err
 	}
 	return nil
@@ -9832,7 +16004,7 @@ func (x NotebookDocumentFilterC) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentFilterC: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9847,6 +16019,33 @@ func (x NotebookDocumentFilterC) marshalProperties(w *bytes.Buffer, n *int) erro
 		return err
 	}
 	if err := marshalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentFilterC) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentFilterC: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentFilterC: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentFilterC: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentFilterC) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "notebookType", &x.NotebookType); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "pattern", &x.Pattern); err != nil {
 		return err
 	}
 	return nil
@@ -9870,7 +16069,7 @@ func (x NotebookDocumentIdentifier) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentIdentifier: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9879,6 +16078,27 @@ func (x NotebookDocumentIdentifier) MarshalJSON() ([]byte, error) {
 
 func (x NotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentIdentifier: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentIdentifier: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentIdentifier: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentIdentifier) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
 		return err
 	}
 	return nil
@@ -9907,7 +16127,7 @@ func (x NotebookDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentSyncClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9919,6 +16139,30 @@ func (x NotebookDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffe
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "executionSummarySupport", x.ExecutionSummarySupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentSyncClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "executionSummarySupport", &x.ExecutionSummarySupport); err != nil {
 		return err
 	}
 	return nil
@@ -9955,7 +16199,7 @@ func (x NotebookDocumentSyncOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentSyncOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -9972,6 +16216,30 @@ func (x NotebookDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+func (x *NotebookDocumentSyncOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentSyncOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "notebookSelector", &x.NotebookSelector); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "save", &x.Save); err != nil {
+		return err
+	}
+	return nil
+}
+
 // NotebookDocumentSyncOptionsNotebookSelector is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -9979,6 +16247,29 @@ func (x NotebookDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) 
 //   - NotebookDocumentSyncOptionsNotebookSelectorB
 type NotebookDocumentSyncOptionsNotebookSelector interface {
 	isNotebookDocumentSyncOptionsNotebookSelector()
+}
+
+func unmarshalNotebookDocumentSyncOptionsNotebookSelector(data []byte, v *NotebookDocumentSyncOptionsNotebookSelector) error {
+	var err error
+	{
+		var candidate NotebookDocumentSyncOptionsNotebookSelectorA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookDocumentSyncOptionsNotebookSelectorB
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (NotebookDocumentSyncOptionsNotebookSelectorA) isNotebookDocumentSyncOptionsNotebookSelector() {}
@@ -10003,7 +16294,7 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorA) MarshalJSON() ([]byte, err
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10015,6 +16306,30 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorA) marshalProperties(w *bytes
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "notebook", &x.Notebook, unmarshalNotebookDocumentSyncOptionsNotebookSelectorANotebook); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "cells", &x.Cells); err != nil {
 		return err
 	}
 	return nil
@@ -10033,7 +16348,7 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorACells) MarshalJSON() ([]byte
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorACells: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10042,6 +16357,27 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorACells) MarshalJSON() ([]byte
 
 func (x NotebookDocumentSyncOptionsNotebookSelectorACells) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorACells) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorACells: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorACells: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorACells: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorACells) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "language", &x.Language); err != nil {
 		return err
 	}
 	return nil
@@ -10057,6 +16393,29 @@ type NotebookDocumentSyncOptionsNotebookSelectorACellsArray []NotebookDocumentSy
 //   - NotebookDocumentFilter
 type NotebookDocumentSyncOptionsNotebookSelectorANotebook interface {
 	isNotebookDocumentSyncOptionsNotebookSelectorANotebook()
+}
+
+func unmarshalNotebookDocumentSyncOptionsNotebookSelectorANotebook(data []byte, v *NotebookDocumentSyncOptionsNotebookSelectorANotebook) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookDocumentFilter
+		err := unmarshalNotebookDocumentFilter(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (String) isNotebookDocumentSyncOptionsNotebookSelectorANotebook() {}
@@ -10082,7 +16441,7 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorB) MarshalJSON() ([]byte, err
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorB: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10094,6 +16453,30 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorB) marshalProperties(w *bytes
 		return err
 	}
 	if err := marshalProperty(w, n, "cells", x.Cells); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorB) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorB: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorB: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorB: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorB) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalPropertyUsing(properties, "notebook", &x.Notebook, unmarshalNotebookDocumentSyncOptionsNotebookSelectorBNotebook); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "cells", &x.Cells); err != nil {
 		return err
 	}
 	return nil
@@ -10112,7 +16495,7 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorBCells) MarshalJSON() ([]byte
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorBCells: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10121,6 +16504,27 @@ func (x NotebookDocumentSyncOptionsNotebookSelectorBCells) MarshalJSON() ([]byte
 
 func (x NotebookDocumentSyncOptionsNotebookSelectorBCells) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "language", x.Language); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorBCells) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorBCells: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorBCells: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentSyncOptionsNotebookSelectorBCells: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncOptionsNotebookSelectorBCells) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "language", &x.Language); err != nil {
 		return err
 	}
 	return nil
@@ -10136,6 +16540,29 @@ type NotebookDocumentSyncOptionsNotebookSelectorBCellsArray []NotebookDocumentSy
 //   - NotebookDocumentFilter
 type NotebookDocumentSyncOptionsNotebookSelectorBNotebook interface {
 	isNotebookDocumentSyncOptionsNotebookSelectorBNotebook()
+}
+
+func unmarshalNotebookDocumentSyncOptionsNotebookSelectorBNotebook(data []byte, v *NotebookDocumentSyncOptionsNotebookSelectorBNotebook) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookDocumentFilter
+		err := unmarshalNotebookDocumentFilter(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (String) isNotebookDocumentSyncOptionsNotebookSelectorBNotebook() {}
@@ -10158,7 +16585,7 @@ func (x NotebookDocumentSyncRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("NotebookDocumentSyncRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10170,6 +16597,30 @@ func (x NotebookDocumentSyncRegistrationOptions) marshalProperties(w *bytes.Buff
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("NotebookDocumentSyncRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("NotebookDocumentSyncRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *NotebookDocumentSyncRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.NotebookDocumentSyncOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -10197,7 +16648,7 @@ func (x OptionalVersionedTextDocumentIdentifier) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("OptionalVersionedTextDocumentIdentifier: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10214,12 +16665,50 @@ func (x OptionalVersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buff
 	return nil
 }
 
+func (x *OptionalVersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("OptionalVersionedTextDocumentIdentifier: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("OptionalVersionedTextDocumentIdentifier: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("OptionalVersionedTextDocumentIdentifier: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *OptionalVersionedTextDocumentIdentifier) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentIdentifier.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "version", &x.Version, unmarshalOptionalVersionedTextDocumentIdentifierVersion); err != nil {
+		return err
+	}
+	return nil
+}
+
 // OptionalVersionedTextDocumentIdentifierVersion is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - Int
 type OptionalVersionedTextDocumentIdentifierVersion interface {
 	isOptionalVersionedTextDocumentIdentifierVersion()
+}
+
+func unmarshalOptionalVersionedTextDocumentIdentifierVersion(data []byte, v *OptionalVersionedTextDocumentIdentifierVersion) error {
+	var err error
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Int) isOptionalVersionedTextDocumentIdentifierVersion() {}
@@ -10251,7 +16740,7 @@ func (x ParameterInformation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ParameterInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10263,6 +16752,30 @@ func (x ParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "documentation", x.Documentation); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ParameterInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ParameterInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ParameterInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ParameterInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ParameterInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "label", &x.Label, unmarshalParameterInformationLabel); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "documentation", &x.Documentation, unmarshalParameterInformationDocumentation); err != nil {
 		return err
 	}
 	return nil
@@ -10280,6 +16793,29 @@ type ParameterInformationDocumentation interface {
 	isParameterInformationDocumentation()
 }
 
+func unmarshalParameterInformationDocumentation(data []byte, v *ParameterInformationDocumentation) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkupContent
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (MarkupContent) isParameterInformationDocumentation() {}
 
 func (String) isParameterInformationDocumentation() {}
@@ -10291,6 +16827,29 @@ func (String) isParameterInformationDocumentation() {}
 //   - ParameterInformationLabelA
 type ParameterInformationLabel interface {
 	isParameterInformationLabel()
+}
+
+func unmarshalParameterInformationLabel(data []byte, v *ParameterInformationLabel) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate ParameterInformationLabelA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (ParameterInformationLabelA) isParameterInformationLabel() {}
@@ -10315,7 +16874,7 @@ func (x PartialResultParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PartialResultParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10324,6 +16883,27 @@ func (x PartialResultParams) MarshalJSON() ([]byte, error) {
 
 func (x PartialResultParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "partialResultToken", x.PartialResultToken); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *PartialResultParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PartialResultParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PartialResultParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PartialResultParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PartialResultParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalPropertyUsing(properties, "partialResultToken", &x.PartialResultToken, unmarshalProgressToken); err != nil {
 		return err
 	}
 	return nil
@@ -10340,7 +16920,7 @@ func (x PartialResultParams) marshalProperties(w *bytes.Buffer, n *int) error {
 // - `[!...]` to negate a range of characters to match in a path segment (e.g., `example.[!0-9]` to match on `example.a`, `example.b`, but not `example.0`)
 //
 // @since 3.17.0
-type Pattern String
+type Pattern = String
 
 // Position is a named structure definition.
 //
@@ -10395,7 +16975,7 @@ func (x Position) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Position: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10407,6 +16987,30 @@ func (x Position) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "character", x.Character); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Position) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Position: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Position: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Position: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Position) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "line", &x.Line); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "character", &x.Character); err != nil {
 		return err
 	}
 	return nil
@@ -10461,7 +17065,7 @@ func (x PrepareRenameParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PrepareRenameParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10478,6 +17082,30 @@ func (x PrepareRenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *PrepareRenameParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PrepareRenameParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PrepareRenameParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PrepareRenameParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PrepareRenameParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // PrepareRenameResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -10487,6 +17115,38 @@ func (x PrepareRenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
 type PrepareRenameResult interface {
 	isPrepareRenameResult()
 	isTextDocumentPrepareRenameResult()
+}
+
+func unmarshalPrepareRenameResult(data []byte, v *PrepareRenameResult) error {
+	var err error
+	{
+		var candidate Range
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate PrepareRenameResultA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate PrepareRenameResultB
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (PrepareRenameResultA) isPrepareRenameResult()             {}
@@ -10512,7 +17172,7 @@ func (x PrepareRenameResultA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PrepareRenameResultA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10524,6 +17184,30 @@ func (x PrepareRenameResultA) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "placeholder", x.Placeholder); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *PrepareRenameResultA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PrepareRenameResultA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PrepareRenameResultA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PrepareRenameResultA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PrepareRenameResultA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "placeholder", &x.Placeholder); err != nil {
 		return err
 	}
 	return nil
@@ -10542,7 +17226,7 @@ func (x PrepareRenameResultB) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PrepareRenameResultB: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10551,6 +17235,27 @@ func (x PrepareRenameResultB) MarshalJSON() ([]byte, error) {
 
 func (x PrepareRenameResultB) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "defaultBehavior", x.DefaultBehavior); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *PrepareRenameResultB) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PrepareRenameResultB: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PrepareRenameResultB: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PrepareRenameResultB: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PrepareRenameResultB) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "defaultBehavior", &x.DefaultBehavior); err != nil {
 		return err
 	}
 	return nil
@@ -10591,7 +17296,7 @@ func (x PreviousResultID) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PreviousResultID: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10603,6 +17308,30 @@ func (x PreviousResultID) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *PreviousResultID) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PreviousResultID: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PreviousResultID: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PreviousResultID: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PreviousResultID) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "value", &x.Value); err != nil {
 		return err
 	}
 	return nil
@@ -10624,7 +17353,7 @@ func (x ProgressParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ProgressParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10641,6 +17370,30 @@ func (x ProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *ProgressParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ProgressParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ProgressParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ProgressParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ProgressParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "token", &x.Token, unmarshalProgressToken); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "value", &x.Value, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // ProgressToken is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -10648,6 +17401,29 @@ func (x ProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
 //   - String
 type ProgressToken interface {
 	isProgressToken()
+}
+
+func unmarshalProgressToken(data []byte, v *ProgressToken) error {
+	var err error
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Int) isProgressToken() {}
@@ -10690,7 +17466,7 @@ func (x PublishDiagnosticsClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PublishDiagnosticsClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10716,6 +17492,39 @@ func (x PublishDiagnosticsClientCapabilities) marshalProperties(w *bytes.Buffer,
 	return nil
 }
 
+func (x *PublishDiagnosticsClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PublishDiagnosticsClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PublishDiagnosticsClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PublishDiagnosticsClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PublishDiagnosticsClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "relatedInformation", &x.RelatedInformation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tagSupport", &x.TagSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "versionSupport", &x.VersionSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeDescriptionSupport", &x.CodeDescriptionSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "dataSupport", &x.DataSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // PublishDiagnosticsClientCapabilitiesTagSupport is a literal structure.
 type PublishDiagnosticsClientCapabilitiesTagSupport struct {
 	// The tags supported by the client.
@@ -10730,7 +17539,7 @@ func (x PublishDiagnosticsClientCapabilitiesTagSupport) MarshalJSON() ([]byte, e
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PublishDiagnosticsClientCapabilitiesTagSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10739,6 +17548,27 @@ func (x PublishDiagnosticsClientCapabilitiesTagSupport) MarshalJSON() ([]byte, e
 
 func (x PublishDiagnosticsClientCapabilitiesTagSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *PublishDiagnosticsClientCapabilitiesTagSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PublishDiagnosticsClientCapabilitiesTagSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PublishDiagnosticsClientCapabilitiesTagSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PublishDiagnosticsClientCapabilitiesTagSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PublishDiagnosticsClientCapabilitiesTagSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -10766,7 +17596,7 @@ func (x PublishDiagnosticsParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("PublishDiagnosticsParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10781,6 +17611,33 @@ func (x PublishDiagnosticsParams) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := marshalProperty(w, n, "diagnostics", x.Diagnostics); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *PublishDiagnosticsParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("PublishDiagnosticsParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("PublishDiagnosticsParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("PublishDiagnosticsParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *PublishDiagnosticsParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "version", &x.Version); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "diagnostics", &x.Diagnostics); err != nil {
 		return err
 	}
 	return nil
@@ -10816,7 +17673,7 @@ func (x Range) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Range: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10828,6 +17685,30 @@ func (x Range) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "end", x.End); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Range) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Range: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Range: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Range: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Range) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "start", &x.Start); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "end", &x.End); err != nil {
 		return err
 	}
 	return nil
@@ -10852,7 +17733,7 @@ func (x ReferenceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ReferenceClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10861,6 +17742,27 @@ func (x ReferenceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x ReferenceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ReferenceClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ReferenceClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ReferenceClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ReferenceClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ReferenceClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -10883,7 +17785,7 @@ func (x ReferenceContext) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ReferenceContext: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10892,6 +17794,27 @@ func (x ReferenceContext) MarshalJSON() ([]byte, error) {
 
 func (x ReferenceContext) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "includeDeclaration", x.IncludeDeclaration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ReferenceContext) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ReferenceContext: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ReferenceContext: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ReferenceContext: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ReferenceContext) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "includeDeclaration", &x.IncludeDeclaration); err != nil {
 		return err
 	}
 	return nil
@@ -10912,7 +17835,7 @@ func (x ReferenceOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ReferenceOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10921,6 +17844,27 @@ func (x ReferenceOptions) MarshalJSON() ([]byte, error) {
 
 func (x ReferenceOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ReferenceOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ReferenceOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ReferenceOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ReferenceOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ReferenceOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -10945,7 +17889,7 @@ func (x ReferenceParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ReferenceParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10968,6 +17912,36 @@ func (x ReferenceParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *ReferenceParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ReferenceParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ReferenceParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ReferenceParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ReferenceParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "context", &x.Context); err != nil {
+		return err
+	}
+	return nil
+}
+
 // ReferenceRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link ReferencesRequest}.
@@ -10984,7 +17958,7 @@ func (x ReferenceRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ReferenceRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -10996,6 +17970,30 @@ func (x ReferenceRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int)
 		return err
 	}
 	if err := x.ReferenceOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ReferenceRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ReferenceRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ReferenceRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ReferenceRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ReferenceRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.ReferenceOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -11022,7 +18020,7 @@ func (x Registration) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Registration: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11037,6 +18035,33 @@ func (x Registration) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "registerOptions", x.RegisterOptions); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Registration) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Registration: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Registration: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Registration: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Registration) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "id", &x.ID); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "method", &x.Method); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "registerOptions", &x.RegisterOptions, unmarshalLSPAny); err != nil {
 		return err
 	}
 	return nil
@@ -11058,7 +18083,7 @@ func (x RegistrationParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RegistrationParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11067,6 +18092,27 @@ func (x RegistrationParams) MarshalJSON() ([]byte, error) {
 
 func (x RegistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "registrations", x.Registrations); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *RegistrationParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RegistrationParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RegistrationParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RegistrationParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RegistrationParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "registrations", &x.Registrations); err != nil {
 		return err
 	}
 	return nil
@@ -11092,7 +18138,7 @@ func (x RegularExpressionsClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RegularExpressionsClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11104,6 +18150,30 @@ func (x RegularExpressionsClientCapabilities) marshalProperties(w *bytes.Buffer,
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *RegularExpressionsClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RegularExpressionsClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RegularExpressionsClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RegularExpressionsClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RegularExpressionsClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "engine", &x.Engine); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "version", &x.Version); err != nil {
 		return err
 	}
 	return nil
@@ -11135,7 +18205,7 @@ func (x RelatedFullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RelatedFullDocumentDiagnosticReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11152,6 +18222,30 @@ func (x RelatedFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, 
 	return nil
 }
 
+func (x *RelatedFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RelatedFullDocumentDiagnosticReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RelatedFullDocumentDiagnosticReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RelatedFullDocumentDiagnosticReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RelatedFullDocumentDiagnosticReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.FullDocumentDiagnosticReport.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "relatedDocuments", &x.RelatedDocuments); err != nil {
+		return err
+	}
+	return nil
+}
+
 // RelatedFullDocumentDiagnosticReportRelatedDocuments is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -11159,6 +18253,29 @@ func (x RelatedFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, 
 //   - UnchangedDocumentDiagnosticReport
 type RelatedFullDocumentDiagnosticReportRelatedDocuments interface {
 	isRelatedFullDocumentDiagnosticReportRelatedDocuments()
+}
+
+func unmarshalRelatedFullDocumentDiagnosticReportRelatedDocuments(data []byte, v *RelatedFullDocumentDiagnosticReportRelatedDocuments) error {
+	var err error
+	{
+		var candidate FullDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate UnchangedDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (FullDocumentDiagnosticReport) isRelatedFullDocumentDiagnosticReportRelatedDocuments() {}
@@ -11194,7 +18311,7 @@ func (x RelatedUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) 
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RelatedUnchangedDocumentDiagnosticReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11211,6 +18328,30 @@ func (x RelatedUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buf
 	return nil
 }
 
+func (x *RelatedUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RelatedUnchangedDocumentDiagnosticReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RelatedUnchangedDocumentDiagnosticReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RelatedUnchangedDocumentDiagnosticReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RelatedUnchangedDocumentDiagnosticReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.UnchangedDocumentDiagnosticReport.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "relatedDocuments", &x.RelatedDocuments); err != nil {
+		return err
+	}
+	return nil
+}
+
 // RelatedUnchangedDocumentDiagnosticReportRelatedDocuments is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -11218,6 +18359,29 @@ func (x RelatedUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buf
 //   - UnchangedDocumentDiagnosticReport
 type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments interface {
 	isRelatedUnchangedDocumentDiagnosticReportRelatedDocuments()
+}
+
+func unmarshalRelatedUnchangedDocumentDiagnosticReportRelatedDocuments(data []byte, v *RelatedUnchangedDocumentDiagnosticReportRelatedDocuments) error {
+	var err error
+	{
+		var candidate FullDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate UnchangedDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (FullDocumentDiagnosticReport) isRelatedUnchangedDocumentDiagnosticReportRelatedDocuments() {}
@@ -11251,7 +18415,7 @@ func (x RelativePattern) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RelativePattern: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11268,6 +18432,30 @@ func (x RelativePattern) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *RelativePattern) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RelativePattern: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RelativePattern: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RelativePattern: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RelativePattern) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "baseUri", &x.BaseURI, unmarshalRelativePatternBaseURI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "pattern", &x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
 // RelativePatternBaseURI is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -11275,6 +18463,29 @@ func (x RelativePattern) marshalProperties(w *bytes.Buffer, n *int) error {
 //   - URI
 type RelativePatternBaseURI interface {
 	isRelativePatternBaseURI()
+}
+
+func unmarshalRelativePatternBaseURI(data []byte, v *RelativePatternBaseURI) error {
+	var err error
+	{
+		var candidate WorkspaceFolder
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate URI
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (URI) isRelativePatternBaseURI() {}
@@ -11315,7 +18526,7 @@ func (x RenameClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RenameClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11333,6 +18544,36 @@ func (x RenameClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "honorsChangeAnnotations", x.HonorsChangeAnnotations); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *RenameClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RenameClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RenameClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RenameClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RenameClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "prepareSupport", &x.PrepareSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "prepareSupportDefaultBehavior", &x.PrepareSupportDefaultBehavior); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "honorsChangeAnnotations", &x.HonorsChangeAnnotations); err != nil {
 		return err
 	}
 	return nil
@@ -11360,7 +18601,7 @@ func (x RenameFile) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RenameFile: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11386,6 +18627,39 @@ func (x RenameFile) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *RenameFile) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RenameFile: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RenameFile: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RenameFile: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RenameFile) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.ResourceOperation.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalLiteralProperty(properties, "kind", "rename"); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "oldUri", &x.OldURI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "newUri", &x.NewURI); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "options", &x.Options); err != nil {
+		return err
+	}
+	return nil
+}
+
 // RenameFileOptions is a named structure definition.
 //
 // Rename file options
@@ -11404,7 +18678,7 @@ func (x RenameFileOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RenameFileOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11416,6 +18690,30 @@ func (x RenameFileOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "ignoreIfExists", x.IgnoreIfExists); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *RenameFileOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RenameFileOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RenameFileOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RenameFileOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RenameFileOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "overwrite", &x.Overwrite); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "ignoreIfExists", &x.IgnoreIfExists); err != nil {
 		return err
 	}
 	return nil
@@ -11441,7 +18739,7 @@ func (x RenameFilesParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RenameFilesParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11450,6 +18748,27 @@ func (x RenameFilesParams) MarshalJSON() ([]byte, error) {
 
 func (x RenameFilesParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "files", x.Files); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *RenameFilesParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RenameFilesParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RenameFilesParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RenameFilesParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RenameFilesParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "files", &x.Files); err != nil {
 		return err
 	}
 	return nil
@@ -11475,7 +18794,7 @@ func (x RenameOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RenameOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11487,6 +18806,30 @@ func (x RenameOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "prepareProvider", x.PrepareProvider); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *RenameOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RenameOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RenameOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RenameOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RenameOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "prepareProvider", &x.PrepareProvider); err != nil {
 		return err
 	}
 	return nil
@@ -11516,7 +18859,7 @@ func (x RenameParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RenameParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11539,6 +18882,36 @@ func (x RenameParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *RenameParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RenameParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RenameParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RenameParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RenameParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "position", &x.Position); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "newName", &x.NewName); err != nil {
+		return err
+	}
+	return nil
+}
+
 // RenameRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link RenameRequest}.
@@ -11555,7 +18928,7 @@ func (x RenameRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("RenameRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11567,6 +18940,30 @@ func (x RenameRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) er
 		return err
 	}
 	if err := x.RenameOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *RenameRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("RenameRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("RenameRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("RenameRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *RenameRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.RenameOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -11592,7 +18989,7 @@ func (x ResourceOperation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ResourceOperation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11604,6 +19001,30 @@ func (x ResourceOperation) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "annotationId", x.AnnotationID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ResourceOperation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ResourceOperation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ResourceOperation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ResourceOperation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ResourceOperation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "annotationId", &x.AnnotationID); err != nil {
 		return err
 	}
 	return nil
@@ -11646,7 +19067,7 @@ func (x SaveOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SaveOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11655,6 +19076,27 @@ func (x SaveOptions) MarshalJSON() ([]byte, error) {
 
 func (x SaveOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "includeText", x.IncludeText); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SaveOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SaveOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SaveOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SaveOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SaveOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "includeText", &x.IncludeText); err != nil {
 		return err
 	}
 	return nil
@@ -11679,7 +19121,7 @@ func (x SelectionRange) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SelectionRange: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11691,6 +19133,30 @@ func (x SelectionRange) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "parent", x.Parent); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SelectionRange) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SelectionRange: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SelectionRange: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SelectionRange: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SelectionRange) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "parent", &x.Parent); err != nil {
 		return err
 	}
 	return nil
@@ -11715,7 +19181,7 @@ func (x SelectionRangeClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SelectionRangeClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11724,6 +19190,27 @@ func (x SelectionRangeClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x SelectionRangeClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SelectionRangeClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SelectionRangeClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SelectionRangeClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SelectionRangeClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SelectionRangeClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -11742,7 +19229,7 @@ func (x SelectionRangeOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SelectionRangeOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11751,6 +19238,27 @@ func (x SelectionRangeOptions) MarshalJSON() ([]byte, error) {
 
 func (x SelectionRangeOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SelectionRangeOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SelectionRangeOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SelectionRangeOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SelectionRangeOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SelectionRangeOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -11777,7 +19285,7 @@ func (x SelectionRangeParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SelectionRangeParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11800,6 +19308,36 @@ func (x SelectionRangeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *SelectionRangeParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SelectionRangeParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SelectionRangeParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SelectionRangeParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SelectionRangeParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "positions", &x.Positions); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SelectionRangeRegistrationOptions is a named structure definition.
 type SelectionRangeRegistrationOptions struct {
 	SelectionRangeOptions
@@ -11815,7 +19353,7 @@ func (x SelectionRangeRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SelectionRangeRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11830,6 +19368,33 @@ func (x SelectionRangeRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SelectionRangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SelectionRangeRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SelectionRangeRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SelectionRangeRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SelectionRangeRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.SelectionRangeOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -11951,7 +19516,7 @@ func (x SemanticTokens) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokens: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -11963,6 +19528,30 @@ func (x SemanticTokens) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokens) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokens: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokens: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokens: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokens) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "resultId", &x.ResultID); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "data", &x.Data); err != nil {
 		return err
 	}
 	return nil
@@ -12023,7 +19612,7 @@ func (x SemanticTokensClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12061,6 +19650,51 @@ func (x SemanticTokensClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+func (x *SemanticTokensClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "requests", &x.Requests); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "tokenTypes", &x.TokenTypes); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "tokenModifiers", &x.TokenModifiers); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "formats", &x.Formats); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "overlappingTokenSupport", &x.OverlappingTokenSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "multilineTokenSupport", &x.MultilineTokenSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "serverCancelSupport", &x.ServerCancelSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "augmentsSyntaxTokens", &x.AugmentsSyntaxTokens); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SemanticTokensClientCapabilitiesRequests is a literal structure.
 type SemanticTokensClientCapabilitiesRequests struct {
 	// The client will send the `textDocument/semanticTokens/range` request if
@@ -12079,7 +19713,7 @@ func (x SemanticTokensClientCapabilitiesRequests) MarshalJSON() ([]byte, error) 
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensClientCapabilitiesRequests: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12096,6 +19730,30 @@ func (x SemanticTokensClientCapabilitiesRequests) marshalProperties(w *bytes.Buf
 	return nil
 }
 
+func (x *SemanticTokensClientCapabilitiesRequests) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequests: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequests: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequests: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensClientCapabilitiesRequests) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalPropertyUsing(properties, "range", &x.Range, unmarshalSemanticTokensClientCapabilitiesRequestsRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "full", &x.Full, unmarshalSemanticTokensClientCapabilitiesRequestsFull); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SemanticTokensClientCapabilitiesRequestsFull is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -12103,6 +19761,29 @@ func (x SemanticTokensClientCapabilitiesRequests) marshalProperties(w *bytes.Buf
 //   - SemanticTokensClientCapabilitiesRequestsFullA
 type SemanticTokensClientCapabilitiesRequestsFull interface {
 	isSemanticTokensClientCapabilitiesRequestsFull()
+}
+
+func unmarshalSemanticTokensClientCapabilitiesRequestsFull(data []byte, v *SemanticTokensClientCapabilitiesRequestsFull) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SemanticTokensClientCapabilitiesRequestsFullA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isSemanticTokensClientCapabilitiesRequestsFull() {}
@@ -12125,7 +19806,7 @@ func (x SemanticTokensClientCapabilitiesRequestsFullA) MarshalJSON() ([]byte, er
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensClientCapabilitiesRequestsFullA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12139,6 +19820,27 @@ func (x SemanticTokensClientCapabilitiesRequestsFullA) marshalProperties(w *byte
 	return nil
 }
 
+func (x *SemanticTokensClientCapabilitiesRequestsFullA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequestsFullA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequestsFullA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequestsFullA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensClientCapabilitiesRequestsFullA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "delta", &x.Delta); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SemanticTokensClientCapabilitiesRequestsRange is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -12146,6 +19848,29 @@ func (x SemanticTokensClientCapabilitiesRequestsFullA) marshalProperties(w *byte
 //   - SemanticTokensClientCapabilitiesRequestsRangeA
 type SemanticTokensClientCapabilitiesRequestsRange interface {
 	isSemanticTokensClientCapabilitiesRequestsRange()
+}
+
+func unmarshalSemanticTokensClientCapabilitiesRequestsRange(data []byte, v *SemanticTokensClientCapabilitiesRequestsRange) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SemanticTokensClientCapabilitiesRequestsRangeA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isSemanticTokensClientCapabilitiesRequestsRange() {}
@@ -12164,7 +19889,7 @@ func (x SemanticTokensClientCapabilitiesRequestsRangeA) MarshalJSON() ([]byte, e
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensClientCapabilitiesRequestsRangeA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12172,6 +19897,24 @@ func (x SemanticTokensClientCapabilitiesRequestsRangeA) MarshalJSON() ([]byte, e
 }
 
 func (x SemanticTokensClientCapabilitiesRequestsRangeA) marshalProperties(w *bytes.Buffer, n *int) error {
+	return nil
+}
+
+func (x *SemanticTokensClientCapabilitiesRequestsRangeA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequestsRangeA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequestsRangeA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensClientCapabilitiesRequestsRangeA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensClientCapabilitiesRequestsRangeA) unmarshalProperties(properties map[string]json.RawMessage) error {
 	return nil
 }
 
@@ -12192,7 +19935,7 @@ func (x SemanticTokensDelta) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensDelta: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12204,6 +19947,30 @@ func (x SemanticTokensDelta) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensDelta) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensDelta: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensDelta: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensDelta: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensDelta) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "resultId", &x.ResultID); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "edits", &x.Edits); err != nil {
 		return err
 	}
 	return nil
@@ -12231,7 +19998,7 @@ func (x SemanticTokensDeltaParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensDeltaParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12254,6 +20021,36 @@ func (x SemanticTokensDeltaParams) marshalProperties(w *bytes.Buffer, n *int) er
 	return nil
 }
 
+func (x *SemanticTokensDeltaParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensDeltaParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensDeltaParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensDeltaParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensDeltaParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "previousResultId", &x.PreviousResultID); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SemanticTokensDeltaPartialResult is a named structure definition.
 //
 // @since 3.16.0
@@ -12269,7 +20066,7 @@ func (x SemanticTokensDeltaPartialResult) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensDeltaPartialResult: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12278,6 +20075,27 @@ func (x SemanticTokensDeltaPartialResult) MarshalJSON() ([]byte, error) {
 
 func (x SemanticTokensDeltaPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "edits", x.Edits); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensDeltaPartialResult) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensDeltaPartialResult: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensDeltaPartialResult: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensDeltaPartialResult: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensDeltaPartialResult) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "edits", &x.Edits); err != nil {
 		return err
 	}
 	return nil
@@ -12303,7 +20121,7 @@ func (x SemanticTokensEdit) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensEdit: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12318,6 +20136,33 @@ func (x SemanticTokensEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensEdit) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensEdit: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensEdit: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensEdit: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensEdit) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "start", &x.Start); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "deleteCount", &x.DeleteCount); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "data", &x.Data); err != nil {
 		return err
 	}
 	return nil
@@ -12344,7 +20189,7 @@ func (x SemanticTokensLegend) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensLegend: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12356,6 +20201,30 @@ func (x SemanticTokensLegend) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "tokenModifiers", x.TokenModifiers); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensLegend) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensLegend: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensLegend: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensLegend: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensLegend) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "tokenTypes", &x.TokenTypes); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "tokenModifiers", &x.TokenModifiers); err != nil {
 		return err
 	}
 	return nil
@@ -12384,7 +20253,7 @@ func (x SemanticTokensOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12407,6 +20276,36 @@ func (x SemanticTokensOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 	return nil
 }
 
+func (x *SemanticTokensOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "legend", &x.Legend); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "range", &x.Range, unmarshalSemanticTokensOptionsRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "full", &x.Full, unmarshalSemanticTokensOptionsFull); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SemanticTokensOptionsFull is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -12414,6 +20313,29 @@ func (x SemanticTokensOptions) marshalProperties(w *bytes.Buffer, n *int) error 
 //   - SemanticTokensOptionsFullA
 type SemanticTokensOptionsFull interface {
 	isSemanticTokensOptionsFull()
+}
+
+func unmarshalSemanticTokensOptionsFull(data []byte, v *SemanticTokensOptionsFull) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SemanticTokensOptionsFullA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isSemanticTokensOptionsFull() {}
@@ -12434,7 +20356,7 @@ func (x SemanticTokensOptionsFullA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensOptionsFullA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12448,6 +20370,27 @@ func (x SemanticTokensOptionsFullA) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+func (x *SemanticTokensOptionsFullA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensOptionsFullA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensOptionsFullA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensOptionsFullA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensOptionsFullA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "delta", &x.Delta); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SemanticTokensOptionsRange is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -12455,6 +20398,29 @@ func (x SemanticTokensOptionsFullA) marshalProperties(w *bytes.Buffer, n *int) e
 //   - SemanticTokensOptionsRangeA
 type SemanticTokensOptionsRange interface {
 	isSemanticTokensOptionsRange()
+}
+
+func unmarshalSemanticTokensOptionsRange(data []byte, v *SemanticTokensOptionsRange) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SemanticTokensOptionsRangeA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isSemanticTokensOptionsRange() {}
@@ -12472,7 +20438,7 @@ func (x SemanticTokensOptionsRangeA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensOptionsRangeA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12480,6 +20446,24 @@ func (x SemanticTokensOptionsRangeA) MarshalJSON() ([]byte, error) {
 }
 
 func (x SemanticTokensOptionsRangeA) marshalProperties(w *bytes.Buffer, n *int) error {
+	return nil
+}
+
+func (x *SemanticTokensOptionsRangeA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensOptionsRangeA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensOptionsRangeA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensOptionsRangeA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensOptionsRangeA) unmarshalProperties(properties map[string]json.RawMessage) error {
 	return nil
 }
 
@@ -12502,7 +20486,7 @@ func (x SemanticTokensParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12517,6 +20501,33 @@ func (x SemanticTokensParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "textDocument", x.TextDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
 		return err
 	}
 	return nil
@@ -12537,7 +20548,7 @@ func (x SemanticTokensPartialResult) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensPartialResult: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12546,6 +20557,27 @@ func (x SemanticTokensPartialResult) MarshalJSON() ([]byte, error) {
 
 func (x SemanticTokensPartialResult) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensPartialResult) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensPartialResult: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensPartialResult: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensPartialResult: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensPartialResult) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "data", &x.Data); err != nil {
 		return err
 	}
 	return nil
@@ -12572,7 +20604,7 @@ func (x SemanticTokensRangeParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensRangeParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12595,6 +20627,36 @@ func (x SemanticTokensRangeParams) marshalProperties(w *bytes.Buffer, n *int) er
 	return nil
 }
 
+func (x *SemanticTokensRangeParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensRangeParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensRangeParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensRangeParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensRangeParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SemanticTokensRegistrationOptions is a named structure definition.
 //
 // @since 3.16.0
@@ -12612,7 +20674,7 @@ func (x SemanticTokensRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12627,6 +20689,33 @@ func (x SemanticTokensRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.SemanticTokensOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -12654,7 +20743,7 @@ func (x SemanticTokensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error)
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SemanticTokensWorkspaceClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12663,6 +20752,27 @@ func (x SemanticTokensWorkspaceClientCapabilities) MarshalJSON() ([]byte, error)
 
 func (x SemanticTokensWorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "refreshSupport", x.RefreshSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SemanticTokensWorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SemanticTokensWorkspaceClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SemanticTokensWorkspaceClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SemanticTokensWorkspaceClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SemanticTokensWorkspaceClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "refreshSupport", &x.RefreshSupport); err != nil {
 		return err
 	}
 	return nil
@@ -12785,7 +20895,7 @@ func (x ServerCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ServerCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -12901,6 +21011,129 @@ func (x ServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *ServerCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ServerCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ServerCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ServerCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ServerCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "positionEncoding", &x.PositionEncoding); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "textDocumentSync", &x.TextDocumentSync, unmarshalServerCapabilitiesTextDocumentSync); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "notebookDocumentSync", &x.NotebookDocumentSync, unmarshalServerCapabilitiesNotebookDocumentSync); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "completionProvider", &x.CompletionProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "hoverProvider", &x.HoverProvider, unmarshalServerCapabilitiesHoverProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "signatureHelpProvider", &x.SignatureHelpProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "declarationProvider", &x.DeclarationProvider, unmarshalServerCapabilitiesDeclarationProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "definitionProvider", &x.DefinitionProvider, unmarshalServerCapabilitiesDefinitionProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "typeDefinitionProvider", &x.TypeDefinitionProvider, unmarshalServerCapabilitiesTypeDefinitionProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "implementationProvider", &x.ImplementationProvider, unmarshalServerCapabilitiesImplementationProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "referencesProvider", &x.ReferencesProvider, unmarshalServerCapabilitiesReferencesProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "documentHighlightProvider", &x.DocumentHighlightProvider, unmarshalServerCapabilitiesDocumentHighlightProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "documentSymbolProvider", &x.DocumentSymbolProvider, unmarshalServerCapabilitiesDocumentSymbolProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "codeActionProvider", &x.CodeActionProvider, unmarshalServerCapabilitiesCodeActionProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeLensProvider", &x.CodeLensProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "documentLinkProvider", &x.DocumentLinkProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "colorProvider", &x.ColorProvider, unmarshalServerCapabilitiesColorProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "workspaceSymbolProvider", &x.WorkspaceSymbolProvider, unmarshalServerCapabilitiesWorkspaceSymbolProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "documentFormattingProvider", &x.DocumentFormattingProvider, unmarshalServerCapabilitiesDocumentFormattingProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "documentRangeFormattingProvider", &x.DocumentRangeFormattingProvider, unmarshalServerCapabilitiesDocumentRangeFormattingProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "documentOnTypeFormattingProvider", &x.DocumentOnTypeFormattingProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "renameProvider", &x.RenameProvider, unmarshalServerCapabilitiesRenameProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "foldingRangeProvider", &x.FoldingRangeProvider, unmarshalServerCapabilitiesFoldingRangeProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "selectionRangeProvider", &x.SelectionRangeProvider, unmarshalServerCapabilitiesSelectionRangeProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "executeCommandProvider", &x.ExecuteCommandProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "callHierarchyProvider", &x.CallHierarchyProvider, unmarshalServerCapabilitiesCallHierarchyProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "linkedEditingRangeProvider", &x.LinkedEditingRangeProvider, unmarshalServerCapabilitiesLinkedEditingRangeProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "semanticTokensProvider", &x.SemanticTokensProvider, unmarshalServerCapabilitiesSemanticTokensProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "monikerProvider", &x.MonikerProvider, unmarshalServerCapabilitiesMonikerProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "typeHierarchyProvider", &x.TypeHierarchyProvider, unmarshalServerCapabilitiesTypeHierarchyProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "inlineValueProvider", &x.InlineValueProvider, unmarshalServerCapabilitiesInlineValueProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "inlayHintProvider", &x.InlayHintProvider, unmarshalServerCapabilitiesInlayHintProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "diagnosticProvider", &x.DiagnosticProvider, unmarshalServerCapabilitiesDiagnosticProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "workspace", &x.Workspace); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "experimental", &x.Experimental, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // ServerCapabilitiesCallHierarchyProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -12909,6 +21142,38 @@ func (x ServerCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 //   - CallHierarchyRegistrationOptions
 type ServerCapabilitiesCallHierarchyProvider interface {
 	isServerCapabilitiesCallHierarchyProvider()
+}
+
+func unmarshalServerCapabilitiesCallHierarchyProvider(data []byte, v *ServerCapabilitiesCallHierarchyProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CallHierarchyOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CallHierarchyRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesCallHierarchyProvider() {}
@@ -12926,6 +21191,29 @@ type ServerCapabilitiesCodeActionProvider interface {
 	isServerCapabilitiesCodeActionProvider()
 }
 
+func unmarshalServerCapabilitiesCodeActionProvider(data []byte, v *ServerCapabilitiesCodeActionProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CodeActionOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesCodeActionProvider() {}
 
 func (CodeActionOptions) isServerCapabilitiesCodeActionProvider() {}
@@ -12938,6 +21226,38 @@ func (CodeActionOptions) isServerCapabilitiesCodeActionProvider() {}
 //   - DocumentColorRegistrationOptions
 type ServerCapabilitiesColorProvider interface {
 	isServerCapabilitiesColorProvider()
+}
+
+func unmarshalServerCapabilitiesColorProvider(data []byte, v *ServerCapabilitiesColorProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentColorOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentColorRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesColorProvider() {}
@@ -12956,6 +21276,38 @@ type ServerCapabilitiesDeclarationProvider interface {
 	isServerCapabilitiesDeclarationProvider()
 }
 
+func unmarshalServerCapabilitiesDeclarationProvider(data []byte, v *ServerCapabilitiesDeclarationProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DeclarationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DeclarationRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesDeclarationProvider() {}
 
 func (DeclarationOptions) isServerCapabilitiesDeclarationProvider() {}
@@ -12971,6 +21323,29 @@ type ServerCapabilitiesDefinitionProvider interface {
 	isServerCapabilitiesDefinitionProvider()
 }
 
+func unmarshalServerCapabilitiesDefinitionProvider(data []byte, v *ServerCapabilitiesDefinitionProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DefinitionOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesDefinitionProvider() {}
 
 func (DefinitionOptions) isServerCapabilitiesDefinitionProvider() {}
@@ -12982,6 +21357,29 @@ func (DefinitionOptions) isServerCapabilitiesDefinitionProvider() {}
 //   - DiagnosticRegistrationOptions
 type ServerCapabilitiesDiagnosticProvider interface {
 	isServerCapabilitiesDiagnosticProvider()
+}
+
+func unmarshalServerCapabilitiesDiagnosticProvider(data []byte, v *ServerCapabilitiesDiagnosticProvider) error {
+	var err error
+	{
+		var candidate DiagnosticOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DiagnosticRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (DiagnosticOptions) isServerCapabilitiesDiagnosticProvider() {}
@@ -12997,6 +21395,29 @@ type ServerCapabilitiesDocumentFormattingProvider interface {
 	isServerCapabilitiesDocumentFormattingProvider()
 }
 
+func unmarshalServerCapabilitiesDocumentFormattingProvider(data []byte, v *ServerCapabilitiesDocumentFormattingProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentFormattingOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesDocumentFormattingProvider() {}
 
 func (DocumentFormattingOptions) isServerCapabilitiesDocumentFormattingProvider() {}
@@ -13008,6 +21429,29 @@ func (DocumentFormattingOptions) isServerCapabilitiesDocumentFormattingProvider(
 //   - DocumentHighlightOptions
 type ServerCapabilitiesDocumentHighlightProvider interface {
 	isServerCapabilitiesDocumentHighlightProvider()
+}
+
+func unmarshalServerCapabilitiesDocumentHighlightProvider(data []byte, v *ServerCapabilitiesDocumentHighlightProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentHighlightOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesDocumentHighlightProvider() {}
@@ -13023,6 +21467,29 @@ type ServerCapabilitiesDocumentRangeFormattingProvider interface {
 	isServerCapabilitiesDocumentRangeFormattingProvider()
 }
 
+func unmarshalServerCapabilitiesDocumentRangeFormattingProvider(data []byte, v *ServerCapabilitiesDocumentRangeFormattingProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentRangeFormattingOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesDocumentRangeFormattingProvider() {}
 
 func (DocumentRangeFormattingOptions) isServerCapabilitiesDocumentRangeFormattingProvider() {}
@@ -13034,6 +21501,29 @@ func (DocumentRangeFormattingOptions) isServerCapabilitiesDocumentRangeFormattin
 //   - DocumentSymbolOptions
 type ServerCapabilitiesDocumentSymbolProvider interface {
 	isServerCapabilitiesDocumentSymbolProvider()
+}
+
+func unmarshalServerCapabilitiesDocumentSymbolProvider(data []byte, v *ServerCapabilitiesDocumentSymbolProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentSymbolOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesDocumentSymbolProvider() {}
@@ -13048,6 +21538,38 @@ func (DocumentSymbolOptions) isServerCapabilitiesDocumentSymbolProvider() {}
 //   - FoldingRangeRegistrationOptions
 type ServerCapabilitiesFoldingRangeProvider interface {
 	isServerCapabilitiesFoldingRangeProvider()
+}
+
+func unmarshalServerCapabilitiesFoldingRangeProvider(data []byte, v *ServerCapabilitiesFoldingRangeProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate FoldingRangeOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate FoldingRangeRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesFoldingRangeProvider() {}
@@ -13065,6 +21587,29 @@ type ServerCapabilitiesHoverProvider interface {
 	isServerCapabilitiesHoverProvider()
 }
 
+func unmarshalServerCapabilitiesHoverProvider(data []byte, v *ServerCapabilitiesHoverProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate HoverOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesHoverProvider() {}
 
 func (HoverOptions) isServerCapabilitiesHoverProvider() {}
@@ -13077,6 +21622,38 @@ func (HoverOptions) isServerCapabilitiesHoverProvider() {}
 //   - ImplementationRegistrationOptions
 type ServerCapabilitiesImplementationProvider interface {
 	isServerCapabilitiesImplementationProvider()
+}
+
+func unmarshalServerCapabilitiesImplementationProvider(data []byte, v *ServerCapabilitiesImplementationProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate ImplementationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate ImplementationRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesImplementationProvider() {}
@@ -13095,6 +21672,38 @@ type ServerCapabilitiesInlayHintProvider interface {
 	isServerCapabilitiesInlayHintProvider()
 }
 
+func unmarshalServerCapabilitiesInlayHintProvider(data []byte, v *ServerCapabilitiesInlayHintProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InlayHintOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InlayHintRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesInlayHintProvider() {}
 
 func (InlayHintOptions) isServerCapabilitiesInlayHintProvider() {}
@@ -13109,6 +21718,38 @@ func (InlayHintRegistrationOptions) isServerCapabilitiesInlayHintProvider() {}
 //   - InlineValueRegistrationOptions
 type ServerCapabilitiesInlineValueProvider interface {
 	isServerCapabilitiesInlineValueProvider()
+}
+
+func unmarshalServerCapabilitiesInlineValueProvider(data []byte, v *ServerCapabilitiesInlineValueProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InlineValueOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate InlineValueRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesInlineValueProvider() {}
@@ -13127,6 +21768,38 @@ type ServerCapabilitiesLinkedEditingRangeProvider interface {
 	isServerCapabilitiesLinkedEditingRangeProvider()
 }
 
+func unmarshalServerCapabilitiesLinkedEditingRangeProvider(data []byte, v *ServerCapabilitiesLinkedEditingRangeProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate LinkedEditingRangeOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate LinkedEditingRangeRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesLinkedEditingRangeProvider() {}
 
 func (LinkedEditingRangeOptions) isServerCapabilitiesLinkedEditingRangeProvider() {}
@@ -13141,6 +21814,38 @@ func (LinkedEditingRangeRegistrationOptions) isServerCapabilitiesLinkedEditingRa
 //   - MonikerRegistrationOptions
 type ServerCapabilitiesMonikerProvider interface {
 	isServerCapabilitiesMonikerProvider()
+}
+
+func unmarshalServerCapabilitiesMonikerProvider(data []byte, v *ServerCapabilitiesMonikerProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MonikerOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MonikerRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesMonikerProvider() {}
@@ -13158,6 +21863,29 @@ type ServerCapabilitiesNotebookDocumentSync interface {
 	isServerCapabilitiesNotebookDocumentSync()
 }
 
+func unmarshalServerCapabilitiesNotebookDocumentSync(data []byte, v *ServerCapabilitiesNotebookDocumentSync) error {
+	var err error
+	{
+		var candidate NotebookDocumentSyncOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate NotebookDocumentSyncRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (NotebookDocumentSyncOptions) isServerCapabilitiesNotebookDocumentSync() {}
 
 func (NotebookDocumentSyncRegistrationOptions) isServerCapabilitiesNotebookDocumentSync() {}
@@ -13169,6 +21897,29 @@ func (NotebookDocumentSyncRegistrationOptions) isServerCapabilitiesNotebookDocum
 //   - ReferenceOptions
 type ServerCapabilitiesReferencesProvider interface {
 	isServerCapabilitiesReferencesProvider()
+}
+
+func unmarshalServerCapabilitiesReferencesProvider(data []byte, v *ServerCapabilitiesReferencesProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate ReferenceOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesReferencesProvider() {}
@@ -13184,6 +21935,29 @@ type ServerCapabilitiesRenameProvider interface {
 	isServerCapabilitiesRenameProvider()
 }
 
+func unmarshalServerCapabilitiesRenameProvider(data []byte, v *ServerCapabilitiesRenameProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate RenameOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesRenameProvider() {}
 
 func (RenameOptions) isServerCapabilitiesRenameProvider() {}
@@ -13196,6 +21970,38 @@ func (RenameOptions) isServerCapabilitiesRenameProvider() {}
 //   - SelectionRangeRegistrationOptions
 type ServerCapabilitiesSelectionRangeProvider interface {
 	isServerCapabilitiesSelectionRangeProvider()
+}
+
+func unmarshalServerCapabilitiesSelectionRangeProvider(data []byte, v *ServerCapabilitiesSelectionRangeProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SelectionRangeOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SelectionRangeRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesSelectionRangeProvider() {}
@@ -13213,6 +22019,29 @@ type ServerCapabilitiesSemanticTokensProvider interface {
 	isServerCapabilitiesSemanticTokensProvider()
 }
 
+func unmarshalServerCapabilitiesSemanticTokensProvider(data []byte, v *ServerCapabilitiesSemanticTokensProvider) error {
+	var err error
+	{
+		var candidate SemanticTokensOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SemanticTokensRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (SemanticTokensOptions) isServerCapabilitiesSemanticTokensProvider() {}
 
 func (SemanticTokensRegistrationOptions) isServerCapabilitiesSemanticTokensProvider() {}
@@ -13224,6 +22053,29 @@ func (SemanticTokensRegistrationOptions) isServerCapabilitiesSemanticTokensProvi
 //   - TextDocumentSyncKind
 type ServerCapabilitiesTextDocumentSync interface {
 	isServerCapabilitiesTextDocumentSync()
+}
+
+func unmarshalServerCapabilitiesTextDocumentSync(data []byte, v *ServerCapabilitiesTextDocumentSync) error {
+	var err error
+	{
+		var candidate TextDocumentSyncOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TextDocumentSyncKind
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TextDocumentSyncKind) isServerCapabilitiesTextDocumentSync() {}
@@ -13240,6 +22092,38 @@ type ServerCapabilitiesTypeDefinitionProvider interface {
 	isServerCapabilitiesTypeDefinitionProvider()
 }
 
+func unmarshalServerCapabilitiesTypeDefinitionProvider(data []byte, v *ServerCapabilitiesTypeDefinitionProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TypeDefinitionOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TypeDefinitionRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (Bool) isServerCapabilitiesTypeDefinitionProvider() {}
 
 func (TypeDefinitionOptions) isServerCapabilitiesTypeDefinitionProvider() {}
@@ -13254,6 +22138,38 @@ func (TypeDefinitionRegistrationOptions) isServerCapabilitiesTypeDefinitionProvi
 //   - TypeHierarchyRegistrationOptions
 type ServerCapabilitiesTypeHierarchyProvider interface {
 	isServerCapabilitiesTypeHierarchyProvider()
+}
+
+func unmarshalServerCapabilitiesTypeHierarchyProvider(data []byte, v *ServerCapabilitiesTypeHierarchyProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TypeHierarchyOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TypeHierarchyRegistrationOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesTypeHierarchyProvider() {}
@@ -13282,7 +22198,7 @@ func (x ServerCapabilitiesWorkspace) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ServerCapabilitiesWorkspace: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13299,6 +22215,30 @@ func (x ServerCapabilitiesWorkspace) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+func (x *ServerCapabilitiesWorkspace) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ServerCapabilitiesWorkspace: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ServerCapabilitiesWorkspace: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ServerCapabilitiesWorkspace: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ServerCapabilitiesWorkspace) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "workspaceFolders", &x.WorkspaceFolders); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "fileOperations", &x.FileOperations); err != nil {
+		return err
+	}
+	return nil
+}
+
 // ServerCapabilitiesWorkspaceSymbolProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -13306,6 +22246,29 @@ func (x ServerCapabilitiesWorkspace) marshalProperties(w *bytes.Buffer, n *int) 
 //   - WorkspaceSymbolOptions
 type ServerCapabilitiesWorkspaceSymbolProvider interface {
 	isServerCapabilitiesWorkspaceSymbolProvider()
+}
+
+func unmarshalServerCapabilitiesWorkspaceSymbolProvider(data []byte, v *ServerCapabilitiesWorkspaceSymbolProvider) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate WorkspaceSymbolOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isServerCapabilitiesWorkspaceSymbolProvider() {}
@@ -13325,7 +22288,7 @@ func (x SetTraceParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SetTraceParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13334,6 +22297,27 @@ func (x SetTraceParams) MarshalJSON() ([]byte, error) {
 
 func (x SetTraceParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "value", x.Value); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SetTraceParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SetTraceParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SetTraceParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SetTraceParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SetTraceParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "value", &x.Value); err != nil {
 		return err
 	}
 	return nil
@@ -13358,7 +22342,7 @@ func (x ShowDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ShowDocumentClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13367,6 +22351,27 @@ func (x ShowDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x ShowDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "support", x.Support); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ShowDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ShowDocumentClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ShowDocumentClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ShowDocumentClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ShowDocumentClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "support", &x.Support); err != nil {
 		return err
 	}
 	return nil
@@ -13404,7 +22409,7 @@ func (x ShowDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ShowDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13422,6 +22427,36 @@ func (x ShowDocumentParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "selection", x.Selection); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ShowDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ShowDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ShowDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ShowDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ShowDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "external", &x.External); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "takeFocus", &x.TakeFocus); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "selection", &x.Selection); err != nil {
 		return err
 	}
 	return nil
@@ -13445,7 +22480,7 @@ func (x ShowDocumentResult) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ShowDocumentResult: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13454,6 +22489,27 @@ func (x ShowDocumentResult) MarshalJSON() ([]byte, error) {
 
 func (x ShowDocumentResult) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "success", x.Success); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ShowDocumentResult) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ShowDocumentResult: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ShowDocumentResult: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ShowDocumentResult: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ShowDocumentResult) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "success", &x.Success); err != nil {
 		return err
 	}
 	return nil
@@ -13477,7 +22533,7 @@ func (x ShowMessageParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ShowMessageParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13489,6 +22545,30 @@ func (x ShowMessageParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ShowMessageParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ShowMessageParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ShowMessageParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ShowMessageParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ShowMessageParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "type", &x.Type); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "message", &x.Message); err != nil {
 		return err
 	}
 	return nil
@@ -13510,7 +22590,7 @@ func (x ShowMessageRequestClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ShowMessageRequestClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13519,6 +22599,27 @@ func (x ShowMessageRequestClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x ShowMessageRequestClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "messageActionItem", x.MessageActionItem); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ShowMessageRequestClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ShowMessageRequestClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ShowMessageRequestClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ShowMessageRequestClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ShowMessageRequestClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "messageActionItem", &x.MessageActionItem); err != nil {
 		return err
 	}
 	return nil
@@ -13540,7 +22641,7 @@ func (x ShowMessageRequestClientCapabilitiesMessageActionItem) MarshalJSON() ([]
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ShowMessageRequestClientCapabilitiesMessageActionItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13549,6 +22650,27 @@ func (x ShowMessageRequestClientCapabilitiesMessageActionItem) MarshalJSON() ([]
 
 func (x ShowMessageRequestClientCapabilitiesMessageActionItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "additionalPropertiesSupport", x.AdditionalPropertiesSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ShowMessageRequestClientCapabilitiesMessageActionItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ShowMessageRequestClientCapabilitiesMessageActionItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ShowMessageRequestClientCapabilitiesMessageActionItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ShowMessageRequestClientCapabilitiesMessageActionItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ShowMessageRequestClientCapabilitiesMessageActionItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "additionalPropertiesSupport", &x.AdditionalPropertiesSupport); err != nil {
 		return err
 	}
 	return nil
@@ -13572,7 +22694,7 @@ func (x ShowMessageRequestParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("ShowMessageRequestParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13587,6 +22709,33 @@ func (x ShowMessageRequestParams) marshalProperties(w *bytes.Buffer, n *int) err
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "actions", x.Actions); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *ShowMessageRequestParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("ShowMessageRequestParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("ShowMessageRequestParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("ShowMessageRequestParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *ShowMessageRequestParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "type", &x.Type); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "message", &x.Message); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "actions", &x.Actions); err != nil {
 		return err
 	}
 	return nil
@@ -13628,7 +22777,7 @@ func (x SignatureHelp) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelp: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13643,6 +22792,33 @@ func (x SignatureHelp) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "activeParameter", x.ActiveParameter); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelp) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelp: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelp: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelp: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelp) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "signatures", &x.Signatures); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "activeSignature", &x.ActiveSignature); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "activeParameter", &x.ActiveParameter); err != nil {
 		return err
 	}
 	return nil
@@ -13674,7 +22850,7 @@ func (x SignatureHelpClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelpClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13689,6 +22865,33 @@ func (x SignatureHelpClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "contextSupport", x.ContextSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelpClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelpClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelpClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelpClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelpClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "signatureInformation", &x.SignatureInformation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "contextSupport", &x.ContextSupport); err != nil {
 		return err
 	}
 	return nil
@@ -13716,7 +22919,7 @@ func (x SignatureHelpClientCapabilitiesSignatureInformation) MarshalJSON() ([]by
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13731,6 +22934,33 @@ func (x SignatureHelpClientCapabilitiesSignatureInformation) marshalProperties(w
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "activeParameterSupport", x.ActiveParameterSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelpClientCapabilitiesSignatureInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelpClientCapabilitiesSignatureInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "documentationFormat", &x.DocumentationFormat); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "parameterInformation", &x.ParameterInformation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "activeParameterSupport", &x.ActiveParameterSupport); err != nil {
 		return err
 	}
 	return nil
@@ -13753,7 +22983,7 @@ func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation)
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformationParameterInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13762,6 +22992,27 @@ func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation)
 
 func (x SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "labelOffsetSupport", x.LabelOffsetSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformationParameterInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformationParameterInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelpClientCapabilitiesSignatureInformationParameterInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelpClientCapabilitiesSignatureInformationParameterInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "labelOffsetSupport", &x.LabelOffsetSupport); err != nil {
 		return err
 	}
 	return nil
@@ -13799,7 +23050,7 @@ func (x SignatureHelpContext) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelpContext: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13817,6 +23068,36 @@ func (x SignatureHelpContext) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "activeSignatureHelp", x.ActiveSignatureHelp); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelpContext) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelpContext: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelpContext: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelpContext: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelpContext) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "triggerKind", &x.TriggerKind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "triggerCharacter", &x.TriggerCharacter); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "isRetrigger", &x.IsRetrigger); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "activeSignatureHelp", &x.ActiveSignatureHelp); err != nil {
 		return err
 	}
 	return nil
@@ -13847,7 +23128,7 @@ func (x SignatureHelpOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelpOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13862,6 +23143,33 @@ func (x SignatureHelpOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "retriggerCharacters", x.RetriggerCharacters); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelpOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelpOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelpOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelpOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelpOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "triggerCharacters", &x.TriggerCharacters); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "retriggerCharacters", &x.RetriggerCharacters); err != nil {
 		return err
 	}
 	return nil
@@ -13889,7 +23197,7 @@ func (x SignatureHelpParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelpParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13904,6 +23212,33 @@ func (x SignatureHelpParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "context", x.Context); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelpParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelpParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelpParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelpParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelpParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "context", &x.Context); err != nil {
 		return err
 	}
 	return nil
@@ -13925,7 +23260,7 @@ func (x SignatureHelpRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureHelpRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -13937,6 +23272,30 @@ func (x SignatureHelpRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := x.SignatureHelpOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SignatureHelpRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureHelpRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureHelpRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureHelpRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureHelpRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.SignatureHelpOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -13994,7 +23353,7 @@ func (x SignatureInformation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SignatureInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14017,6 +23376,36 @@ func (x SignatureInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *SignatureInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SignatureInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SignatureInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SignatureInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SignatureInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "label", &x.Label); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "documentation", &x.Documentation, unmarshalSignatureInformationDocumentation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "parameters", &x.Parameters); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "activeParameter", &x.ActiveParameter); err != nil {
+		return err
+	}
+	return nil
+}
+
 // SignatureInformationArray is an array of SignatureInformation elements.
 type SignatureInformationArray []SignatureInformation
 
@@ -14027,6 +23416,29 @@ type SignatureInformationArray []SignatureInformation
 //   - MarkupContent
 type SignatureInformationDocumentation interface {
 	isSignatureInformationDocumentation()
+}
+
+func unmarshalSignatureInformationDocumentation(data []byte, v *SignatureInformationDocumentation) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate MarkupContent
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (MarkupContent) isSignatureInformationDocumentation() {}
@@ -14051,7 +23463,7 @@ func (x StaticRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("StaticRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14060,6 +23472,27 @@ func (x StaticRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 func (x StaticRegistrationOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "id", x.ID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *StaticRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("StaticRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("StaticRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("StaticRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *StaticRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "id", &x.ID); err != nil {
 		return err
 	}
 	return nil
@@ -14104,7 +23537,7 @@ func (x SymbolInformation) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("SymbolInformation: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14119,6 +23552,33 @@ func (x SymbolInformation) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "location", x.Location); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *SymbolInformation) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("SymbolInformation: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("SymbolInformation: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("SymbolInformation: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *SymbolInformation) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.BaseSymbolInformation.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "deprecated", &x.Deprecated); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "location", &x.Location); err != nil {
 		return err
 	}
 	return nil
@@ -14225,7 +23685,7 @@ func (x TextDocumentChangeRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentChangeRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14237,6 +23697,30 @@ func (x TextDocumentChangeRegistrationOptions) marshalProperties(w *bytes.Buffer
 		return err
 	}
 	if err := marshalProperty(w, n, "syncKind", x.SyncKind); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TextDocumentChangeRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentChangeRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentChangeRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentChangeRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentChangeRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "syncKind", &x.SyncKind); err != nil {
 		return err
 	}
 	return nil
@@ -14345,7 +23829,7 @@ func (x TextDocumentClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14446,6 +23930,114 @@ func (x TextDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 	return nil
 }
 
+func (x *TextDocumentClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "synchronization", &x.Synchronization); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "completion", &x.Completion); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "hover", &x.Hover); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "signatureHelp", &x.SignatureHelp); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "declaration", &x.Declaration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "definition", &x.Definition); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "typeDefinition", &x.TypeDefinition); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "implementation", &x.Implementation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "references", &x.References); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "documentHighlight", &x.DocumentHighlight); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "documentSymbol", &x.DocumentSymbol); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeAction", &x.CodeAction); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeLens", &x.CodeLens); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "documentLink", &x.DocumentLink); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "colorProvider", &x.ColorProvider); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "formatting", &x.Formatting); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "rangeFormatting", &x.RangeFormatting); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "onTypeFormatting", &x.OnTypeFormatting); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "rename", &x.Rename); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "foldingRange", &x.FoldingRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "selectionRange", &x.SelectionRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "publishDiagnostics", &x.PublishDiagnostics); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "callHierarchy", &x.CallHierarchy); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "semanticTokens", &x.SemanticTokens); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "linkedEditingRange", &x.LinkedEditingRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "moniker", &x.Moniker); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "typeHierarchy", &x.TypeHierarchy); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "inlineValue", &x.InlineValue); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "inlayHint", &x.InlayHint); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "diagnostic", &x.Diagnostic); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentCodeActionPartialResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -14453,6 +24045,29 @@ func (x TextDocumentClientCapabilities) marshalProperties(w *bytes.Buffer, n *in
 //   - CodeAction
 type TextDocumentCodeActionPartialResult interface {
 	isTextDocumentCodeActionPartialResult()
+}
+
+func unmarshalTextDocumentCodeActionPartialResult(data []byte, v *TextDocumentCodeActionPartialResult) error {
+	var err error
+	{
+		var candidate Command
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CodeAction
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CodeAction) isTextDocumentCodeActionPartialResult() {}
@@ -14470,6 +24085,20 @@ type TextDocumentCodeActionResult interface {
 	isTextDocumentCodeActionResult()
 }
 
+func unmarshalTextDocumentCodeActionResult(data []byte, v *TextDocumentCodeActionResult) error {
+	var err error
+	{
+		var candidate TextDocumentCodeActionResultAArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (TextDocumentCodeActionResultAArray) isTextDocumentCodeActionResult() {}
 
 // TextDocumentCodeActionResultA is a union (aka 'or') of several other types.
@@ -14479,6 +24108,29 @@ func (TextDocumentCodeActionResultAArray) isTextDocumentCodeActionResult() {}
 //   - CodeAction
 type TextDocumentCodeActionResultA interface {
 	isTextDocumentCodeActionResultA()
+}
+
+func unmarshalTextDocumentCodeActionResultA(data []byte, v *TextDocumentCodeActionResultA) error {
+	var err error
+	{
+		var candidate Command
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CodeAction
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CodeAction) isTextDocumentCodeActionResultA() {}
@@ -14494,6 +24146,20 @@ type TextDocumentCodeActionResultAArray []TextDocumentCodeActionResultA
 //   - CodeLensArray
 type TextDocumentCodeLensResult interface {
 	isTextDocumentCodeLensResult()
+}
+
+func unmarshalTextDocumentCodeLensResult(data []byte, v *TextDocumentCodeLensResult) error {
+	var err error
+	{
+		var candidate CodeLensArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CodeLensArray) isTextDocumentCodeLensResult() {}
@@ -14512,7 +24178,7 @@ func (x TextDocumentColorPresentationRegistrationOptions) MarshalJSON() ([]byte,
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentColorPresentationRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14529,6 +24195,30 @@ func (x TextDocumentColorPresentationRegistrationOptions) marshalProperties(w *b
 	return nil
 }
 
+func (x *TextDocumentColorPresentationRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentColorPresentationRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentColorPresentationRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentColorPresentationRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentColorPresentationRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentCompletionResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -14536,6 +24226,29 @@ func (x TextDocumentColorPresentationRegistrationOptions) marshalProperties(w *b
 //   - CompletionList
 type TextDocumentCompletionResult interface {
 	isTextDocumentCompletionResult()
+}
+
+func unmarshalTextDocumentCompletionResult(data []byte, v *TextDocumentCompletionResult) error {
+	var err error
+	{
+		var candidate CompletionItemArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CompletionList
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CompletionItemArray) isTextDocumentCompletionResult() {}
@@ -14549,6 +24262,29 @@ func (CompletionList) isTextDocumentCompletionResult() {}
 //   - TextDocumentContentChangeEventB
 type TextDocumentContentChangeEvent interface {
 	isTextDocumentContentChangeEvent()
+}
+
+func unmarshalTextDocumentContentChangeEvent(data []byte, v *TextDocumentContentChangeEvent) error {
+	var err error
+	{
+		var candidate TextDocumentContentChangeEventA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TextDocumentContentChangeEventB
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TextDocumentContentChangeEventA) isTextDocumentContentChangeEvent() {}
@@ -14575,7 +24311,7 @@ func (x TextDocumentContentChangeEventA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentContentChangeEventA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14590,6 +24326,33 @@ func (x TextDocumentContentChangeEventA) marshalProperties(w *bytes.Buffer, n *i
 		return err
 	}
 	if err := marshalProperty(w, n, "text", x.Text); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TextDocumentContentChangeEventA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentContentChangeEventA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentContentChangeEventA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentContentChangeEventA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentContentChangeEventA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "rangeLength", &x.RangeLength); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "text", &x.Text); err != nil {
 		return err
 	}
 	return nil
@@ -14612,7 +24375,7 @@ func (x TextDocumentContentChangeEventB) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentContentChangeEventB: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14626,6 +24389,27 @@ func (x TextDocumentContentChangeEventB) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
+func (x *TextDocumentContentChangeEventB) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentContentChangeEventB: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentContentChangeEventB: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentContentChangeEventB: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentContentChangeEventB) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "text", &x.Text); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentDeclarationPartialResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -14633,6 +24417,29 @@ func (x TextDocumentContentChangeEventB) marshalProperties(w *bytes.Buffer, n *i
 //   - DeclarationLinkArray
 type TextDocumentDeclarationPartialResult interface {
 	isTextDocumentDeclarationPartialResult()
+}
+
+func unmarshalTextDocumentDeclarationPartialResult(data []byte, v *TextDocumentDeclarationPartialResult) error {
+	var err error
+	{
+		var candidate LocationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DeclarationLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (DeclarationLinkArray) isTextDocumentDeclarationPartialResult() {}
@@ -14648,6 +24455,29 @@ type TextDocumentDeclarationResult interface {
 	isTextDocumentDeclarationResult()
 }
 
+func unmarshalTextDocumentDeclarationResult(data []byte, v *TextDocumentDeclarationResult) error {
+	var err error
+	{
+		var candidate Declaration
+		err := unmarshalDeclaration(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DeclarationLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DeclarationLinkArray) isTextDocumentDeclarationResult() {}
 
 // TextDocumentDefinitionPartialResult is a union (aka 'or') of several other types.
@@ -14657,6 +24487,29 @@ func (DeclarationLinkArray) isTextDocumentDeclarationResult() {}
 //   - DefinitionLinkArray
 type TextDocumentDefinitionPartialResult interface {
 	isTextDocumentDefinitionPartialResult()
+}
+
+func unmarshalTextDocumentDefinitionPartialResult(data []byte, v *TextDocumentDefinitionPartialResult) error {
+	var err error
+	{
+		var candidate LocationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DefinitionLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (DefinitionLinkArray) isTextDocumentDefinitionPartialResult() {}
@@ -14672,6 +24525,29 @@ type TextDocumentDefinitionResult interface {
 	isTextDocumentDefinitionResult()
 }
 
+func unmarshalTextDocumentDefinitionResult(data []byte, v *TextDocumentDefinitionResult) error {
+	var err error
+	{
+		var candidate Definition
+		err := unmarshalDefinition(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DefinitionLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DefinitionLinkArray) isTextDocumentDefinitionResult() {}
 
 // TextDocumentDocumentHighlightResult is a union (aka 'or') of several other types.
@@ -14682,6 +24558,20 @@ type TextDocumentDocumentHighlightResult interface {
 	isTextDocumentDocumentHighlightResult()
 }
 
+func unmarshalTextDocumentDocumentHighlightResult(data []byte, v *TextDocumentDocumentHighlightResult) error {
+	var err error
+	{
+		var candidate DocumentHighlightArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DocumentHighlightArray) isTextDocumentDocumentHighlightResult() {}
 
 // TextDocumentDocumentLinkResult is a union (aka 'or') of several other types.
@@ -14690,6 +24580,20 @@ func (DocumentHighlightArray) isTextDocumentDocumentHighlightResult() {}
 //   - DocumentLinkArray
 type TextDocumentDocumentLinkResult interface {
 	isTextDocumentDocumentLinkResult()
+}
+
+func unmarshalTextDocumentDocumentLinkResult(data []byte, v *TextDocumentDocumentLinkResult) error {
+	var err error
+	{
+		var candidate DocumentLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (DocumentLinkArray) isTextDocumentDocumentLinkResult() {}
@@ -14703,6 +24607,29 @@ type TextDocumentDocumentSymbolPartialResult interface {
 	isTextDocumentDocumentSymbolPartialResult()
 }
 
+func unmarshalTextDocumentDocumentSymbolPartialResult(data []byte, v *TextDocumentDocumentSymbolPartialResult) error {
+	var err error
+	{
+		var candidate SymbolInformationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentSymbolArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DocumentSymbolArray) isTextDocumentDocumentSymbolPartialResult() {}
 
 func (SymbolInformationArray) isTextDocumentDocumentSymbolPartialResult() {}
@@ -14714,6 +24641,29 @@ func (SymbolInformationArray) isTextDocumentDocumentSymbolPartialResult() {}
 //   - DocumentSymbolArray
 type TextDocumentDocumentSymbolResult interface {
 	isTextDocumentDocumentSymbolResult()
+}
+
+func unmarshalTextDocumentDocumentSymbolResult(data []byte, v *TextDocumentDocumentSymbolResult) error {
+	var err error
+	{
+		var candidate SymbolInformationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DocumentSymbolArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (DocumentSymbolArray) isTextDocumentDocumentSymbolResult() {}
@@ -14744,7 +24694,7 @@ func (x TextDocumentEdit) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentEdit: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14761,6 +24711,30 @@ func (x TextDocumentEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *TextDocumentEdit) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentEdit: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentEdit: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentEdit: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentEdit) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "edits", &x.Edits); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentEditEdits is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -14768,6 +24742,29 @@ func (x TextDocumentEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 //   - AnnotatedTextEdit
 type TextDocumentEditEdits interface {
 	isTextDocumentEditEdits()
+}
+
+func unmarshalTextDocumentEditEdits(data []byte, v *TextDocumentEditEdits) error {
+	var err error
+	{
+		var candidate TextEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate AnnotatedTextEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (AnnotatedTextEdit) isTextDocumentEditEdits() {}
@@ -14786,6 +24783,38 @@ type TextDocumentEditEditsArray []TextDocumentEditEdits
 type TextDocumentFilter interface {
 	isTextDocumentFilter()
 	isDocumentFilter()
+}
+
+func unmarshalTextDocumentFilter(data []byte, v *TextDocumentFilter) error {
+	var err error
+	{
+		var candidate TextDocumentFilterA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TextDocumentFilterB
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate TextDocumentFilterC
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TextDocumentFilterA) isTextDocumentFilter() {}
@@ -14815,7 +24844,7 @@ func (x TextDocumentFilterA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentFilterA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14830,6 +24859,33 @@ func (x TextDocumentFilterA) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TextDocumentFilterA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentFilterA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentFilterA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentFilterA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentFilterA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "language", &x.Language); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "pattern", &x.Pattern); err != nil {
 		return err
 	}
 	return nil
@@ -14853,7 +24909,7 @@ func (x TextDocumentFilterB) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentFilterB: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14868,6 +24924,33 @@ func (x TextDocumentFilterB) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "pattern", x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TextDocumentFilterB) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentFilterB: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentFilterB: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentFilterB: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentFilterB) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "language", &x.Language); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "pattern", &x.Pattern); err != nil {
 		return err
 	}
 	return nil
@@ -14891,7 +24974,7 @@ func (x TextDocumentFilterC) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentFilterC: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14911,12 +24994,53 @@ func (x TextDocumentFilterC) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *TextDocumentFilterC) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentFilterC: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentFilterC: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentFilterC: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentFilterC) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "language", &x.Language); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "scheme", &x.Scheme); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "pattern", &x.Pattern); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentFoldingRangeResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - FoldingRangeArray
 type TextDocumentFoldingRangeResult interface {
 	isTextDocumentFoldingRangeResult()
+}
+
+func unmarshalTextDocumentFoldingRangeResult(data []byte, v *TextDocumentFoldingRangeResult) error {
+	var err error
+	{
+		var candidate FoldingRangeArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (FoldingRangeArray) isTextDocumentFoldingRangeResult() {}
@@ -14929,6 +25053,20 @@ type TextDocumentFormattingResult interface {
 	isTextDocumentFormattingResult()
 }
 
+func unmarshalTextDocumentFormattingResult(data []byte, v *TextDocumentFormattingResult) error {
+	var err error
+	{
+		var candidate TextEditArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (TextEditArray) isTextDocumentFormattingResult() {}
 
 // TextDocumentHoverResult is a union (aka 'or') of several other types.
@@ -14937,6 +25075,20 @@ func (TextEditArray) isTextDocumentFormattingResult() {}
 //   - Hover
 type TextDocumentHoverResult interface {
 	isTextDocumentHoverResult()
+}
+
+func unmarshalTextDocumentHoverResult(data []byte, v *TextDocumentHoverResult) error {
+	var err error
+	{
+		var candidate Hover
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Hover) isTextDocumentHoverResult() {}
@@ -14957,7 +25109,7 @@ func (x TextDocumentIdentifier) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentIdentifier: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -14966,6 +25118,27 @@ func (x TextDocumentIdentifier) MarshalJSON() ([]byte, error) {
 
 func (x TextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentIdentifier: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentIdentifier: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentIdentifier: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentIdentifier) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
 		return err
 	}
 	return nil
@@ -14983,6 +25156,29 @@ type TextDocumentImplementationPartialResult interface {
 	isTextDocumentImplementationPartialResult()
 }
 
+func unmarshalTextDocumentImplementationPartialResult(data []byte, v *TextDocumentImplementationPartialResult) error {
+	var err error
+	{
+		var candidate LocationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DefinitionLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DefinitionLinkArray) isTextDocumentImplementationPartialResult() {}
 
 func (LocationArray) isTextDocumentImplementationPartialResult() {}
@@ -14996,6 +25192,29 @@ type TextDocumentImplementationResult interface {
 	isTextDocumentImplementationResult()
 }
 
+func unmarshalTextDocumentImplementationResult(data []byte, v *TextDocumentImplementationResult) error {
+	var err error
+	{
+		var candidate Definition
+		err := unmarshalDefinition(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DefinitionLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DefinitionLinkArray) isTextDocumentImplementationResult() {}
 
 // TextDocumentInlayHintResult is a union (aka 'or') of several other types.
@@ -15006,6 +25225,20 @@ type TextDocumentInlayHintResult interface {
 	isTextDocumentInlayHintResult()
 }
 
+func unmarshalTextDocumentInlayHintResult(data []byte, v *TextDocumentInlayHintResult) error {
+	var err error
+	{
+		var candidate InlayHintArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (InlayHintArray) isTextDocumentInlayHintResult() {}
 
 // TextDocumentInlineValueResult is a union (aka 'or') of several other types.
@@ -15014,6 +25247,20 @@ func (InlayHintArray) isTextDocumentInlayHintResult() {}
 //   - InlineValueArray
 type TextDocumentInlineValueResult interface {
 	isTextDocumentInlineValueResult()
+}
+
+func unmarshalTextDocumentInlineValueResult(data []byte, v *TextDocumentInlineValueResult) error {
+	var err error
+	{
+		var candidate InlineValueArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (InlineValueArray) isTextDocumentInlineValueResult() {}
@@ -15042,7 +25289,7 @@ func (x TextDocumentItem) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15065,6 +25312,36 @@ func (x TextDocumentItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *TextDocumentItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "languageId", &x.LanguageID); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "version", &x.Version); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "text", &x.Text); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentItemArray is an array of TextDocumentItem elements.
 type TextDocumentItemArray []TextDocumentItem
 
@@ -15074,6 +25351,20 @@ type TextDocumentItemArray []TextDocumentItem
 //   - LinkedEditingRanges
 type TextDocumentLinkedEditingRangeResult interface {
 	isTextDocumentLinkedEditingRangeResult()
+}
+
+func unmarshalTextDocumentLinkedEditingRangeResult(data []byte, v *TextDocumentLinkedEditingRangeResult) error {
+	var err error
+	{
+		var candidate LinkedEditingRanges
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (LinkedEditingRanges) isTextDocumentLinkedEditingRangeResult() {}
@@ -15086,6 +25377,20 @@ type TextDocumentMonikerResult interface {
 	isTextDocumentMonikerResult()
 }
 
+func unmarshalTextDocumentMonikerResult(data []byte, v *TextDocumentMonikerResult) error {
+	var err error
+	{
+		var candidate MonikerArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (MonikerArray) isTextDocumentMonikerResult() {}
 
 // TextDocumentOnTypeFormattingResult is a union (aka 'or') of several other types.
@@ -15094,6 +25399,20 @@ func (MonikerArray) isTextDocumentMonikerResult() {}
 //   - TextEditArray
 type TextDocumentOnTypeFormattingResult interface {
 	isTextDocumentOnTypeFormattingResult()
+}
+
+func unmarshalTextDocumentOnTypeFormattingResult(data []byte, v *TextDocumentOnTypeFormattingResult) error {
+	var err error
+	{
+		var candidate TextEditArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TextEditArray) isTextDocumentOnTypeFormattingResult() {}
@@ -15117,7 +25436,7 @@ func (x TextDocumentPositionParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentPositionParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15134,12 +25453,50 @@ func (x TextDocumentPositionParams) marshalProperties(w *bytes.Buffer, n *int) e
 	return nil
 }
 
+func (x *TextDocumentPositionParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentPositionParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentPositionParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentPositionParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentPositionParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "position", &x.Position); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentPrepareCallHierarchyResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - CallHierarchyItemArray
 type TextDocumentPrepareCallHierarchyResult interface {
 	isTextDocumentPrepareCallHierarchyResult()
+}
+
+func unmarshalTextDocumentPrepareCallHierarchyResult(data []byte, v *TextDocumentPrepareCallHierarchyResult) error {
+	var err error
+	{
+		var candidate CallHierarchyItemArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CallHierarchyItemArray) isTextDocumentPrepareCallHierarchyResult() {}
@@ -15152,12 +25509,40 @@ type TextDocumentPrepareRenameResult interface {
 	isTextDocumentPrepareRenameResult()
 }
 
+func unmarshalTextDocumentPrepareRenameResult(data []byte, v *TextDocumentPrepareRenameResult) error {
+	var err error
+	{
+		var candidate PrepareRenameResult
+		err := unmarshalPrepareRenameResult(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 // TextDocumentPrepareTypeHierarchyResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - TypeHierarchyItemArray
 type TextDocumentPrepareTypeHierarchyResult interface {
 	isTextDocumentPrepareTypeHierarchyResult()
+}
+
+func unmarshalTextDocumentPrepareTypeHierarchyResult(data []byte, v *TextDocumentPrepareTypeHierarchyResult) error {
+	var err error
+	{
+		var candidate TypeHierarchyItemArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TypeHierarchyItemArray) isTextDocumentPrepareTypeHierarchyResult() {}
@@ -15170,6 +25555,20 @@ type TextDocumentRangeFormattingResult interface {
 	isTextDocumentRangeFormattingResult()
 }
 
+func unmarshalTextDocumentRangeFormattingResult(data []byte, v *TextDocumentRangeFormattingResult) error {
+	var err error
+	{
+		var candidate TextEditArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (TextEditArray) isTextDocumentRangeFormattingResult() {}
 
 // TextDocumentReferencesResult is a union (aka 'or') of several other types.
@@ -15178,6 +25577,20 @@ func (TextEditArray) isTextDocumentRangeFormattingResult() {}
 //   - LocationArray
 type TextDocumentReferencesResult interface {
 	isTextDocumentReferencesResult()
+}
+
+func unmarshalTextDocumentReferencesResult(data []byte, v *TextDocumentReferencesResult) error {
+	var err error
+	{
+		var candidate LocationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (LocationArray) isTextDocumentReferencesResult() {}
@@ -15199,7 +25612,7 @@ func (x TextDocumentRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15213,12 +25626,47 @@ func (x TextDocumentRegistrationOptions) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
+func (x *TextDocumentRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "documentSelector", &x.DocumentSelector, unmarshalTextDocumentRegistrationOptionsDocumentSelector); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentRegistrationOptionsDocumentSelector is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - DocumentSelector
 type TextDocumentRegistrationOptionsDocumentSelector interface {
 	isTextDocumentRegistrationOptionsDocumentSelector()
+}
+
+func unmarshalTextDocumentRegistrationOptionsDocumentSelector(data []byte, v *TextDocumentRegistrationOptionsDocumentSelector) error {
+	var err error
+	{
+		var candidate DocumentSelector
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (DocumentSelector) isTextDocumentRegistrationOptionsDocumentSelector() {}
@@ -15229,6 +25677,20 @@ func (DocumentSelector) isTextDocumentRegistrationOptionsDocumentSelector() {}
 //   - WorkspaceEdit
 type TextDocumentRenameResult interface {
 	isTextDocumentRenameResult()
+}
+
+func unmarshalTextDocumentRenameResult(data []byte, v *TextDocumentRenameResult) error {
+	var err error
+	{
+		var candidate WorkspaceEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (WorkspaceEdit) isTextDocumentRenameResult() {}
@@ -15270,7 +25732,7 @@ func (x TextDocumentSaveRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentSaveRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15287,12 +25749,50 @@ func (x TextDocumentSaveRegistrationOptions) marshalProperties(w *bytes.Buffer, 
 	return nil
 }
 
+func (x *TextDocumentSaveRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentSaveRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentSaveRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentSaveRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentSaveRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.SaveOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentSelectionRangeResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - SelectionRangeArray
 type TextDocumentSelectionRangeResult interface {
 	isTextDocumentSelectionRangeResult()
+}
+
+func unmarshalTextDocumentSelectionRangeResult(data []byte, v *TextDocumentSelectionRangeResult) error {
+	var err error
+	{
+		var candidate SelectionRangeArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (SelectionRangeArray) isTextDocumentSelectionRangeResult() {}
@@ -15304,6 +25804,29 @@ func (SelectionRangeArray) isTextDocumentSelectionRangeResult() {}
 //   - SemanticTokensDeltaPartialResult
 type TextDocumentSemanticTokensFullDeltaPartialResult interface {
 	isTextDocumentSemanticTokensFullDeltaPartialResult()
+}
+
+func unmarshalTextDocumentSemanticTokensFullDeltaPartialResult(data []byte, v *TextDocumentSemanticTokensFullDeltaPartialResult) error {
+	var err error
+	{
+		var candidate SemanticTokensPartialResult
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SemanticTokensDeltaPartialResult
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (SemanticTokensDeltaPartialResult) isTextDocumentSemanticTokensFullDeltaPartialResult() {}
@@ -15319,6 +25842,29 @@ type TextDocumentSemanticTokensFullDeltaResult interface {
 	isTextDocumentSemanticTokensFullDeltaResult()
 }
 
+func unmarshalTextDocumentSemanticTokensFullDeltaResult(data []byte, v *TextDocumentSemanticTokensFullDeltaResult) error {
+	var err error
+	{
+		var candidate SemanticTokens
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SemanticTokensDelta
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (SemanticTokens) isTextDocumentSemanticTokensFullDeltaResult() {}
 
 func (SemanticTokensDelta) isTextDocumentSemanticTokensFullDeltaResult() {}
@@ -15331,6 +25877,20 @@ type TextDocumentSemanticTokensFullResult interface {
 	isTextDocumentSemanticTokensFullResult()
 }
 
+func unmarshalTextDocumentSemanticTokensFullResult(data []byte, v *TextDocumentSemanticTokensFullResult) error {
+	var err error
+	{
+		var candidate SemanticTokens
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (SemanticTokens) isTextDocumentSemanticTokensFullResult() {}
 
 // TextDocumentSemanticTokensRangeResult is a union (aka 'or') of several other types.
@@ -15341,6 +25901,20 @@ type TextDocumentSemanticTokensRangeResult interface {
 	isTextDocumentSemanticTokensRangeResult()
 }
 
+func unmarshalTextDocumentSemanticTokensRangeResult(data []byte, v *TextDocumentSemanticTokensRangeResult) error {
+	var err error
+	{
+		var candidate SemanticTokens
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (SemanticTokens) isTextDocumentSemanticTokensRangeResult() {}
 
 // TextDocumentSignatureHelpResult is a union (aka 'or') of several other types.
@@ -15349,6 +25923,20 @@ func (SemanticTokens) isTextDocumentSemanticTokensRangeResult() {}
 //   - SignatureHelp
 type TextDocumentSignatureHelpResult interface {
 	isTextDocumentSignatureHelpResult()
+}
+
+func unmarshalTextDocumentSignatureHelpResult(data []byte, v *TextDocumentSignatureHelpResult) error {
+	var err error
+	{
+		var candidate SignatureHelp
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (SignatureHelp) isTextDocumentSignatureHelpResult() {}
@@ -15375,7 +25963,7 @@ func (x TextDocumentSyncClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentSyncClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15393,6 +25981,36 @@ func (x TextDocumentSyncClientCapabilities) marshalProperties(w *bytes.Buffer, n
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "didSave", x.DidSave); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TextDocumentSyncClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentSyncClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentSyncClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentSyncClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentSyncClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willSave", &x.WillSave); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willSaveWaitUntil", &x.WillSaveWaitUntil); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didSave", &x.DidSave); err != nil {
 		return err
 	}
 	return nil
@@ -15449,7 +26067,7 @@ func (x TextDocumentSyncOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextDocumentSyncOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15475,6 +26093,39 @@ func (x TextDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) erro
 	return nil
 }
 
+func (x *TextDocumentSyncOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextDocumentSyncOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextDocumentSyncOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextDocumentSyncOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextDocumentSyncOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "openClose", &x.OpenClose); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "change", &x.Change); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willSave", &x.WillSave); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "willSaveWaitUntil", &x.WillSaveWaitUntil); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "save", &x.Save, unmarshalTextDocumentSyncOptionsSave); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TextDocumentSyncOptionsSave is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -15482,6 +26133,29 @@ func (x TextDocumentSyncOptions) marshalProperties(w *bytes.Buffer, n *int) erro
 //   - SaveOptions
 type TextDocumentSyncOptionsSave interface {
 	isTextDocumentSyncOptionsSave()
+}
+
+func unmarshalTextDocumentSyncOptionsSave(data []byte, v *TextDocumentSyncOptionsSave) error {
+	var err error
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate SaveOptions
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isTextDocumentSyncOptionsSave() {}
@@ -15497,6 +26171,29 @@ type TextDocumentTypeDefinitionPartialResult interface {
 	isTextDocumentTypeDefinitionPartialResult()
 }
 
+func unmarshalTextDocumentTypeDefinitionPartialResult(data []byte, v *TextDocumentTypeDefinitionPartialResult) error {
+	var err error
+	{
+		var candidate LocationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DefinitionLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DefinitionLinkArray) isTextDocumentTypeDefinitionPartialResult() {}
 
 func (LocationArray) isTextDocumentTypeDefinitionPartialResult() {}
@@ -15510,6 +26207,29 @@ type TextDocumentTypeDefinitionResult interface {
 	isTextDocumentTypeDefinitionResult()
 }
 
+func unmarshalTextDocumentTypeDefinitionResult(data []byte, v *TextDocumentTypeDefinitionResult) error {
+	var err error
+	{
+		var candidate Definition
+		err := unmarshalDefinition(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DefinitionLinkArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (DefinitionLinkArray) isTextDocumentTypeDefinitionResult() {}
 
 // TextDocumentWillSaveWaitUntilResult is a union (aka 'or') of several other types.
@@ -15518,6 +26238,20 @@ func (DefinitionLinkArray) isTextDocumentTypeDefinitionResult() {}
 //   - TextEditArray
 type TextDocumentWillSaveWaitUntilResult interface {
 	isTextDocumentWillSaveWaitUntilResult()
+}
+
+func unmarshalTextDocumentWillSaveWaitUntilResult(data []byte, v *TextDocumentWillSaveWaitUntilResult) error {
+	var err error
+	{
+		var candidate TextEditArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TextEditArray) isTextDocumentWillSaveWaitUntilResult() {}
@@ -15542,7 +26276,7 @@ func (x TextEdit) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TextEdit: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15554,6 +26288,30 @@ func (x TextEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "newText", x.NewText); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TextEdit) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TextEdit: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TextEdit: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TextEdit: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TextEdit) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "newText", &x.NewText); err != nil {
 		return err
 	}
 	return nil
@@ -15616,7 +26374,7 @@ func (x TypeDefinitionClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeDefinitionClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15628,6 +26386,30 @@ func (x TypeDefinitionClientCapabilities) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "linkSupport", x.LinkSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeDefinitionClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeDefinitionClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeDefinitionClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeDefinitionClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeDefinitionClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "linkSupport", &x.LinkSupport); err != nil {
 		return err
 	}
 	return nil
@@ -15646,7 +26428,7 @@ func (x TypeDefinitionOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeDefinitionOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15655,6 +26437,27 @@ func (x TypeDefinitionOptions) MarshalJSON() ([]byte, error) {
 
 func (x TypeDefinitionOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeDefinitionOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeDefinitionOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeDefinitionOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeDefinitionOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeDefinitionOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -15675,7 +26478,7 @@ func (x TypeDefinitionParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeDefinitionParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15690,6 +26493,33 @@ func (x TypeDefinitionParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := x.PartialResultParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeDefinitionParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeDefinitionParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeDefinitionParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeDefinitionParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeDefinitionParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -15710,7 +26540,7 @@ func (x TypeDefinitionRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeDefinitionRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15725,6 +26555,33 @@ func (x TypeDefinitionRegistrationOptions) marshalProperties(w *bytes.Buffer, n 
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeDefinitionRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeDefinitionRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeDefinitionRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeDefinitionRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeDefinitionRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.TypeDefinitionOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -15748,7 +26605,7 @@ func (x TypeHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeHierarchyClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15757,6 +26614,27 @@ func (x TypeHierarchyClientCapabilities) MarshalJSON() ([]byte, error) {
 
 func (x TypeHierarchyClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "dynamicRegistration", x.DynamicRegistration); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeHierarchyClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeHierarchyClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeHierarchyClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeHierarchyClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeHierarchyClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
 		return err
 	}
 	return nil
@@ -15798,7 +26676,7 @@ func (x TypeHierarchyItem) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeHierarchyItem: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15833,6 +26711,48 @@ func (x TypeHierarchyItem) marshalProperties(w *bytes.Buffer, n *int) error {
 	return nil
 }
 
+func (x *TypeHierarchyItem) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeHierarchyItem: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeHierarchyItem: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeHierarchyItem: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeHierarchyItem) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "name", &x.Name); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "kind", &x.Kind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tags", &x.Tags); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "detail", &x.Detail); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "range", &x.Range); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "selectionRange", &x.SelectionRange); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TypeHierarchyItemArray is an array of TypeHierarchyItem elements.
 type TypeHierarchyItemArray []TypeHierarchyItem
 
@@ -15853,7 +26773,7 @@ func (x TypeHierarchyOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeHierarchyOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15862,6 +26782,27 @@ func (x TypeHierarchyOptions) MarshalJSON() ([]byte, error) {
 
 func (x TypeHierarchyOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := x.WorkDoneProgressOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeHierarchyOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeHierarchyOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeHierarchyOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeHierarchyOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeHierarchyOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -15885,7 +26826,7 @@ func (x TypeHierarchyPrepareParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeHierarchyPrepareParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15897,6 +26838,30 @@ func (x TypeHierarchyPrepareParams) marshalProperties(w *bytes.Buffer, n *int) e
 		return err
 	}
 	if err := x.WorkDoneProgressParams.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeHierarchyPrepareParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeHierarchyPrepareParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeHierarchyPrepareParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeHierarchyPrepareParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeHierarchyPrepareParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentPositionParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -15921,7 +26886,7 @@ func (x TypeHierarchyRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeHierarchyRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15936,6 +26901,33 @@ func (x TypeHierarchyRegistrationOptions) marshalProperties(w *bytes.Buffer, n *
 		return err
 	}
 	if err := x.StaticRegistrationOptions.marshalProperties(w, n); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *TypeHierarchyRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeHierarchyRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeHierarchyRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeHierarchyRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeHierarchyRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentRegistrationOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.TypeHierarchyOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.StaticRegistrationOptions.unmarshalProperties(properties); err != nil {
 		return err
 	}
 	return nil
@@ -15961,7 +26953,7 @@ func (x TypeHierarchySubtypesParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeHierarchySubtypesParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -15981,12 +26973,53 @@ func (x TypeHierarchySubtypesParams) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+func (x *TypeHierarchySubtypesParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeHierarchySubtypesParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeHierarchySubtypesParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeHierarchySubtypesParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeHierarchySubtypesParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "item", &x.Item); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TypeHierarchySubtypesResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - TypeHierarchyItemArray
 type TypeHierarchySubtypesResult interface {
 	isTypeHierarchySubtypesResult()
+}
+
+func unmarshalTypeHierarchySubtypesResult(data []byte, v *TypeHierarchySubtypesResult) error {
+	var err error
+	{
+		var candidate TypeHierarchyItemArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TypeHierarchyItemArray) isTypeHierarchySubtypesResult() {}
@@ -16011,7 +27044,7 @@ func (x TypeHierarchySupertypesParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("TypeHierarchySupertypesParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16031,12 +27064,53 @@ func (x TypeHierarchySupertypesParams) marshalProperties(w *bytes.Buffer, n *int
 	return nil
 }
 
+func (x *TypeHierarchySupertypesParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("TypeHierarchySupertypesParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("TypeHierarchySupertypesParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("TypeHierarchySupertypesParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *TypeHierarchySupertypesParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "item", &x.Item); err != nil {
+		return err
+	}
+	return nil
+}
+
 // TypeHierarchySupertypesResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - TypeHierarchyItemArray
 type TypeHierarchySupertypesResult interface {
 	isTypeHierarchySupertypesResult()
+}
+
+func unmarshalTypeHierarchySupertypesResult(data []byte, v *TypeHierarchySupertypesResult) error {
+	var err error
+	{
+		var candidate TypeHierarchyItemArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (TypeHierarchyItemArray) isTypeHierarchySupertypesResult() {}
@@ -16070,7 +27144,7 @@ func (x UnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("UnchangedDocumentDiagnosticReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16082,6 +27156,30 @@ func (x UnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer, n 
 		return err
 	}
 	if err := marshalProperty(w, n, "resultId", x.ResultID); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *UnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("UnchangedDocumentDiagnosticReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("UnchangedDocumentDiagnosticReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("UnchangedDocumentDiagnosticReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *UnchangedDocumentDiagnosticReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalLiteralProperty(properties, "kind", "unchanged"); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "resultId", &x.ResultID); err != nil {
 		return err
 	}
 	return nil
@@ -16136,7 +27234,7 @@ func (x Unregistration) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("Unregistration: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16148,6 +27246,30 @@ func (x Unregistration) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "method", x.Method); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *Unregistration) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("Unregistration: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("Unregistration: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("Unregistration: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *Unregistration) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "id", &x.ID); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "method", &x.Method); err != nil {
 		return err
 	}
 	return nil
@@ -16169,7 +27291,7 @@ func (x UnregistrationParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("UnregistrationParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16178,6 +27300,27 @@ func (x UnregistrationParams) MarshalJSON() ([]byte, error) {
 
 func (x UnregistrationParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "unregisterations", x.Unregisterations); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *UnregistrationParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("UnregistrationParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("UnregistrationParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("UnregistrationParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *UnregistrationParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "unregisterations", &x.Unregisterations); err != nil {
 		return err
 	}
 	return nil
@@ -16203,7 +27346,7 @@ func (x VersionedNotebookDocumentIdentifier) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("VersionedNotebookDocumentIdentifier: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16215,6 +27358,30 @@ func (x VersionedNotebookDocumentIdentifier) marshalProperties(w *bytes.Buffer, 
 		return err
 	}
 	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *VersionedNotebookDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("VersionedNotebookDocumentIdentifier: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("VersionedNotebookDocumentIdentifier: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("VersionedNotebookDocumentIdentifier: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *VersionedNotebookDocumentIdentifier) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "version", &x.Version); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
 		return err
 	}
 	return nil
@@ -16238,7 +27405,7 @@ func (x VersionedTextDocumentIdentifier) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("VersionedTextDocumentIdentifier: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16250,6 +27417,30 @@ func (x VersionedTextDocumentIdentifier) marshalProperties(w *bytes.Buffer, n *i
 		return err
 	}
 	if err := marshalProperty(w, n, "version", x.Version); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *VersionedTextDocumentIdentifier) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("VersionedTextDocumentIdentifier: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("VersionedTextDocumentIdentifier: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("VersionedTextDocumentIdentifier: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *VersionedTextDocumentIdentifier) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.TextDocumentIdentifier.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "version", &x.Version); err != nil {
 		return err
 	}
 	return nil
@@ -16291,7 +27482,7 @@ func (x WillSaveTextDocumentParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WillSaveTextDocumentParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16303,6 +27494,30 @@ func (x WillSaveTextDocumentParams) marshalProperties(w *bytes.Buffer, n *int) e
 		return err
 	}
 	if err := marshalProperty(w, n, "reason", x.Reason); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WillSaveTextDocumentParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WillSaveTextDocumentParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WillSaveTextDocumentParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WillSaveTextDocumentParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WillSaveTextDocumentParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "textDocument", &x.TextDocument); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "reason", &x.Reason); err != nil {
 		return err
 	}
 	return nil
@@ -16338,7 +27553,7 @@ func (x WindowClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WindowClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16358,12 +27573,53 @@ func (x WindowClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) err
 	return nil
 }
 
+func (x *WindowClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WindowClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WindowClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WindowClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WindowClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "workDoneProgress", &x.WorkDoneProgress); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "showMessage", &x.ShowMessage); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "showDocument", &x.ShowDocument); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WindowShowMessageRequestResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - MessageActionItem
 type WindowShowMessageRequestResult interface {
 	isWindowShowMessageRequestResult()
+}
+
+func unmarshalWindowShowMessageRequestResult(data []byte, v *WindowShowMessageRequestResult) error {
+	var err error
+	{
+		var candidate MessageActionItem
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (MessageActionItem) isWindowShowMessageRequestResult() {}
@@ -16402,7 +27658,7 @@ func (x WorkDoneProgressBegin) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkDoneProgressBegin: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16428,6 +27684,39 @@ func (x WorkDoneProgressBegin) marshalProperties(w *bytes.Buffer, n *int) error 
 	return nil
 }
 
+func (x *WorkDoneProgressBegin) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressBegin: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressBegin: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkDoneProgressBegin: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressBegin) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalLiteralProperty(properties, "kind", "begin"); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "title", &x.Title); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "cancellable", &x.Cancellable); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "message", &x.Message); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "percentage", &x.Percentage); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkDoneProgressCancelParams is a named structure definition.
 type WorkDoneProgressCancelParams struct {
 	// The token to be used to report progress.
@@ -16442,7 +27731,7 @@ func (x WorkDoneProgressCancelParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkDoneProgressCancelParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16451,6 +27740,27 @@ func (x WorkDoneProgressCancelParams) MarshalJSON() ([]byte, error) {
 
 func (x WorkDoneProgressCancelParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "token", x.Token); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressCancelParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressCancelParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressCancelParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkDoneProgressCancelParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressCancelParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "token", &x.Token, unmarshalProgressToken); err != nil {
 		return err
 	}
 	return nil
@@ -16470,7 +27780,7 @@ func (x WorkDoneProgressCreateParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkDoneProgressCreateParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16479,6 +27789,27 @@ func (x WorkDoneProgressCreateParams) MarshalJSON() ([]byte, error) {
 
 func (x WorkDoneProgressCreateParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "token", x.Token); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressCreateParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressCreateParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressCreateParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkDoneProgressCreateParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressCreateParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalPropertyUsing(properties, "token", &x.Token, unmarshalProgressToken); err != nil {
 		return err
 	}
 	return nil
@@ -16499,7 +27830,7 @@ func (x WorkDoneProgressEnd) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkDoneProgressEnd: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16511,6 +27842,30 @@ func (x WorkDoneProgressEnd) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "message", x.Message); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressEnd) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressEnd: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressEnd: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkDoneProgressEnd: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressEnd) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalLiteralProperty(properties, "kind", "end"); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "message", &x.Message); err != nil {
 		return err
 	}
 	return nil
@@ -16529,7 +27884,7 @@ func (x WorkDoneProgressOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkDoneProgressOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16538,6 +27893,27 @@ func (x WorkDoneProgressOptions) MarshalJSON() ([]byte, error) {
 
 func (x WorkDoneProgressOptions) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "workDoneProgress", x.WorkDoneProgress); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkDoneProgressOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "workDoneProgress", &x.WorkDoneProgress); err != nil {
 		return err
 	}
 	return nil
@@ -16557,7 +27933,7 @@ func (x WorkDoneProgressParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkDoneProgressParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16566,6 +27942,27 @@ func (x WorkDoneProgressParams) MarshalJSON() ([]byte, error) {
 
 func (x WorkDoneProgressParams) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "workDoneToken", x.WorkDoneToken); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkDoneProgressParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalPropertyUsing(properties, "workDoneToken", &x.WorkDoneToken, unmarshalProgressToken); err != nil {
 		return err
 	}
 	return nil
@@ -16601,7 +27998,7 @@ func (x WorkDoneProgressReport) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkDoneProgressReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16619,6 +28016,36 @@ func (x WorkDoneProgressReport) marshalProperties(w *bytes.Buffer, n *int) error
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "percentage", x.Percentage); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkDoneProgressReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkDoneProgressReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkDoneProgressReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalLiteralProperty(properties, "kind", "report"); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "cancellable", &x.Cancellable); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "message", &x.Message); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "percentage", &x.Percentage); err != nil {
 		return err
 	}
 	return nil
@@ -16689,7 +28116,7 @@ func (x WorkspaceClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16742,6 +28169,66 @@ func (x WorkspaceClientCapabilities) marshalProperties(w *bytes.Buffer, n *int) 
 	return nil
 }
 
+func (x *WorkspaceClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "applyEdit", &x.ApplyEdit); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "workspaceEdit", &x.WorkspaceEdit); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didChangeConfiguration", &x.DidChangeConfiguration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "didChangeWatchedFiles", &x.DidChangeWatchedFiles); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "symbol", &x.Symbol); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "executeCommand", &x.ExecuteCommand); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "workspaceFolders", &x.WorkspaceFolders); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "configuration", &x.Configuration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "semanticTokens", &x.SemanticTokens); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "codeLens", &x.CodeLens); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "fileOperations", &x.FileOperations); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "inlineValue", &x.InlineValue); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "inlayHint", &x.InlayHint); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "diagnostics", &x.Diagnostics); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceDiagnosticParams is a named structure definition.
 //
 // Parameters of the workspace diagnostic request.
@@ -16766,7 +28253,7 @@ func (x WorkspaceDiagnosticParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceDiagnosticParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16789,6 +28276,36 @@ func (x WorkspaceDiagnosticParams) marshalProperties(w *bytes.Buffer, n *int) er
 	return nil
 }
 
+func (x *WorkspaceDiagnosticParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceDiagnosticParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceDiagnosticParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceDiagnosticParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceDiagnosticParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "identifier", &x.Identifier); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "previousResultIds", &x.PreviousResultIDs); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceDiagnosticReport is a named structure definition.
 //
 // A workspace diagnostic report.
@@ -16806,7 +28323,7 @@ func (x WorkspaceDiagnosticReport) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceDiagnosticReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16815,6 +28332,27 @@ func (x WorkspaceDiagnosticReport) MarshalJSON() ([]byte, error) {
 
 func (x WorkspaceDiagnosticReport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "items", x.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceDiagnosticReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceDiagnosticReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceDiagnosticReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceDiagnosticReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceDiagnosticReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "items", &x.Items); err != nil {
 		return err
 	}
 	return nil
@@ -16837,7 +28375,7 @@ func (x WorkspaceDiagnosticReportPartialResult) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceDiagnosticReportPartialResult: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16851,6 +28389,27 @@ func (x WorkspaceDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffe
 	return nil
 }
 
+func (x *WorkspaceDiagnosticReportPartialResult) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceDiagnosticReportPartialResult: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceDiagnosticReportPartialResult: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceDiagnosticReportPartialResult: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceDiagnosticReportPartialResult) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "items", &x.Items); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceDocumentDiagnosticReport is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -16858,6 +28417,29 @@ func (x WorkspaceDiagnosticReportPartialResult) marshalProperties(w *bytes.Buffe
 //   - WorkspaceUnchangedDocumentDiagnosticReport
 type WorkspaceDocumentDiagnosticReport interface {
 	isWorkspaceDocumentDiagnosticReport()
+}
+
+func unmarshalWorkspaceDocumentDiagnosticReport(data []byte, v *WorkspaceDocumentDiagnosticReport) error {
+	var err error
+	{
+		var candidate WorkspaceFullDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate WorkspaceUnchangedDocumentDiagnosticReport
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (WorkspaceFullDocumentDiagnosticReport) isWorkspaceDocumentDiagnosticReport() {}
@@ -16912,7 +28494,7 @@ func (x WorkspaceEdit) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceEdit: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16927,6 +28509,33 @@ func (x WorkspaceEdit) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "changeAnnotations", x.ChangeAnnotations); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceEdit) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceEdit: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceEdit: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceEdit: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceEdit) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "changes", &x.Changes); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "documentChanges", &x.DocumentChanges); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "changeAnnotations", &x.ChangeAnnotations); err != nil {
 		return err
 	}
 	return nil
@@ -16969,7 +28578,7 @@ func (x WorkspaceEditClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceEditClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -16995,6 +28604,39 @@ func (x WorkspaceEditClientCapabilities) marshalProperties(w *bytes.Buffer, n *i
 	return nil
 }
 
+func (x *WorkspaceEditClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceEditClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceEditClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceEditClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceEditClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "documentChanges", &x.DocumentChanges); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resourceOperations", &x.ResourceOperations); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "failureHandling", &x.FailureHandling); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "normalizesLineEndings", &x.NormalizesLineEndings); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "changeAnnotationSupport", &x.ChangeAnnotationSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceEditClientCapabilitiesChangeAnnotationSupport is a literal structure.
 type WorkspaceEditClientCapabilitiesChangeAnnotationSupport struct {
 	// Whether the client groups edits with equal labels into tree nodes,
@@ -17011,7 +28653,7 @@ func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) MarshalJSON() ([
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceEditClientCapabilitiesChangeAnnotationSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17020,6 +28662,27 @@ func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) MarshalJSON() ([
 
 func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "groupsOnLabel", x.GroupsOnLabel); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceEditClientCapabilitiesChangeAnnotationSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceEditClientCapabilitiesChangeAnnotationSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceEditClientCapabilitiesChangeAnnotationSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceEditClientCapabilitiesChangeAnnotationSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceEditClientCapabilitiesChangeAnnotationSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "groupsOnLabel", &x.GroupsOnLabel); err != nil {
 		return err
 	}
 	return nil
@@ -17034,6 +28697,47 @@ func (x WorkspaceEditClientCapabilitiesChangeAnnotationSupport) marshalPropertie
 //   - DeleteFile
 type WorkspaceEditDocumentChanges interface {
 	isWorkspaceEditDocumentChanges()
+}
+
+func unmarshalWorkspaceEditDocumentChanges(data []byte, v *WorkspaceEditDocumentChanges) error {
+	var err error
+	{
+		var candidate TextDocumentEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate CreateFile
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate RenameFile
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate DeleteFile
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (CreateFile) isWorkspaceEditDocumentChanges() {}
@@ -17055,6 +28759,20 @@ type WorkspaceExecuteCommandResult interface {
 	isWorkspaceExecuteCommandResult()
 }
 
+func unmarshalWorkspaceExecuteCommandResult(data []byte, v *WorkspaceExecuteCommandResult) error {
+	var err error
+	{
+		var candidate LSPAny
+		err := unmarshalLSPAny(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 // WorkspaceFolder is a named structure definition.
 //
 // A workspace folder inside a client.
@@ -17074,7 +28792,7 @@ func (x WorkspaceFolder) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceFolder: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17086,6 +28804,30 @@ func (x WorkspaceFolder) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalProperty(w, n, "name", x.Name); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceFolder) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceFolder: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceFolder: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceFolder: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceFolder) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "name", &x.Name); err != nil {
 		return err
 	}
 	return nil
@@ -17112,7 +28854,7 @@ func (x WorkspaceFoldersChangeEvent) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceFoldersChangeEvent: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17124,6 +28866,30 @@ func (x WorkspaceFoldersChangeEvent) marshalProperties(w *bytes.Buffer, n *int) 
 		return err
 	}
 	if err := marshalProperty(w, n, "removed", x.Removed); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceFoldersChangeEvent) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceFoldersChangeEvent: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceFoldersChangeEvent: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceFoldersChangeEvent: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceFoldersChangeEvent) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "added", &x.Added); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "removed", &x.Removed); err != nil {
 		return err
 	}
 	return nil
@@ -17149,7 +28915,7 @@ func (x WorkspaceFoldersInitializeParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceFoldersInitializeParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17163,12 +28929,47 @@ func (x WorkspaceFoldersInitializeParams) marshalProperties(w *bytes.Buffer, n *
 	return nil
 }
 
+func (x *WorkspaceFoldersInitializeParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceFoldersInitializeParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceFoldersInitializeParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceFoldersInitializeParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceFoldersInitializeParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalPropertyUsing(properties, "workspaceFolders", &x.WorkspaceFolders, unmarshalWorkspaceFoldersInitializeParamsWorkspaceFolders); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceFoldersInitializeParamsWorkspaceFolders is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - WorkspaceFolderArray
 type WorkspaceFoldersInitializeParamsWorkspaceFolders interface {
 	isWorkspaceFoldersInitializeParamsWorkspaceFolders()
+}
+
+func unmarshalWorkspaceFoldersInitializeParamsWorkspaceFolders(data []byte, v *WorkspaceFoldersInitializeParamsWorkspaceFolders) error {
+	var err error
+	{
+		var candidate WorkspaceFolderArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (WorkspaceFolderArray) isWorkspaceFoldersInitializeParamsWorkspaceFolders() {}
@@ -17195,7 +28996,7 @@ func (x WorkspaceFoldersServerCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceFoldersServerCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17212,6 +29013,30 @@ func (x WorkspaceFoldersServerCapabilities) marshalProperties(w *bytes.Buffer, n
 	return nil
 }
 
+func (x *WorkspaceFoldersServerCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceFoldersServerCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceFoldersServerCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceFoldersServerCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceFoldersServerCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "supported", &x.Supported); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "changeNotifications", &x.ChangeNotifications, unmarshalWorkspaceFoldersServerCapabilitiesChangeNotifications); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceFoldersServerCapabilitiesChangeNotifications is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -17219,6 +29044,29 @@ func (x WorkspaceFoldersServerCapabilities) marshalProperties(w *bytes.Buffer, n
 //   - Bool
 type WorkspaceFoldersServerCapabilitiesChangeNotifications interface {
 	isWorkspaceFoldersServerCapabilitiesChangeNotifications()
+}
+
+func unmarshalWorkspaceFoldersServerCapabilitiesChangeNotifications(data []byte, v *WorkspaceFoldersServerCapabilitiesChangeNotifications) error {
+	var err error
+	{
+		var candidate String
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate Bool
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Bool) isWorkspaceFoldersServerCapabilitiesChangeNotifications() {}
@@ -17248,7 +29096,7 @@ func (x WorkspaceFullDocumentDiagnosticReport) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceFullDocumentDiagnosticReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17268,12 +29116,53 @@ func (x WorkspaceFullDocumentDiagnosticReport) marshalProperties(w *bytes.Buffer
 	return nil
 }
 
+func (x *WorkspaceFullDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceFullDocumentDiagnosticReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceFullDocumentDiagnosticReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceFullDocumentDiagnosticReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceFullDocumentDiagnosticReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.FullDocumentDiagnosticReport.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "version", &x.Version, unmarshalWorkspaceFullDocumentDiagnosticReportVersion); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceFullDocumentDiagnosticReportVersion is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - Int
 type WorkspaceFullDocumentDiagnosticReportVersion interface {
 	isWorkspaceFullDocumentDiagnosticReportVersion()
+}
+
+func unmarshalWorkspaceFullDocumentDiagnosticReportVersion(data []byte, v *WorkspaceFullDocumentDiagnosticReportVersion) error {
+	var err error
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Int) isWorkspaceFullDocumentDiagnosticReportVersion() {}
@@ -17307,7 +29196,7 @@ func (x WorkspaceSymbol) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbol: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17322,6 +29211,33 @@ func (x WorkspaceSymbol) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "data", x.Data); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbol) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbol: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbol: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbol: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbol) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.BaseSymbolInformation.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "location", &x.Location, unmarshalWorkspaceSymbolLocation); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "data", &x.Data, unmarshalLSPAny); err != nil {
 		return err
 	}
 	return nil
@@ -17359,7 +29275,7 @@ func (x WorkspaceSymbolClientCapabilities) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolClientCapabilities: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17382,6 +29298,36 @@ func (x WorkspaceSymbolClientCapabilities) marshalProperties(w *bytes.Buffer, n 
 	return nil
 }
 
+func (x *WorkspaceSymbolClientCapabilities) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilities: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilities: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilities: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolClientCapabilities) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "dynamicRegistration", &x.DynamicRegistration); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "symbolKind", &x.SymbolKind); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "tagSupport", &x.TagSupport); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveSupport", &x.ResolveSupport); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceSymbolClientCapabilitiesResolveSupport is a literal structure.
 type WorkspaceSymbolClientCapabilitiesResolveSupport struct {
 	// The properties that a client can resolve lazily. Usually
@@ -17397,7 +29343,7 @@ func (x WorkspaceSymbolClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, 
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolClientCapabilitiesResolveSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17406,6 +29352,27 @@ func (x WorkspaceSymbolClientCapabilitiesResolveSupport) MarshalJSON() ([]byte, 
 
 func (x WorkspaceSymbolClientCapabilitiesResolveSupport) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "properties", x.Properties); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolClientCapabilitiesResolveSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesResolveSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesResolveSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesResolveSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolClientCapabilitiesResolveSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "properties", &x.Properties); err != nil {
 		return err
 	}
 	return nil
@@ -17432,7 +29399,7 @@ func (x WorkspaceSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, erro
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolClientCapabilitiesSymbolKind: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17441,6 +29408,27 @@ func (x WorkspaceSymbolClientCapabilitiesSymbolKind) MarshalJSON() ([]byte, erro
 
 func (x WorkspaceSymbolClientCapabilitiesSymbolKind) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalOptionalProperty(w, n, "valueSet", x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolClientCapabilitiesSymbolKind) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesSymbolKind: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesSymbolKind: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesSymbolKind: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolClientCapabilitiesSymbolKind) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalOptionalProperty(properties, "valueSet", &x.ValueSet); err != nil {
 		return err
 	}
 	return nil
@@ -17460,7 +29448,7 @@ func (x WorkspaceSymbolClientCapabilitiesTagSupport) MarshalJSON() ([]byte, erro
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolClientCapabilitiesTagSupport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17474,6 +29462,27 @@ func (x WorkspaceSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.
 	return nil
 }
 
+func (x *WorkspaceSymbolClientCapabilitiesTagSupport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesTagSupport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesTagSupport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolClientCapabilitiesTagSupport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolClientCapabilitiesTagSupport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "valueSet", &x.ValueSet); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceSymbolLocation is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -17481,6 +29490,29 @@ func (x WorkspaceSymbolClientCapabilitiesTagSupport) marshalProperties(w *bytes.
 //   - WorkspaceSymbolLocationA
 type WorkspaceSymbolLocation interface {
 	isWorkspaceSymbolLocation()
+}
+
+func unmarshalWorkspaceSymbolLocation(data []byte, v *WorkspaceSymbolLocation) error {
+	var err error
+	{
+		var candidate Location
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate WorkspaceSymbolLocationA
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Location) isWorkspaceSymbolLocation() {}
@@ -17500,7 +29532,7 @@ func (x WorkspaceSymbolLocationA) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolLocationA: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17509,6 +29541,27 @@ func (x WorkspaceSymbolLocationA) MarshalJSON() ([]byte, error) {
 
 func (x WorkspaceSymbolLocationA) marshalProperties(w *bytes.Buffer, n *int) error {
 	if err := marshalProperty(w, n, "uri", x.URI); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolLocationA) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolLocationA: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolLocationA: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolLocationA: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolLocationA) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
 		return err
 	}
 	return nil
@@ -17535,7 +29588,7 @@ func (x WorkspaceSymbolOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17547,6 +29600,30 @@ func (x WorkspaceSymbolOptions) marshalProperties(w *bytes.Buffer, n *int) error
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "resolveProvider", x.ResolveProvider); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "resolveProvider", &x.ResolveProvider); err != nil {
 		return err
 	}
 	return nil
@@ -17572,7 +29649,7 @@ func (x WorkspaceSymbolParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17592,6 +29669,33 @@ func (x WorkspaceSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error 
 	return nil
 }
 
+func (x *WorkspaceSymbolParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := x.PartialResultParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "query", &x.Query); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceSymbolPartialResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -17599,6 +29703,29 @@ func (x WorkspaceSymbolParams) marshalProperties(w *bytes.Buffer, n *int) error 
 //   - WorkspaceSymbolArray
 type WorkspaceSymbolPartialResult interface {
 	isWorkspaceSymbolPartialResult()
+}
+
+func unmarshalWorkspaceSymbolPartialResult(data []byte, v *WorkspaceSymbolPartialResult) error {
+	var err error
+	{
+		var candidate SymbolInformationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate WorkspaceSymbolArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (SymbolInformationArray) isWorkspaceSymbolPartialResult() {}
@@ -17620,7 +29747,7 @@ func (x WorkspaceSymbolRegistrationOptions) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceSymbolRegistrationOptions: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17634,6 +29761,27 @@ func (x WorkspaceSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n
 	return nil
 }
 
+func (x *WorkspaceSymbolRegistrationOptions) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolRegistrationOptions: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceSymbolRegistrationOptions: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceSymbolRegistrationOptions: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceSymbolRegistrationOptions) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkspaceSymbolOptions.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceSymbolResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -17641,6 +29789,29 @@ func (x WorkspaceSymbolRegistrationOptions) marshalProperties(w *bytes.Buffer, n
 //   - WorkspaceSymbolArray
 type WorkspaceSymbolResult interface {
 	isWorkspaceSymbolResult()
+}
+
+func unmarshalWorkspaceSymbolResult(data []byte, v *WorkspaceSymbolResult) error {
+	var err error
+	{
+		var candidate SymbolInformationArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	{
+		var candidate WorkspaceSymbolArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (SymbolInformationArray) isWorkspaceSymbolResult() {}
@@ -17670,7 +29841,7 @@ func (x WorkspaceUnchangedDocumentDiagnosticReport) MarshalJSON() ([]byte, error
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("WorkspaceUnchangedDocumentDiagnosticReport: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17690,12 +29861,53 @@ func (x WorkspaceUnchangedDocumentDiagnosticReport) marshalProperties(w *bytes.B
 	return nil
 }
 
+func (x *WorkspaceUnchangedDocumentDiagnosticReport) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("WorkspaceUnchangedDocumentDiagnosticReport: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("WorkspaceUnchangedDocumentDiagnosticReport: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("WorkspaceUnchangedDocumentDiagnosticReport: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *WorkspaceUnchangedDocumentDiagnosticReport) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.UnchangedDocumentDiagnosticReport.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "uri", &x.URI); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "version", &x.Version, unmarshalWorkspaceUnchangedDocumentDiagnosticReportVersion); err != nil {
+		return err
+	}
+	return nil
+}
+
 // WorkspaceUnchangedDocumentDiagnosticReportVersion is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
 //   - Int
 type WorkspaceUnchangedDocumentDiagnosticReportVersion interface {
 	isWorkspaceUnchangedDocumentDiagnosticReportVersion()
+}
+
+func unmarshalWorkspaceUnchangedDocumentDiagnosticReportVersion(data []byte, v *WorkspaceUnchangedDocumentDiagnosticReportVersion) error {
+	var err error
+	{
+		var candidate Int
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (Int) isWorkspaceUnchangedDocumentDiagnosticReportVersion() {}
@@ -17708,6 +29920,20 @@ type WorkspaceWillCreateFilesResult interface {
 	isWorkspaceWillCreateFilesResult()
 }
 
+func unmarshalWorkspaceWillCreateFilesResult(data []byte, v *WorkspaceWillCreateFilesResult) error {
+	var err error
+	{
+		var candidate WorkspaceEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (WorkspaceEdit) isWorkspaceWillCreateFilesResult() {}
 
 // WorkspaceWillDeleteFilesResult is a union (aka 'or') of several other types.
@@ -17716,6 +29942,20 @@ func (WorkspaceEdit) isWorkspaceWillCreateFilesResult() {}
 //   - WorkspaceEdit
 type WorkspaceWillDeleteFilesResult interface {
 	isWorkspaceWillDeleteFilesResult()
+}
+
+func unmarshalWorkspaceWillDeleteFilesResult(data []byte, v *WorkspaceWillDeleteFilesResult) error {
+	var err error
+	{
+		var candidate WorkspaceEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (WorkspaceEdit) isWorkspaceWillDeleteFilesResult() {}
@@ -17728,6 +29968,20 @@ type WorkspaceWillRenameFilesResult interface {
 	isWorkspaceWillRenameFilesResult()
 }
 
+func unmarshalWorkspaceWillRenameFilesResult(data []byte, v *WorkspaceWillRenameFilesResult) error {
+	var err error
+	{
+		var candidate WorkspaceEdit
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
+}
+
 func (WorkspaceEdit) isWorkspaceWillRenameFilesResult() {}
 
 // WorkspaceWorkspaceFoldersResult is a union (aka 'or') of several other types.
@@ -17736,6 +29990,20 @@ func (WorkspaceEdit) isWorkspaceWillRenameFilesResult() {}
 //   - WorkspaceFolderArray
 type WorkspaceWorkspaceFoldersResult interface {
 	isWorkspaceWorkspaceFoldersResult()
+}
+
+func unmarshalWorkspaceWorkspaceFoldersResult(data []byte, v *WorkspaceWorkspaceFoldersResult) error {
+	var err error
+	{
+		var candidate WorkspaceFolderArray
+		err := json.Unmarshal(data, &candidate)
+		if err == nil {
+			*v = candidate
+			return nil
+		}
+		err = errors.Join(err, err)
+	}
+	return err
 }
 
 func (WorkspaceFolderArray) isWorkspaceWorkspaceFoldersResult() {}
@@ -17796,7 +30064,7 @@ func (x initializeParams) MarshalJSON() ([]byte, error) {
 
 	w.WriteByte('{')
 	if err := x.marshalProperties(&w, &n); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("initializeParams: %w", err)
 	}
 	w.WriteByte('}')
 
@@ -17829,6 +30097,51 @@ func (x initializeParams) marshalProperties(w *bytes.Buffer, n *int) error {
 		return err
 	}
 	if err := marshalOptionalProperty(w, n, "trace", x.Trace); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (x *initializeParams) UnmarshalJSON(data []byte) error {
+	var properties map[string]json.RawMessage
+	if err := json.Unmarshal(data, &properties); err != nil {
+		return fmt.Errorf("initializeParams: %w", err)
+	}
+	if err := x.unmarshalProperties(properties); err != nil {
+		return fmt.Errorf("initializeParams: %w", err)
+	}
+	for k := range properties {
+		return fmt.Errorf("initializeParams: %s: unrecognized property", k)
+	}
+	return nil
+}
+
+func (x *initializeParams) unmarshalProperties(properties map[string]json.RawMessage) error {
+	if err := x.WorkDoneProgressParams.unmarshalProperties(properties); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "processId", &x.ProcessID, unmarshalInitializeParamsProcessID); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "clientInfo", &x.ClientInfo); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "locale", &x.Locale); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "rootPath", &x.RootPath, unmarshalInitializeParamsRootPath); err != nil {
+		return err
+	}
+	if err := unmarshalPropertyUsing(properties, "rootUri", &x.RootURI, unmarshalInitializeParamsRootURI); err != nil {
+		return err
+	}
+	if err := unmarshalProperty(properties, "capabilities", &x.Capabilities); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalPropertyUsing(properties, "initializationOptions", &x.InitializationOptions, unmarshalLSPAny); err != nil {
+		return err
+	}
+	if err := unmarshalOptionalProperty(properties, "trace", &x.Trace); err != nil {
 		return err
 	}
 	return nil

@@ -23,5 +23,6 @@ func (g *generator) VisitAlias(n *model.Alias) {
 	g.
 		Type().
 		Id(name).
+		Op("=").
 		Id(underlying)
 }
