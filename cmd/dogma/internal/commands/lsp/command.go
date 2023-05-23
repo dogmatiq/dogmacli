@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/dogmatiq/dogmacli/internal/lsp"
+	"github.com/dogmatiq/dogmacli/internal/langserver"
 	"github.com/dogmatiq/imbue"
 	"github.com/spf13/cobra"
 )
@@ -41,7 +41,7 @@ func Command(con *imbue.Container) *cobra.Command {
 				con,
 				func(
 					ctx context.Context,
-					s *lsp.Server,
+					s *langserver.Server,
 				) error {
 					result := make(chan error, 1)
 					go func() {

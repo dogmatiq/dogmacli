@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/dogmatiq/dogmacli/internal/lsp"
+	"github.com/dogmatiq/dogmacli/internal/langserver"
 	"github.com/dogmatiq/harpy"
 	"github.com/dogmatiq/imbue"
 	"golang.org/x/exp/slog"
@@ -14,7 +14,7 @@ func init() {
 		catalog,
 		func(
 			ctx imbue.Context,
-		) (*lsp.Server, error) {
+		) (*langserver.Server, error) {
 			logger := slog.New(
 				slog.NewTextHandler(
 					os.Stderr,
@@ -24,7 +24,7 @@ func init() {
 				),
 			)
 
-			return &lsp.Server{
+			return &langserver.Server{
 				In:             os.Stdin,
 				Out:            os.Stdout,
 				Version:        version,
