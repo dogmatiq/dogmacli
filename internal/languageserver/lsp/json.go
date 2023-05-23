@@ -11,6 +11,10 @@ func marshalProperty(
 	k string,
 	v any,
 ) error {
+	if v == nil {
+		return nil
+	}
+
 	*n++
 	if *n == 1 {
 		w.WriteByte(',')
