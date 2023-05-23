@@ -78,21 +78,21 @@ func (g *generator) VisitOr(n *model.Or) {
 				g.Block(
 					jen.
 						Var().
-						Id("candidate").
+						Id("x").
 						Id(nameOf(t)),
 					jen.Err().
 						Op(":=").
 						Add(fn).
 						Call(
 							jen.Id("data"),
-							jen.Op("&").Id("candidate"),
+							jen.Op("&").Id("x"),
 						),
 					jen.
 						If(
 							jen.Err().Op("==").Nil(),
 						).
 						Block(
-							jen.Op("*").Id("v").Op("=").Id("candidate"),
+							jen.Op("*").Id("v").Op("=").Id("x"),
 							jen.Return(jen.Nil()),
 						),
 					jen.

@@ -17,7 +17,7 @@ type Property struct {
 	Name          string
 	Documentation Documentation
 	Type          Type
-	Optional      bool
+	IsOptional    bool
 }
 
 func (b *builder) buildStruct(in lowlevel.Struct, out *Struct) {
@@ -42,6 +42,6 @@ func (b *builder) buildProperty(in lowlevel.Property) *Property {
 		out.Name = in.Name
 		out.Documentation = in.Documentation
 		out.Type = b.buildType(in.Type)
-		out.Optional = in.Optional
+		out.IsOptional = in.Optional
 	})
 }

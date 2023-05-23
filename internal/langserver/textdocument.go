@@ -96,8 +96,8 @@ func (h *handler) HandleTextDocumentDiagnostic(
 							Character: lsp.UInt(d.End.Column - 1),
 						},
 					},
-					Severity: lsp.With(severity(d.Severity)),
-					Source:   lsp.With(lsp.String("dogma")),
+					Severity: severity(d.Severity),
+					Source:   "dogma",
 					Message:  lsp.String(d.Message),
 				},
 			)

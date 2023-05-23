@@ -27,6 +27,17 @@ func (g *generator) VisitBool(n *model.Bool) {
 				Op("=").
 				False(),
 		)
+
+	g.
+		Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("isZero").
+		Params().
+		Bool().
+		Block(
+			jen.Return(jen.Id("x").Op("==").Id("False")),
+		)
 }
 
 func (g *generator) VisitDecimal(n *model.Decimal) {
@@ -38,6 +49,17 @@ func (g *generator) VisitDecimal(n *model.Decimal) {
 		Type().
 		Id(name).
 		Float64()
+
+	g.
+		Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("isZero").
+		Params().
+		Bool().
+		Block(
+			jen.Return(jen.Id("x").Op("==").Lit(0)),
+		)
 }
 
 func (g *generator) VisitString(n *model.String) {
@@ -49,6 +71,17 @@ func (g *generator) VisitString(n *model.String) {
 		Type().
 		Id(name).
 		String()
+
+	g.
+		Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("isZero").
+		Params().
+		Bool().
+		Block(
+			jen.Return(jen.Id("x").Op("==").Lit("")),
+		)
 }
 
 func (g *generator) VisitInteger(n *model.Integer) {
@@ -60,6 +93,17 @@ func (g *generator) VisitInteger(n *model.Integer) {
 		Type().
 		Id(name).
 		Int32()
+
+	g.
+		Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("isZero").
+		Params().
+		Bool().
+		Block(
+			jen.Return(jen.Id("x").Op("==").Lit(0)),
+		)
 }
 
 func (g *generator) VisitUInteger(n *model.UInteger) {
@@ -71,6 +115,17 @@ func (g *generator) VisitUInteger(n *model.UInteger) {
 		Type().
 		Id(name).
 		Uint32()
+
+	g.
+		Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("isZero").
+		Params().
+		Bool().
+		Block(
+			jen.Return(jen.Id("x").Op("==").Lit(0)),
+		)
 }
 
 func (g *generator) VisitDocumentURI(n *model.DocumentURI) {
@@ -82,6 +137,21 @@ func (g *generator) VisitDocumentURI(n *model.DocumentURI) {
 		Type().
 		Id(name).
 		Qual("net/url", "URL")
+
+	g.
+		Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("isZero").
+		Params().
+		Bool().
+		Block(
+			jen.Return(
+				jen.
+					Id("x").Op("==").
+					Parens(jen.Id(name).Values()),
+			),
+		)
 }
 
 func (g *generator) VisitURI(n *model.URI) {
@@ -93,6 +163,21 @@ func (g *generator) VisitURI(n *model.URI) {
 		Type().
 		Id(name).
 		Qual("net/url", "URL")
+
+	g.
+		Line().
+		Func().
+		Params(jen.Id("x").Id(name)).
+		Id("isZero").
+		Params().
+		Bool().
+		Block(
+			jen.Return(
+				jen.
+					Id("x").Op("==").
+					Parens(jen.Id(name).Values()),
+			),
+		)
 }
 
 func (g *generator) VisitNull(n *model.Null) {}
