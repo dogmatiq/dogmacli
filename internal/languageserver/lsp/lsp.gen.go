@@ -114,6 +114,8 @@ type CallHierarchyIncomingCallsResult interface {
 	isCallHierarchyIncomingCallsResult()
 }
 
+func (CallHierarchyIncomingCallArray) isCallHierarchyIncomingCallsResult() {}
+
 // CallHierarchyItem is a named structure definition.
 //
 // Represents programming constructs like functions or constructors in the context
@@ -190,6 +192,8 @@ type CallHierarchyOutgoingCallsResult interface {
 	isCallHierarchyOutgoingCallsResult()
 }
 
+func (CallHierarchyOutgoingCallArray) isCallHierarchyOutgoingCallsResult() {}
+
 // CallHierarchyPrepareParams is a named structure definition.
 //
 // The parameter of a `textDocument/prepareCallHierarchy` request.
@@ -225,6 +229,10 @@ type CancelParams struct {
 type CancelParamsID interface {
 	isCancelParamsID()
 }
+
+func (Int) isCancelParamsID() {}
+
+func (String) isCancelParamsID() {}
 
 // ChangeAnnotation is a named structure definition.
 //
@@ -706,7 +714,7 @@ type CompletionClientCapabilities struct {
 	DynamicRegistration Optional[Bool]
 	// The client supports the following `CompletionItem` specific
 	// capabilities.
-	CompletionItem     Optional[CompletionClientCapabilitiesCompletionItem]
+	CompletionItem Optional[CompletionClientCapabilitiesCompletionItem]
 	CompletionItemKind Optional[CompletionClientCapabilitiesCompletionItemKind]
 	// Defines how the client handles whitespace and indentation
 	// when accepting a completion item that uses multi line
@@ -891,6 +899,10 @@ type CompletionItemDocumentation interface {
 	isCompletionItemDocumentation()
 }
 
+func (MarkupContent) isCompletionItemDocumentation() {}
+
+func (String) isCompletionItemDocumentation() {}
+
 // CompletionItemKind is an enumeration of UInt values.
 //
 // The kind of a completion entry.
@@ -993,6 +1005,10 @@ type CompletionItemTextEdit interface {
 	isCompletionItemTextEdit()
 }
 
+func (InsertReplaceEdit) isCompletionItemTextEdit() {}
+
+func (TextEdit) isCompletionItemTextEdit() {}
+
 // CompletionList is a named structure definition.
 //
 // Represents a collection of {@link CompletionItem completion items} to be presented
@@ -1032,6 +1048,10 @@ type CompletionListItemDefaults struct{}
 type CompletionListItemDefaultsEditRange interface {
 	isCompletionListItemDefaultsEditRange()
 }
+
+func (CompletionListItemDefaultsEditRangeA) isCompletionListItemDefaultsEditRange() {}
+
+func (Range) isCompletionListItemDefaultsEditRange() {}
 
 // CompletionListItemDefaultsEditRangeA is a literal structure.
 type CompletionListItemDefaultsEditRangeA struct{}
@@ -1177,7 +1197,14 @@ type Decimal float64
 //   - LocationArray
 type Declaration interface {
 	isDeclaration()
+	isTextDocumentDeclarationResult()
 }
+
+func (Location) isDeclaration()                   {}
+func (Location) isTextDocumentDeclarationResult() {}
+
+func (LocationArray) isDeclaration()                   {}
+func (LocationArray) isTextDocumentDeclarationResult() {}
 
 // DeclarationClientCapabilities is a named structure definition.
 //
@@ -1231,7 +1258,20 @@ type DeclarationRegistrationOptions struct {
 //   - LocationArray
 type Definition interface {
 	isDefinition()
+	isTextDocumentDefinitionResult()
+	isTextDocumentImplementationResult()
+	isTextDocumentTypeDefinitionResult()
 }
+
+func (Location) isDefinition()                       {}
+func (Location) isTextDocumentDefinitionResult()     {}
+func (Location) isTextDocumentImplementationResult() {}
+func (Location) isTextDocumentTypeDefinitionResult() {}
+
+func (LocationArray) isDefinition()                       {}
+func (LocationArray) isTextDocumentDefinitionResult()     {}
+func (LocationArray) isTextDocumentImplementationResult() {}
+func (LocationArray) isTextDocumentTypeDefinitionResult() {}
 
 // DefinitionClientCapabilities is a named structure definition.
 //
@@ -1375,6 +1415,10 @@ type DiagnosticClientCapabilities struct {
 type DiagnosticCode interface {
 	isDiagnosticCode()
 }
+
+func (Int) isDiagnosticCode() {}
+
+func (String) isDiagnosticCode() {}
 
 // DiagnosticOptions is a named structure definition.
 //
@@ -1524,6 +1568,10 @@ type DidChangeConfigurationRegistrationOptions struct {
 type DidChangeConfigurationRegistrationOptionsSection interface {
 	isDidChangeConfigurationRegistrationOptionsSection()
 }
+
+func (String) isDidChangeConfigurationRegistrationOptionsSection() {}
+
+func (StringArray) isDidChangeConfigurationRegistrationOptionsSection() {}
 
 // DidChangeNotebookDocumentParams is a named structure definition.
 //
@@ -1731,6 +1779,10 @@ type DocumentDiagnosticReport interface {
 	isDocumentDiagnosticReport()
 }
 
+func (RelatedFullDocumentDiagnosticReport) isDocumentDiagnosticReport() {}
+
+func (RelatedUnchangedDocumentDiagnosticReport) isDocumentDiagnosticReport() {}
+
 // DocumentDiagnosticReportKind is an enumeration of String values.
 //
 // The document diagnostic report kinds.
@@ -1769,6 +1821,10 @@ type DocumentDiagnosticReportPartialResultRelatedDocuments interface {
 	isDocumentDiagnosticReportPartialResultRelatedDocuments()
 }
 
+func (FullDocumentDiagnosticReport) isDocumentDiagnosticReportPartialResultRelatedDocuments() {}
+
+func (UnchangedDocumentDiagnosticReport) isDocumentDiagnosticReportPartialResultRelatedDocuments() {}
+
 // DocumentDiagnosticReportPartialResultRelatedDocumentsMap is a map of DocumentURI to DocumentDiagnosticReportPartialResultRelatedDocuments.
 type DocumentDiagnosticReportPartialResultRelatedDocumentsMap map[DocumentURI]DocumentDiagnosticReportPartialResultRelatedDocuments
 
@@ -1780,6 +1836,8 @@ type DocumentDiagnosticReportPartialResultRelatedDocumentsMap map[DocumentURI]Do
 type DocumentFilter interface {
 	isDocumentFilter()
 }
+
+func (NotebookCellTextDocumentFilter) isDocumentFilter() {}
 
 // DocumentFormattingClientCapabilities is a named structure definition.
 //
@@ -2646,6 +2704,10 @@ type GlobPattern interface {
 	isGlobPattern()
 }
 
+func (Pattern) isGlobPattern() {}
+
+func (RelativePattern) isGlobPattern() {}
+
 // Hover is a named structure definition.
 //
 // The result of a hover request.
@@ -2675,6 +2737,10 @@ type HoverClientCapabilities struct {
 type HoverContents interface {
 	isHoverContents()
 }
+
+func (MarkedStringArray) isHoverContents() {}
+
+func (MarkupContent) isHoverContents() {}
 
 // HoverOptions is a named structure definition.
 //
@@ -2761,6 +2827,8 @@ type InitializeParamsProcessID interface {
 	isInitializeParamsProcessID()
 }
 
+func (Int) isInitializeParamsProcessID() {}
+
 // InitializeParamsRootPath is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -2769,6 +2837,8 @@ type InitializeParamsRootPath interface {
 	isInitializeParamsRootPath()
 }
 
+func (String) isInitializeParamsRootPath() {}
+
 // InitializeParamsRootURI is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -2776,6 +2846,8 @@ type InitializeParamsRootPath interface {
 type InitializeParamsRootURI interface {
 	isInitializeParamsRootURI()
 }
+
+func (DocumentURI) isInitializeParamsRootURI() {}
 
 // InitializeResult is a named structure definition.
 //
@@ -2882,6 +2954,10 @@ type InlayHintLabel interface {
 	isInlayHintLabel()
 }
 
+func (InlayHintLabelPartArray) isInlayHintLabel() {}
+
+func (String) isInlayHintLabel() {}
+
 // InlayHintLabelPart is a named structure definition.
 //
 // An inlay hint label part allows for interactive and composite labels
@@ -2925,6 +3001,10 @@ type InlayHintLabelPartArray []InlayHintLabelPart
 type InlayHintLabelPartTooltip interface {
 	isInlayHintLabelPartTooltip()
 }
+
+func (MarkupContent) isInlayHintLabelPartTooltip() {}
+
+func (String) isInlayHintLabelPartTooltip() {}
 
 // InlayHintOptions is a named structure definition.
 //
@@ -2973,6 +3053,10 @@ type InlayHintTooltip interface {
 	isInlayHintTooltip()
 }
 
+func (MarkupContent) isInlayHintTooltip() {}
+
+func (String) isInlayHintTooltip() {}
+
 // InlayHintWorkspaceClientCapabilities is a named structure definition.
 //
 // Client workspace capabilities specific to inlay hints.
@@ -2998,6 +3082,12 @@ type InlayHintWorkspaceClientCapabilities struct {
 type InlineValue interface {
 	isInlineValue()
 }
+
+func (InlineValueEvaluatableExpression) isInlineValue() {}
+
+func (InlineValueText) isInlineValue() {}
+
+func (InlineValueVariableLookup) isInlineValue() {}
 
 // InlineValueArray is an array of InlineValue elements.
 type InlineValueArray []InlineValue
@@ -3205,7 +3295,29 @@ type Int int32
 //   - Bool
 type LSPAny interface {
 	isLSPAny()
+	isWorkspaceExecuteCommandResult()
 }
+
+func (Bool) isLSPAny()                        {}
+func (Bool) isWorkspaceExecuteCommandResult() {}
+
+func (Decimal) isLSPAny()                        {}
+func (Decimal) isWorkspaceExecuteCommandResult() {}
+
+func (Int) isLSPAny()                        {}
+func (Int) isWorkspaceExecuteCommandResult() {}
+
+func (LSPArray) isLSPAny()                        {}
+func (LSPArray) isWorkspaceExecuteCommandResult() {}
+
+func (LSPObject) isLSPAny()                        {}
+func (LSPObject) isWorkspaceExecuteCommandResult() {}
+
+func (String) isLSPAny()                        {}
+func (String) isWorkspaceExecuteCommandResult() {}
+
+func (UInt) isLSPAny()                        {}
+func (UInt) isWorkspaceExecuteCommandResult() {}
 
 // LSPAnyArray is an array of LSPAny elements.
 type LSPAnyArray []LSPAny
@@ -3305,7 +3417,7 @@ type LinkedEditingRanges struct {
 // Represents a location inside a resource, such as a line
 // inside a text file.
 type Location struct {
-	URI   DocumentURI
+	URI DocumentURI
 	Range Range
 }
 
@@ -3373,7 +3485,14 @@ type MarkdownClientCapabilities struct {
 //   - MarkedStringA
 type MarkedString interface {
 	isMarkedString()
+	isHoverContents()
 }
+
+func (MarkedStringA) isMarkedString()  {}
+func (MarkedStringA) isHoverContents() {}
+
+func (String) isMarkedString()  {}
+func (String) isHoverContents() {}
 
 // MarkedStringA is a literal structure.
 type MarkedStringA struct{}
@@ -3631,6 +3750,8 @@ type NotebookCellTextDocumentFilterNotebook interface {
 	isNotebookCellTextDocumentFilterNotebook()
 }
 
+func (String) isNotebookCellTextDocumentFilterNotebook() {}
+
 // NotebookDocument is a named structure definition.
 //
 // A notebook document.
@@ -3699,7 +3820,25 @@ type NotebookDocumentClientCapabilities struct {
 //   - NotebookDocumentFilterC
 type NotebookDocumentFilter interface {
 	isNotebookDocumentFilter()
+	isNotebookCellTextDocumentFilterNotebook()
+	isNotebookDocumentSyncOptionsNotebookSelectorANotebook()
+	isNotebookDocumentSyncOptionsNotebookSelectorBNotebook()
 }
+
+func (NotebookDocumentFilterA) isNotebookDocumentFilter()                               {}
+func (NotebookDocumentFilterA) isNotebookCellTextDocumentFilterNotebook()               {}
+func (NotebookDocumentFilterA) isNotebookDocumentSyncOptionsNotebookSelectorANotebook() {}
+func (NotebookDocumentFilterA) isNotebookDocumentSyncOptionsNotebookSelectorBNotebook() {}
+
+func (NotebookDocumentFilterB) isNotebookDocumentFilter()                               {}
+func (NotebookDocumentFilterB) isNotebookCellTextDocumentFilterNotebook()               {}
+func (NotebookDocumentFilterB) isNotebookDocumentSyncOptionsNotebookSelectorANotebook() {}
+func (NotebookDocumentFilterB) isNotebookDocumentSyncOptionsNotebookSelectorBNotebook() {}
+
+func (NotebookDocumentFilterC) isNotebookDocumentFilter()                               {}
+func (NotebookDocumentFilterC) isNotebookCellTextDocumentFilterNotebook()               {}
+func (NotebookDocumentFilterC) isNotebookDocumentSyncOptionsNotebookSelectorANotebook() {}
+func (NotebookDocumentFilterC) isNotebookDocumentSyncOptionsNotebookSelectorBNotebook() {}
 
 // NotebookDocumentFilterA is a literal structure.
 type NotebookDocumentFilterA struct{}
@@ -3767,6 +3906,10 @@ type NotebookDocumentSyncOptionsNotebookSelector interface {
 	isNotebookDocumentSyncOptionsNotebookSelector()
 }
 
+func (NotebookDocumentSyncOptionsNotebookSelectorA) isNotebookDocumentSyncOptionsNotebookSelector() {}
+
+func (NotebookDocumentSyncOptionsNotebookSelectorB) isNotebookDocumentSyncOptionsNotebookSelector() {}
+
 // NotebookDocumentSyncOptionsNotebookSelectorA is a literal structure.
 type NotebookDocumentSyncOptionsNotebookSelectorA struct{}
 
@@ -3784,6 +3927,8 @@ type NotebookDocumentSyncOptionsNotebookSelectorACellsArray []NotebookDocumentSy
 type NotebookDocumentSyncOptionsNotebookSelectorANotebook interface {
 	isNotebookDocumentSyncOptionsNotebookSelectorANotebook()
 }
+
+func (String) isNotebookDocumentSyncOptionsNotebookSelectorANotebook() {}
 
 // NotebookDocumentSyncOptionsNotebookSelectorArray is an array of NotebookDocumentSyncOptionsNotebookSelector elements.
 type NotebookDocumentSyncOptionsNotebookSelectorArray []NotebookDocumentSyncOptionsNotebookSelector
@@ -3805,6 +3950,8 @@ type NotebookDocumentSyncOptionsNotebookSelectorBCellsArray []NotebookDocumentSy
 type NotebookDocumentSyncOptionsNotebookSelectorBNotebook interface {
 	isNotebookDocumentSyncOptionsNotebookSelectorBNotebook()
 }
+
+func (String) isNotebookDocumentSyncOptionsNotebookSelectorBNotebook() {}
 
 // NotebookDocumentSyncRegistrationOptions is a named structure definition.
 //
@@ -3838,6 +3985,8 @@ type OptionalVersionedTextDocumentIdentifierVersion interface {
 	isOptionalVersionedTextDocumentIdentifierVersion()
 }
 
+func (Int) isOptionalVersionedTextDocumentIdentifierVersion() {}
+
 // ParameterInformation is a named structure definition.
 //
 // Represents a parameter of a callable-signature. A parameter can
@@ -3869,6 +4018,10 @@ type ParameterInformationDocumentation interface {
 	isParameterInformationDocumentation()
 }
 
+func (MarkupContent) isParameterInformationDocumentation() {}
+
+func (String) isParameterInformationDocumentation() {}
+
 // ParameterInformationLabel is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -3877,6 +4030,10 @@ type ParameterInformationDocumentation interface {
 type ParameterInformationLabel interface {
 	isParameterInformationLabel()
 }
+
+func (ParameterInformationLabelA) isParameterInformationLabel() {}
+
+func (String) isParameterInformationLabel() {}
 
 // ParameterInformationLabelA is a 2-tuple of UInt.
 type ParameterInformationLabelA [2]UInt
@@ -3995,7 +4152,17 @@ type PrepareRenameParams struct {
 //   - PrepareRenameResultB
 type PrepareRenameResult interface {
 	isPrepareRenameResult()
+	isTextDocumentPrepareRenameResult()
 }
+
+func (PrepareRenameResultA) isPrepareRenameResult()             {}
+func (PrepareRenameResultA) isTextDocumentPrepareRenameResult() {}
+
+func (PrepareRenameResultB) isPrepareRenameResult()             {}
+func (PrepareRenameResultB) isTextDocumentPrepareRenameResult() {}
+
+func (Range) isPrepareRenameResult()             {}
+func (Range) isTextDocumentPrepareRenameResult() {}
 
 // PrepareRenameResultA is a literal structure.
 type PrepareRenameResultA struct{}
@@ -4046,6 +4213,10 @@ type ProgressParams struct {
 type ProgressToken interface {
 	isProgressToken()
 }
+
+func (Int) isProgressToken() {}
+
+func (String) isProgressToken() {}
 
 // PublishDiagnosticsClientCapabilities is a named structure definition.
 //
@@ -4220,6 +4391,10 @@ type RelatedFullDocumentDiagnosticReportRelatedDocuments interface {
 	isRelatedFullDocumentDiagnosticReportRelatedDocuments()
 }
 
+func (FullDocumentDiagnosticReport) isRelatedFullDocumentDiagnosticReportRelatedDocuments() {}
+
+func (UnchangedDocumentDiagnosticReport) isRelatedFullDocumentDiagnosticReportRelatedDocuments() {}
+
 // RelatedFullDocumentDiagnosticReportRelatedDocumentsMap is a map of DocumentURI to RelatedFullDocumentDiagnosticReportRelatedDocuments.
 type RelatedFullDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedFullDocumentDiagnosticReportRelatedDocuments
 
@@ -4250,6 +4425,11 @@ type RelatedUnchangedDocumentDiagnosticReportRelatedDocuments interface {
 	isRelatedUnchangedDocumentDiagnosticReportRelatedDocuments()
 }
 
+func (FullDocumentDiagnosticReport) isRelatedUnchangedDocumentDiagnosticReportRelatedDocuments() {}
+
+func (UnchangedDocumentDiagnosticReport) isRelatedUnchangedDocumentDiagnosticReportRelatedDocuments() {
+}
+
 // RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap is a map of DocumentURI to RelatedUnchangedDocumentDiagnosticReportRelatedDocuments.
 type RelatedUnchangedDocumentDiagnosticReportRelatedDocumentsMap map[DocumentURI]RelatedUnchangedDocumentDiagnosticReportRelatedDocuments
 
@@ -4276,6 +4456,10 @@ type RelativePattern struct {
 type RelativePatternBaseURI interface {
 	isRelativePatternBaseURI()
 }
+
+func (URI) isRelativePatternBaseURI() {}
+
+func (WorkspaceFolder) isRelativePatternBaseURI() {}
 
 // RenameClientCapabilities is a named structure definition.
 type RenameClientCapabilities struct {
@@ -4630,6 +4814,11 @@ type SemanticTokensClientCapabilitiesRequestsFull interface {
 	isSemanticTokensClientCapabilitiesRequestsFull()
 }
 
+func (Bool) isSemanticTokensClientCapabilitiesRequestsFull() {}
+
+func (SemanticTokensClientCapabilitiesRequestsFullA) isSemanticTokensClientCapabilitiesRequestsFull() {
+}
+
 // SemanticTokensClientCapabilitiesRequestsFullA is a literal structure.
 type SemanticTokensClientCapabilitiesRequestsFullA struct{}
 
@@ -4640,6 +4829,11 @@ type SemanticTokensClientCapabilitiesRequestsFullA struct{}
 //   - SemanticTokensClientCapabilitiesRequestsRangeA
 type SemanticTokensClientCapabilitiesRequestsRange interface {
 	isSemanticTokensClientCapabilitiesRequestsRange()
+}
+
+func (Bool) isSemanticTokensClientCapabilitiesRequestsRange() {}
+
+func (SemanticTokensClientCapabilitiesRequestsRangeA) isSemanticTokensClientCapabilitiesRequestsRange() {
 }
 
 // SemanticTokensClientCapabilitiesRequestsRangeA is a literal structure.
@@ -4724,6 +4918,10 @@ type SemanticTokensOptionsFull interface {
 	isSemanticTokensOptionsFull()
 }
 
+func (Bool) isSemanticTokensOptionsFull() {}
+
+func (SemanticTokensOptionsFullA) isSemanticTokensOptionsFull() {}
+
 // SemanticTokensOptionsFullA is a literal structure.
 type SemanticTokensOptionsFullA struct{}
 
@@ -4735,6 +4933,10 @@ type SemanticTokensOptionsFullA struct{}
 type SemanticTokensOptionsRange interface {
 	isSemanticTokensOptionsRange()
 }
+
+func (Bool) isSemanticTokensOptionsRange() {}
+
+func (SemanticTokensOptionsRangeA) isSemanticTokensOptionsRange() {}
 
 // SemanticTokensOptionsRangeA is a literal structure.
 type SemanticTokensOptionsRangeA struct{}
@@ -4912,6 +5114,12 @@ type ServerCapabilitiesCallHierarchyProvider interface {
 	isServerCapabilitiesCallHierarchyProvider()
 }
 
+func (Bool) isServerCapabilitiesCallHierarchyProvider() {}
+
+func (CallHierarchyOptions) isServerCapabilitiesCallHierarchyProvider() {}
+
+func (CallHierarchyRegistrationOptions) isServerCapabilitiesCallHierarchyProvider() {}
+
 // ServerCapabilitiesCodeActionProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4920,6 +5128,10 @@ type ServerCapabilitiesCallHierarchyProvider interface {
 type ServerCapabilitiesCodeActionProvider interface {
 	isServerCapabilitiesCodeActionProvider()
 }
+
+func (Bool) isServerCapabilitiesCodeActionProvider() {}
+
+func (CodeActionOptions) isServerCapabilitiesCodeActionProvider() {}
 
 // ServerCapabilitiesColorProvider is a union (aka 'or') of several other types.
 //
@@ -4931,6 +5143,12 @@ type ServerCapabilitiesColorProvider interface {
 	isServerCapabilitiesColorProvider()
 }
 
+func (Bool) isServerCapabilitiesColorProvider() {}
+
+func (DocumentColorOptions) isServerCapabilitiesColorProvider() {}
+
+func (DocumentColorRegistrationOptions) isServerCapabilitiesColorProvider() {}
+
 // ServerCapabilitiesDeclarationProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4941,6 +5159,12 @@ type ServerCapabilitiesDeclarationProvider interface {
 	isServerCapabilitiesDeclarationProvider()
 }
 
+func (Bool) isServerCapabilitiesDeclarationProvider() {}
+
+func (DeclarationOptions) isServerCapabilitiesDeclarationProvider() {}
+
+func (DeclarationRegistrationOptions) isServerCapabilitiesDeclarationProvider() {}
+
 // ServerCapabilitiesDefinitionProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4949,6 +5173,10 @@ type ServerCapabilitiesDeclarationProvider interface {
 type ServerCapabilitiesDefinitionProvider interface {
 	isServerCapabilitiesDefinitionProvider()
 }
+
+func (Bool) isServerCapabilitiesDefinitionProvider() {}
+
+func (DefinitionOptions) isServerCapabilitiesDefinitionProvider() {}
 
 // ServerCapabilitiesDiagnosticProvider is a union (aka 'or') of several other types.
 //
@@ -4959,6 +5187,10 @@ type ServerCapabilitiesDiagnosticProvider interface {
 	isServerCapabilitiesDiagnosticProvider()
 }
 
+func (DiagnosticOptions) isServerCapabilitiesDiagnosticProvider() {}
+
+func (DiagnosticRegistrationOptions) isServerCapabilitiesDiagnosticProvider() {}
+
 // ServerCapabilitiesDocumentFormattingProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4967,6 +5199,10 @@ type ServerCapabilitiesDiagnosticProvider interface {
 type ServerCapabilitiesDocumentFormattingProvider interface {
 	isServerCapabilitiesDocumentFormattingProvider()
 }
+
+func (Bool) isServerCapabilitiesDocumentFormattingProvider() {}
+
+func (DocumentFormattingOptions) isServerCapabilitiesDocumentFormattingProvider() {}
 
 // ServerCapabilitiesDocumentHighlightProvider is a union (aka 'or') of several other types.
 //
@@ -4977,6 +5213,10 @@ type ServerCapabilitiesDocumentHighlightProvider interface {
 	isServerCapabilitiesDocumentHighlightProvider()
 }
 
+func (Bool) isServerCapabilitiesDocumentHighlightProvider() {}
+
+func (DocumentHighlightOptions) isServerCapabilitiesDocumentHighlightProvider() {}
+
 // ServerCapabilitiesDocumentRangeFormattingProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4986,6 +5226,10 @@ type ServerCapabilitiesDocumentRangeFormattingProvider interface {
 	isServerCapabilitiesDocumentRangeFormattingProvider()
 }
 
+func (Bool) isServerCapabilitiesDocumentRangeFormattingProvider() {}
+
+func (DocumentRangeFormattingOptions) isServerCapabilitiesDocumentRangeFormattingProvider() {}
+
 // ServerCapabilitiesDocumentSymbolProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -4994,6 +5238,10 @@ type ServerCapabilitiesDocumentRangeFormattingProvider interface {
 type ServerCapabilitiesDocumentSymbolProvider interface {
 	isServerCapabilitiesDocumentSymbolProvider()
 }
+
+func (Bool) isServerCapabilitiesDocumentSymbolProvider() {}
+
+func (DocumentSymbolOptions) isServerCapabilitiesDocumentSymbolProvider() {}
 
 // ServerCapabilitiesFoldingRangeProvider is a union (aka 'or') of several other types.
 //
@@ -5005,6 +5253,12 @@ type ServerCapabilitiesFoldingRangeProvider interface {
 	isServerCapabilitiesFoldingRangeProvider()
 }
 
+func (Bool) isServerCapabilitiesFoldingRangeProvider() {}
+
+func (FoldingRangeOptions) isServerCapabilitiesFoldingRangeProvider() {}
+
+func (FoldingRangeRegistrationOptions) isServerCapabilitiesFoldingRangeProvider() {}
+
 // ServerCapabilitiesHoverProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5013,6 +5267,10 @@ type ServerCapabilitiesFoldingRangeProvider interface {
 type ServerCapabilitiesHoverProvider interface {
 	isServerCapabilitiesHoverProvider()
 }
+
+func (Bool) isServerCapabilitiesHoverProvider() {}
+
+func (HoverOptions) isServerCapabilitiesHoverProvider() {}
 
 // ServerCapabilitiesImplementationProvider is a union (aka 'or') of several other types.
 //
@@ -5024,6 +5282,12 @@ type ServerCapabilitiesImplementationProvider interface {
 	isServerCapabilitiesImplementationProvider()
 }
 
+func (Bool) isServerCapabilitiesImplementationProvider() {}
+
+func (ImplementationOptions) isServerCapabilitiesImplementationProvider() {}
+
+func (ImplementationRegistrationOptions) isServerCapabilitiesImplementationProvider() {}
+
 // ServerCapabilitiesInlayHintProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5033,6 +5297,12 @@ type ServerCapabilitiesImplementationProvider interface {
 type ServerCapabilitiesInlayHintProvider interface {
 	isServerCapabilitiesInlayHintProvider()
 }
+
+func (Bool) isServerCapabilitiesInlayHintProvider() {}
+
+func (InlayHintOptions) isServerCapabilitiesInlayHintProvider() {}
+
+func (InlayHintRegistrationOptions) isServerCapabilitiesInlayHintProvider() {}
 
 // ServerCapabilitiesInlineValueProvider is a union (aka 'or') of several other types.
 //
@@ -5044,6 +5314,12 @@ type ServerCapabilitiesInlineValueProvider interface {
 	isServerCapabilitiesInlineValueProvider()
 }
 
+func (Bool) isServerCapabilitiesInlineValueProvider() {}
+
+func (InlineValueOptions) isServerCapabilitiesInlineValueProvider() {}
+
+func (InlineValueRegistrationOptions) isServerCapabilitiesInlineValueProvider() {}
+
 // ServerCapabilitiesLinkedEditingRangeProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5053,6 +5329,12 @@ type ServerCapabilitiesInlineValueProvider interface {
 type ServerCapabilitiesLinkedEditingRangeProvider interface {
 	isServerCapabilitiesLinkedEditingRangeProvider()
 }
+
+func (Bool) isServerCapabilitiesLinkedEditingRangeProvider() {}
+
+func (LinkedEditingRangeOptions) isServerCapabilitiesLinkedEditingRangeProvider() {}
+
+func (LinkedEditingRangeRegistrationOptions) isServerCapabilitiesLinkedEditingRangeProvider() {}
 
 // ServerCapabilitiesMonikerProvider is a union (aka 'or') of several other types.
 //
@@ -5064,6 +5346,12 @@ type ServerCapabilitiesMonikerProvider interface {
 	isServerCapabilitiesMonikerProvider()
 }
 
+func (Bool) isServerCapabilitiesMonikerProvider() {}
+
+func (MonikerOptions) isServerCapabilitiesMonikerProvider() {}
+
+func (MonikerRegistrationOptions) isServerCapabilitiesMonikerProvider() {}
+
 // ServerCapabilitiesNotebookDocumentSync is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5072,6 +5360,10 @@ type ServerCapabilitiesMonikerProvider interface {
 type ServerCapabilitiesNotebookDocumentSync interface {
 	isServerCapabilitiesNotebookDocumentSync()
 }
+
+func (NotebookDocumentSyncOptions) isServerCapabilitiesNotebookDocumentSync() {}
+
+func (NotebookDocumentSyncRegistrationOptions) isServerCapabilitiesNotebookDocumentSync() {}
 
 // ServerCapabilitiesReferencesProvider is a union (aka 'or') of several other types.
 //
@@ -5082,6 +5374,10 @@ type ServerCapabilitiesReferencesProvider interface {
 	isServerCapabilitiesReferencesProvider()
 }
 
+func (Bool) isServerCapabilitiesReferencesProvider() {}
+
+func (ReferenceOptions) isServerCapabilitiesReferencesProvider() {}
+
 // ServerCapabilitiesRenameProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5090,6 +5386,10 @@ type ServerCapabilitiesReferencesProvider interface {
 type ServerCapabilitiesRenameProvider interface {
 	isServerCapabilitiesRenameProvider()
 }
+
+func (Bool) isServerCapabilitiesRenameProvider() {}
+
+func (RenameOptions) isServerCapabilitiesRenameProvider() {}
 
 // ServerCapabilitiesSelectionRangeProvider is a union (aka 'or') of several other types.
 //
@@ -5101,6 +5401,12 @@ type ServerCapabilitiesSelectionRangeProvider interface {
 	isServerCapabilitiesSelectionRangeProvider()
 }
 
+func (Bool) isServerCapabilitiesSelectionRangeProvider() {}
+
+func (SelectionRangeOptions) isServerCapabilitiesSelectionRangeProvider() {}
+
+func (SelectionRangeRegistrationOptions) isServerCapabilitiesSelectionRangeProvider() {}
+
 // ServerCapabilitiesSemanticTokensProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5110,6 +5416,10 @@ type ServerCapabilitiesSemanticTokensProvider interface {
 	isServerCapabilitiesSemanticTokensProvider()
 }
 
+func (SemanticTokensOptions) isServerCapabilitiesSemanticTokensProvider() {}
+
+func (SemanticTokensRegistrationOptions) isServerCapabilitiesSemanticTokensProvider() {}
+
 // ServerCapabilitiesTextDocumentSync is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5118,6 +5428,10 @@ type ServerCapabilitiesSemanticTokensProvider interface {
 type ServerCapabilitiesTextDocumentSync interface {
 	isServerCapabilitiesTextDocumentSync()
 }
+
+func (TextDocumentSyncKind) isServerCapabilitiesTextDocumentSync() {}
+
+func (TextDocumentSyncOptions) isServerCapabilitiesTextDocumentSync() {}
 
 // ServerCapabilitiesTypeDefinitionProvider is a union (aka 'or') of several other types.
 //
@@ -5129,6 +5443,12 @@ type ServerCapabilitiesTypeDefinitionProvider interface {
 	isServerCapabilitiesTypeDefinitionProvider()
 }
 
+func (Bool) isServerCapabilitiesTypeDefinitionProvider() {}
+
+func (TypeDefinitionOptions) isServerCapabilitiesTypeDefinitionProvider() {}
+
+func (TypeDefinitionRegistrationOptions) isServerCapabilitiesTypeDefinitionProvider() {}
+
 // ServerCapabilitiesTypeHierarchyProvider is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5138,6 +5458,12 @@ type ServerCapabilitiesTypeDefinitionProvider interface {
 type ServerCapabilitiesTypeHierarchyProvider interface {
 	isServerCapabilitiesTypeHierarchyProvider()
 }
+
+func (Bool) isServerCapabilitiesTypeHierarchyProvider() {}
+
+func (TypeHierarchyOptions) isServerCapabilitiesTypeHierarchyProvider() {}
+
+func (TypeHierarchyRegistrationOptions) isServerCapabilitiesTypeHierarchyProvider() {}
 
 // ServerCapabilitiesWorkspace is a literal structure.
 type ServerCapabilitiesWorkspace struct{}
@@ -5150,6 +5476,10 @@ type ServerCapabilitiesWorkspace struct{}
 type ServerCapabilitiesWorkspaceSymbolProvider interface {
 	isServerCapabilitiesWorkspaceSymbolProvider()
 }
+
+func (Bool) isServerCapabilitiesWorkspaceSymbolProvider() {}
+
+func (WorkspaceSymbolOptions) isServerCapabilitiesWorkspaceSymbolProvider() {}
 
 // SetTraceParams is a named structure definition.
 type SetTraceParams struct {
@@ -5403,6 +5733,10 @@ type SignatureInformationDocumentation interface {
 	isSignatureInformationDocumentation()
 }
 
+func (MarkupContent) isSignatureInformationDocumentation() {}
+
+func (String) isSignatureInformationDocumentation() {}
+
 // StaticRegistrationOptions is a named structure definition.
 //
 // Static registration options to be returned in the initialize
@@ -5641,6 +5975,10 @@ type TextDocumentCodeActionPartialResult interface {
 	isTextDocumentCodeActionPartialResult()
 }
 
+func (CodeAction) isTextDocumentCodeActionPartialResult() {}
+
+func (Command) isTextDocumentCodeActionPartialResult() {}
+
 // TextDocumentCodeActionPartialResultArray is an array of TextDocumentCodeActionPartialResult elements.
 type TextDocumentCodeActionPartialResultArray []TextDocumentCodeActionPartialResult
 
@@ -5652,6 +5990,8 @@ type TextDocumentCodeActionResult interface {
 	isTextDocumentCodeActionResult()
 }
 
+func (TextDocumentCodeActionResultAArray) isTextDocumentCodeActionResult() {}
+
 // TextDocumentCodeActionResultA is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5660,6 +6000,10 @@ type TextDocumentCodeActionResult interface {
 type TextDocumentCodeActionResultA interface {
 	isTextDocumentCodeActionResultA()
 }
+
+func (CodeAction) isTextDocumentCodeActionResultA() {}
+
+func (Command) isTextDocumentCodeActionResultA() {}
 
 // TextDocumentCodeActionResultAArray is an array of TextDocumentCodeActionResultA elements.
 type TextDocumentCodeActionResultAArray []TextDocumentCodeActionResultA
@@ -5671,6 +6015,8 @@ type TextDocumentCodeActionResultAArray []TextDocumentCodeActionResultA
 type TextDocumentCodeLensResult interface {
 	isTextDocumentCodeLensResult()
 }
+
+func (CodeLensArray) isTextDocumentCodeLensResult() {}
 
 // TextDocumentColorPresentationRegistrationOptions is an intersection (aka 'and') of several other types.
 type TextDocumentColorPresentationRegistrationOptions struct {
@@ -5687,6 +6033,10 @@ type TextDocumentCompletionResult interface {
 	isTextDocumentCompletionResult()
 }
 
+func (CompletionItemArray) isTextDocumentCompletionResult() {}
+
+func (CompletionList) isTextDocumentCompletionResult() {}
+
 // TextDocumentContentChangeEvent is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5695,6 +6045,10 @@ type TextDocumentCompletionResult interface {
 type TextDocumentContentChangeEvent interface {
 	isTextDocumentContentChangeEvent()
 }
+
+func (TextDocumentContentChangeEventA) isTextDocumentContentChangeEvent() {}
+
+func (TextDocumentContentChangeEventB) isTextDocumentContentChangeEvent() {}
 
 // TextDocumentContentChangeEventA is a literal structure.
 type TextDocumentContentChangeEventA struct{}
@@ -5714,6 +6068,10 @@ type TextDocumentDeclarationPartialResult interface {
 	isTextDocumentDeclarationPartialResult()
 }
 
+func (DeclarationLinkArray) isTextDocumentDeclarationPartialResult() {}
+
+func (LocationArray) isTextDocumentDeclarationPartialResult() {}
+
 // TextDocumentDeclarationResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5722,6 +6080,8 @@ type TextDocumentDeclarationPartialResult interface {
 type TextDocumentDeclarationResult interface {
 	isTextDocumentDeclarationResult()
 }
+
+func (DeclarationLinkArray) isTextDocumentDeclarationResult() {}
 
 // TextDocumentDefinitionPartialResult is a union (aka 'or') of several other types.
 //
@@ -5732,6 +6092,10 @@ type TextDocumentDefinitionPartialResult interface {
 	isTextDocumentDefinitionPartialResult()
 }
 
+func (DefinitionLinkArray) isTextDocumentDefinitionPartialResult() {}
+
+func (LocationArray) isTextDocumentDefinitionPartialResult() {}
+
 // TextDocumentDefinitionResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5741,6 +6105,8 @@ type TextDocumentDefinitionResult interface {
 	isTextDocumentDefinitionResult()
 }
 
+func (DefinitionLinkArray) isTextDocumentDefinitionResult() {}
+
 // TextDocumentDocumentHighlightResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5749,6 +6115,8 @@ type TextDocumentDocumentHighlightResult interface {
 	isTextDocumentDocumentHighlightResult()
 }
 
+func (DocumentHighlightArray) isTextDocumentDocumentHighlightResult() {}
+
 // TextDocumentDocumentLinkResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5756,6 +6124,8 @@ type TextDocumentDocumentHighlightResult interface {
 type TextDocumentDocumentLinkResult interface {
 	isTextDocumentDocumentLinkResult()
 }
+
+func (DocumentLinkArray) isTextDocumentDocumentLinkResult() {}
 
 // TextDocumentDocumentSymbolPartialResult is a union (aka 'or') of several other types.
 //
@@ -5766,6 +6136,10 @@ type TextDocumentDocumentSymbolPartialResult interface {
 	isTextDocumentDocumentSymbolPartialResult()
 }
 
+func (DocumentSymbolArray) isTextDocumentDocumentSymbolPartialResult() {}
+
+func (SymbolInformationArray) isTextDocumentDocumentSymbolPartialResult() {}
+
 // TextDocumentDocumentSymbolResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5774,6 +6148,10 @@ type TextDocumentDocumentSymbolPartialResult interface {
 type TextDocumentDocumentSymbolResult interface {
 	isTextDocumentDocumentSymbolResult()
 }
+
+func (DocumentSymbolArray) isTextDocumentDocumentSymbolResult() {}
+
+func (SymbolInformationArray) isTextDocumentDocumentSymbolResult() {}
 
 // TextDocumentEdit is a named structure definition.
 //
@@ -5800,6 +6178,10 @@ type TextDocumentEditEdits interface {
 	isTextDocumentEditEdits()
 }
 
+func (AnnotatedTextEdit) isTextDocumentEditEdits() {}
+
+func (TextEdit) isTextDocumentEditEdits() {}
+
 // TextDocumentEditEditsArray is an array of TextDocumentEditEdits elements.
 type TextDocumentEditEditsArray []TextDocumentEditEdits
 
@@ -5811,7 +6193,17 @@ type TextDocumentEditEditsArray []TextDocumentEditEdits
 //   - TextDocumentFilterC
 type TextDocumentFilter interface {
 	isTextDocumentFilter()
+	isDocumentFilter()
 }
+
+func (TextDocumentFilterA) isTextDocumentFilter() {}
+func (TextDocumentFilterA) isDocumentFilter()     {}
+
+func (TextDocumentFilterB) isTextDocumentFilter() {}
+func (TextDocumentFilterB) isDocumentFilter()     {}
+
+func (TextDocumentFilterC) isTextDocumentFilter() {}
+func (TextDocumentFilterC) isDocumentFilter()     {}
 
 // TextDocumentFilterA is a literal structure.
 type TextDocumentFilterA struct{}
@@ -5830,6 +6222,8 @@ type TextDocumentFoldingRangeResult interface {
 	isTextDocumentFoldingRangeResult()
 }
 
+func (FoldingRangeArray) isTextDocumentFoldingRangeResult() {}
+
 // TextDocumentFormattingResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5838,6 +6232,8 @@ type TextDocumentFormattingResult interface {
 	isTextDocumentFormattingResult()
 }
 
+func (TextEditArray) isTextDocumentFormattingResult() {}
+
 // TextDocumentHoverResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5845,6 +6241,8 @@ type TextDocumentFormattingResult interface {
 type TextDocumentHoverResult interface {
 	isTextDocumentHoverResult()
 }
+
+func (Hover) isTextDocumentHoverResult() {}
 
 // TextDocumentIdentifier is a named structure definition.
 //
@@ -5866,6 +6264,10 @@ type TextDocumentImplementationPartialResult interface {
 	isTextDocumentImplementationPartialResult()
 }
 
+func (DefinitionLinkArray) isTextDocumentImplementationPartialResult() {}
+
+func (LocationArray) isTextDocumentImplementationPartialResult() {}
+
 // TextDocumentImplementationResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5875,6 +6277,8 @@ type TextDocumentImplementationResult interface {
 	isTextDocumentImplementationResult()
 }
 
+func (DefinitionLinkArray) isTextDocumentImplementationResult() {}
+
 // TextDocumentInlayHintResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5883,6 +6287,8 @@ type TextDocumentInlayHintResult interface {
 	isTextDocumentInlayHintResult()
 }
 
+func (InlayHintArray) isTextDocumentInlayHintResult() {}
+
 // TextDocumentInlineValueResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5890,6 +6296,8 @@ type TextDocumentInlayHintResult interface {
 type TextDocumentInlineValueResult interface {
 	isTextDocumentInlineValueResult()
 }
+
+func (InlineValueArray) isTextDocumentInlineValueResult() {}
 
 // TextDocumentItem is a named structure definition.
 //
@@ -5918,6 +6326,8 @@ type TextDocumentLinkedEditingRangeResult interface {
 	isTextDocumentLinkedEditingRangeResult()
 }
 
+func (LinkedEditingRanges) isTextDocumentLinkedEditingRangeResult() {}
+
 // TextDocumentMonikerResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5926,6 +6336,8 @@ type TextDocumentMonikerResult interface {
 	isTextDocumentMonikerResult()
 }
 
+func (MonikerArray) isTextDocumentMonikerResult() {}
+
 // TextDocumentOnTypeFormattingResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5933,6 +6345,8 @@ type TextDocumentMonikerResult interface {
 type TextDocumentOnTypeFormattingResult interface {
 	isTextDocumentOnTypeFormattingResult()
 }
+
+func (TextEditArray) isTextDocumentOnTypeFormattingResult() {}
 
 // TextDocumentPositionParams is a named structure definition.
 //
@@ -5953,6 +6367,8 @@ type TextDocumentPrepareCallHierarchyResult interface {
 	isTextDocumentPrepareCallHierarchyResult()
 }
 
+func (CallHierarchyItemArray) isTextDocumentPrepareCallHierarchyResult() {}
+
 // TextDocumentPrepareRenameResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5969,6 +6385,8 @@ type TextDocumentPrepareTypeHierarchyResult interface {
 	isTextDocumentPrepareTypeHierarchyResult()
 }
 
+func (TypeHierarchyItemArray) isTextDocumentPrepareTypeHierarchyResult() {}
+
 // TextDocumentRangeFormattingResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5977,6 +6395,8 @@ type TextDocumentRangeFormattingResult interface {
 	isTextDocumentRangeFormattingResult()
 }
 
+func (TextEditArray) isTextDocumentRangeFormattingResult() {}
+
 // TextDocumentReferencesResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -5984,6 +6404,8 @@ type TextDocumentRangeFormattingResult interface {
 type TextDocumentReferencesResult interface {
 	isTextDocumentReferencesResult()
 }
+
+func (LocationArray) isTextDocumentReferencesResult() {}
 
 // TextDocumentRegistrationOptions is a named structure definition.
 //
@@ -6002,6 +6424,8 @@ type TextDocumentRegistrationOptionsDocumentSelector interface {
 	isTextDocumentRegistrationOptionsDocumentSelector()
 }
 
+func (DocumentSelector) isTextDocumentRegistrationOptionsDocumentSelector() {}
+
 // TextDocumentRenameResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -6009,6 +6433,8 @@ type TextDocumentRegistrationOptionsDocumentSelector interface {
 type TextDocumentRenameResult interface {
 	isTextDocumentRenameResult()
 }
+
+func (WorkspaceEdit) isTextDocumentRenameResult() {}
 
 // TextDocumentSaveReason is an enumeration of UInt values.
 //
@@ -6047,6 +6473,8 @@ type TextDocumentSelectionRangeResult interface {
 	isTextDocumentSelectionRangeResult()
 }
 
+func (SelectionRangeArray) isTextDocumentSelectionRangeResult() {}
+
 // TextDocumentSemanticTokensFullDeltaPartialResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -6055,6 +6483,10 @@ type TextDocumentSelectionRangeResult interface {
 type TextDocumentSemanticTokensFullDeltaPartialResult interface {
 	isTextDocumentSemanticTokensFullDeltaPartialResult()
 }
+
+func (SemanticTokensDeltaPartialResult) isTextDocumentSemanticTokensFullDeltaPartialResult() {}
+
+func (SemanticTokensPartialResult) isTextDocumentSemanticTokensFullDeltaPartialResult() {}
 
 // TextDocumentSemanticTokensFullDeltaResult is a union (aka 'or') of several other types.
 //
@@ -6065,6 +6497,10 @@ type TextDocumentSemanticTokensFullDeltaResult interface {
 	isTextDocumentSemanticTokensFullDeltaResult()
 }
 
+func (SemanticTokens) isTextDocumentSemanticTokensFullDeltaResult() {}
+
+func (SemanticTokensDelta) isTextDocumentSemanticTokensFullDeltaResult() {}
+
 // TextDocumentSemanticTokensFullResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -6072,6 +6508,8 @@ type TextDocumentSemanticTokensFullDeltaResult interface {
 type TextDocumentSemanticTokensFullResult interface {
 	isTextDocumentSemanticTokensFullResult()
 }
+
+func (SemanticTokens) isTextDocumentSemanticTokensFullResult() {}
 
 // TextDocumentSemanticTokensRangeResult is a union (aka 'or') of several other types.
 //
@@ -6081,6 +6519,8 @@ type TextDocumentSemanticTokensRangeResult interface {
 	isTextDocumentSemanticTokensRangeResult()
 }
 
+func (SemanticTokens) isTextDocumentSemanticTokensRangeResult() {}
+
 // TextDocumentSignatureHelpResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -6088,6 +6528,8 @@ type TextDocumentSemanticTokensRangeResult interface {
 type TextDocumentSignatureHelpResult interface {
 	isTextDocumentSignatureHelpResult()
 }
+
+func (SignatureHelp) isTextDocumentSignatureHelpResult() {}
 
 // TextDocumentSyncClientCapabilities is a named structure definition.
 type TextDocumentSyncClientCapabilities struct {
@@ -6155,6 +6597,10 @@ type TextDocumentSyncOptionsSave interface {
 	isTextDocumentSyncOptionsSave()
 }
 
+func (Bool) isTextDocumentSyncOptionsSave() {}
+
+func (SaveOptions) isTextDocumentSyncOptionsSave() {}
+
 // TextDocumentTypeDefinitionPartialResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -6163,6 +6609,10 @@ type TextDocumentSyncOptionsSave interface {
 type TextDocumentTypeDefinitionPartialResult interface {
 	isTextDocumentTypeDefinitionPartialResult()
 }
+
+func (DefinitionLinkArray) isTextDocumentTypeDefinitionPartialResult() {}
+
+func (LocationArray) isTextDocumentTypeDefinitionPartialResult() {}
 
 // TextDocumentTypeDefinitionResult is a union (aka 'or') of several other types.
 //
@@ -6173,6 +6623,8 @@ type TextDocumentTypeDefinitionResult interface {
 	isTextDocumentTypeDefinitionResult()
 }
 
+func (DefinitionLinkArray) isTextDocumentTypeDefinitionResult() {}
+
 // TextDocumentWillSaveWaitUntilResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -6180,6 +6632,8 @@ type TextDocumentTypeDefinitionResult interface {
 type TextDocumentWillSaveWaitUntilResult interface {
 	isTextDocumentWillSaveWaitUntilResult()
 }
+
+func (TextEditArray) isTextDocumentWillSaveWaitUntilResult() {}
 
 // TextEdit is a named structure definition.
 //
@@ -6352,6 +6806,8 @@ type TypeHierarchySubtypesResult interface {
 	isTypeHierarchySubtypesResult()
 }
 
+func (TypeHierarchyItemArray) isTypeHierarchySubtypesResult() {}
+
 // TypeHierarchySupertypesParams is a named structure definition.
 //
 // The parameter of a `typeHierarchy/supertypes` request.
@@ -6371,6 +6827,8 @@ type TypeHierarchySupertypesParams struct {
 type TypeHierarchySupertypesResult interface {
 	isTypeHierarchySupertypesResult()
 }
+
+func (TypeHierarchyItemArray) isTypeHierarchySupertypesResult() {}
 
 // UInt is the LSP unsigned integer type.
 type UInt uint32
@@ -6521,6 +6979,8 @@ type WindowClientCapabilities struct {
 type WindowShowMessageRequestResult interface {
 	isWindowShowMessageRequestResult()
 }
+
+func (MessageActionItem) isWindowShowMessageRequestResult() {}
 
 // WorkDoneProgressBegin is a named structure definition.
 type WorkDoneProgressBegin struct {
@@ -6700,6 +7160,10 @@ type WorkspaceDocumentDiagnosticReport interface {
 	isWorkspaceDocumentDiagnosticReport()
 }
 
+func (WorkspaceFullDocumentDiagnosticReport) isWorkspaceDocumentDiagnosticReport() {}
+
+func (WorkspaceUnchangedDocumentDiagnosticReport) isWorkspaceDocumentDiagnosticReport() {}
+
 // WorkspaceDocumentDiagnosticReportArray is an array of WorkspaceDocumentDiagnosticReport elements.
 type WorkspaceDocumentDiagnosticReportArray []WorkspaceDocumentDiagnosticReport
 
@@ -6783,6 +7247,14 @@ type WorkspaceEditDocumentChanges interface {
 	isWorkspaceEditDocumentChanges()
 }
 
+func (CreateFile) isWorkspaceEditDocumentChanges() {}
+
+func (DeleteFile) isWorkspaceEditDocumentChanges() {}
+
+func (RenameFile) isWorkspaceEditDocumentChanges() {}
+
+func (TextDocumentEdit) isWorkspaceEditDocumentChanges() {}
+
 // WorkspaceEditDocumentChangesArray is an array of WorkspaceEditDocumentChanges elements.
 type WorkspaceEditDocumentChangesArray []WorkspaceEditDocumentChanges
 
@@ -6838,6 +7310,8 @@ type WorkspaceFoldersInitializeParamsWorkspaceFolders interface {
 	isWorkspaceFoldersInitializeParamsWorkspaceFolders()
 }
 
+func (WorkspaceFolderArray) isWorkspaceFoldersInitializeParamsWorkspaceFolders() {}
+
 // WorkspaceFoldersServerCapabilities is a named structure definition.
 type WorkspaceFoldersServerCapabilities struct {
 	// The server has support for workspace folders
@@ -6861,6 +7335,10 @@ type WorkspaceFoldersServerCapabilitiesChangeNotifications interface {
 	isWorkspaceFoldersServerCapabilitiesChangeNotifications()
 }
 
+func (Bool) isWorkspaceFoldersServerCapabilitiesChangeNotifications() {}
+
+func (String) isWorkspaceFoldersServerCapabilitiesChangeNotifications() {}
+
 // WorkspaceFullDocumentDiagnosticReport is a named structure definition.
 //
 // A full document diagnostic report for a workspace diagnostic result.
@@ -6883,6 +7361,8 @@ type WorkspaceFullDocumentDiagnosticReport struct {
 type WorkspaceFullDocumentDiagnosticReportVersion interface {
 	isWorkspaceFullDocumentDiagnosticReportVersion()
 }
+
+func (Int) isWorkspaceFullDocumentDiagnosticReportVersion() {}
 
 // WorkspaceSymbol is a named structure definition.
 //
@@ -6947,6 +7427,10 @@ type WorkspaceSymbolLocation interface {
 	isWorkspaceSymbolLocation()
 }
 
+func (Location) isWorkspaceSymbolLocation() {}
+
+func (WorkspaceSymbolLocationA) isWorkspaceSymbolLocation() {}
+
 // WorkspaceSymbolLocationA is a literal structure.
 type WorkspaceSymbolLocationA struct{}
 
@@ -6984,6 +7468,10 @@ type WorkspaceSymbolPartialResult interface {
 	isWorkspaceSymbolPartialResult()
 }
 
+func (SymbolInformationArray) isWorkspaceSymbolPartialResult() {}
+
+func (WorkspaceSymbolArray) isWorkspaceSymbolPartialResult() {}
+
 // WorkspaceSymbolRegistrationOptions is a named structure definition.
 //
 // Registration options for a {@link WorkspaceSymbolRequest}.
@@ -6999,6 +7487,10 @@ type WorkspaceSymbolRegistrationOptions struct {
 type WorkspaceSymbolResult interface {
 	isWorkspaceSymbolResult()
 }
+
+func (SymbolInformationArray) isWorkspaceSymbolResult() {}
+
+func (WorkspaceSymbolArray) isWorkspaceSymbolResult() {}
 
 // WorkspaceUnchangedDocumentDiagnosticReport is a named structure definition.
 //
@@ -7023,6 +7515,8 @@ type WorkspaceUnchangedDocumentDiagnosticReportVersion interface {
 	isWorkspaceUnchangedDocumentDiagnosticReportVersion()
 }
 
+func (Int) isWorkspaceUnchangedDocumentDiagnosticReportVersion() {}
+
 // WorkspaceWillCreateFilesResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -7030,6 +7524,8 @@ type WorkspaceUnchangedDocumentDiagnosticReportVersion interface {
 type WorkspaceWillCreateFilesResult interface {
 	isWorkspaceWillCreateFilesResult()
 }
+
+func (WorkspaceEdit) isWorkspaceWillCreateFilesResult() {}
 
 // WorkspaceWillDeleteFilesResult is a union (aka 'or') of several other types.
 //
@@ -7039,6 +7535,8 @@ type WorkspaceWillDeleteFilesResult interface {
 	isWorkspaceWillDeleteFilesResult()
 }
 
+func (WorkspaceEdit) isWorkspaceWillDeleteFilesResult() {}
+
 // WorkspaceWillRenameFilesResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -7047,6 +7545,8 @@ type WorkspaceWillRenameFilesResult interface {
 	isWorkspaceWillRenameFilesResult()
 }
 
+func (WorkspaceEdit) isWorkspaceWillRenameFilesResult() {}
+
 // WorkspaceWorkspaceFoldersResult is a union (aka 'or') of several other types.
 //
 // It may be one of the following types:
@@ -7054,6 +7554,8 @@ type WorkspaceWillRenameFilesResult interface {
 type WorkspaceWorkspaceFoldersResult interface {
 	isWorkspaceWorkspaceFoldersResult()
 }
+
+func (WorkspaceFolderArray) isWorkspaceWorkspaceFoldersResult() {}
 
 // initializeParams is a named structure definition.
 //

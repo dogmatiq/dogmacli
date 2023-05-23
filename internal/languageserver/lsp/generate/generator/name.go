@@ -26,7 +26,7 @@ func tryNameOf(n model.Node, suffix ...string) (string, bool) {
 		}
 	}
 
-	var v namer
+	var v nameOfX
 	model.VisitNode(n, &v)
 
 	if v.N == "" {
@@ -36,39 +36,39 @@ func tryNameOf(n model.Node, suffix ...string) (string, bool) {
 	return v.N + strings.Join(suffix, ""), true
 }
 
-type namer struct {
+type nameOfX struct {
 	N string
 }
 
-func (v *namer) VisitModel(n *model.Model)               {}
-func (v *namer) VisitCall(n *model.Call)                 { v.N = ident(n.Name()) }
-func (v *namer) VisitNotification(n *model.Notification) { v.N = ident(n.Name()) }
-func (v *namer) VisitBool(n *model.Bool)                 { v.N = "Bool" }
-func (v *namer) VisitDecimal(n *model.Decimal)           { v.N = "Decimal" }
-func (v *namer) VisitString(n *model.String)             { v.N = "String" }
-func (v *namer) VisitInteger(n *model.Integer)           { v.N = "Int" }
-func (v *namer) VisitUInteger(n *model.UInteger)         { v.N = "UInt" }
-func (v *namer) VisitDocumentURI(n *model.DocumentURI)   { v.N = "DocumentURI" }
-func (v *namer) VisitURI(n *model.URI)                   { v.N = "URI" }
-func (v *namer) VisitNull(n *model.Null)                 {}
-func (v *namer) VisitReference(n *model.Reference)       { v.N = nameOf(n.Target) }
-func (v *namer) VisitArray(n *model.Array)               { v.N = nameOf(n.ElementType, "Array") }
-func (v *namer) VisitMap(n *model.Map)                   { v.N = nameOf(n.ValueType, "Map") }
-func (v *namer) VisitAnd(n *model.And)                   { v.N = scopeOf(n) }
-func (v *namer) VisitOr(n *model.Or)                     { v.N = scopeOf(n) }
-func (v *namer) VisitTuple(n *model.Tuple)               { v.N = scopeOf(n) }
-func (v *namer) VisitStructLit(n *model.StructLit)       { v.N = scopeOf(n) }
-func (v *namer) VisitStringLit(n *model.StringLit)       {}
-func (v *namer) VisitAlias(n *model.Alias)               { v.N = ident(n.Name()) }
-func (v *namer) VisitEnum(n *model.Enum)                 { v.N = ident(n.Name()) }
-func (v *namer) VisitEnumMember(n *model.EnumMember)     { v.N = ident(n.Name) + nameOf(n.Parent()) }
-func (v *namer) VisitStruct(n *model.Struct)             { v.N = ident(n.Name()) }
-func (v *namer) VisitProperty(n *model.Property)         { v.N = ident(n.Name) }
+func (v *nameOfX) VisitModel(n *model.Model)               {}
+func (v *nameOfX) VisitCall(n *model.Call)                 { v.N = ident(n.Name()) }
+func (v *nameOfX) VisitNotification(n *model.Notification) { v.N = ident(n.Name()) }
+func (v *nameOfX) VisitBool(n *model.Bool)                 { v.N = "Bool" }
+func (v *nameOfX) VisitDecimal(n *model.Decimal)           { v.N = "Decimal" }
+func (v *nameOfX) VisitString(n *model.String)             { v.N = "String" }
+func (v *nameOfX) VisitInteger(n *model.Integer)           { v.N = "Int" }
+func (v *nameOfX) VisitUInteger(n *model.UInteger)         { v.N = "UInt" }
+func (v *nameOfX) VisitDocumentURI(n *model.DocumentURI)   { v.N = "DocumentURI" }
+func (v *nameOfX) VisitURI(n *model.URI)                   { v.N = "URI" }
+func (v *nameOfX) VisitNull(n *model.Null)                 {}
+func (v *nameOfX) VisitReference(n *model.Reference)       { v.N = nameOf(n.Target) }
+func (v *nameOfX) VisitArray(n *model.Array)               { v.N = nameOf(n.ElementType, "Array") }
+func (v *nameOfX) VisitMap(n *model.Map)                   { v.N = nameOf(n.ValueType, "Map") }
+func (v *nameOfX) VisitAnd(n *model.And)                   { v.N = scopeOf(n) }
+func (v *nameOfX) VisitOr(n *model.Or)                     { v.N = scopeOf(n) }
+func (v *nameOfX) VisitTuple(n *model.Tuple)               { v.N = scopeOf(n) }
+func (v *nameOfX) VisitStructLit(n *model.StructLit)       { v.N = scopeOf(n) }
+func (v *nameOfX) VisitStringLit(n *model.StringLit)       {}
+func (v *nameOfX) VisitAlias(n *model.Alias)               { v.N = ident(n.Name()) }
+func (v *nameOfX) VisitEnum(n *model.Enum)                 { v.N = ident(n.Name()) }
+func (v *nameOfX) VisitEnumMember(n *model.EnumMember)     { v.N = ident(n.Name) + nameOf(n.Parent()) }
+func (v *nameOfX) VisitStruct(n *model.Struct)             { v.N = ident(n.Name()) }
+func (v *nameOfX) VisitProperty(n *model.Property)         { v.N = ident(n.Name) }
 
 // scopeOf returns an identifier for the "scopeOf" that n is within. It is used
 // to give anonymous types a name based on where they are defined.
 func scopeOf(n model.Node) string {
-	v := scoper{
+	v := scopeOfX{
 		Child: n,
 	}
 
@@ -81,12 +81,12 @@ func scopeOf(n model.Node) string {
 	return v.Name
 }
 
-type scoper struct {
+type scopeOfX struct {
 	Child model.Node
 	Name  string
 }
 
-func (v *scoper) VisitCall(n *model.Call) {
+func (v *scopeOfX) VisitCall(n *model.Call) {
 	switch v.Child {
 	case n.ParamsType:
 		v.push("Params")
@@ -105,7 +105,7 @@ func (v *scoper) VisitCall(n *model.Call) {
 	v.push(ident(n.Name()))
 }
 
-func (v *scoper) VisitNotification(n *model.Notification) {
+func (v *scopeOfX) VisitNotification(n *model.Notification) {
 	switch v.Child {
 	case n.ParamsType:
 		v.push("Params")
@@ -118,7 +118,7 @@ func (v *scoper) VisitNotification(n *model.Notification) {
 	v.push(ident(n.Name()))
 }
 
-func (v *scoper) VisitOr(n *model.Or) {
+func (v *scopeOfX) VisitOr(n *model.Or) {
 	letter := rune('A')
 	for _, t := range n.Types {
 		if t == v.Child {
@@ -132,7 +132,7 @@ func (v *scoper) VisitOr(n *model.Or) {
 	panic("child not found in parent")
 }
 
-func (v *scoper) VisitTuple(n *model.Tuple) {
+func (v *scopeOfX) VisitTuple(n *model.Tuple) {
 	for i, t := range n.Types {
 		if t == v.Child {
 			v.push(ordinals[i])
@@ -142,40 +142,40 @@ func (v *scoper) VisitTuple(n *model.Tuple) {
 	panic("child not found in parent")
 }
 
-func (v *scoper) VisitAlias(n *model.Alias) {
+func (v *scopeOfX) VisitAlias(n *model.Alias) {
 	v.push(ident(n.Name()))
 }
 
-func (v *scoper) VisitStruct(n *model.Struct) {
+func (v *scopeOfX) VisitStruct(n *model.Struct) {
 	v.push(ident(n.Name()))
 }
 
-func (v *scoper) VisitProperty(n *model.Property) {
+func (v *scopeOfX) VisitProperty(n *model.Property) {
 	v.push(ident(n.Name))
 }
 
 // These node types may have anonymous types declared within them.
-func (v *scoper) VisitModel(n *model.Model)         {}
-func (v *scoper) VisitReference(n *model.Reference) {}
-func (v *scoper) VisitArray(n *model.Array)         {}
-func (v *scoper) VisitMap(n *model.Map)             {}
-func (v *scoper) VisitStructLit(n *model.StructLit) {}
+func (v *scopeOfX) VisitModel(n *model.Model)         {}
+func (v *scopeOfX) VisitReference(n *model.Reference) {}
+func (v *scopeOfX) VisitArray(n *model.Array)         {}
+func (v *scopeOfX) VisitMap(n *model.Map)             {}
+func (v *scopeOfX) VisitStructLit(n *model.StructLit) {}
 
 // These node types are not expected to have anonymous types declared within them.
-func (v *scoper) VisitBool(n *model.Bool)               { panic("unexpected anonymous type") }
-func (v *scoper) VisitDecimal(n *model.Decimal)         { panic("unexpected anonymous type") }
-func (v *scoper) VisitString(n *model.String)           { panic("unexpected anonymous type") }
-func (v *scoper) VisitInteger(n *model.Integer)         { panic("unexpected anonymous type") }
-func (v *scoper) VisitUInteger(n *model.UInteger)       { panic("unexpected anonymous type") }
-func (v *scoper) VisitDocumentURI(n *model.DocumentURI) { panic("unexpected anonymous type") }
-func (v *scoper) VisitURI(n *model.URI)                 { panic("unexpected anonymous type") }
-func (v *scoper) VisitNull(n *model.Null)               { panic("unexpected anonymous type") }
-func (v *scoper) VisitStringLit(n *model.StringLit)     { panic("unexpected anonymous type") }
-func (v *scoper) VisitAnd(n *model.And)                 { panic("unexpected anonymous type") }
-func (v *scoper) VisitEnum(n *model.Enum)               { panic("unexpected anonymous type") }
-func (v *scoper) VisitEnumMember(n *model.EnumMember)   { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitBool(n *model.Bool)               { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitDecimal(n *model.Decimal)         { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitString(n *model.String)           { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitInteger(n *model.Integer)         { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitUInteger(n *model.UInteger)       { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitDocumentURI(n *model.DocumentURI) { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitURI(n *model.URI)                 { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitNull(n *model.Null)               { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitStringLit(n *model.StringLit)     { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitAnd(n *model.And)                 { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitEnum(n *model.Enum)               { panic("unexpected anonymous type") }
+func (v *scopeOfX) VisitEnumMember(n *model.EnumMember)   { panic("unexpected anonymous type") }
 
-func (v *scoper) push(name string) {
+func (v *scopeOfX) push(name string) {
 	v.Name = ident(name) + v.Name
 }
 

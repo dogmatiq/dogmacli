@@ -14,6 +14,7 @@ func Generate(
 ) {
 	g := &generator{
 		Group: f.Group,
+		Model: m,
 	}
 
 	model.VisitNode(m, g)
@@ -21,9 +22,10 @@ func Generate(
 
 type generator struct {
 	*jen.Group
+	Model *model.Model
 }
 
-// withGroup returns a function that can be passed to jen's XXXFunc() methods
+// withGroup returns a function that can be passed to jen's <Elem>Func() methods
 // which, when invoked calls fn() with g.Group set to the provided by the
 // XXXFunc() method.
 func (g *generator) withGroup(
