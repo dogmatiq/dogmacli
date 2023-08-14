@@ -3,7 +3,7 @@ module github.com/dogmatiq/dogmacli
 go 1.20
 
 require (
-	github.com/dave/jennifer v1.6.1
+	github.com/dave/jennifer v1.7.0
 	github.com/dogmatiq/configkit v0.12.1
 	github.com/dogmatiq/harpy v0.10.3
 	github.com/dogmatiq/imbue v0.7.0
