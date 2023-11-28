@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.4.0
 	github.com/spf13/cobra v1.8.0
 	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
-	golang.org/x/tools v0.15.0
+	golang.org/x/tools v0.16.0
 )
 
 require (
