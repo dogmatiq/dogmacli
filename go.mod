@@ -7,7 +7,7 @@ require (
 	github.com/dogmatiq/configkit v0.12.1
 	github.com/dogmatiq/harpy v0.10.3
 	github.com/dogmatiq/imbue v0.7.1
-	github.com/google/uuid v1.4.0
+	github.com/google/uuid v1.5.0
 	github.com/spf13/cobra v1.8.0
 	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
 	golang.org/x/tools v0.16.1
