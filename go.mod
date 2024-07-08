@@ -10,7 +10,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.8.1
 	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
-	golang.org/x/tools v0.22.0
+	golang.org/x/tools v0.23.0
 )
 
 require (
@@ -25,6 +25,6 @@ require (
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.24.0 // indirect
-	golang.org/x/mod v0.18.0 // indirect
+	golang.org/x/mod v0.19.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 )
