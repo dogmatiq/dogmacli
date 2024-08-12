@@ -4,12 +4,12 @@ go 1.21
 
 require (
 	github.com/dave/jennifer v1.7.0
-	github.com/dogmatiq/configkit v0.13.1
+	github.com/dogmatiq/configkit v0.13.2
 	github.com/dogmatiq/harpy v0.10.3
 	github.com/dogmatiq/imbue v0.7.1
 	github.com/google/uuid v1.6.0
 	github.com/spf13/cobra v1.8.1
-	golang.org/x/exp v0.0.0-20230510235704-dd950f8aeaea
+	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
 	golang.org/x/tools v0.24.0
 )
 
