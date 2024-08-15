@@ -3,8 +3,8 @@ package metamodel
 import (
 	_ "embed"
 	"encoding/json"
-
-	"golang.org/x/exp/slices"
+	"slices"
+	"strings"
 )
 
 // Root is the root of the model.
@@ -161,29 +161,29 @@ func Get() Root {
 
 	slices.SortFunc(
 		root.Requests,
-		func(a, b Request) bool {
-			return a.Method < b.Method
+		func(a, b Request) int {
+			return strings.Compare(a.Method, b.Method)
 		},
 	)
 
 	slices.SortFunc(
 		root.Structures,
-		func(a, b Structure) bool {
-			return a.Name < b.Name
+		func(a, b Structure) int {
+			return strings.Compare(a.Name, b.Name)
 		},
 	)
 
 	slices.SortFunc(
 		root.Enumerations,
-		func(a, b Enumeration) bool {
-			return a.Name < b.Name
+		func(a, b Enumeration) int {
+			return strings.Compare(a.Name, b.Name)
 		},
 	)
 
 	slices.SortFunc(
 		root.TypeAliases,
-		func(a, b TypeAlias) bool {
-			return a.Name < b.Name
+		func(a, b TypeAlias) int {
+			return strings.Compare(a.Name, b.Name)
 		},
 	)
 

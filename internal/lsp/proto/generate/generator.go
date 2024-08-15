@@ -1,13 +1,12 @@
 package main
 
 import (
+	"slices"
 	"strings"
 
 	"github.com/dave/jennifer/jen"
 	"github.com/dogmatiq/dogmacli/internal/lsp/proto/metamodel"
 	"golang.org/x/exp/constraints"
-	"golang.org/x/exp/maps"
-	"golang.org/x/exp/slices"
 )
 
 type generator struct {
@@ -105,7 +104,10 @@ func normalizeUnexportedName(n string) string {
 }
 
 func sortedKeys[M map[K]V, K constraints.Ordered, V any](m M) []K {
-	keys := maps.Keys(m)
+	var keys []K
+	for k := range m {
+		keys = append(keys, k)
+	}
 	slices.Sort(keys)
 	return keys
 }

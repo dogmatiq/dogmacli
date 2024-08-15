@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"slices"
 
 	"github.com/dave/jennifer/jen"
-	"golang.org/x/exp/slices"
 )
 
 func main() {

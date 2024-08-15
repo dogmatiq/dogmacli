@@ -2,12 +2,12 @@ package ruletest
 
 import (
 	"context"
+	"slices"
 	"testing"
 
 	linter "github.com/dogmatiq/dogmacli/internal/linter" // TODO: alias is to stop goimports from removing the import
 	"github.com/dogmatiq/dogmacli/internal/linter/diagnostic"
 	"github.com/dogmatiq/dogmacli/internal/linter/internal/lint"
-	"golang.org/x/exp/slices"
 	"golang.org/x/tools/go/packages"
 	"golang.org/x/tools/go/ssa/ssautil"
 )
