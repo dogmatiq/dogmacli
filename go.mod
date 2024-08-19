@@ -6,7 +6,7 @@ toolchain go1.23.0
 
 require (
 	github.com/dave/jennifer v1.7.0
-	github.com/dogmatiq/configkit v0.13.4
+	github.com/dogmatiq/configkit v0.13.6
 	github.com/dogmatiq/harpy v0.10.3
 	github.com/dogmatiq/imbue v0.7.1
 	github.com/google/uuid v1.6.0
@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	github.com/dogmatiq/dogma v0.13.1 // indirect
+	github.com/dogmatiq/dogma v0.14.0 // indirect
 	github.com/dogmatiq/iago v0.4.0 // indirect
 	github.com/dogmatiq/interopspec v0.5.4 // indirect
 	github.com/emicklei/dot v1.6.2 // indirect
