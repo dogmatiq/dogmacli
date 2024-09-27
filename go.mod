@@ -6,7 +6,7 @@ toolchain go1.23.0
 
 require (
 	github.com/dave/jennifer v1.7.1
-	github.com/dogmatiq/configkit v0.13.8
+	github.com/dogmatiq/configkit v0.14.0
 	github.com/dogmatiq/harpy v0.10.3
 	github.com/dogmatiq/imbue v0.7.1
 	github.com/google/uuid v1.6.0
@@ -16,7 +16,7 @@ require (
 )
 
 require (
-	github.com/dogmatiq/dogma v0.14.2 // indirect
+	github.com/dogmatiq/dogma v0.14.3 // indirect
 	github.com/dogmatiq/iago v0.4.0 // indirect
 	github.com/dogmatiq/interopspec v0.5.4 // indirect
 	github.com/emicklei/dot v1.6.2 // indirect
@@ -33,7 +33,7 @@ require (
 	golang.org/x/sync v0.8.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.18.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240528184218-531527333157 // indirect
-	google.golang.org/grpc v1.65.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142 // indirect
+	google.golang.org/grpc v1.67.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 )
