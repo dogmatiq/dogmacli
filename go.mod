@@ -6,7 +6,7 @@ toolchain go1.23.0
 
 require (
 	github.com/dave/jennifer v1.7.1
-	github.com/dogmatiq/configkit v0.15.0
+	github.com/dogmatiq/configkit v0.16.0
 	github.com/dogmatiq/harpy v0.10.3
 	github.com/dogmatiq/imbue v0.7.1
 	github.com/google/uuid v1.6.0
@@ -17,7 +17,7 @@ require (
 
 require (
 	github.com/dogmatiq/dogma v0.15.0 // indirect
-	github.com/dogmatiq/enginekit v0.16.0 // indirect
+	github.com/dogmatiq/enginekit v0.16.1 // indirect
 	github.com/dogmatiq/iago v0.4.0 // indirect
 	github.com/emicklei/dot v1.6.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -30,6 +30,6 @@ require (
 	go.uber.org/zap v1.24.0 // indirect
 	golang.org/x/mod v0.21.0 // indirect
 	golang.org/x/sync v0.8.0 // indirect
-	golang.org/x/text v0.18.0 // indirect
+	golang.org/x/text v0.19.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 )
